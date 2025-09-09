@@ -78,6 +78,17 @@ By the end of this week, students will be able to:
 3. Use aggregation functions effectively
 4. Optimize query performance
 
+### Lab Exercise 4: PostgreSQL Exercises on Supabase
+- **Platform**: [pgexercises.com](https://pgexercises.com/gettingstarted.html)
+- **Environment**: Supabase SQL Editor
+- Complete the PostgreSQL exercises using the Supabase SQL editor
+- Practice with the country club database schema provided by pgexercises
+- Focus on:
+  - Basic SELECT queries
+  - JOINs and relationships
+  - Aggregation and grouping
+  - Subqueries and advanced techniques
+
 ## Assignments
 
 ### Assignment 1: Architecture Analysis
@@ -101,16 +112,24 @@ By the end of this week, students will be able to:
 - [PostgreSQL Official Documentation](https://www.postgresql.org/docs/)
 - [PostgreSQL Tutorial](https://www.postgresqltutorial.com/)
 
+### Practice Exercises
+- **[pgexercises.com](https://pgexercises.com/gettingstarted.html)** - Interactive PostgreSQL exercises
+  - Use Supabase SQL Editor to complete exercises
+  - Practice with country club database schema
+  - Progressive difficulty levels
+
 ### Cloud Database Services
 - AWS RDS
 - Google Cloud SQL
 - Azure Database for PostgreSQL
 - Heroku Postgres
+- **Supabase** (for pgexercises practice)
 
 ### Tools
 - pgAdmin (PostgreSQL administration tool)
 - DBeaver (Universal database tool)
 - psql (command-line interface)
+- **Supabase SQL Editor** (for pgexercises)
 
 ## Assessment
 
