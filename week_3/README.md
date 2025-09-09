@@ -60,31 +60,8 @@ By the end of this week, students will be able to:
 
 ## Activities
 
-### Lab Exercise 1: PostgreSQL Installation and Setup
-1. Install PostgreSQL on your local machine
-2. Create a new database
-3. Import the `review.sql` file
-4. Verify the database structure
 
-**Alternative Setup for Supabase Users:**
-1. Create a new Supabase project
-2. Open the SQL Editor in Supabase
-3. Run the `review.sql` file to create the database schema
-4. Verify the tables and data are created correctly
-
-### Lab Exercise 2: Database Schema Analysis
-1. Examine the three main tables in the review database
-2. Identify relationships between tables
-3. Document the schema design
-4. Suggest potential improvements
-
-### Lab Exercise 3: Query Practice
-1. Write queries to answer business questions about the country club
-2. Practice different types of joins
-3. Use aggregation functions effectively
-4. Optimize query performance
-
-### Lab Exercise 4: PostgreSQL Exercises on Supabase
+### Lab Exercise 
 - **Platform**: [pgexercises.com](https://pgexercises.com/gettingstarted.html)
 - **Environment**: Supabase SQL Editor
 - **Setup**: First, run the `review.sql` file in Supabase SQL Editor to create the database schema
