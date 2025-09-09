@@ -1,0 +1,90 @@
+# Temporary Microsoft Office files
+~$*
+*.tmp
+
+# PowerPoint temporary files
+~$*.pptx
+~$*.ppt
+~$*.pptm
+
+# Word temporary files
+~$*.docx
+~$*.doc
+~$*.docm
+
+# Excel temporary files
+~$*.xlsx
+~$*.xls
+~$*.xlsm
+
+# General temporary files
+*.tmp
+*.temp
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Log files
+*.log
+
+# Database files (if you have local database files)
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.bak
+*.backup
+
+# Compressed files (if you don't want to track them)
+*.zip
+*.rar
+*.7z
+*.tar.gz
+
+# Node modules (if you add any web development content)
+node_modules/
+
+# Python (if you add Python scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Java (if you add Java content)
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+
+# C/C++ (if you add C/C++ content)
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
