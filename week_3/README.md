@@ -66,6 +66,12 @@ By the end of this week, students will be able to:
 3. Import the `review.sql` file
 4. Verify the database structure
 
+**Alternative Setup for Supabase Users:**
+1. Create a new Supabase project
+2. Open the SQL Editor in Supabase
+3. Run the `review.sql` file to create the database schema
+4. Verify the tables and data are created correctly
+
 ### Lab Exercise 2: Database Schema Analysis
 1. Examine the three main tables in the review database
 2. Identify relationships between tables
@@ -81,6 +87,7 @@ By the end of this week, students will be able to:
 ### Lab Exercise 4: PostgreSQL Exercises on Supabase
 - **Platform**: [pgexercises.com](https://pgexercises.com/gettingstarted.html)
 - **Environment**: Supabase SQL Editor
+- **Setup**: First, run the `review.sql` file in Supabase SQL Editor to create the database schema
 - Complete the PostgreSQL exercises using the Supabase SQL editor
 - Practice with the country club database schema provided by pgexercises
 - Focus on:
