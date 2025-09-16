@@ -150,8 +150,16 @@ ALTER TABLE orders
 ```
 
 ### 4. Triggers
-- **What**: Callbacks that fire before/after table events. Use for auditing, denormalised counters, or enforcing multi-row logic.
-- **Key pieces**: trigger function (returns `NEW`/`OLD`), trigger definition (timing + event + level).
+- **What**: Callbacks PostgreSQL executes automatically when a table event occurs. Use them for auditing, denormalised counters, enforcing complex business rules, or rejecting invalid changes.
+- **Trigger anatomy**:
+  * **Trigger function** — written in PL/pgSQL (or another language) and returns `NEW` (for INSERT/UPDATE) or `OLD` (for DELETE). It contains the logic you want to run.
+  * **Trigger definition** — `CREATE TRIGGER ... BEFORE|AFTER event ON table FOR EACH ROW|STATEMENT EXECUTE FUNCTION ...`. Timing determines whether you can modify the incoming row (`BEFORE`) or react after the change (`AFTER`). Level decides whether the trigger fires once per row or once per statement.
+  * **Transition tables** (PostgreSQL 10+): `REFERENCING NEW TABLE AS ...` lets you access all affected rows inside the trigger for statement-level triggers.
+- **Best practices**:
+  * Keep trigger functions short and deterministic; document side effects.
+  * Avoid heavy queries inside triggers—they run inside the original transaction and can block it.
+  * Log actions with `RAISE NOTICE` while testing; remove noisy logging in production.
+  * Version-control trigger definitions alongside migrations so changes are reviewable.
 - **Demo**:
 ```sql
 CREATE OR REPLACE FUNCTION audit.log_order_change()
@@ -171,8 +179,19 @@ FOR EACH ROW EXECUTE FUNCTION audit.log_order_change();
 ```
 
 ### 5. Transactions & ACID
-- **What**: Wrap related statements so they succeed or fail together while preserving isolation.
-- **Teaching tip**: Use `BEGIN/COMMIT`, roll back on error, and demonstrate isolation differences.
+- **What**: Wrap related statements so they succeed or fail together while preserving isolation. ACID stands for Atomicity, Consistency, Isolation, Durability.
+- **How they work**:
+  * `BEGIN;` starts a transaction block. PostgreSQL keeps your changes private until you `COMMIT;`.
+  * `COMMIT;` makes the changes durable. If anything fails before commit, issue `ROLLBACK;` to undo everything executed after `BEGIN;`.
+  * Savepoints (`SAVEPOINT name;` / `ROLLBACK TO name;`) let you partially undo work inside a longer transaction.
+- **Isolation levels** control how concurrent transactions see each other:
+  * `READ COMMITTED` (default) — each statement sees committed data at its start.
+  * `REPEATABLE READ` — the whole transaction sees a consistent snapshot; repeated reads return the same rows even if others commit changes.
+  * `SERIALIZABLE` — prevents all anomalies by detecting conflicts and forcing retries.
+- **Session vs transaction settings**:
+  * `SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL ...;` changes the default isolation level for all future transactions in that session.
+  * `SET TRANSACTION ISOLATION LEVEL ...;` inside a transaction affects only the current one.
+  * Use these commands to demonstrate how isolation affects behaviour during the live demo.
 - **Demo**:
 ```sql
 BEGIN;
@@ -180,6 +199,7 @@ UPDATE accounts SET balance = balance - 100 WHERE id = 1;
 UPDATE accounts SET balance = balance + 100 WHERE id = 2;
 COMMIT;
 
+-- Raise default isolation level for subsequent transactions in this session
 SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL REPEATABLE READ;
 ```
 
