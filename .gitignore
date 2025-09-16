@@ -88,3 +88,5 @@ hs_err_pid*
 *.dll
 *.so
 *.dylib
+
+*instructor_guide*
