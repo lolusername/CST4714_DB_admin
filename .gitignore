@@ -89,3 +89,4 @@ hs_err_pid*
 *.so
 *.dylib
 *teacher*
+*instructor*

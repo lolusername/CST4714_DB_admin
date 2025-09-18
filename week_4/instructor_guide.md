@@ -189,9 +189,9 @@ FOR EACH ROW EXECUTE FUNCTION audit.log_order_change();
   * `REPEATABLE READ` — the whole transaction sees a consistent snapshot; repeated reads return the same rows even if others commit changes.
   * `SERIALIZABLE` — prevents all anomalies by detecting conflicts and forcing retries.
 - **Session vs transaction settings**:
-  * `SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL ...;` changes the default isolation level for all future transactions in that session.
-  * `SET TRANSACTION ISOLATION LEVEL ...;` inside a transaction affects only the current one.
-  * Use these commands to demonstrate how isolation affects behaviour during the live demo.
+  * `SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL ...;` changes the default isolation level for every transaction you open in that connection from that point onward. Think of it as telling PostgreSQL, “until I disconnect, assume every new `BEGIN;` should run at REPEATABLE READ (or whatever level you chose).” Use this when you want to compare a set of behaviours with the stronger level applied automatically.
+  * `SET TRANSACTION ISOLATION LEVEL ...;` must run *inside* an open transaction (after `BEGIN;`). It overrides the isolation level for that single transaction only, then reverts to the session default after `COMMIT;` or `ROLLBACK;`. This is perfect for one-off experiments where you do not want to change the ongoing default.
+  * Demo flow: open two shells. In shell A, leave the default isolation in place. In shell B, run `SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL REPEATABLE READ;`, then show how a long-running `SELECT` in shell B keeps seeing the same snapshot while shell A continues to update rows. Repeat the demo with `SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;` inside a single transaction so students see a serialization failure without altering the rest of the session.
 - **Demo**:
 ```sql
 BEGIN;
@@ -253,113 +253,142 @@ Run each block in a sandbox project before class so you can describe the results
 
 ### Slide 1 — Week 4 Overview (3 minutes)
 **Script**
-> “Welcome to Week 4: Advanced SQL and Transaction Management. Up to now we focused on writing queries; today we look at how database administrators extend SQL with functions, views, triggers, and constraints, and how we wrap everything in reliable transactions. These skills are critical for the midterm project because your designs must enforce data integrity and behave safely under concurrent load.”
+> “Welcome to Week 4: Advanced SQL and Transaction Management. Think of today as moving from basic querying into administration skills. When I say *Advanced SQL*, I mean the server-side tools—functions, views, triggers, constraints—that let us enforce data rules in the database itself. *Transaction management* is about grouping related statements so they succeed or fail together, which is critical for reliability. These topics feed directly into your midterm: every project must show how it protects data quality and handles concurrent users.”
+
+**Key terms explained**
+- *Advanced SQL*: features beyond SELECT/INSERT/UPDATE that live inside the database engine.
+- *Database administrator (DBA)*: the role responsible for configuration, security, backups, and performance.
+- *Transaction*: a unit of work that is either fully applied or fully rolled back.
 
 **Teaching Notes**
-- Emphasise that everything in this deck appears in the lab and midterm proposal.
-- Remind students the session has four parts: lecture, demo, lab, proposal planning.
+- Highlight that lecture, demo, lab, and proposal workshop are tightly linked; students should carry notes from each segment into their midterm plan.
 
-### Slide 2 — Agenda (2 minutes)
+### Slide 2 — Agenda (3 minutes)
 **Script**
-> “Here’s the agenda. We’ll start with advanced SQL building blocks, plug them together with constraints and triggers, examine ACID transactions, and preview the hands-on lab. Keep the midterm proposal in mind—each concept maps to a deliverable in that assignment.”
+> “Here’s how we’ll spend the session. First, we’ll review the building blocks—functions, views, triggers, constraints, transactions—so you know what tools exist. Then we’ll combine them to see how integrity is enforced. After that we’ll dig into ACID and isolation levels so you understand how PostgreSQL keeps transactions safe. Once the concepts are clear, I’ll run a live demo showing each feature in action. You’ll practice the same steps in the lab, and we’ll end by outlining your midterm proposal.”
+
+**Key terms explained**
+- *ACID*: stands for Atomicity, Consistency, Isolation, Durability—the four guarantees of reliable transactions.
+- *Isolation level*: rule that controls how simultaneous transactions can see each other’s changes.
 
 **Background**
-- Clarify the timing: 50-minute lecture, 20-minute live demo, 60-minute lab, 20-minute proposal workshop.
+- Reiterate timing: lecture (~50 min), demo (20 min), lab (60 min), proposal workshop (20 min). Encourage students to jot questions for each block.
 
-### Slide 3 — Advanced SQL Building Blocks (3 minutes)
+### Slide 3 — Advanced SQL Building Blocks (4 minutes)
 **Script**
-> “Advanced SQL for administrators covers five pillars: server-side functions, views, triggers, constraints, and transactions. Functions let you package logic; views expose curated data; triggers react to changes; constraints guard data quality; transactions wrap everything so it either succeeds together or fails together. We’ll drill into each pillar next.”
+> “Administrators lean on five pillars: functions, views, constraints, triggers, and transactions. Functions package reusable logic right next to the data. Views give users a clean window onto the tables without exposing raw structures. Constraints describe the rules data must obey. Triggers let us react automatically when data changes. Transactions glue everything together so related statements succeed or fail as a unit. We will study each pillar, see examples, and discuss when to choose one tool over another.”
 
-**Background**
-- Stress that DBAs prefer declarative features (views/constraints) before procedural ones (triggers) because the optimizer understands them better.
+**Key terms explained**
+- *Declarative vs procedural*: declarative features (views, constraints) describe what must be true; procedural features (functions, triggers) run step-by-step instructions.
+- *Optimizer*: the part of PostgreSQL that decides how to run queries; it understands declarative rules, so favor those when possible.
 
-### Slide 4 — User-Defined Functions Overview (5 minutes)
+### Slide 4 — User-Defined Functions Overview (6 minutes)
 **Script**
-> “PostgreSQL can run custom code right in the database. The simplest approach is a SQL function—a single SELECT expression. When we need flow control or variables we switch to PL/pgSQL, the built-in procedural language. Every function declares its volatility—`IMMUTABLE` means it always returns the same output for the same input, `STABLE` allows reads but no writes, and `VOLATILE` can do anything. That metadata helps the query planner cache results correctly. Functions also define security: by default they execute with the caller’s permissions (`SECURITY INVOKER`), but `SECURITY DEFINER` elevates to the owner’s role for maintenance tasks. Use definer functions sparingly and document them.”
+> “Functions are mini-programs stored in the database. A simple SQL function can be one SELECT statement—great for transforming values. PL/pgSQL functions give you variables, loops, and conditionals. PostgreSQL asks every function to label its *volatility*: `IMMUTABLE` means the output never changes for the same inputs and lets the planner cache results; `STABLE` allows reads but not writes and stays consistent within a statement; `VOLATILE` is the default when outputs may change each call, like `now()`. We also pick the security context: `SECURITY INVOKER` runs with the caller’s privileges, while `SECURITY DEFINER` runs with the owner’s privileges—useful for maintenance jobs but potentially dangerous if you elevate rights.”
 
-**Background**
-- Walk through the SQL snippet on the slide: point out the simple SQL function versus the PL/pgSQL trigger-style function.
-- Explain parameter modes (`IN`, `OUT`, `VARIADIC`) if asked; emphasise most functions use `IN` parameters.
+**Examples to mention**
+- Data-cleanup function that uppercases names.
+- Reporting helper that calculates tax or discounts.
 
-### Slide 5 — Creating PL/pgSQL Functions (5 minutes)
+**Key terms explained**
+- *Volatility*: hint to the planner about how predictable the function is.
+- *Security context*: whose permissions apply during execution.
+- *Parameter modes*: `IN` (default input), `OUT` (returned via parameters), `VARIADIC` (variably sized argument list).
+
+### Slide 5 — Creating PL/pgSQL Functions (6 minutes)
 **Script**
-> “This slide shows the full anatomy of a PL/pgSQL function. We name the function, list arguments with types, and declare the return type. Inside the `BEGIN … END` block we can run any SQL, set variables, raise notices, or call other functions. If the function returns data we either `RETURN` a scalar or `RETURN QUERY` for sets. Notice the snippet notifies a channel via `pg_notify`; functions often emit events for application queues. When you write these, think about volatility and permissions, then add unit tests—`pgTAP` is a popular extension for that.”
+> “This slide breaks down the anatomy of a PL/pgSQL function. We give it a name, schema, and parameter list; we specify the return type. Inside `BEGIN … END` we can run any SQL, declare variables, raise notices, and even call other functions. To send data back we use `RETURN` for single values or `RETURN QUERY` for result sets. Notice the example fires a `pg_notify` message—functions often integrate with other systems. Whenever you write a function, decide on volatility and security, and think about tests. The pgTAP extension is a popular way to unit test functions.”
 
-**Background**
-- Mention that the lab demonstrates the structure indirectly via trigger functions; reassure everyone they will practice in the notebook.
+**Key terms explained**
+- *`pg_notify`*: PostgreSQL messaging feature that lets you send notifications to listeners.
+- *`RAISE NOTICE`*: command used for debug output from PL/pgSQL.
+- *Unit testing functions*: ensures behavior stays correct during schema changes.
 
-### Slide 6 — Views & Materialized Views (4 minutes)
+### Slide 6 — Views & Materialized Views (5 minutes)
 **Script**
-> “Views are named SELECT statements. They let us hide join complexity, expose only approved columns, and enforce security by granting access to the view instead of the underlying tables. Materialized views persist the result set to disk—great for heavy analytical queries—but they must be refreshed explicitly. In PostgreSQL you refresh with `REFRESH MATERIALIZED VIEW`. Remember to index materialized views if you filter on them often.”
+> “Views are saved SELECT statements. They shield users from complex joins and let you centralize business logic. Because a view only stores the SQL text, each query pulls current data. Materialized views go a step further: they store the query results on disk, which speeds up heavy analytics but means you must refresh them periodically. In PostgreSQL you refresh with `REFRESH MATERIALIZED VIEW`, and you can even do it `CONCURRENTLY` if you add a unique index so readers aren’t blocked. Granting SELECT on a view is safer than granting access to base tables because you decide exactly which columns and rows are exposed.”
 
-**Background**
-- Highlight the snippet that grants SELECT to an `analyst` role; point out how DBAs layer security.
-- Emphasise differences: views are always current; materialized views are snapshots.
+**Key terms explained**
+- *Encapsulation*: hiding complexity behind a simpler interface (the view).
+- *Least privilege*: giving users only the permissions they need.
+- *Refresh*: rerunning the materialized view query to update stored data.
 
 ### Slide 7 — Designing Robust Views (4 minutes)
 **Script**
-> “Two pro tips for views: first, use `WITH CHECK OPTION` when the view is updatable. That prevents users from inserting rows that fall outside the view’s filter. Second, set `security_barrier = true` when you rely on views for row-level security—the planner then applies your filters before the client’s predicates, preventing information leaks. Finally, treat your view definitions like code: version them in migrations so teammates know when semantics change.”
+> “When views are updatable, use `WITH CHECK OPTION` to stop users from inserting rows that violate the view’s filter—otherwise the row would disappear after insert. Set `security_barrier = true` for security-sensitive views; it forces PostgreSQL to apply the view’s filter before client-supplied filters to prevent data leaks. Treat views like source code: keep them in migrations, review changes, and document dependencies. If a view becomes slow, analyze its query plan with `EXPLAIN` just like you would for tables.”
 
-**Background**
-- If students ask about updatable views, explain that PostgreSQL allows updates if it can map the view back to a single base table.
+**Key terms explained**
+- *Updatable view*: one where PostgreSQL can translate inserts/updates back to the base table.
+- *`EXPLAIN`*: command that shows how PostgreSQL plans to execute a query.
 
-### Slide 8 — Constraint Toolbox (5 minutes)
+### Slide 8 — Constraint Toolbox (6 minutes)
 **Script**
-> “Constraints are declarative—PostgreSQL enforces them with zero extra code. Primary keys and unique constraints guarantee identity. Foreign keys maintain referential integrity. CHECK constraints let us express business rules, like `unit_price >= 0`. Exclusion constraints are advanced: they use GiST indexes to prevent overlaps, perfect for scheduling, geospatial ranges, or time bookings. Whenever you think about writing a trigger to block bad data, pause and ask whether a constraint can do the job.”
+> “Constraints are declarative guarantees. A PRIMARY KEY enforces uniqueness and not-null in one step; UNIQUE constraints ensure no duplicate values; CHECK constraints evaluate Boolean expressions like `quantity > 0`; FOREIGN KEYS ensure relationships remain valid; EXCLUDE constraints use GiST indexes to block overlapping ranges—perfect for scheduling or geospatial data. Because constraints are declarative, the optimizer can use them to simplify queries and they run faster than trigger-based checks. Before writing procedural code, ask if a constraint can solve the problem.”
 
-**Background**
-- Explain domains (reusable type wrappers) as a way to apply shared constraints—e.g., an `email_address` domain with validation.
+**Examples**
+- CHECK preventing negative account balances.
+- FOREIGN KEY ensuring every order references an existing customer.
+- EXCLUDE to stop room double-bookings.
 
-### Slide 9 — Advanced Constraint Management (3 minutes)
+### Slide 9 — Advanced Constraint Management (4 minutes)
 **Script**
-> “Sometimes we defer constraint enforcement. Adding `DEFERRABLE INITIALLY DEFERRED` tells PostgreSQL to check at commit time. That’s handy when you insert a parent row and child rows in the same transaction. You can also validate constraints later using `ALTER TABLE … VALIDATE CONSTRAINT`—great for backfilling data without blocking writes. Be explicit about foreign key actions: `ON DELETE CASCADE` removes dependents, `SET NULL` clears references, and `RESTRICT` blocks the delete. Document these choices so downstream teams know what happens.”
+> “Real systems need flexibility. `DEFERRABLE INITIALLY DEFERRED` lets you postpone checks until `COMMIT` so you can insert a parent row and its children in one transaction. `ALTER TABLE … VALIDATE CONSTRAINT` lets you add a constraint as `NOT VALID`—meaning new rows must comply, but existing rows are checked later without blocking writes. For foreign keys, choose the right action: `CASCADE` deletes dependent rows, `SET NULL` clears the reference, `RESTRICT` blocks the delete. Document these behaviors so teammates aren’t surprised.”
 
-**Background**
-- Mention the lab’s deferrable constraint example; preview that you’ll show it fail in the demo.
+**Key terms explained**
+- *Deferrable*: enforcement can be delayed until transaction end.
+- *Backfill*: populating historical data after the fact.
 
 ### Slide 10 — Trigger Fundamentals (5 minutes)
 **Script**
-> “Triggers execute automatically when a table changes. They can fire BEFORE or AFTER an event. BEFORE triggers are ideal for validation or modifying the incoming row; AFTER triggers are used for logging or side effects. Triggers can be row-level—once per row—or statement-level—once per statement. A trigger always invokes a trigger function; for row-level triggers that function must return `NEW` or `OLD`. Remember that triggers run inside the same transaction, so failures roll everything back.”
+> “Triggers are automatic reactions. `BEFORE` triggers let you modify or reject a change before it hits the table—great for validation or derived columns. `AFTER` triggers run once the change is saved, perfect for logging. Decide whether the trigger fires for each row or once per statement. The trigger function must return `NEW` (the incoming row) or `OLD` (the existing row) depending on the event. Triggers execute inside the user’s transaction, so if they fail, the entire statement fails. Keep them fast and documented.”
 
-**Background**
-- Reinforce that triggers add hidden complexity; keep them documented and minimal.
+**Key terms explained**
+- *Row-level vs statement-level*: whether the trigger fires per affected row or once per SQL statement.
+- *`NEW`/`OLD` records*: special variables representing the row data before/after the change.
 
-### Slide 11 — Trigger Design Patterns (4 minutes)
+### Slide 11 — Trigger Design Patterns (5 minutes)
 **Script**
-> “Common trigger patterns include audit trails, denormalised counters, data sanitisation, and guard rails. The slide shows a counter trigger that logs inventory consumption and another that raises an exception when an update would create a negative balance. In your projects, prefer triggers when the rule depends on multiple rows or needs historical logging. Otherwise, start with constraints.”
+> “Common patterns include audit trails that copy changes into history tables, denormalised counters that maintain summary totals, data sanitisation that formats values, and guard rails that raise exceptions when business rules are broken. Use triggers when the rule depends on multiple rows or you need a history of changes. If a declarative constraint can do the job, prefer the constraint; it’s simpler for the optimizer and easier to test.”
 
-**Background**
-- Point out that the teacher notebook includes the audit-style trigger logic.
+**Examples**
+- Audit trigger logging before/after values for compliance.
+- Inventory trigger subtracting quantities from a stock table.
+- Validation trigger rejecting updates that would set `balance < 0`.
 
-### Slide 12 — Transactions & ACID (4 minutes)
+### Slide 12 — Transactions & ACID (6 minutes)
 **Script**
-> “Transactions group statements into an all-or-nothing unit. Atomicity means every statement succeeds or none persist—you manage that with `BEGIN`, `COMMIT`, and `ROLLBACK`. Consistency relies on constraints and triggers to keep the database valid. Isolation defines how concurrent transactions interact; PostgreSQL defaults to READ COMMITTED but can run REPEATABLE READ or SERIALIZABLE. Durability ensures committed data survives crashes thanks to the Write-Ahead Log (WAL). The code snippet shows a simple transfer and how to change isolation level.”
+> “Transactions guarantee ACID. **Atomicity**: either all statements succeed or none do—managed with `BEGIN`, `COMMIT`, and `ROLLBACK`. **Consistency**: constraints and triggers keep the data valid before and after the transaction. **Isolation**: concurrent transactions act as if they ran in sequence, depending on the isolation level. **Durability**: once committed, changes survive crashes because PostgreSQL writes them to the Write-Ahead Log (WAL). Use savepoints for complex workflows so you can roll back part of a transaction without losing earlier work.”
 
-**Background**
-- Briefly explain MVCC: each transaction sees a snapshot of data; updates create new versions.
+**Key terms explained**
+- *Write-Ahead Log (WAL)*: sequential log PostgreSQL uses to guarantee durability and for recovery.
+- *Savepoint*: named checkpoint in a transaction for partial rollback.
 
-### Slide 13 — Isolation Levels & Concurrency (3 minutes)
+### Slide 13 — Isolation Levels & Concurrency (5 minutes)
 **Script**
-> “Isolation levels trade off throughput and anomaly protection. READ COMMITTED prevents dirty reads. REPEATABLE READ adds protection against non-repeatable reads but can allow write skew. SERIALIZABLE protects against all anomalies by detecting conflicts and forcing retries. When you need to guarantee correctness—think ledger balances—raise the isolation level and possibly lock rows with `SELECT … FOR UPDATE`. Monitor live sessions using `pg_locks` and `pg_stat_activity`.”
+> “Isolation decides which anomalies are allowed. `READ COMMITTED` (default) prevents dirty reads but allows non-repeatable reads and phantom rows. `REPEATABLE READ` adds protection against non-repeatable reads—once you read a row, you see the same snapshot—but phantoms can still appear. `SERIALIZABLE` simulates running transactions one at a time; PostgreSQL detects conflicts and forces retries. Explain anomalies with quick examples so students understand why isolation matters. Show how `SELECT … FOR UPDATE` locks rows to avoid lost updates.”
 
-**Background**
-- Mention the lab isolation experiment: Transaction 1 with REPEATABLE READ, Transaction 2 updating data.
+**Key terms explained**
+- *Dirty read*: seeing uncommitted data from another transaction.
+- *Non-repeatable read*: reading the same row twice and getting different results because another transaction committed in between.
+- *Phantom read*: new rows matching a condition appear between two scans.
 
 ### Slide 14 — Transaction Troubleshooting (4 minutes)
 **Script**
-> “Real databases see blocking and deadlocks. Watch `pg_stat_activity` for long-running statements and use lock timeouts so clients fail fast instead of hanging forever. Savepoints are mini-checkpoints—wrap risky statements in a savepoint so you can roll back part of a transaction without losing earlier work. When you hit a deadlock, PostgreSQL writes a detailed message to the logs; capture those logs and reconstruct the lock graph to fix the ordering problem.”
+> “Production systems hit blocking and deadlocks. Monitor `pg_stat_activity` to spot long-running queries and `pg_locks` to see who is waiting. Use `SET lock_timeout` or `statement_timeout` so clients fail gracefully instead of hanging forever. Savepoints help isolate risky statements. When PostgreSQL reports a deadlock, grab the log entry—it lists the queries and lock types involved so you can fix the order of operations. Encourage students to practice reproducing a deadlock in the lab to understand the error message.”
 
-**Background**
-- Encourage enabling `log_line_prefix` with PID/session info to trace blocking queries.
+**Key terms explained**
+- *Deadlock*: two transactions waiting on each other’s locks, so neither can proceed.
+- *Timeout*: automatic cancel after a specified waiting period.
 
-### Slide 15 — Lab & Midterm Preparation (5 minutes)
+### Slide 15 — Lab & Midterm Preparation (6 minutes)
 **Script**
-> “The lab has you build the order summary view, add a deferrable constraint, install the inventory trigger, and experiment with transactions. Submit the notebook output plus SQL scripts. Then start drafting your midterm proposal: Define the dataset, required constraints, triggers, and key transactions. We’ll spend the last 20 minutes brainstorming project scope—bring any dataset ideas you have.”
+> “The lab walks through real administration tasks: create a reporting view, enforce a deferrable constraint, wire up an inventory trigger, and experiment with transactions and isolation levels. Capture screenshots or notebook cells showing each success—they’re required for the lab submission. After the lab, begin your midterm proposal: define the dataset, list constraints you’ll enforce, identify triggers or functions you’ll need, and describe at least one critical transaction flow. We’ll use the proposal workshop to stress-test your ideas.”
 
-**Background**
-- Remind students the proposal requires integrity rules and transaction scenarios drawn from today’s topics.
+**Key terms explained**
+- *Deferrable constraint*: constraint evaluated at commit time.
+- *Proposal scope*: the boundaries of the midterm project—dataset, users, features, risks.
 
-Total speaking time: ~50 minutes.
+Total speaking time: ~50 minutes (with richer explanations).
 
 ---
 
@@ -394,6 +423,322 @@ Use the **student notebook** for the commands and reference the **teacher notebo
   - `pg_dump` not available → let them document steps and run the command on a machine where `pg_dump` is installed later.
 - Remind students to capture outputs (screenshots or exported notebook) for submission.
 - Suggest they fill out the `proposal_notes` cell while concepts are fresh.
+
+---
+
+## Day 2 Lab — Indexed Analytics & Automation (75 minutes)
+
+Day 2 is meant to feel friendly: keep the dataset, but slow the pace and show each new SQL feature in tiny steps. Everything still lives in the `week4_day2` schema so students can reset safely.
+
+### Before Class (10 minutes)
+- Run `psql -f week_4/week4_day2_lab.sql` (or execute the file in Supabase) to reset the schema. The script rebuilds only the `week4_day2` objects, so it will not touch `public`.
+- Skim the key tables:
+  - `week4_day2.students` — roster of 60 students.
+  - `week4_day2.course_offerings` — which course runs in which term.
+  - `week4_day2.enrollments` — mix of completed/enrolled/dropped rows used for indexing and analytics.
+  - `week4_day2.term_credit_summary`, `week4_day2.enrollment_audit` — start empty for the trigger exercise.
+- Take 2–3 screenshots (before/after `EXPLAIN`) so you have real numbers to reference while teaching.
+
+### Agenda & Talking Points
+
+**1. Index warm-up (15 minutes)**
+- Prompt: “Let’s prove an index matters before we talk theory.”
+- Baseline plan:
+  ```sql
+  EXPLAIN (ANALYZE, BUFFERS)
+  SELECT *
+  FROM week4_day2.enrollments
+  WHERE offering_id = 18 AND status = 'completed';
+  ```
+  It should show a sequential scan and ~thousands of heap fetches.
+- Create the index together:
+  ```sql
+  CREATE INDEX CONCURRENTLY IF NOT EXISTS week4_day2_enrollments_offering_status_idx
+      ON week4_day2.enrollments (offering_id, status);
+  ANALYZE week4_day2.enrollments;
+  ```
+- Rerun the `EXPLAIN`. Point out “Bitmap/Index Scan”, lower timings, and the drop in buffer hits. Optional: show `pg_stat_user_indexes` to prove the index was used.
+
+**2. Window functions in three passes (20 minutes)**
+- Goal: students see that a window function is “GROUP BY plus extra columns” rather than magic.
+- Pass 1 — regular aggregate:
+  ```sql
+  SELECT s.full_name,
+         o.term,
+         SUM(e.grade_points * e.credits_attempted) / NULLIF(SUM(e.credits_attempted), 0) AS term_gpa,
+         SUM(e.credits_earned) AS term_credits
+  FROM week4_day2.enrollments e
+  JOIN week4_day2.course_offerings o ON o.offering_id = e.offering_id
+  JOIN week4_day2.students s        ON s.student_id = e.student_id
+  WHERE e.status = 'completed'
+  GROUP BY s.full_name, o.term
+  ORDER BY o.term, term_gpa DESC;
+  ```
+  Describe this as “scoreboard by term.”
+- Pass 2 — add a simple ranking window:
+  ```sql
+  WITH per_term AS (
+      -- paste the query from Pass 1
+  )
+  SELECT *,
+         ROW_NUMBER() OVER (PARTITION BY term ORDER BY term_gpa DESC) AS term_rank
+  FROM per_term
+  ORDER BY term, term_rank;
+  ```
+  Explain: “PARTITION BY term means restart the numbering each term.”
+- Pass 3 — add a running total for credits:
+  ```sql
+  WITH per_term AS (
+      -- same as before
+  )
+  SELECT full_name,
+         term,
+         term_gpa,
+         term_rank,
+         SUM(term_credits)
+             OVER (PARTITION BY full_name ORDER BY term
+                   ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS credits_so_far
+  FROM per_term
+  ORDER BY term, term_rank;
+  ```
+  Emphasise that the window clause just tells PostgreSQL “add the current student’s earlier rows.”
+- Show a sample output so everyone can picture it:
+  ```text
+   full_name        | term         | term_gpa | term_rank | credits_so_far
+  ------------------+--------------+----------+-----------+----------------
+   Andrea Flores    | 2023-Fall    | 3.67     |         1 |             12
+   Brian Kim        | 2023-Fall    | 3.20     |         2 |              9
+   ...
+  ```
+
+**3. Turn it into an easy-to-share view (10 minutes)**
+- Reuse the Pass 3 query inside a view so advisors do not need to retype the logic.
+  ```sql
+  CREATE OR REPLACE VIEW week4_day2.vw_student_term_progress AS
+  <pass 3 query>;
+  ```
+- Keep the conversation simple: “Views = saved SELECT.”
+- Optional: grant `SELECT` on the view to a read-only role.
+
+**4. Trigger automation without the math headache (15 minutes)**
+- Message: “Every time a grade changes, refresh the summary table.”
+- Provide this easier trigger function that re-summarises rather than doing manual arithmetic:
+  ```sql
+  CREATE OR REPLACE FUNCTION week4_day2.update_term_summary()
+  RETURNS trigger
+  LANGUAGE plpgsql AS $$
+  DECLARE
+      v_term text;
+      v_attempted int;
+      v_earned    int;
+      v_quality   numeric(10,2);
+  BEGIN
+      SELECT term INTO v_term
+      FROM week4_day2.course_offerings
+      WHERE offering_id = NEW.offering_id;
+
+      SELECT COALESCE(SUM(e.credits_attempted), 0),
+             COALESCE(SUM(e.credits_earned), 0),
+             COALESCE(SUM(COALESCE(e.grade_points, 0) * e.credits_attempted), 0)
+      INTO  v_attempted, v_earned, v_quality
+      FROM week4_day2.enrollments e
+      JOIN week4_day2.course_offerings o ON o.offering_id = e.offering_id
+      WHERE e.student_id = NEW.student_id
+        AND o.term = v_term
+        AND e.status = 'completed';
+
+      INSERT INTO week4_day2.term_credit_summary(student_id, term, credits_attempted,
+             credits_earned, quality_points, gpa, last_recalc)
+      VALUES (NEW.student_id, v_term, v_attempted, v_earned, v_quality,
+              CASE WHEN v_attempted > 0 THEN v_quality / v_attempted ELSE NULL END,
+              now())
+      ON CONFLICT (student_id, term) DO UPDATE
+          SET credits_attempted = EXCLUDED.credits_attempted,
+              credits_earned    = EXCLUDED.credits_earned,
+              quality_points    = EXCLUDED.quality_points,
+              gpa               = EXCLUDED.gpa,
+              last_recalc       = now();
+
+      RETURN NEW;
+  END;
+  $$;
+  ```
+- Wire it up:
+  ```sql
+  CREATE TRIGGER enrollment_finalize_summary
+  AFTER INSERT OR UPDATE OF status, grade_points, credits_earned
+  ON week4_day2.enrollments
+  FOR EACH ROW EXECUTE FUNCTION week4_day2.update_term_summary();
+  ```
+- Demo: flip enrollment 25 to `completed`, then show the summary table.
+
+**5. Advisor helper function (10 minutes)**
+- Purpose: give advisors a quick list of students who need attention.
+- Sample definition (reuses the view + summary table):
+  ```sql
+  CREATE OR REPLACE FUNCTION week4_day2.fn_flag_at_risk(
+      p_term text,
+      p_min_gpa numeric,
+      p_min_credits int)
+  RETURNS TABLE (
+      student_id uuid,
+      full_name text,
+      term text,
+      term_gpa numeric,
+      credits_so_far int)
+  LANGUAGE sql AS $$
+      SELECT v.student_id,
+             v.full_name,
+             v.term,
+             v.term_gpa,
+             t.credits_earned AS credits_so_far
+      FROM week4_day2.vw_student_term_progress v
+      JOIN week4_day2.term_credit_summary t
+        ON t.student_id = v.student_id AND t.term = v.term
+      WHERE v.term = p_term
+        AND (v.term_gpa < p_min_gpa OR t.credits_earned < p_min_credits)
+      ORDER BY v.term_gpa;
+  $$;
+  ```
+- Call it live: `SELECT * FROM week4_day2.fn_flag_at_risk('2024-Spring', 2.5, 9);`
+- Talk through result columns so advisors hear plain-language benefits.
+
+### Deliverables & Exit Tickets
+- `EXPLAIN (ANALYZE, BUFFERS)` screenshot before/after the index.
+- Query result showing window rankings.
+- Result from `SELECT * FROM week4_day2.term_credit_summary ORDER BY student_id, term LIMIT 5;`.
+- Output from `fn_flag_at_risk` with their chosen thresholds.
+- One takeaway posted in the LMS discussion: “Indexing mattered most when ______.”
+
+### Common Sticking Points
+- Remind students to `ANALYZE week4_day2.enrollments;` if the planner still prefers a sequential scan after creating the index.
+- `permission denied for schema week4_day2` → grant usage: `GRANT USAGE ON SCHEMA week4_day2 TO <role>;`
+- If the trigger double-counts credits, check whether they filtered to `NEW.status = 'completed'` before adding earned credits.
+- Encourage multi-session testing (psql tabs) so they can see trigger-side effects live.
+
+---
+
+## Day 2 Slide Guide — Instructor Notes & Script (≈55 minutes)
+
+Use this guide alongside `Week4_Day2_Indexed_Analytics.pptx`. Each slide section below includes:
+
+- **Talking points for the instructor** — what to review before class and how it ties back to the lab dataset (`week4_day2_lab.sql`).
+- **Suggested demo cues** — when to tab over to `psql` or show result screenshots.
+- **Word-for-word script** — read verbatim or adapt slightly for your style. Emphasis words are intentional; practice them beforehand.
+
+### Instructor Prep Checklist (20 minutes)
+- Rerun `psql -f week_4/week4_day2_lab.sql` so your environment mirrors the students'.
+- Capture baseline vs indexed `EXPLAIN` outputs to quote real timings (expect ~4–6x improvement on offering 18).
+- Test the trigger path by updating enrollment 25 so you can confirm the delta in `term_credit_summary` and optional `enrollment_audit` log.
+- Execute `SELECT * FROM week4_day2.fn_flag_at_risk('2024-Spring', 2.50, 9);` to reference a concrete result set while teaching the function.
+- Skim the view definition and be ready to explain why `security_barrier` is helpful even in a lab.
+
+### Slide-by-Slide Script
+
+**Slide 1 — Week 4 Day 2: Indexed Analytics & Automation (2 minutes)**
+- *Context*: Frame the day as a continuation of advanced SQL with a performance and automation focus.
+- *Script*:
+  > “Welcome back to Week 4, Day 2. Today we’re staying inside the database to build indexed analytics and lightweight automation. We’ll benchmark a real query, layer on window logic, and use triggers and functions to keep our reporting data clean. Everything we touch comes from the `week4_day2` schema you reset with the new lab script.”
+
+**Slide 2 — Agenda (2 minutes)**
+- *Context*: Outline the flow; reinforce that the deck mirrors the lab steps.
+- *Script*:
+  > “Here’s the map for the next hour: we’ll reset the dataset, run the indexing benchmark, craft analytic windows, harden those results with views, automate credit summaries with triggers, then package advisor insights inside a reusable function. We’ll close with deliverables and next steps so you know exactly what to capture for the lab submission.”
+
+**Slide 3 — Resetting the Lab Dataset (3 minutes)**
+- *Demo cue*: Show the command (either in terminal history or the SQL editor).
+- *Script*:
+  > “Before class, and whenever results look off, rerun `psql -f week_4/week4_day2_lab.sql`. The script drops and recreates only the `week4_day2` schema, so it’s safe to run repeatedly. It seeds about a thousand enrollments across four terms, which guarantees we see meaningful differences once the index is in place.”
+
+**Slide 4 — Schema Quick Reference (3 minutes)**
+- *Context*: Emphasise relationships; have the ER mental map ready.
+- *Script*:
+  > “The schema mirrors a registrar slice. `students`, `faculty`, and `courses` are reference tables. `course_offerings` ties a course, term, and instructor together. `enrollments` logs each student–offering pair along with status and grades. The `term_credit_summary` and `enrollment_audit` tables start empty so our triggers can populate them during the lab.”
+
+**Slide 5 — Table Definitions In Context (3 minutes)**
+- *Context*: Highlight unique constraints.
+- *Script*:
+  > “Each table has constraints that mimic production rules. `students` enforces a reasonable credit goal range. `enrollments` uses the `enforce_completed_grade` check so a completed record can’t have a missing grade. Foreign keys ensure an enrollment can’t exist without the related student or offering. These guardrails keep our analytics trustworthy without writing extra code.”
+
+**Slide 6 — Synthetic Data Highlights (2 minutes)**
+- *Context*: Mention data variety for realistic plans.
+- *Script*:
+  > “The data generator leans on `generate_series` with looping arrays to create sixty unique students. Offerings cover four consecutive terms with rotating instructors. We randomise status by using modular arithmetic so every cohort has enrollments that are completed, dropped, or still in progress. Completed rows carry grade points and earned credits so the GPA math is meaningful.”
+
+**Slide 7 — Baseline Enrollment Query (4 minutes)**
+- *Demo cue*: Run the baseline `EXPLAIN` live. Point out seq scan.
+- *Script*:
+  > “Let’s feel the pain before we fix it. Run `EXPLAIN (ANALYZE, BUFFERS)` on the query filtering offering 18 for completed enrollments. The planner chooses a sequential scan because the table lacks a useful index. Notice the high buffer counts and the timing—capture this screenshot now; it’s the ‘before’ artifact you’ll submit.”
+
+**Slide 8 — Creating the Covering Index (3 minutes)**
+- *Demo cue*: Execute the CREATE INDEX statement, explain CONCURRENTLY.
+- *Script*:
+  > “Now craft the covering index: `CREATE INDEX CONCURRENTLY IF NOT EXISTS week4_day2_enrollments_offering_status_idx ON week4_day2.enrollments (offering_id, status);`. We use `CONCURRENTLY` to mirror real production practice—writers keep running while the index builds. Follow it with `ANALYZE week4_day2.enrollments;` so the planner picks up the new statistics immediately.”
+
+**Slide 9 — Comparing Plans After Indexing (4 minutes)**
+- *Demo cue*: Rerun `EXPLAIN`, show `pg_stat_user_indexes`.
+- *Script*:
+  > “Rerun the same `EXPLAIN`. You should see an index or bitmap scan with dramatically lower timing and buffer usage. Grab that screenshot—it’s your ‘after’ evidence. Then run `SELECT relname, idx_scan FROM pg_stat_user_indexes WHERE schemaname = 'week4_day2' AND relname = 'week4_day2_enrollments_offering_status_idx';` to watch the usage counter climb. Remind students that indexing trades faster reads for slightly slower writes, so we measure both sides.”
+
+**Slide 10 — Maintaining Healthy Statistics (2 minutes)**
+- *Context*: Reinforce manual ANALYZE in lab.
+- *Script*:
+  > “Labs don’t always have autovacuum, so don’t be shy about running `ANALYZE`. If you’re curious what the planner knows, query `pg_stats` for the enrollments table. Document your indexing decision in the midterm proposal—operators will want to know what you tuned and why.”
+
+**Slide 11 — Window Function Primer (3 minutes)**
+- *Context*: Show that a window is just “aggregate plus extra column.”
+- *Script*:
+  > “If regular `GROUP BY` is a scoreboard, a window function is that same scoreboard with bonus columns. We’ll build it in passes: first the plain totals, then add a row number, then add a running credit total. Because we keep the original rows, we can give advisors the full story instead of one line per student.”
+
+**Slide 12 — Window Function: Three Passes (5 minutes)**
+- *Demo cue*: Type each pass live, pausing between them.
+- *Script*:
+  > “Pass one: plain aggregate per student and term. Pass two: wrap it in a CTE and add `ROW_NUMBER()` with `PARTITION BY term` so the numbering restarts each term. Pass three: add `SUM(term_credits) OVER (PARTITION BY full_name ORDER BY term)`—that one sentence literally means ‘for this student, add up the earlier rows.’ Stop after each pass so students can read the output and see how little the SQL changes.”
+
+**Slide 13 — Save the Query as a View (3 minutes)**
+- *Context*: Keep the terminology friendly.
+- *Script*:
+  > “Views are saved SELECT statements. Drop the Pass Three query inside `CREATE OR REPLACE VIEW week4_day2.vw_student_term_progress AS ...`. Now anyone can `SELECT * FROM week4_day2.vw_student_term_progress WHERE term = '2024-Spring';` without touching the complex SQL. Mention that comments and simple grants help future you remember why the view exists.”
+
+**Slide 14 — Sharing the View Safely (2 minutes)**
+- *Context*: Quick reminder about permissions.
+- *Script*:
+  > “Grant access on the view, not the base tables: `GRANT SELECT ON week4_day2.vw_student_term_progress TO reporting_role;`. If you later need stricter security, you can add `security_barrier = true`, but for the lab the main idea is ‘one clean doorway for analysts.’”
+
+**Slide 15 — Trigger Automation Blueprint (3 minutes)**
+- *Context*: Explain the simplified trigger story.
+- *Script*:
+  > “Every time a grade changes we want the summary table refreshed. We’ll attach an `AFTER INSERT OR UPDATE` trigger to enrollments. The trigger just says ‘call our helper function.’ Because it runs inside the same transaction, if the summary update fails the grade change also rolls back—automatic consistency.”
+
+**Slide 16 — update_term_summary() Walkthrough (5 minutes)**
+- *Demo cue*: Highlight the SELECT ... INTO block and the upsert.
+- *Script*:
+  > “The function stays friendly: find the term, aggregate the student’s completed enrollments for that term, then upsert one row into `term_credit_summary`. No hand math, no complicated offsets. Point out the guard: if the student has zero attempted credits we store NULL GPA, otherwise quality points divided by attempted credits.”
+
+**Slide 17 — Optional Audit Trail (2 minutes)**
+- *Context*: Still optional, but relate it to storytelling.
+- *Script*:
+  > “If you like receipts, drop a tiny `INSERT` into `week4_day2.enrollment_audit` right before `RETURN NEW;`. The table captures before/after status and grades so you can answer ‘who changed what?’ later. Totally optional, but nice to mention for ambitious students.”
+
+**Slide 18 — Advisor Function Goals (2 minutes)**
+- *Context*: Connect back to the view.
+- *Script*:
+  > “The advisor function is just packaging. We point it at the view, layer a WHERE clause for GPA or credit thresholds, and give advisors a neat list. Because the heavy logic lives in the view, the function body stays five lines long.”
+
+**Slide 19 — fn_flag_at_risk() Example (4 minutes)**
+- *Demo cue*: Run the function and read the columns aloud.
+- *Script*:
+  > “Here’s the SQL: it selects from the view, joins to the summary table for credits, and filters by the parameters. Run `SELECT * FROM week4_day2.fn_flag_at_risk('2024-Spring', 2.5, 9);`, then literally read the results like a checklist: student name, term GPA, credits so far. That helps everyone see why we built the earlier pieces.”
+
+**Slide 20 — Lab Deliverables & Evidence (2 minutes)**
+- *Context*: Reinforce documentation requirement.
+- *Script*:
+  > “To complete the lab, capture before-and-after `EXPLAIN` screenshots, show the ranking query results, dump the first five rows of `term_credit_summary`, and include the advisor function output. Finish with the reflection prompt: ‘Indexing mattered most when …’. These artifacts prove you exercised every feature we built today.”
+
+**Slide 21 — Wrap-Up & Next Steps (2 minutes)**
+- *Context*: Encourage midterm prep.
+- *Script*:
+  > “Before you leave, double-check that your trigger math looks right and the audit table is logging what you expect. Document your new index, view, trigger, and function so you can reuse the patterns in the midterm proposal. If you have stretch ideas—like extending the advisor function—bring them to tomorrow’s workshop.”
 
 ---
 
