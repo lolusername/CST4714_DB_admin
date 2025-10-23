@@ -41,6 +41,7 @@ This course is organized into weekly modules, each containing:
 - **Weekly folders**: Each week contains specific materials and exercises
 - **SQL examples**: Practical database scripts and examples
 - **Presentation materials**: PowerPoint slides and visual aids
+- **Recommended MongoDB resource**: [Schema Design Patterns and Anti-Patterns](https://learn.mongodb.com/learn/course/schema-design-patterns-and-antipatterns/schema-design-patterns-and-anti-patterns/apply-schema-design-patterns)
 
 ## Getting Started
 
