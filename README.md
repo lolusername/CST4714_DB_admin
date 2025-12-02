@@ -27,7 +27,8 @@ This course is organized into weekly modules, each containing:
 - SQL fundamentals and advanced queries
 
 ### Weeks 4-15
-*[Content to be added as course progresses]*
+- Content is added week-by-week in the `week_*` folders.
+- Week 15 in-class lab: **MongoDB Atlas Search — Implement search-as-you-type (partial match)** using the tutorial at https://www.mongodb.com/docs/atlas/atlas-search/tutorial/partial-match/?deployment-type=atlas&interface=atlas-ui.
 
 ## Prerequisites
 
