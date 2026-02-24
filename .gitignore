@@ -42,3 +42,6 @@ venv/
 postgres/.env
 postgres/.env.*
 postgres/data/
+
+# Internal helper/build scripts (keep out of course content repo)
+.internal_tools/
