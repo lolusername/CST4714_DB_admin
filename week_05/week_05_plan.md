@@ -42,6 +42,8 @@ Primary outcome:
 - explain exact guided steps
 - stress existing tables only, no new schema build
 - show simplified deliverables
+- launch Day 1 and Day 2 sequence expectations
+- clarify that Day 2 is incident response focused
 
 ## 95-100 min: Reading Response Setup and Close
 - assign short two-prompt response

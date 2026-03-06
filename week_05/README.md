@@ -8,27 +8,28 @@ This week teaches practical concurrency control:
 - Supabase-aware operational response
 
 ## Class Length and Level
-- Duration: 1 hour 40 minutes (100 minutes)
+- Duration: 1 hour 40 minutes (100 minutes) per class day
 - Level: beginner-intermediate
+
+## Two-Day Structure
+Week 5 now has two class-day labs:
+1. Day 1 lab (kept): `lab_day1_transactions_basics.md`
+2. Day 2 lab (new): `lab_day2_incident_response_game.md`
 
 ## Learning Outcomes
 By the end of Week 5, students should be able to:
 1. Explain commit vs rollback with confidence.
 2. Describe practical isolation level tradeoffs.
 3. Identify and diagnose blocking symptoms.
-4. Run basic lock diagnostics with metadata queries.
+4. Run lock diagnostics with metadata queries.
 5. Execute safer concurrency workflows in Supabase.
+6. Write short, evidence-based incident summaries.
 
-## In-Class Flow (100 minutes)
-1. Transaction and ACID refresh with practical examples
-2. Isolation levels and anomaly intuition
-3. Locking, blocking, and deadlock basics
-4. Supabase operations for concurrency incidents
-5. Guided lab launch + short reading response
-
-## Week 5 Work
-- Lecture deck: `Week_05_Transactions_Isolation_Locking_Supabase.pptx`
-- Lab: `lab_activity.md`
+## Week 5 Course Materials
+- Day 1 lecture deck: `Week_05_Transactions_Isolation_Locking_Supabase.pptx`
+- Day 2 lecture deck: `Week_05_Day2_Concurrency_Incident_Response_Supabase.pptx`
+- Day 1 lab: `lab_day1_transactions_basics.md`
+- Day 2 lab: `lab_day2_incident_response_game.md` (worked example -> guided run -> independent challenge)
 - In-class reading response: `in_class_reading_response.md`
 - Teacher prep: `teacher_cheat_sheet.md`
 - Full delivery plan: `week_05_plan.md`

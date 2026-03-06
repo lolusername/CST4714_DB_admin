@@ -45,3 +45,6 @@ postgres/data/
 
 # Internal helper/build scripts (keep out of course content repo)
 .internal_tools/
+
+# Private instructor prep materials
+.internal_teacher_guides/
