@@ -20,13 +20,25 @@ By the end of Week 3, students should be able to:
 
 ## Week 3 Materials
 - `Week_03_Postgres_Admin_DevOps_Supabase.pptx`
+- `lab_activity.md`
 - `notes.md`
 - `assets/` (reference screenshots/placeholders)
+- Sentry article: [Transaction ID Wraparound in Postgres](https://blog.sentry.io/transaction-id-wraparound-in-postgres/)
 
 ## In-Class Work
 - Guided walk-through of Supabase admin features
 - operational checks for logs, reports, and backup/recovery posture
 - launch of practical DBA/DevOps workflow tasks
+- guided reading and response on transaction ID wraparound in PostgreSQL
+
+## Week 3 Work
+- Complete the lab: `lab_activity.md`
+- Use the lecture deck during instruction: `Week_03_Postgres_Admin_DevOps_Supabase.pptx`
+
+### Lab scope note
+- This lab is designed to last about one class hour.
+- It stays intentionally easy and mostly read-only.
+- New concepts are taught inside the lab before students answer the article questions.
 
 ## Why This Week Matters
 This week builds the operational foundation used for the midterm project:
