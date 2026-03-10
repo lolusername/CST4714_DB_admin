@@ -213,11 +213,14 @@ Autovacuum is the background process that automates much of this work. The class
             "If wraparound risk gets too high, PostgreSQL may stop writes",
             "That is a correctness protection, not just a performance slowdown",
             "Sentry traded some data in one noncritical table for faster recovery",
+            "Reading URL: blog.sentry.io/transaction-id-wraparound-in-postgres/",
             "Prevention means monitoring, vacuum discipline, and operational readiness",
         ],
         "terms": ["XID", "wraparound", "correctness", "availability", "TRUNCATE"],
         "footer": "Week 7 turned maintenance into a real production story.",
         "notes": """The Sentry reading matters because it shows why PostgreSQL maintenance is not just housekeeping. Transaction IDs are finite. If old rows are not cleaned up properly and the system approaches wraparound danger, PostgreSQL may stop accepting writes. It does that to protect correctness.
+
+The exact article URL for this activity is https://blog.sentry.io/transaction-id-wraparound-in-postgres/
 
 That is the key phrase: protect correctness. This is not only about the database running slowly. This is about preserving valid visibility rules so the database does not lie about what rows should be seen.
 

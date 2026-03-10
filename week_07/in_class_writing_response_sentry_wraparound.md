@@ -10,6 +10,7 @@ In-class individual writing response (participation credit)
 ## Assigned Reading
 Read:
 - **Transaction ID Wraparound in Postgres** by David Cramer (Sentry)
+- URL: [https://blog.sentry.io/transaction-id-wraparound-in-postgres/](https://blog.sentry.io/transaction-id-wraparound-in-postgres/)
 
 ## Goal
 Explain why transaction ID wraparound is a database correctness problem that can also become a service availability problem.
