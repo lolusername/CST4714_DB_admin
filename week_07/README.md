@@ -20,5 +20,4 @@ This week we will:
 - `build_week_07_postgres_to_nosql_bridge.py`
 - `Week_07_Postgres_to_NoSQL_Bridge.pptx`
 - `lab_nosql_design_studio.md`
-- `teacher_cheat_sheet_nosql_bridge_lab.md`
 - `../midterm_project_options.md`
