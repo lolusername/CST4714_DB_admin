@@ -51,21 +51,21 @@ Your job is to produce a short design answer that is technically defensible.
 
 ---
 
-## Step 1: Silent Warm-Up + Pair Check
+## Step 1: Silent Warm-Up + Group Check
 Without notes, answer these individually:
 
 1. What are **three things SQL/relational systems do well**?
 2. What are **two pressures modern applications create** that a database designer may need to handle differently?
 3. Which matters more for a database designer: product hype or workload fit? Explain in one sentence.
 
-Write first, then compare with one partner.
+Write first, then compare with your group.
 
 ---
 
-## Step 2: Partner Design Card
-Work with one partner.
+## Step 2: Group Design Card
+Work with one group only. Do not combine with another group.
 
-Your pair must choose **one** workload below:
+Choose **one** workload below:
 
 ### Workload A - Mobile Sessions
 The app mostly needs to fetch session or token data by a known key, with very fast reads and writes.
@@ -79,7 +79,7 @@ The college wants to detect suspicious account sharing, shared devices, and conn
 ### Workload D - Telemetry and Activity Logs
 The platform records large volumes of time-stamped events and mostly queries recent windows or aggregates.
 
-Create one partner design card on paper, in a shared doc, or in a single markdown file.
+Create one group design card on paper, in a shared doc, or in a single markdown file.
 
 Your card must answer these four prompts:
 
@@ -145,7 +145,7 @@ Rules:
 ---
 
 ## Step 3: Rapid Share-Out + Exit Ticket
-Each pair gives a short summary:
+Each group should be ready to give a short summary of its choice:
 - workload chosen,
 - database family chosen,
 - one SQL idea kept,
@@ -168,21 +168,20 @@ Your response must include:
 Everything is completed in class.
 
 Submit only:
-1. one partner design card
+1. one group design card
 2. one individual exit ticket
 
 Submission note:
-- choose one person in the pair to submit the partner design card,
-- at the top of the submission, that person must write both names,
-- use a line like: `Submitted by: Maya Chen | Partner: Luis Gomez`,
-- each student still turns in their own exit ticket.
+- choose one person from the group to submit the group design card,
+- at the top of the submission, that person must write the names of everyone in the group,
+- use a line like: `Submitted by: Maya Chen | Group members: Luis Gomez, Ari Patel`
 
 No screenshots, no code file, and no after-class polish.
 
 ---
 
 ## Evaluation (100 points)
-- 35 pts: partner design card shows clear keep/change reasoning
+- 35 pts: group design card shows clear keep/change reasoning
 - 25 pts: workload is matched to a plausible database family
 - 20 pts: DBA/admin concerns are realistic
 - 20 pts: exit ticket is clear, specific, and evidence-based
