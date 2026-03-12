@@ -17,7 +17,6 @@ This week we will:
 
 ## Week 7 Materials
 - `in_class_writing_response_sentry_wraparound.md`
-- `build_week_07_postgres_to_nosql_bridge.py`
 - `Week_07_Postgres_to_NoSQL_Bridge.pptx`
 - `lab_nosql_design_studio.md`
 - `../midterm_project_options.md`
