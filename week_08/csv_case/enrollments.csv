@@ -1,0 +1,5 @@
+enrollment_id,student_id,course_id,term,grade_option
+1001,1,CST4714,Spring 2026,Letter
+1002,1,COP4813,Spring 2026,Letter
+1003,2,CST4714,Spring 2026,Letter
+1004,3,CEN4010,Spring 2026,PassFail
