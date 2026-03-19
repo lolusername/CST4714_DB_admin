@@ -40,7 +40,7 @@ I want you to notice one pattern through the whole deck. We keep returning to th
             "Week 3: admin workflows, backups, roles, least privilege, and RLS",
             "Week 4: views, materialized views, identity, constraints, introspection",
             "Week 5: transactions, isolation, blocking, deadlocks, diagnostics",
-            "Weeks 6-7: MVCC, vacuum, autovacuum, wraparound, Sentry case study",
+            "Weeks 6-7: MVCC, vacuum, autovacuum, wraparound, inspection lab, Sentry case study",
         ],
         "terms": ["database", "schema", "migration", "blocking", "vacuum"],
         "footer": "The local week folders are the source of truth for this review.",
@@ -211,6 +211,7 @@ Autovacuum is the background process that automates much of this work. The class
         "bullets": [
             "Transaction IDs are finite, so PostgreSQL must prevent dangerous wraparound",
             "If wraparound risk gets too high, PostgreSQL may stop writes",
+            "Mini lab: inspect xid age, dead tuples, and autovacuum metadata safely",
             "That is a correctness protection, not just a performance slowdown",
             "Sentry traded some data in one noncritical table for faster recovery",
             "Reading URL: blog.sentry.io/transaction-id-wraparound-in-postgres/",
@@ -218,7 +219,9 @@ Autovacuum is the background process that automates much of this work. The class
         ],
         "terms": ["XID", "wraparound", "correctness", "availability", "TRUNCATE"],
         "footer": "Week 7 turned maintenance into a real production story.",
-        "notes": """The Sentry reading matters because it shows why PostgreSQL maintenance is not just housekeeping. Transaction IDs are finite. If old rows are not cleaned up properly and the system approaches wraparound danger, PostgreSQL may stop accepting writes. It does that to protect correctness.
+        "notes": """The Week 7 activity is a hybrid. Students first run safe inspection queries to look at current transaction ID, xid age, dead tuples, and autovacuum signals. Then they connect those observations to the Sentry incident.
+
+The Sentry reading matters because it shows why PostgreSQL maintenance is not just housekeeping. Transaction IDs are finite. If old rows are not cleaned up properly and the system approaches wraparound danger, PostgreSQL may stop accepting writes. It does that to protect correctness.
 
 The exact article URL for this activity is https://blog.sentry.io/transaction-id-wraparound-in-postgres/
 
