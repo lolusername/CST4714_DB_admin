@@ -40,9 +40,9 @@ MongoDB University describes this unit as covering:
 - and managing databases, collections, and documents in Atlas Data Explorer.
 
 
-Lab:
+# Lab: #
 
-Submit screenshot of completion w/ score
+## Submit screenshot of completion w/ score ##
 ### 3. Modeling Data Relationships
 - URL: https://learn.mongodb.com/courses/modeling-data-relationships
 
