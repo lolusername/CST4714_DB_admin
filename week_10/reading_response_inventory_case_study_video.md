@@ -1,8 +1,8 @@
-# Week 10 Reading Response
+# Week 10 Day 2 In-Class Response
 ## Event-Driven Inventory Platform Case Study (MongoDB Video)
 
 ## Activity Type
-Short individual response tied to the MongoDB data modeling week
+Short individual Day 2 response tied to the MongoDB data modeling week
 
 ## Purpose
 This assignment asks you to watch a MongoDB beginner case-study video about building an event-driven inventory platform and explain the design choices in your own words.
@@ -14,7 +14,8 @@ The goal is to watch MongoDB modeling decisions happen in context:
 - modeling tradeoffs third.
 
 That is more useful than treating embedding and referencing as abstract rules with no application behind them.
-This response works best after the MongoDB University modeling labs because it lets you connect the official beginner material to a more realistic application design story.
+This response belongs on Day 2, after the MongoDB University modeling labs.
+That timing lets students connect the official beginner material to a more realistic application design story.
 
 ## Assigned Video
 Watch this video:
@@ -41,7 +42,7 @@ If you want a short official reference before or after watching:
 Create `week10_inventory_video_response.md` and answer all prompts.
 
 Requirements:
-- 320-500 words total
+- 250-400 words total
 - full sentences
 - refer to at least two specific timestamps from the video
 - make an argument, not just a summary
@@ -94,24 +95,9 @@ Examples:
 
 Explain why that concern matters in a real platform.
 
-## Citation Rule
-Because this is a video response, cite timestamps instead of page numbers.
-
-Example:
-- `(Video, 04:12-04:45)`
 
 Use at least two timestamp citations in your response.
 
-## Strong Answer Reminder
-A strong answer does not say:
-- "MongoDB is good because it is newer."
-- "NoSQL means schema does not matter."
-- "Embedding is always the best MongoDB strategy."
-
-A strong answer does say things like:
-- "the access pattern makes one document shape more natural"
-- "references still matter when one fact should be updated in one place"
-- "event-driven systems still need validation, indexing, and clear source-of-truth decisions"
 
 ## Evaluation (Participation / 10)
 - 4 pts: all prompts are addressed

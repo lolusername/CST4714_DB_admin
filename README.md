@@ -20,8 +20,8 @@ This repository holds the weekly materials, labs, handouts, and course project s
 - [Week 7 Lab: NoSQL Design Studio](week_07/lab_nosql_design_studio.md)
 - [Week 8 In-Class Assignment: From CSV "Tables" to JSON](week_08/in_class_assignment_json_from_csv.md)
 - [Week 10 Lab: MongoDB University Beginner-to-Modeling Track](week_10/lab_mongodb_atlas_beginner_to_modeling.md)
-- [Week 10 Reading Response: Event-Driven Inventory Platform Video](week_10/reading_response_inventory_case_study_video.md)
-- [Week 10 In-Class Reflection: MongoDB Modeling Decisions](week_10/in_class_reflection_mongodb_modeling.md)
+- [Week 10 Lab Day 2: MongoDB University Modeling Studio](week_10/lab_day2_mongodb_university_modeling_studio.md)
+- [Week 10 Day 2 In-Class Response: Event-Driven Inventory Platform Video](week_10/reading_response_inventory_case_study_video.md)
 
 ## Project Support
 - [Midterm Project Options](midterm_project_options.md)
