@@ -24,7 +24,7 @@ This repository holds the weekly materials, labs, handouts, and course project s
 - [Week 10 Lab Day 2: MongoDB University Modeling Studio](week_10/lab_day2_mongodb_university_modeling_studio.md)
 - [Week 10 Day 2 In-Class Response: Event-Driven Inventory Platform Video](week_10/reading_response_inventory_case_study_video.md)
 - [Week 11 Lab Day 1: MongoDB Basics Continued - MQL and Atlas Data Explorer](week_11/lab_day1_basic_mql_and_data_explorer.md)
-- [Week 11 Lab Day 2: Beginner Modeling Continuation](week_11/lab_day2_beginner_modeling_continuation.md)
+- [Week 11 Lab Day 2: MongoDB University In-Class Lab on Improving `$sort` Stages](week_11/lab_day2_beginner_modeling_continuation.md)
 - [Week 11 Day 2 In-Class Response: Event-Driven Inventory Platform Video](week_11/reading_response_inventory_case_study_video_week11.md)
 
 ## Project Support
