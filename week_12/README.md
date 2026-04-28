@@ -15,6 +15,7 @@ All Week 12 work is individual unless the instructor explicitly changes the proj
 
 ## Week 12 Course Materials
 - `Week_12_Reliability_and_Final_Project_Launch.pptx`
+- `Week_12_Reliability_and_Final_Project_Launch.pdf`
 - `lab_day1_reliability_and_project_choice.md`
 - `lab_day2_restore_first_project_studio.md`
 - `lab_atlas_jumpstart_using_python.md`
