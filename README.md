@@ -11,6 +11,7 @@ This repository holds the weekly materials, labs, handouts, and course project s
 - [Week 9](week_09/README.md)
 - [Week 10](week_10/README.md)
 - [Week 11](week_11/README.md)
+- [Week 12](week_12/README.md)
 
 ## Lab and Activity Index
 - [Week 3 Lab Activity: Supabase Admin Tour + Easy Postgres Maintenance Concepts](week_03/lab_activity.md)
@@ -26,6 +27,10 @@ This repository holds the weekly materials, labs, handouts, and course project s
 - [Week 11 Lab Day 1: MongoDB Basics Continued - MQL and Atlas Data Explorer](week_11/lab_day1_basic_mql_and_data_explorer.md)
 - [Week 11 Lab Day 2: MongoDB University In-Class Lab on Improving `$sort` Stages](week_11/lab_day2_beginner_modeling_continuation.md)
 - [Week 11 Day 2 In-Class Response: Event-Driven Inventory Platform Video](week_11/reading_response_inventory_case_study_video_week11.md)
+- [Week 12 Lab Day 1: Reliability Concepts and Final Project Choice](week_12/lab_day1_reliability_and_project_choice.md)
+- [Week 12 Lab Day 2: Restore-First Thinking and Final Project Studio](week_12/lab_day2_restore_first_project_studio.md)
+- [Week 12 Lab: MongoDB Atlas Jumpstart Using Python](week_12/lab_atlas_jumpstart_using_python.md)
 
 ## Project Support
+- [Final Project](final_project.md)
 - [Midterm Project Options](midterm_project_options.md)
