@@ -1,5 +1,8 @@
 # CST4714 Final Project
 
+## Due Date
+The final project is due May 22, 2026.
+
 ## Purpose
 The final project is a beginner-friendly cloud database administration project.
 
@@ -126,6 +129,7 @@ Week 15:
 - final report
 - presentation
 - portfolio cleanup
+- final project due May 22, 2026
 
 ## Grading Priorities
 - 25 pts: clear data model

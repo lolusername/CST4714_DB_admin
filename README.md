@@ -28,9 +28,11 @@ This repository holds the weekly materials, labs, handouts, and course project s
 - [Week 11 Lab Day 2: MongoDB University In-Class Lab on Improving `$sort` Stages](week_11/lab_day2_beginner_modeling_continuation.md)
 - [Week 11 Day 2 In-Class Response: Event-Driven Inventory Platform Video](week_11/reading_response_inventory_case_study_video_week11.md)
 - [Week 12 Lab Day 1: Reliability Concepts and Final Project Choice](week_12/lab_day1_reliability_and_project_choice.md)
-- [Week 12 Lab Day 2: Restore-First Thinking and Final Project Studio](week_12/lab_day2_restore_first_project_studio.md)
+- [Week 12 Lab Day 2: Data Platform and Dataset Audit](week_12/lab_day2_data_platform_dataset_audit.md)
+- [Week 12 Notebook: Atlas + Supabase Dataset Demo](week_12/week12_atlas_supabase_dataset_demo.ipynb)
 - [Week 12 Lab: MongoDB Atlas Jumpstart Using Python](week_12/lab_atlas_jumpstart_using_python.md)
 
 ## Project Support
+- [Course Content Creation Guide](COURSE_CONTENT_CREATION_README.md)
 - [Final Project](final_project.md)
 - [Midterm Project Options](midterm_project_options.md)
