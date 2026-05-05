@@ -2,6 +2,9 @@
 
 This repository holds the weekly materials, labs, handouts, and course project supports for CST4714.
 
+## Course Schedule Note
+The last class meeting is May 19, 2026.
+
 ## Weekly Guides
 - [Week 3](week_03/README.md)
 - [Week 4](week_04/README.md)
@@ -12,6 +15,8 @@ This repository holds the weekly materials, labs, handouts, and course project s
 - [Week 10](week_10/README.md)
 - [Week 11](week_11/README.md)
 - [Week 12](week_12/README.md)
+- [Week 13](week_13/README.md)
+- [Week 14](week_14/README.md)
 
 ## Lab and Activity Index
 - [Week 3 Lab Activity: Supabase Admin Tour + Easy Postgres Maintenance Concepts](week_03/lab_activity.md)
@@ -31,6 +36,11 @@ This repository holds the weekly materials, labs, handouts, and course project s
 - [Week 12 Lab Day 2: Data Platform and Dataset Audit](week_12/lab_day2_data_platform_dataset_audit.md)
 - [Week 12 Notebook: Atlas + Supabase Dataset Demo](week_12/week12_atlas_supabase_dataset_demo.ipynb)
 - [Week 12 Lab: MongoDB Atlas Jumpstart Using Python](week_12/lab_atlas_jumpstart_using_python.md)
+- [Week 13 Lab Day 1: Final Project Scope and Data Model Build](week_13/lab_day1_final_project_scope_and_data_model.md)
+- [Week 13 Lab Day 2: Final Project Queries, Indexes, and Seed Data](week_13/lab_day2_final_project_queries_indexes_and_seed_data.md)
+- [Week 13 Sample Final Project: CISA KEV Mini Tracker](week_13/sample_final_project_cisa_kev_tracker.ipynb)
+- [Week 14 Lab Day 1: Final Project Admin Evidence Check](week_14/lab_day1_final_project_admin_evidence_check.md)
+- [Week 14 Lab Day 2: Final Project Report, Presentation, and Submission Check](week_14/lab_day2_final_project_report_presentation_and_submission_check.md)
 
 ## Project Support
 - [Course Content Creation Guide](COURSE_CONTENT_CREATION_README.md)
