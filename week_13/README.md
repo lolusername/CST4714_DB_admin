@@ -84,7 +84,7 @@ First half:
 
 Second half:
 - seed data work time
-- query writing work time
+- two-query draft work time
 - index evidence work time
 
 ## Learning Outcomes
@@ -94,7 +94,7 @@ By the end of Week 13, students should be able to:
 3. name at least three capacity signals that suggest a database is under pressure
 4. build or revise the final project data model
 5. create or plan seed data for the final project
-6. write at least four useful final project queries or reporting questions
+6. write at least two useful final project queries or reporting questions
 7. draft one aggregation/reporting query that could improve the final project demo
 8. identify one index that supports a final project query
 
@@ -106,4 +106,4 @@ By the end of Week 13, students should be able to:
 5. After the data transformation lab, use slides 16-22 in `Week_13_Scaling_and_Final_Project_Build.pptx` for the indexing mini-lesson.
 6. Run `lab_day2_final_project_queries_indexes_and_seed_data.md` during the second class.
 7. If there is extra time, assign the optional MongoDB University `Lab: Indexing Design Fundamentals`.
-8. End the week with each student having a data model, seed data plan, query list, one reporting/aggregation idea, and at least one index decision.
+8. End the week with each student having a data model, seed data idea, two draft queries, one reporting idea, and one index decision.
