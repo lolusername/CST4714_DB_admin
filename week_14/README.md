@@ -34,6 +34,7 @@ First half:
 - when one database is enough
 - when two databases are justified
 - distributed tradeoffs and data ownership
+- Supabase/Postgres review: tables, SQL evidence, RLS thinking, backups, restore checks, and connection strings
 
 Second half:
 - final project admin evidence check
@@ -62,7 +63,8 @@ By the end of Week 14, students should be able to:
 
 ## Recommended Instructor Flow
 1. Use `Week_14_Polyglot_Tradeoffs_and_Final_Project_Finish_Line.pptx`.
-2. Keep the lecture short and connect every concept to final project decisions.
-3. Run `lab_day1_final_project_admin_evidence_check.md`.
-4. Run `lab_day2_final_project_report_presentation_and_submission_check.md`.
-5. End Week 14 with every student knowing exactly what remains before the May 26, 2026 due date.
+2. Keep the polyglot lecture short and connect every concept to final project decisions.
+3. Use the Supabase review slides before the Day 1 lab if many students are using Supabase/Postgres.
+4. Run `lab_day1_final_project_admin_evidence_check.md`.
+5. Run `lab_day2_final_project_report_presentation_and_submission_check.md`.
+6. End Week 14 with every student knowing exactly what remains before the May 26, 2026 due date.
