@@ -39,9 +39,9 @@ First half:
 - Supabase/Postgres review: tables, SQL evidence, RLS thinking, backups, restore checks, and connection strings
 
 Second half:
-- final project admin evidence check
-- backup/restore plan
-- access-control and instructor-review readiness
+- final project admin evidence snapshot
+- platform-specific access, restore, and index evidence
+- instructor-review readiness
 
 ### Class 2
 First half:
@@ -59,7 +59,7 @@ By the end of Week 14, students should be able to:
 1. explain polyglot persistence in plain language
 2. defend using one database or two databases for a project
 3. explain a distributed tradeoff involving consistency, duplication, ownership, or failure
-4. complete final project admin evidence
+4. complete a short final project admin evidence snapshot
 5. prepare a short final project presentation
 6. verify that the final project is ready for May 26, 2026
 
@@ -69,6 +69,6 @@ By the end of Week 14, students should be able to:
 3. Use the Supabase review slides before the Day 1 lab if many students are using Supabase/Postgres.
 4. Use `teacher_guide_day1_supabase_admin_evidence.md` as the instructor prep guide if students have Supabase/Postgres questions.
 5. Use `week14_sqlite_supabase_postgres_admin_demo.ipynb` as an optional quick demo of schema, seed data, queries, indexes, query plans, and backup-style exports.
-6. Run `lab_day1_final_project_admin_evidence_check.md`.
+6. Run `lab_day1_final_project_admin_evidence_check.md` as a short platform-specific admin evidence snapshot, not a long checklist.
 7. Run `lab_day2_final_project_report_presentation_and_submission_check.md`.
 8. End Week 14 with every student knowing exactly what remains before the May 26, 2026 due date.

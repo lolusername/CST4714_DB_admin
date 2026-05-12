@@ -6,11 +6,9 @@ Today is not a new-build day.
 It is an evidence day.
 
 Students should leave with language and artifacts they can reuse in the final project:
-- platform decision
-- access-control concern
-- backup/restore plan
-- index/performance decision
-- instructor review plan
+- one-database or two-database decision
+- one platform-specific admin evidence paragraph
+- one instructor review-readiness sentence
 
 The final project is due May 26, 2026.
 The last class meeting is May 19, 2026.
@@ -201,11 +199,9 @@ When explaining it, say:
 Students submit one text response.
 
 Required items:
-1. platform decision
-2. access-control evidence
-3. backup/restore evidence
-4. index/performance evidence
-5. instructor review readiness
+1. one-database or two-database decision
+2. platform-track paragraph for Supabase/Postgres, MongoDB/Atlas, or both
+3. review-readiness sentence
 
 Keep them from overbuilding.
 The target is clear evidence, not a perfect production system.
