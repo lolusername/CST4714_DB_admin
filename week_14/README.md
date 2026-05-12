@@ -16,6 +16,8 @@ There is no group work and no combined submission.
 
 ## Week 14 Course Materials
 - `Week_14_Polyglot_Tradeoffs_and_Final_Project_Finish_Line.pptx`
+- `teacher_guide_day1_supabase_admin_evidence.md`
+- `week14_sqlite_supabase_postgres_admin_demo.ipynb`
 - `lab_day1_final_project_admin_evidence_check.md`
 - `lab_day2_final_project_report_presentation_and_submission_check.md`
 
@@ -65,6 +67,8 @@ By the end of Week 14, students should be able to:
 1. Use `Week_14_Polyglot_Tradeoffs_and_Final_Project_Finish_Line.pptx`.
 2. Keep the polyglot lecture short and connect every concept to final project decisions.
 3. Use the Supabase review slides before the Day 1 lab if many students are using Supabase/Postgres.
-4. Run `lab_day1_final_project_admin_evidence_check.md`.
-5. Run `lab_day2_final_project_report_presentation_and_submission_check.md`.
-6. End Week 14 with every student knowing exactly what remains before the May 26, 2026 due date.
+4. Use `teacher_guide_day1_supabase_admin_evidence.md` as the instructor prep guide if students have Supabase/Postgres questions.
+5. Use `week14_sqlite_supabase_postgres_admin_demo.ipynb` as an optional quick demo of schema, seed data, queries, indexes, query plans, and backup-style exports.
+6. Run `lab_day1_final_project_admin_evidence_check.md`.
+7. Run `lab_day2_final_project_report_presentation_and_submission_check.md`.
+8. End Week 14 with every student knowing exactly what remains before the May 26, 2026 due date.

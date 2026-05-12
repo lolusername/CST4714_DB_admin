@@ -39,6 +39,8 @@ The last class meeting is May 19, 2026.
 - [Week 13 Lab Day 1: Final Project Scope and Data Model Build](week_13/lab_day1_final_project_scope_and_data_model.md)
 - [Week 13 Lab Day 2: Final Project Queries, Indexes, and Seed Data](week_13/lab_day2_final_project_queries_indexes_and_seed_data.md)
 - [Week 13 Sample Final Project: CISA KEV Mini Tracker](week_13/sample_final_project_cisa_kev_tracker.ipynb)
+- [Week 14 Teacher Guide: Supabase/Postgres Admin Evidence](week_14/teacher_guide_day1_supabase_admin_evidence.md)
+- [Week 14 Notebook: SQLite to Supabase/Postgres Admin Demo](week_14/week14_sqlite_supabase_postgres_admin_demo.ipynb)
 - [Week 14 Lab Day 1: Final Project Admin Evidence Check](week_14/lab_day1_final_project_admin_evidence_check.md)
 - [Week 14 Lab Day 2: Final Project Report, Presentation, and Submission Check](week_14/lab_day2_final_project_report_presentation_and_submission_check.md)
 
