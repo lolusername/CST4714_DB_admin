@@ -42,7 +42,9 @@ The last class meeting is May 19, 2026.
 - [Week 14 Teacher Guide: Supabase/Postgres Admin Evidence](week_14/teacher_guide_day1_supabase_admin_evidence.md)
 - [Week 14 Notebook: SQLite to Supabase/Postgres Admin Demo](week_14/week14_sqlite_supabase_postgres_admin_demo.ipynb)
 - [Week 14 Lab Day 1: Final Project Admin Evidence Check](week_14/lab_day1_final_project_admin_evidence_check.md)
-- [Week 14 Lab Day 2: Final Project Report, Presentation, and Submission Check](week_14/lab_day2_final_project_report_presentation_and_submission_check.md)
+- [Week 14 Teacher Guide Day 2: Distributed Database Incident Room](week_14/teacher_guide_day2_distributed_database_incident_room.md)
+- [Week 14 Notebook: MongoDB Atlas Incident Repair Demo](week_14/week14_mongodb_atlas_incident_demo.ipynb)
+- [Week 14 Lab Day 2: Distributed Database Incident Room](week_14/lab_day2_distributed_database_incident_room.md)
 
 ## Project Support
 - [Course Content Creation Guide](COURSE_CONTENT_CREATION_README.md)

@@ -16,10 +16,13 @@ There is no group work and no combined submission.
 
 ## Week 14 Course Materials
 - `Week_14_Polyglot_Tradeoffs_and_Final_Project_Finish_Line.pptx`
+- `Week_14_Day2_Distributed_Database_Incident_Game.pptx`
 - `teacher_guide_day1_supabase_admin_evidence.md`
+- `teacher_guide_day2_distributed_database_incident_room.md`
 - `week14_sqlite_supabase_postgres_admin_demo.ipynb`
+- `week14_mongodb_atlas_incident_demo.ipynb`
 - `lab_day1_final_project_admin_evidence_check.md`
-- `lab_day2_final_project_report_presentation_and_submission_check.md`
+- `lab_day2_distributed_database_incident_room.md`
 
 ## Direct Official Links
 - [Supabase Connection Strings and IPv4 Pooler Guidance](https://supabase.com/docs/guides/database/connecting-to-postgres)
@@ -27,6 +30,10 @@ There is no group work and no combined submission.
 - [Supabase Postgres Indexes](https://supabase.com/docs/guides/database/postgres/indexes)
 - [MongoDB Atlas Backup, Restore, and Archive](https://www.mongodb.com/docs/atlas/backup-restore-cluster/)
 - [MongoDB Query Optimization](https://www.mongodb.com/docs/manual/core/query-optimization/)
+- [MongoDB University: Replication in MongoDB](https://learn.mongodb.com/courses/replication-in-mongodb)
+- [MongoDB University Practice: Read and Write Concerns with MongoDB Deployments](https://learn.mongodb.com/learn/course/replication-in-mongodb/lesson-5-read-and-write-concerns-with-mongodb-deployments/last-lesson)
+- [MongoDB Atlas IP Access List](https://www.mongodb.com/docs/atlas/security/ip-access-list/)
+- [Open Week 14 MongoDB Atlas Incident Demo in Colab](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_14/week14_mongodb_atlas_incident_demo.ipynb)
 
 ## Two-Class Structure
 
@@ -45,14 +52,18 @@ Second half:
 
 ### Class 2
 First half:
-- final project report structure
-- presentation structure
-- portfolio/interview framing
+- distributed database incident game
+- source of truth and consistency
+- MongoDB University practice on read concern, write concern, and read preference
+- idempotent retries
+- fast reads vs correct reads
 
 Second half:
-- final work session
-- submission checklist
-- individual review and cleanup
+- incident commander lab
+- optional MongoDB Atlas incident repair notebook demo
+- repair-pattern choice
+- tradeoff writing
+- short optional final-project connection
 
 ## Learning Outcomes
 By the end of Week 14, students should be able to:
@@ -60,7 +71,7 @@ By the end of Week 14, students should be able to:
 2. defend using one database or two databases for a project
 3. explain a distributed tradeoff involving consistency, duplication, ownership, or failure
 4. complete a short final project admin evidence snapshot
-5. prepare a short final project presentation
+5. explain why source of truth matters in a distributed database incident
 6. verify that the final project is ready for May 26, 2026
 
 ## Recommended Instructor Flow
@@ -70,5 +81,9 @@ By the end of Week 14, students should be able to:
 4. Use `teacher_guide_day1_supabase_admin_evidence.md` as the instructor prep guide if students have Supabase/Postgres questions.
 5. Use `week14_sqlite_supabase_postgres_admin_demo.ipynb` as an optional quick demo of schema, seed data, queries, indexes, query plans, and backup-style exports.
 6. Run `lab_day1_final_project_admin_evidence_check.md` as a short platform-specific admin evidence snapshot, not a long checklist.
-7. Run `lab_day2_final_project_report_presentation_and_submission_check.md`.
-8. End Week 14 with every student knowing exactly what remains before the May 26, 2026 due date.
+7. For Day 2, use `Week_14_Day2_Distributed_Database_Incident_Game.pptx`.
+8. Use `teacher_guide_day2_distributed_database_incident_room.md` if you want a detailed run-of-show and sample explanations.
+9. Have students open the MongoDB University practice on read and write concerns before the incident write-up.
+10. Optionally demo `week14_mongodb_atlas_incident_demo.ipynb` if you want live Atlas code.
+11. Run `lab_day2_distributed_database_incident_room.md`.
+12. End Week 14 with students able to explain source of truth, safe retries, and distributed tradeoffs in plain language.
