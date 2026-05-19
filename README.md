@@ -17,6 +17,7 @@ The last class meeting is May 19, 2026.
 - [Week 12](week_12/README.md)
 - [Week 13](week_13/README.md)
 - [Week 14](week_14/README.md)
+- [Week 15](week_15/README.md)
 
 ## Lab and Activity Index
 - [Week 3 Lab Activity: Supabase Admin Tour + Easy Postgres Maintenance Concepts](week_03/lab_activity.md)
@@ -45,6 +46,10 @@ The last class meeting is May 19, 2026.
 - [Week 14 Teacher Guide Day 2: Distributed Database Incident Room](week_14/teacher_guide_day2_distributed_database_incident_room.md)
 - [Week 14 Notebook: MongoDB Atlas Incident Repair Demo](week_14/week14_mongodb_atlas_incident_demo.ipynb)
 - [Week 14 Lab Day 2: Distributed Database Incident Room](week_14/lab_day2_distributed_database_incident_room.md)
+- [Week 15 SQL Review Notebook](week_15/final_class_sql_review_notebook.ipynb)
+- [Week 15 Document Modeling Review Notebook](week_15/final_class_document_modeling_review_notebook.ipynb)
+- [Week 15 Interview and Portfolio Guide](week_15/job_interview_portfolio_guide.md)
+- [Week 15 Final Lab: GitHub Database Concept Artifact](week_15/lab_final_github_concept_artifact.md)
 
 ## Project Support
 - [Course Content Creation Guide](COURSE_CONTENT_CREATION_README.md)
