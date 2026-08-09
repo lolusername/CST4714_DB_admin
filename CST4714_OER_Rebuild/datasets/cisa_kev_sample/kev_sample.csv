@@ -1,0 +1,76 @@
+cveID,vendorProject,product,vulnerabilityName,dateAdded,dueDate,knownRansomwareCampaignUse,cwes
+CVE-2026-56291,Balbooa,Forms,Balbooa Forms Unrestricted Upload of File with Dangerous Type Vulnerability,2026-07-10,2026-07-13,Unknown,CWE-434
+CVE-2026-48939,iCagenda,iCagenda,iCagenda Unrestricted Upload of File with Dangerous Type Vulnerability,2026-07-10,2026-07-13,Unknown,CWE-434
+CVE-2026-48908,JoomShaper,SP Page Builder,JoomShaper SP Page Builder Unrestricted Upload of File with Dangerous Type Vulnerability,2026-07-07,2026-07-10,Unknown,CWE-434
+CVE-2026-55255,Langflow,Langflow,Langflow Authorization Bypass Through User-Controlled Key Vulnerability,2026-07-07,2026-07-10,Unknown,CWE-639
+CVE-2026-56290,Joomlack,Page Builder,Joomlack Page Builder Improper Access Control Vulnerability,2026-07-07,2026-07-10,Unknown,CWE-284
+CVE-2026-48282,Adobe,ColdFusion,Adobe ColdFusion Path Traversal Vulnerability,2026-07-07,2026-07-10,Unknown,CWE-22
+CVE-2026-45659,Microsoft,SharePoint Server,Microsoft SharePoint Server Deserialization of Untrusted Data Vulnerability,2026-07-01,2026-07-04,Unknown,CWE-502
+CVE-2026-48558,SimpleHelp ,SimpleHelp,SimpleHelp Authentication Bypass Vulnerability,2026-06-29,2026-07-02,Unknown,CWE-347
+CVE-2026-12569,PTC,Windchill and FlexPLM,PTC Windchill and FlexPLM Improper Input Validation Vulnerability,2026-06-25,2026-06-28,Unknown,CWE-20|CWE-502
+CVE-2026-20230,Cisco,Unified Communications Manager,Cisco Unified Communications Manager Server-Side Request Forgery (SSRF) Vulnerability,2026-06-25,2026-06-28,Unknown,CWE-918
+CVE-2025-67038,Lantronix,EDS5000,Lantronix EDS5000 Code Injection Vulnerability,2026-06-23,2026-06-26,Unknown,CWE-78|CWE-94
+CVE-2026-34910,Ubiquiti,UniFi OS,Ubiquiti UniFi OS Improper Input Validation Vulnerability,2026-06-23,2026-06-26,Unknown,CWE-20
+CVE-2026-34909,Ubiquiti,UniFi OS,Ubiquiti UniFi OS Path Traversal Vulnerability,2026-06-23,2026-06-26,Unknown,CWE-22
+CVE-2026-34908,Ubiquiti,UniFi OS,Ubiquiti UniFi OS Improper Access Control Vulnerability,2026-06-23,2026-06-26,Unknown,CWE-284
+CVE-2026-20253,Splunk,Enterprise,Splunk Enterprise Missing Authentication for Critical Function Vulnerability,2026-06-18,2026-06-21,Unknown,CWE-306
+CVE-2026-48907,Widget Factory,Joomla Content Editor ,Widget Factory Joomla Content Editor Improper Access Control Vulnerability,2026-06-16,2026-06-19,Unknown,CWE-284
+CVE-2026-54420,LiteSpeed,cPanel Plugin,LiteSpeed cPanel Plugin UNIX Symbolic Link (Symlink) Following Vulnerability,2026-06-15,2026-06-18,Unknown,CWE-61
+CVE-2026-20262,Cisco,Catalyst SD-WAN Manager,Cisco Catalyst SD-WAN Manager Directory or Path Traversal Vulnerability,2026-06-15,2026-06-29,Unknown,CWE-22
+CVE-2026-35273,Oracle, PeopleSoft Enterprise PeopleTools,Oracle PeopleSoft Enterprise PeopleTools Missing Authentication for Critical Function Vulnerability,2026-06-12,2026-06-15,Known,CWE-306
+CVE-2026-10520,Ivanti,Sentry,Ivanti Sentry OS Command Injection Vulnerability,2026-06-11,2026-06-14,Unknown,CWE-78
+CVE-2026-11645,Google,Chromium V8,Google Chromium V8 Out-of-Bounds Read and Write Vulnerability,2026-06-09,2026-06-23,Unknown,CWE-787|CWE-125
+CVE-2026-7473,Arista,Extensible Operating System,Arista Extensible Operating System Incomplete Comparison with Missing Factors Vulnerability,2026-06-09,2026-06-23,Unknown,CWE-1023
+CVE-2026-20245,Cisco,Catalyst SD-WAN Manager,Cisco Catalyst SD-WAN Manager Improper Encoding or Escaping of Output Vulnerability,2026-06-09,2026-06-23,Unknown,CWE-116
+CVE-2026-42271,BerriAI,LiteLLM,BerriAI LiteLLM Command Injection Vulnerability,2026-06-08,2026-06-22,Unknown,CWE-78|CWE-77
+CVE-2026-50751,Check Point,Security Gateway,Check Point Security Gateway Improper Authentication Vulnerability,2026-06-08,2026-06-11,Known,CWE-287
+CVE-2026-28318,SolarWinds,Serv-U,SolarWinds Serv-U Uncontrolled Resource Consumption Vulnerability,2026-06-05,2026-06-19,Unknown,CWE-400
+CVE-2026-45247,Mirasvit,Mirasvit Full Page Cache Warmer,Mirasvit Full Page Cache Warmer Deserialization of Untrusted Data Vulnerability,2026-06-03,2026-06-06,Unknown,CWE-502
+CVE-2022-0492,Linux,Kernel,Linux Kernel Improper Authentication Vulnerability,2026-06-02,2026-06-05,Unknown,CWE-287|CWE-862
+CVE-2025-48595,Android,Framework,Android Framework Integer Overflow Vulnerability,2026-06-02,2026-06-05,Unknown,CWE-190
+CVE-2024-21182,Oracle,WebLogic Server,Oracle WebLogic Server Unspecified Vulnerability,2026-06-01,2026-06-04,Unknown,
+CVE-2026-0257,Palo Alto Networks,PAN-OS,Palo Alto Networks PAN-OS Authentication Bypass Vulnerability,2026-05-29,2026-06-01,Unknown,CWE-565
+CVE-2026-48027,Nx,Nx Console,Nx Console Embedded Malicious Code Vulnerability,2026-05-27,2026-06-10,Known,CWE-506
+CVE-2026-45321,TanStack,TanStack,TanStack Unspecified Vulnerability,2026-05-27,2026-06-10,Known,
+CVE-2026-8398,Daemon,Daemon Tools Lite,Daemon Tools Lite Embedded Malicious Code Vulnerability,2026-05-27,2026-05-30,Unknown,CWE-506
+CVE-2026-48172,LiteSpeed,cPanel Plugin,LiteSpeed cPanel Plugin Privilege Escalation Vulnerability,2026-05-26,2026-05-29,Unknown,CWE-266
+CVE-2026-9082,Drupal,Core,Drupal Core SQL Injection Vulnerability,2026-05-22,2026-05-27,Unknown,CWE-89
+CVE-2025-34291,Langflow,Langflow,Langflow Origin Validation Error Vulnerability,2026-05-21,2026-06-04,Unknown,CWE-346
+CVE-2026-34926,Trend Micro,Apex One,Trend Micro Apex One (On-Premise) Directory Traversal Vulnerability,2026-05-21,2026-06-04,Unknown,CWE-23
+CVE-2008-4250,Microsoft,Windows,Microsoft Windows Buffer Overflow Vulnerability,2026-05-20,2026-06-03,Unknown,CWE-94
+CVE-2009-1537,Microsoft,DirectX,Microsoft DirectX NULL Byte Overwrite Vulnerability,2026-05-20,2026-06-03,Unknown,
+CVE-2009-3459,Adobe,Acrobat and Reader,Adobe Acrobat and Reader Heap-Based Buffer Overflow Vulnerability,2026-05-20,2026-06-03,Unknown,CWE-119
+CVE-2010-0249,Microsoft,Internet Explorer,Microsoft Internet Explorer Use-After-Free Vulnerability,2026-05-20,2026-06-03,Unknown,CWE-416
+CVE-2010-0806,Microsoft,Internet Explorer,Microsoft Internet Explorer Use-After-Free Vulnerability,2026-05-20,2026-06-03,Unknown,CWE-399
+CVE-2026-41091,Microsoft,Defender,Microsoft Defender Link Following Vulnerability,2026-05-20,2026-06-03,Unknown,CWE-59
+CVE-2026-45498,Microsoft,Defender,Microsoft Defender Denial of Service Vulnerability,2026-05-20,2026-06-03,Unknown,
+CVE-2026-42897,Microsoft,Microsoft,Microsoft Exchange Server Cross-Site Scripting Vulnerability,2026-05-15,2026-05-29,Unknown,CWE-79
+CVE-2026-20182,Cisco,Catalyst SD-WAN,Cisco Catalyst SD-WAN Controller Authentication Bypass Vulnerability,2026-05-14,2026-05-17,Unknown,CWE-287
+CVE-2026-42208,BerriAI,LiteLLM,BerriAI LiteLLM SQL Injection Vulnerability,2026-05-08,2026-05-11,Unknown,CWE-89
+CVE-2026-6973,Ivanti,Endpoint Manager Mobile (EPMM),Ivanti Endpoint Manager Mobile (EPMM) Improper Input Validation Vulnerability,2026-05-07,2026-05-10,Unknown,CWE-20
+CVE-2026-0300,Palo Alto Networks,PAN-OS,Palo Alto Networks PAN-OS Out-of-bounds Write Vulnerability,2026-05-06,2026-05-09,Unknown,CWE-787
+CVE-2026-31431,Linux,Kernel,Linux Kernel Incorrect Resource Transfer Between Spheres Vulnerability,2026-05-01,2026-05-15,Unknown,CWE-669
+CVE-2026-41940,WebPros,cPanel & WHM and WP2 (WordPress Squared),WebPros cPanel & WHM and WP2 (WordPress Squared) Missing Authentication for Critical Function Vulnerability,2026-04-30,2026-05-03,Known,CWE-306
+CVE-2024-1708,ConnectWise,ScreenConnect,ConnectWise ScreenConnect Path Traversal Vulnerability,2026-04-28,2026-05-12,Known,CWE-22
+CVE-2026-32202,Microsoft,Windows,Microsoft Windows Protection Mechanism Failure Vulnerability,2026-04-28,2026-05-12,Unknown,CWE-693
+CVE-2025-29635,D-Link,DIR-823X,D-Link DIR-823X Command Injection Vulnerability,2026-04-24,2026-05-08,Unknown,CWE-77
+CVE-2024-7399,Samsung,MagicINFO 9 Server,Samsung MagicINFO 9 Server Path Traversal Vulnerability,2026-04-24,2026-05-08,Unknown,CWE-22|CWE-434
+CVE-2024-57728,SimpleHelp ,SimpleHelp,SimpleHelp Path Traversal Vulnerability,2026-04-24,2026-05-08,Known,CWE-22
+CVE-2024-57726,SimpleHelp ,SimpleHelp,SimpleHelp Missing Authorization Vulnerability,2026-04-24,2026-05-08,Known,CWE-862
+CVE-2026-39987,Marimo,Marimo,Marimo Remote Code Execution Vulnerability,2026-04-23,2026-05-07,Unknown,CWE-306
+CVE-2026-33825,Microsoft,Defender,Microsoft Defender Insufficient Granularity of Access Control Vulnerability,2026-04-22,2026-05-06,Known,CWE-1220
+CVE-2026-20122,Cisco,Catalyst SD-WAN Manger,Cisco Catalyst SD-WAN Manager Incorrect Use of Privileged APIs Vulnerability,2026-04-20,2026-04-23,Unknown,CWE-648
+CVE-2026-20133,Cisco,Catalyst SD-WAN Manager,Cisco Catalyst SD-WAN Manager Exposure of Sensitive Information to an Unauthorized Actor Vulnerability,2026-04-20,2026-04-23,Unknown,CWE-200
+CVE-2025-2749,Kentico,Kentico Xperience,Kentico Xperience Path Traversal Vulnerability,2026-04-20,2026-05-04,Unknown,CWE-22|CWE-434
+CVE-2023-27351,PaperCut,NG/MF,PaperCut NG/MF Improper Authentication Vulnerability,2026-04-20,2026-05-04,Known,CWE-287
+CVE-2025-48700,Synacor,Zimbra Collaboration Suite (ZCS),Synacor Zimbra Collaboration Suite (ZCS) Cross-site Scripting Vulnerability,2026-04-20,2026-04-23,Unknown,CWE-79
+CVE-2026-20128,Cisco,Catalyst SD-WAN Manager,Cisco Catalyst SD-WAN Manager Storing Passwords in a Recoverable Format Vulnerability,2026-04-20,2026-04-23,Unknown,CWE-257
+CVE-2025-32975,Quest,KACE Systems Management Appliance (SMA),Quest KACE Systems Management Appliance (SMA) Improper Authentication Vulnerability,2026-04-20,2026-05-04,Unknown,CWE-287
+CVE-2024-27199,JetBrains,TeamCity,JetBrains TeamCity Relative Path Traversal Vulnerability,2026-04-20,2026-05-04,Known,CWE-23
+CVE-2026-34197,Apache,ActiveMQ,Apache ActiveMQ Improper Input Validation Vulnerability,2026-04-16,2026-04-30,Unknown,CWE-20|CWE-94
+CVE-2009-0238,Microsoft,Office,Microsoft Office Remote Code Execution,2026-04-14,2026-04-28,Unknown,CWE-94
+CVE-2026-32201,Microsoft,SharePoint Server,Microsoft SharePoint Server Improper Input Validation Vulnerability,2026-04-14,2026-04-28,Unknown,CWE-20
+CVE-2012-1854,Microsoft,Visual Basic for Applications (VBA),Microsoft Visual Basic for Applications Insecure Library Loading Vulnerability,2026-04-13,2026-04-27,Unknown,CWE-426
+CVE-2025-60710,Microsoft,Windows,Microsoft Windows Link Following Vulnerability,2026-04-13,2026-04-27,Unknown,CWE-59
+CVE-2023-21529,Microsoft,Exchange Server,Microsoft Exchange Server Deserialization of Untrusted Data Vulnerability,2026-04-13,2026-04-27,Known,CWE-502
+CVE-2023-36424,Microsoft,Windows,Microsoft Windows Out-of-Bounds Read Vulnerability,2026-04-13,2026-04-27,Unknown,CWE-125

@@ -1,0 +1,7 @@
+item_id,sku,item_name,category,reorder_point,active
+301,LAB-USB-C-01,USB-C Cable 1m,cables,12,true
+302,LAB-HDMI-02,HDMI Cable 2m,cables,8,true
+303,LAB-MSE-01,Wired Optical Mouse,peripherals,6,true
+304,LAB-KBD-01,Compact Keyboard,peripherals,5,true
+305,LAB-HUB-04,Four-Port USB Hub,adapters,7,true
+306,LAB-ETH-01,USB Ethernet Adapter,adapters,4,true

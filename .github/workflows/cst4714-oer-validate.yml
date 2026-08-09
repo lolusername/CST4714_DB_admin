@@ -1,0 +1,25 @@
+name: Validate CST4714 OER
+
+on:
+  pull_request:
+    paths:
+      - "CST4714_OER_Rebuild/**"
+      - ".github/workflows/cst4714-oer-validate.yml"
+  push:
+    paths:
+      - "CST4714_OER_Rebuild/**"
+      - ".github/workflows/cst4714-oer-validate.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate the OER package
+        run: python CST4714_OER_Rebuild/tools/validate_oer.py

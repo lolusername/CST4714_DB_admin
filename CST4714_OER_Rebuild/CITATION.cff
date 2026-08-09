@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use or adapt this course, please cite it."
+title: "Operating Cloud Databases: PostgreSQL, MongoDB, and Reliable Data Systems"
+type: software
+authors:
+  - family-names: Barreda
+    given-names: Atilio
+version: 1.0.0-rc.1
+license: CC-BY-NC-SA-4.0
+repository-code: "https://github.com/lolusername/CST4714_DB_admin"
+abstract: >-
+  A beginner-friendly, lab-first open course in PostgreSQL, Supabase, MongoDB
+  Atlas, database operations, security, performance, reliability, and career
+  communication.
+keywords:
+  - database administration
+  - PostgreSQL
+  - MongoDB
+  - open educational resources
+  - cloud databases
