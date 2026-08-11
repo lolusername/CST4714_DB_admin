@@ -26,33 +26,39 @@ as classroom-piloted or externally reviewed.
 
 ## Candidate Validation
 
-- Structural validation passed 259 checks. Network-enabled link validation
-  passed 261 checks across 135 unique URLs with no definite 404 or 410 result;
-  five automated-client refusals remain manual-review items.
-- All 68 notebook code cells executed through offline paths with zero errors.
+- Structural validation passed 306 checks. Network-enabled validation passed 308
+  checks across 143 unique URLs with no confirmed 404 or 410 result; five
+  automated-client refusals remain manual-review items.
+- All 68 notebook code cells re-executed through offline paths with zero errors
+  after the connection-safety update; generated and checked notebook sources
+  match exactly.
 - PostgreSQL setup scripts executed in a disposable database with verified row
   counts and 100,000 performance rows.
 - All 214 slides passed boundary checks; every final slide and all 15 exported
   PDF handouts received visual review.
 - Every speaker-note script matches its transcript wording and slide order.
 - The self-contained HTML passed landmark, skip-target, desktop, and mobile
-  reflow checks. EPUB and DOCX archive/XML checks and SHA-256 verification passed;
-  all 90 Word pages received visual review.
+  reflow checks. A representative Safari keyboard sequence successfully focused
+  and activated the skip link and transferred accessibility focus into the main
+  content. EPUB and DOCX archive/XML checks and SHA-256 verification passed. The
+  current 90-page Word export received complete visual review, including the
+  updated Module 13 connection examples.
 - No credentials, student data, private grading keys, teacher-only cheat sheets,
   or temporary slide-generation files are part of the public package.
 
 ## Known Limitations
 
 - Pressbooks import and Pressbooks-generated export review are pending. The local
-  HTML, EPUB, and DOCX release-candidate exports have completed technical and
-  visual QA.
-- PDF handouts are visually reviewed and contain extractable text but are not
-  represented as tagged accessible PDFs.
+  HTML, EPUB, and DOCX release-candidate exports have completed local technical
+  and visual QA.
+- All PDF handouts report tagged structure, are unencrypted, and contain
+  extractable text, but tag-tree quality and assistive-technology reading order
+  have not received human review.
 - Live Atlas and Supabase notebook paths require a pre-course smoke test with
   temporary accounts.
 - Account-gated vendor activities require final student-role verification.
-- Keyboard and screen-reader checks must be completed in the final webbook and
-  LMS environment.
+- Comprehensive keyboard and human screen-reader checks must be completed in the
+  final webbook and LMS environment.
 - Five sources that reject automated link clients require manual browser review.
 - Classroom implementation, aggregate learning evidence, and evidence-based
   revision have not yet occurred for this rebuilt edition.

@@ -3,7 +3,7 @@
 > **Document type:** fellowship evidence and release-control record, not student
 > course content and not a claim of external approval.
 
-- **Audit date:** August 9, 2026
+- **Audit date:** August 10, 2026
 - **Candidate:** *Operating Cloud Databases*, `1.0.0-rc.1` source package
 - **Review boundary:** locally controllable research, content review, build
   checks, and automated or direct inspection. Classroom piloting, OER-team
@@ -67,7 +67,7 @@ was operated under a live student account.
 | 10 | Atlas connection boundaries, CRUD evidence, embedding versus referencing | [Atlas connection prerequisites](https://www.mongodb.com/docs/atlas/connect-to-database-deployment/), [MongoDB modeling guidance](https://www.mongodb.com/docs/manual/data-modeling/concepts/embedding-vs-references/) | verified; access patterns, atomicity, duplication, and unbounded growth drive the model decision |
 | 11 | aggregation order, validation, explain evidence, indexed sort | [aggregation optimization](https://www.mongodb.com/docs/manual/core/aggregation-pipeline-optimization/), [schema validation](https://www.mongodb.com/docs/manual/core/schema-validation/), [`$sort`](https://www.mongodb.com/docs/manual/reference/operator/aggregation/sort/) | verified; deterministic tie-breaks and Atlas Free in-memory-sort limits are now explicit |
 | 12 | replica-set roles, read/write concerns, CAP scope, replication versus backup | [read concern](https://www.mongodb.com/docs/manual/reference/read-concern/), [replica-set semantics](https://www.mongodb.com/docs/manual/applications/replication/), [Atlas Free limits](https://www.mongodb.com/docs/atlas/reference/free-shared-limitations/) | verified; Atlas Free remains fixed at three nodes with no native backup or failover testing |
-| 13 | shard-key evidence, routing, cardinality/frequency/monotonicity, secure cloud connection | [MongoDB shard-key selection](https://www.mongodb.com/docs/manual/core/sharding-choose-a-shard-key/), [Supabase connection modes](https://supabase.com/docs/guides/database/connecting-to-postgres), [Atlas network security](https://www.mongodb.com/docs/atlas/architecture/current/network-security/) | verified; the course simulates distribution and does not claim operation of a paid sharded cluster |
+| 13 | shard-key evidence, routing, cardinality/frequency/monotonicity, secure cloud connection | [MongoDB shard-key selection](https://www.mongodb.com/docs/manual/core/sharding-choose-a-shard-key/), [PyMongo connection guidance](https://www.mongodb.com/docs/languages/python/pymongo-driver/current/connect/), [Supabase connection modes](https://supabase.com/docs/guides/database/connecting-to-postgres), [Supabase SSL modes](https://supabase.com/docs/guides/platform/ssl-enforcement) | verified; examples use Stable API, bounded waits, and explicit encrypted PostgreSQL transport while distinguishing encryption from full certificate/hostname verification |
 | 14 | dual-write failure, transactional outbox, idempotency, reconciliation | [AWS transactional outbox guidance](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html), [PostgreSQL logical decoding](https://www.postgresql.org/docs/current/logicaldecoding-explanation.html), [MongoDB change streams](https://www.mongodb.com/docs/manual/changeStreams/) | verified; the text avoids an exactly-once guarantee and requires stable IDs, retries, lag evidence, and repair direction |
 | 15 | portfolio safety, evidence-based interview claims, career competencies | [GitHub secret-scanning guidance](https://docs.github.com/code-security/secret-scanning/introduction/about-secret-scanning), [NACE competencies](https://www.naceweb.org/career-readiness/competencies/career-readiness-defined), [O*NET DBA profile](https://www.onetonline.org/link/summary/15-1242.00) | verified; students translate bounded course evidence rather than claim production ownership |
 
@@ -82,6 +82,10 @@ The audit verified these change-sensitive facts on August 8, 2026:
   transaction endpoint on port 6543 suits transient/serverless traffic and does
   not support prepared statements. Native tools such as `pg_dump` should use a
   compatible direct or session connection rather than transaction pooling.
+- PostgreSQL's default `sslmode=prefer` can fall back to plaintext. The notebook
+  cloud paths require `require`, `verify-ca`, or `verify-full`; `verify-full` with
+  the current Supabase CA is the production recommendation, while `require`
+  encrypts without authenticating the server.
 - Atlas Free uses MongoDB 8.0, has a fixed three-node replica set and 0.5 GB
   storage, and does not provide native backup, sharding, primary-failover tests,
   disk spill for aggregation, or the Performance Advisor. Current limits include
@@ -89,7 +93,8 @@ The audit verified these change-sensitive facts on August 8, 2026:
   in-memory sort boundary.
 - Atlas requires TLS and explicit network access. A temporary single-address
   `/32` entry is safer than a permanent all-address rule. Atlas users and database
-  users are separate identities.
+  users are separate identities. Current Python examples use Stable API version
+  1, bounded server-selection/operation waits, ping, and explicit cleanup.
 - Free-tier limits are instructional constraints, not production recommendations.
   The course uses small fixtures, local fallbacks, and explicit non-production
   scope.
@@ -136,18 +141,24 @@ local candidate commit or tag, the current run must establish:
 - external links receive automated review, with account-gated or bot-protected
   cases recorded for later manual verification.
 
-The release checklist remains authoritative for actual results. The August 9
-candidate run passed 259 local checks and 261 checks in network-enabled link mode
-across 135 unique URLs, with five automated-client refusals retained for manual
-review. All 214 final slides and all 15 final PDF handouts received visual review;
-the six notebooks executed 68 offline code cells without errors; PostgreSQL
-fixtures executed with documented counts; publication checksums and EPUB/DOCX
-archive/XML checks passed; and all 90 Word pages received visual review.
+The release checklist remains authoritative for actual results. The August 10
+candidate QA run passed 306 local checks and 308 checks in network-enabled mode
+across 143 unique URLs. No confirmed 404 or 410 result was found; five automated-
+client refusals remain queued for manual review. All 214 final slides and all 15
+final PDF handouts received visual review; all handouts report tagged structure
+and are unencrypted; the six notebooks re-executed 68 offline code cells without
+errors after connection-safety updates; PostgreSQL fixtures executed with
+documented counts; publication checksums and EPUB/DOCX archive/XML checks passed;
+and all 90 pages of the current Word export received visual review.
 
 Standalone HTML contains one navigation landmark, one focusable main landmark,
 an effective skip target, embedded CSS, and no page-level overflow at tested
-desktop and mobile widths. These results do not replace the pending human
-keyboard and screen-reader checks in the intended Pressbooks and LMS contexts.
+desktop and mobile widths. In Safari, an actual `Option+Tab` and `Return`
+sequence focused and activated the skip link, changed the URL to
+`#main-content`, moved the viewport, and transferred accessibility focus into
+the main container. This representative standalone check does not replace a
+comprehensive keyboard traversal or the pending human screen-reader checks in
+the intended Pressbooks and LMS contexts.
 
 ## 7. External Gates That Remain Honest Gaps
 
@@ -155,8 +166,8 @@ The following cannot be completed by local authoring alone and must not be
 represented as done:
 
 - OER-team attribution and accessibility approval;
-- a human keyboard and screen-reader review in the final Pressbooks and LMS
-  environments;
+- comprehensive keyboard and human screen-reader review in the final Pressbooks
+  and LMS environments;
 - Pressbooks import plus Pressbooks-generated Digital PDF, EPUB, and Common
   Cartridge inspection;
 - live Atlas, Supabase, and account-gated vendor completion under temporary

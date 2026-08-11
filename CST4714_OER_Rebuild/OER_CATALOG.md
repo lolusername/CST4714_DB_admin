@@ -155,8 +155,10 @@ The package includes 15 PowerPoint decks containing 214 authored slides. Visible
 content teaches students directly. Every slide has complete word-for-word spoken
 prose in its PowerPoint speaker notes, and every script is reproduced in a
 matching structured-text transcript. Every deck also has a visually verified PDF
-handout. The PDFs are not represented as tagged PDFs; the transcript and module
-provide the complete structured-text alternatives.
+handout. All 15 PDFs report tagged structure, contain extractable text, and are
+unencrypted. Tag-tree quality and assistive-technology reading order have not
+received human review, so the transcript and module remain the authoritative
+structured-text alternatives.
 
 | ID | Week and original instructional role | Slides | Published formats | Status |
 |---|---|---:|---|---|
@@ -236,8 +238,8 @@ the created-OER totals:
 - **Accessibility is provided in multiple editable formats.** Core prose is
   structured Markdown; spoken content is available as exact transcripts; decks
   use large, high-contrast student-facing layouts; and cloud barriers have
-  equivalent evidence paths. PDFs are described accurately as handouts rather
-  than being called tagged when no tag audit was performed.
+  equivalent evidence paths. PDFs are described accurately as handouts whose
+  reported tags still require a human quality and reading-order audit.
 - **Release quality is reproducible.** The public validator checks inventory,
   links, datasets, notebooks, secrets, individual-work rules, canonical
   assignments, notes/transcript identity, and presentation formats. The release

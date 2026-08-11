@@ -112,9 +112,10 @@ another person can inspect, reproduce, and discuss.
 Every module is available as structured Markdown. Slide decks include complete
 spoken scripts in speaker notes, and each deck is also published as a PDF handout
 and a structured-text transcript. The transcript is the complete text alternative
-to the spoken presentation; the PDF is not claimed to be tagged until a tag and
-reading-order audit is completed. Labs avoid color-only instructions, identify
-expected output, and include text alternatives for essential visuals.
+to the spoken presentation. Every PDF reports tagged structure, but tag-tree
+quality and assistive-technology reading order remain unaudited. Labs avoid
+color-only instructions, identify expected output, and include text alternatives
+for essential visuals.
 
 The open textbook is also built as semantic HTML, EPUB, and Word. These portable
 formats expand device and assistive-technology options; final accessibility is

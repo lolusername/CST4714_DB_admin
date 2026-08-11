@@ -158,9 +158,15 @@ selection, timeouts, and query behavior. Keep the first program small.
 ```python
 from getpass import getpass
 from pymongo import MongoClient
+from pymongo.server_api import ServerApi
 
 mongodb_uri = getpass("Atlas connection URI: ")
-client = MongoClient(mongodb_uri, serverSelectionTimeoutMS=10000)
+client = MongoClient(
+    mongodb_uri,
+    server_api=ServerApi("1", strict=True, deprecation_errors=True),
+    serverSelectionTimeoutMS=10000,
+    timeoutMS=10000,
+)
 client.admin.command("ping")
 
 tickets = client["cst4714_metro_support"]["tickets"]
@@ -177,16 +183,23 @@ access list, DNS, and supported TLS path.
 ```python
 from getpass import getpass
 import psycopg
+from psycopg.conninfo import conninfo_to_dict
 
 database_url = getpass("PostgreSQL connection URL: ")
-with psycopg.connect(database_url) as connection:
+sslmode = conninfo_to_dict(database_url).get("sslmode", "prefer")
+if sslmode not in {"require", "verify-ca", "verify-full"}:
+    raise ValueError("Add sslmode=require or a stronger mode to the URL.")
+
+with psycopg.connect(database_url, connect_timeout=10) as connection:
     with connection.cursor() as cursor:
         cursor.execute("SELECT count(*) FROM metro_support.tickets")
         print(cursor.fetchone())
 ```
 
 On a network without direct IPv6 connectivity, use the provider's current IPv4-
-compatible pooler URI rather than changing database code randomly.
+compatible session-pooler URI rather than changing database code randomly.
+`sslmode=require` prevents an unencrypted fallback but does not verify server
+identity. For production, use `verify-full` with the provider's CA certificate.
 
 ## 8. Import in Small, Verifiable Batches
 

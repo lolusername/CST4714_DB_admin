@@ -18,6 +18,9 @@ course materials in the parent directory.
 - [Currentness, pedagogy, and QA audit](CURRENTNESS_PEDAGOGY_QA_AUDIT.md):
   current primary-source baseline, learning-design evidence, optional-extension
   inventory, locally controllable checks, and external release gates.
+- [Standalone HTML accessibility QA](STANDALONE_HTML_ACCESSIBILITY_QA.md):
+  dated semantic, reflow, and representative Safari keyboard evidence with
+  explicit limits and a platform-retest protocol.
 - [Cloud and vendor smoke-test record](CLOUD_AND_VENDOR_SMOKE_TEST_RECORD.md):
   completed account-free checks, exact live protocols, and honestly unrun
   account-gated evidence.

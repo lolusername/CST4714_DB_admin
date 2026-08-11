@@ -103,13 +103,23 @@ Minimal Psycopg test:
 ```python
 from getpass import getpass
 import psycopg
+from psycopg.conninfo import conninfo_to_dict
 
 database_url = getpass("PostgreSQL connection URL: ")
-with psycopg.connect(database_url, connect_timeout=15) as connection:
+sslmode = conninfo_to_dict(database_url).get("sslmode", "prefer")
+if sslmode not in {"require", "verify-ca", "verify-full"}:
+    raise ValueError("Add sslmode=require or a stronger mode to the URL.")
+
+with psycopg.connect(database_url, connect_timeout=10) as connection:
     with connection.cursor() as cursor:
         cursor.execute("select current_database(), current_user")
         print(cursor.fetchone())
 ```
+
+For a short classroom connection, `sslmode=require` prevents plaintext fallback
+but does not authenticate the server. The production target is `verify-full`
+with the Supabase CA certificate downloaded from the current database settings.
+Do not describe `require` as certificate validation.
 
 ### PostgreSQL Connection Checklist
 
@@ -161,9 +171,15 @@ Minimal PyMongo test:
 ```python
 from getpass import getpass
 from pymongo import MongoClient
+from pymongo.server_api import ServerApi
 
 mongodb_uri = getpass("Atlas connection URI: ")
-client = MongoClient(mongodb_uri, serverSelectionTimeoutMS=15000)
+client = MongoClient(
+    mongodb_uri,
+    server_api=ServerApi("1", strict=True, deprecation_errors=True),
+    serverSelectionTimeoutMS=10000,
+    timeoutMS=10000,
+)
 client.admin.command("ping")
 print("Connected to Atlas")
 client.close()

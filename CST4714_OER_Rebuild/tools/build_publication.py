@@ -77,6 +77,9 @@ def main() -> None:
                 "off",
                 "-depth",
                 "8",
+                "-strip",
+                "-define",
+                "png:exclude-chunk=date,time",
                 cover,
             ]
         )

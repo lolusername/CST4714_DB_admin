@@ -27,7 +27,7 @@ reusability documented below.
 
 ## Evidence Snapshot
 
-Inventory verified July 13, 2026:
+Inventory verified August 9, 2026:
 
 | Work package | Completed evidence |
 |---|---:|
@@ -85,7 +85,7 @@ an unsupported numerical score.
 | Comprehensiveness | Full 15-week progression from relational algebra and SQL review through administration, security, performance, recovery, NoSQL, reliability, scale, integration, and careers | Strong |
 | Attribution | Visible CC BY-NC-SA, MIT, and CC0 terms; source-specific attribution file; separate free-resource catalog; documented CISA transformation | Strong; final OER-team copyright review remains appropriate |
 | Organization | Stable module anatomy, two-class weekly guides, canonical major assignments, course map, recurring Metro Support case, and one evidence cycle | Strong |
-| Accessibility | Semantic Markdown, descriptive links, text tables, exact transcripts, high-contrast slides, multiple formats, credential-safe alternatives, and no color-only lab directions | Substantial but not final: Pressbooks, keyboard, screen-reader, and exported-PDF checks remain |
+| Accessibility | Semantic Markdown, descriptive links, text tables, exact transcripts, high-contrast slides, multiple formats, credential-safe alternatives, no color-only lab directions, responsive standalone HTML, reported PDF tag structures, and a passing representative Safari skip-link sequence | Substantial but not final: comprehensive keyboard, human screen-reader, Pressbooks/LMS, and PDF tag-quality/reading-order checks remain |
 | Navigation | Central course map and catalog, stable relative links, automated inventory/link checks, and no confirmed broken link in the candidate audit | Strong candidate evidence; three externally blocked URLs require manual review |
 | Modularity | Each module, lab, notebook, dataset, assessment, and implementation guide can be adopted independently; conceptual goals are separated from vendor interfaces | Strong |
 | Cultural relevance | Diverse synthetic actors, community-service scenarios, privacy-conscious examples, public civic/security data, student-selected final topics, and career genres | Credible foundation; student feedback should test relevance and identify needed local examples |

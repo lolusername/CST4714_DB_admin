@@ -6,7 +6,7 @@
 an approved or published fellowship release.
 
 - **Candidate version:** `1.0.0-rc.1`
-- **Status reviewed:** August 9, 2026
+- **Status reviewed:** August 10, 2026
 - **Current authorization:** local QA and review preparation only
 
 No formal tag, remote push, Pressbooks import, OpenLab publication, Academic
@@ -18,7 +18,7 @@ record. Publication begins only after the instructor explicitly approves it.
 | Gate | Evidence currently available | State | What closes the gate |
 |---|---|---|---|
 | Authored scope | Cataloged 15-week course, open text, labs, notebooks, datasets, projects, assessments, decks, scripts, guides, and publication exports | COMPLETE | maintain inventory through release |
-| Technical local QA | 259-check local pass; 261-check network pass over 135 URLs; notebook execution; PostgreSQL fixtures; all-slide/all-PDF visual review; HTML reflow/landmarks; EPUB/DOCX/checksum checks | COMPLETE | repeat from the approved release commit before tagging |
+| Technical local QA | 306-check local pass; 308-check network pass over 143 URLs with five automated-client warnings and no confirmed 404/410; current 68-cell notebook execution; PostgreSQL fixtures; all-slide/all-PDF/all-Word-page visual review; HTML reflow/landmarks/representative keyboard entry; EPUB/DOCX/checksum checks | COMPLETE | repeat from the approved release commit before tagging |
 | Attribution review | Source and license register plus automated completeness checks | SELF-AUDITED | named OER reviewer signs the attribution sample |
 | Accessibility review | Semantic source formats, transcripts, alternatives, visual QA, automated checks | PARTIAL | keyboard and screen-reader review in intended webbook/LMS; record defects and fixes |
 | Cloud/vendor smoke test | account-free and offline checks | PARTIAL | complete the live rows in the cloud/vendor record |
@@ -70,16 +70,17 @@ recorded before this gate is represented as complete.
 
 | Environment and assistive technology | Pages sampled | Findings | Fix commit | Retest | Reviewer/date |
 |---|---|---|---|---|---|
-| Standalone HTML, semantic/reflow precheck | single-page book: cover, TOC, code, and tables | one navigation landmark, one focusable main landmark, valid skip target, embedded CSS, and no desktop/mobile page overflow; human keyboard sequence still required | | | local automated/direct inspection, August 9, 2026 |
-| Standalone HTML, keyboard | NOT RUN | reliable human key sequence still required | | | |
+| Standalone HTML, semantic/reflow precheck | single-page book: cover, TOC, code, and tables | one navigation landmark, one focusable main landmark, valid skip target, embedded CSS, and no desktop/mobile page overflow | | PASS LOCAL | local automated/direct inspection, August 9, 2026 |
+| Standalone HTML, Safari keyboard | skip link and representative content entry | `Option+Tab` focused the skip link; `Return` changed the URL to `#main-content`, moved the viewport, and transferred accessibility focus into the main container; comprehensive traversal and platform repeat remain pending | | PASS REPRESENTATIVE | local direct test, August 9, 2026 |
 | Standalone HTML, screen reader | NOT RUN | human/AT review required | | | |
 | EPUB reader | NOT RUN | representative reading-system review required | | | |
 | Pressbooks webbook | NOT RUN | import required | | | |
 | Brightspace/LMS | NOT RUN | course-shell review required | | | |
 
-PDFs are handouts with extractable text. They must not be described as tagged
-accessible PDFs until tags, reading order, language, headings, lists, tables,
-links, and alternative text receive an appropriate PDF audit.
+All 15 PDF handouts report tagged structure, are unencrypted, and contain
+extractable text. They must not be described as accessible PDFs until tag-tree
+quality, reading order, language, headings, lists, tables, links, and alternative
+text receive an appropriate human/assistive-technology audit.
 
 ## Private Pressbooks Import Review
 

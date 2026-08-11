@@ -536,6 +536,12 @@ incident transcript when a cloud connection is unavailable.
 3. Rotate the temporary password after class if required by your course policy.
 4. Never paste a URL into a code or Markdown cell.
 
+The URL must request `sslmode=require`, `verify-ca`, or `verify-full`; the
+notebook rejects libpq's default `prefer` mode because it can fall back to an
+unencrypted connection. For production, use `verify-full` with the Supabase CA
+certificate. `require` encrypts the classroom connection but does not verify the
+CA or hostname.
+
 Set `USE_CLOUD` to `True` only when you are ready. It remains `False` in the public
 notebook so all non-cloud cells can run safely without credentials.
 """
@@ -552,6 +558,7 @@ import threading
 import time
 
 import psycopg
+from psycopg.conninfo import conninfo_to_dict
 
 USE_CLOUD = False  # Change to True during the in-class cloud lab.
 print("Cloud path enabled:", USE_CLOUD)
@@ -574,9 +581,19 @@ or resolve the block; it observes it.
 if USE_CLOUD:
     database_url = getpass("Paste the temporary PostgreSQL connection URL: ")
 
-    session_a = psycopg.connect(database_url, application_name="cst4714_session_a")
-    session_b = psycopg.connect(database_url, application_name="cst4714_session_b")
-    diagnostic = psycopg.connect(database_url, application_name="cst4714_diagnostic")
+    sslmode = conninfo_to_dict(database_url).get("sslmode", "prefer")
+    if sslmode not in {"require", "verify-ca", "verify-full"}:
+        raise ValueError("Add sslmode=require or a stronger mode to the temporary URL.")
+
+    session_a = psycopg.connect(
+        database_url, application_name="cst4714_session_a", connect_timeout=10
+    )
+    session_b = psycopg.connect(
+        database_url, application_name="cst4714_session_b", connect_timeout=10
+    )
+    diagnostic = psycopg.connect(
+        database_url, application_name="cst4714_diagnostic", connect_timeout=10
+    )
     diagnostic.autocommit = True
 
     print("Opened Session A, Session B, and the diagnostic session.")
@@ -1387,13 +1404,19 @@ from getpass import getpass
 
 import mongomock
 from pymongo import MongoClient
+from pymongo.server_api import ServerApi
 
 USE_ATLAS = False  # Change to True only when your Atlas setup is ready.
 DATABASE_NAME = "cst4714_metro_support_practice"  # Make unique in a shared project.
 
 if USE_ATLAS:
     mongodb_uri = getpass("Paste the temporary Atlas URI: ")
-    client = MongoClient(mongodb_uri, serverSelectionTimeoutMS=10000)
+    client = MongoClient(
+        mongodb_uri,
+        server_api=ServerApi("1", strict=True, deprecation_errors=True),
+        serverSelectionTimeoutMS=10000,
+        timeoutMS=10000,
+    )
     print("Atlas ping:", client.admin.command("ping"))
 else:
     client = mongomock.MongoClient()
@@ -1802,6 +1825,7 @@ from bson import json_util
 from bson.json_util import CANONICAL_JSON_OPTIONS
 from pymongo import ASCENDING, DESCENDING, MongoClient
 from pymongo.errors import OperationFailure
+from pymongo.server_api import ServerApi
 
 USE_ATLAS = False  # Change only in the in-class Atlas lab.
 DATABASE_SUFFIX = "offline"  # Use a unique suffix before enabling Atlas.
@@ -1810,7 +1834,12 @@ if USE_ATLAS:
     if DATABASE_SUFFIX == "offline":
         raise ValueError("Replace DATABASE_SUFFIX with a unique course value before using Atlas.")
     mongodb_uri = getpass("Paste the temporary Atlas URI: ")
-    client = MongoClient(mongodb_uri, serverSelectionTimeoutMS=10000)
+    client = MongoClient(
+        mongodb_uri,
+        server_api=ServerApi("1", strict=True, deprecation_errors=True),
+        serverSelectionTimeoutMS=10000,
+        timeoutMS=10000,
+    )
     print("Atlas ping:", client.admin.command("ping"))
 else:
     client = mongomock.MongoClient()
@@ -2154,7 +2183,9 @@ import sqlite3
 import urllib.request
 
 from pymongo import MongoClient
+from pymongo.server_api import ServerApi
 import psycopg
+from psycopg.conninfo import conninfo_to_dict
 
 print("Notebook libraries are ready.")
 """
@@ -2439,7 +2470,12 @@ URI, network access, driver, DNS, or TLS cause instead.
             """
 if LOAD_ATLAS:
     atlas_uri = getpass("Atlas connection URI (hidden): ")
-    atlas_client = MongoClient(atlas_uri, serverSelectionTimeoutMS=15000)
+    atlas_client = MongoClient(
+        atlas_uri,
+        server_api=ServerApi("1", strict=True, deprecation_errors=True),
+        serverSelectionTimeoutMS=10000,
+        timeoutMS=10000,
+    )
     atlas_client.admin.command("ping")
 
     atlas_collection = atlas_client["cst4714_public_data"]["kev_sample"]
@@ -2458,14 +2494,19 @@ else:
 Copy the current PostgreSQL connection URL from your provider and enter it when
 prompted. If a notebook network cannot reach the direct IPv6 endpoint, use the
 provider's current IPv4-compatible session-pooler URL. Do not place the URL in a
-Markdown or code cell.
+Markdown or code cell. Add `sslmode=require` or a stronger mode. For production,
+use `verify-full` with the Supabase CA certificate; `require` encrypts traffic but
+does not verify the CA or hostname.
 """
         ),
         code(
             """
 if LOAD_POSTGRES:
     postgres_url = getpass("PostgreSQL connection URL (hidden): ")
-    with psycopg.connect(postgres_url) as connection:
+    sslmode = conninfo_to_dict(postgres_url).get("sslmode", "prefer")
+    if sslmode not in {"require", "verify-ca", "verify-full"}:
+        raise ValueError("Add sslmode=require or a stronger mode to the temporary URL.")
+    with psycopg.connect(postgres_url, connect_timeout=10) as connection:
         with connection.cursor() as cursor:
             cursor.execute("CREATE SCHEMA IF NOT EXISTS cst4714_oer")
             cursor.execute('''
@@ -2551,7 +2592,7 @@ if LOAD_ATLAS:
     assert atlas_collection.count_documents({}) == len(records) and atlas_known
 
 if LOAD_POSTGRES:
-    with psycopg.connect(postgres_url) as connection:
+    with psycopg.connect(postgres_url, connect_timeout=10) as connection:
         with connection.cursor() as cursor:
             cursor.execute("SELECT count(*) FROM cst4714_oer.kev_sample")
             postgres_count = cursor.fetchone()[0]
@@ -2613,14 +2654,26 @@ Write four sentences:
 4. Before scaling, I would verify ___ and improve ___ because ___.
 
 If you used a cloud path, close the client and remove temporary broad network
-access after class.
+access after class. The cleanup cell removes only this notebook's Atlas fixture
+IDs and the disposable `cst4714_oer` PostgreSQL schema.
 """
         ),
         code(
             """
 if LOAD_ATLAS:
+    fixture_ids = [record["cveID"] for record in records]
+    deleted = atlas_collection.delete_many({"cveID": {"$in": fixture_ids}})
+    print("Deleted Atlas fixture documents:", deleted.deleted_count)
     atlas_client.close()
     print("Closed the Atlas client. Review and narrow temporary network access.")
+    atlas_uri = None
+if LOAD_POSTGRES:
+    with psycopg.connect(postgres_url, connect_timeout=10) as connection:
+        with connection.cursor() as cursor:
+            cursor.execute("DROP SCHEMA IF EXISTS cst4714_oer CASCADE")
+        connection.commit()
+    postgres_url = None
+    print("Removed the disposable PostgreSQL schema and cleared the URL variable.")
 if LOAD_SQLITE:
     con.close()
     print("Closed the disposable SQLite database.")

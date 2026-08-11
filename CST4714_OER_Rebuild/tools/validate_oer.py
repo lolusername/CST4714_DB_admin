@@ -18,6 +18,7 @@ import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime
 from pathlib import Path
 
 
@@ -29,6 +30,13 @@ SLIDE_SECTION_RE = re.compile(r"^## Slide (\d+):[^\n]*\n", re.MULTILINE)
 NS = {
     "a": "http://schemas.openxmlformats.org/drawingml/2006/main",
     "p": "http://schemas.openxmlformats.org/presentationml/2006/main",
+}
+EPUB_NS = {
+    "dc": "http://purl.org/dc/elements/1.1/",
+    "opf": "http://www.idpf.org/2007/opf",
+}
+WORD_NS = {
+    "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
 }
 
 
@@ -104,6 +112,22 @@ def check_structure(report: Report) -> None:
         (ROOT / "fellowship/CURRENTNESS_PEDAGOGY_QA_AUDIT.md").is_file(),
         "currentness and pedagogy audit record exists",
     )
+    accessibility_report = (
+        ROOT / "fellowship/STANDALONE_HTML_ACCESSIBILITY_QA.md"
+    )
+    report.require(
+        accessibility_report.is_file(),
+        "standalone HTML accessibility QA record exists",
+    )
+    if accessibility_report.is_file():
+        accessibility_text = read_text(accessibility_report)
+        fellowship_index = read_text(ROOT / "fellowship/README.md")
+        report.require(
+            "Representative Safari keyboard result: PASS" in accessibility_text
+            and "Screen-reader test: NOT RUN" in accessibility_text
+            and "STANDALONE_HTML_ACCESSIBILITY_QA.md" in fellowship_index,
+            "accessibility record distinguishes completed and pending checks",
+        )
 
     unwanted = [
         path
@@ -186,6 +210,7 @@ def check_json_csv_and_notebooks(report: Report) -> None:
         )
 
     notebooks = sorted((ROOT / "notebooks").glob("*.ipynb"))
+    notebook_code: dict[str, str] = {}
     for path in notebooks:
         try:
             notebook = json.loads(read_text(path))
@@ -214,10 +239,73 @@ def check_json_csv_and_notebooks(report: Report) -> None:
             for cell in cells
             if cell.get("cell_type") == "code"
         )
+        notebook_code[path.name] = code_text
         if re.search(r"tlsInsecure\s*=\s*True", code_text, re.IGNORECASE):
             report.fail(f"unsafe tlsInsecure=True in {relative(path)}")
         if re.search(r"sslmode\s*=\s*['\"]?disable", code_text, re.IGNORECASE):
             report.fail(f"unsafe sslmode=disable in {relative(path)}")
+
+    disabled_markers = {
+        "02_postgres_transactions_locks.ipynb": "USE_CLOUD = False",
+        "04_atlas_mql_modeling.ipynb": "USE_ATLAS = False",
+        "05_mongodb_logical_recovery.ipynb": "USE_ATLAS = False",
+        "06_public_data_capacity_integration.ipynb": "LOAD_ATLAS = False",
+    }
+    report.require(
+        all(marker in notebook_code.get(name, "") for name, marker in disabled_markers.items())
+        and "LOAD_POSTGRES = False"
+        in notebook_code.get("06_public_data_capacity_integration.ipynb", ""),
+        "all optional cloud notebook paths default to disabled",
+    )
+    cloud_notebooks = [
+        notebook_code.get(name, "")
+        for name in disabled_markers
+    ]
+    report.require(
+        all("getpass(" in code for code in cloud_notebooks),
+        "cloud notebooks request connection secrets at runtime",
+    )
+    atlas_notebooks = [
+        notebook_code.get(name, "")
+        for name in [
+            "04_atlas_mql_modeling.ipynb",
+            "05_mongodb_logical_recovery.ipynb",
+            "06_public_data_capacity_integration.ipynb",
+        ]
+    ]
+    report.require(
+        all(
+            'ServerApi("1", strict=True, deprecation_errors=True)' in code
+            and "serverSelectionTimeoutMS=" in code
+            and "timeoutMS=" in code
+            and '.admin.command("ping")' in code
+            for code in atlas_notebooks
+        ),
+        "Atlas notebook paths use Stable API, bounded waits, and ping",
+    )
+    postgres_notebooks = [
+        notebook_code.get("02_postgres_transactions_locks.ipynb", ""),
+        notebook_code.get("06_public_data_capacity_integration.ipynb", ""),
+    ]
+    report.require(
+        all(
+            "conninfo_to_dict" in code
+            and "connect_timeout=10" in code
+            and '{"require", "verify-ca", "verify-full"}' in code
+            for code in postgres_notebooks
+        ),
+        "PostgreSQL notebook paths require encrypted transport and bounded connects",
+    )
+    report.require(
+        "DROP SCHEMA IF EXISTS lock_lab CASCADE"
+        in postgres_notebooks[0]
+        and "session_a.close()" in postgres_notebooks[0]
+        and 'delete_many({"course_fixture": "cst4714"})' in atlas_notebooks[0]
+        and "client.drop_database(SOURCE_DB)" in atlas_notebooks[1]
+        and 'delete_many({"cveID": {"$in": fixture_ids}})' in atlas_notebooks[2]
+        and "DROP SCHEMA IF EXISTS cst4714_oer CASCADE" in atlas_notebooks[2],
+        "cloud notebook cleanup is bounded to disposable course artifacts",
+    )
 
 
 def check_publication(report: Report) -> None:
@@ -275,6 +363,21 @@ def check_publication(report: Report) -> None:
         and "--teal-dark:" in html_text,
         "standalone HTML embeds the authored stylesheet",
     )
+    report.require(
+        bool(re.search(r'<html\b[^>]*\blang="en-US"', html_text))
+        and "<title>Operating Cloud Databases</title>" in html_text,
+        "standalone HTML identifies its language and title",
+    )
+    html_ids = re.findall(r'\sid="([^"]+)"', html_text)
+    fragment_targets = re.findall(r'href="#([^"]+)"', html_text)
+    report.require(
+        len(html_ids) == len(set(html_ids)),
+        "standalone HTML identifiers are unique",
+    )
+    report.require(
+        not (set(fragment_targets) - set(html_ids)),
+        "standalone HTML fragment links resolve to local targets",
+    )
 
     for path, label in [(epub, "EPUB"), (docx, "Word import")]:
         try:
@@ -283,6 +386,84 @@ def check_publication(report: Report) -> None:
             report.require(bad_member is None, f"{label} archive passes integrity check")
         except zipfile.BadZipFile as exc:
             report.fail(f"invalid {label} archive: {exc}")
+
+    try:
+        with zipfile.ZipFile(epub) as archive:
+            first_member = archive.infolist()[0]
+            report.require(
+                first_member.filename == "mimetype"
+                and first_member.compress_type == zipfile.ZIP_STORED
+                and archive.read("mimetype") == b"application/epub+zip",
+                "EPUB starts with the required uncompressed mimetype entry",
+            )
+            epub_xml_names = [
+                name
+                for name in archive.namelist()
+                if Path(name).suffix.lower() in {".xml", ".xhtml", ".opf", ".ncx"}
+            ]
+            epub_xml_valid = True
+            for name in epub_xml_names:
+                try:
+                    ET.fromstring(archive.read(name))
+                except ET.ParseError:
+                    epub_xml_valid = False
+                    break
+            report.require(epub_xml_valid, "all EPUB XML and XHTML files are well formed")
+
+            package = ET.fromstring(archive.read("EPUB/content.opf"))
+            title = package.findtext(".//dc:title", namespaces=EPUB_NS)
+            language = package.findtext(".//dc:language", namespaces=EPUB_NS)
+            published = package.findtext(".//dc:date", namespaces=EPUB_NS)
+            report.require(
+                title == "Operating Cloud Databases"
+                and language == "en-US"
+                and published == "2026-08-09",
+                "EPUB metadata identifies the candidate title, language, and date",
+            )
+            chapter_ids = {
+                item.attrib.get("id")
+                for item in package.findall(".//opf:manifest/opf:item", EPUB_NS)
+                if re.fullmatch(r"text/ch\d{3}\.xhtml", item.attrib.get("href", ""))
+            }
+            spine_ids = {
+                item.attrib.get("idref")
+                for item in package.findall(".//opf:spine/opf:itemref", EPUB_NS)
+            }
+            report.require(
+                len(chapter_ids) == 17 and chapter_ids <= spine_ids,
+                "EPUB manifest and reading order contain all 17 book sections",
+            )
+    except (KeyError, zipfile.BadZipFile, ET.ParseError) as exc:
+        report.fail(f"EPUB structure could not be inspected: {exc}")
+
+    try:
+        with zipfile.ZipFile(docx) as archive:
+            word_xml_names = [
+                name
+                for name in archive.namelist()
+                if Path(name).suffix.lower() in {".xml", ".rels"}
+            ]
+            word_xml_valid = True
+            for name in word_xml_names:
+                try:
+                    ET.fromstring(archive.read(name))
+                except ET.ParseError:
+                    word_xml_valid = False
+                    break
+            report.require(
+                word_xml_valid,
+                "all Word import XML and relationship files are well formed",
+            )
+            document = ET.fromstring(archive.read("word/document.xml"))
+            heading_ones = document.findall(
+                ".//w:pStyle[@w:val='Heading1']", WORD_NS
+            )
+            report.require(
+                len(heading_ones) == 17,
+                "Word import contains one Heading 1 for each of 17 book sections",
+            )
+    except (KeyError, zipfile.BadZipFile, ET.ParseError) as exc:
+        report.fail(f"Word import structure could not be inspected: {exc}")
 
     with cover.open("rb") as image:
         header = image.read(24)
@@ -312,6 +493,30 @@ def check_publication(report: Report) -> None:
         "version: \"1.0.0-rc.1\"" in read_text(publication / "book_metadata.yaml")
         and "Version 1.0.0-rc.1" in read_text(publication / "cover.svg"),
         "publication metadata and cover identify the candidate version",
+    )
+
+    metadata_text = read_text(publication / "book_metadata.yaml")
+    catalog_text = read_text(ROOT / "OER_CATALOG.md")
+    metadata_date_match = re.search(
+        r'^date:\s*"(\d{4}-\d{2}-\d{2})"', metadata_text, re.MULTILINE
+    )
+    catalog_date_match = re.search(
+        r"^- \*\*Inventory date:\*\* ([A-Za-z]+ \d{1,2}, \d{4})$",
+        catalog_text,
+        re.MULTILINE,
+    )
+    dates_match = False
+    if metadata_date_match and catalog_date_match:
+        try:
+            catalog_date = datetime.strptime(
+                catalog_date_match.group(1), "%B %d, %Y"
+            ).date().isoformat()
+            dates_match = metadata_date_match.group(1) == catalog_date
+        except ValueError:
+            dates_match = False
+    report.require(
+        dates_match,
+        "publication date matches the authoritative OER inventory date",
     )
 
 
@@ -367,6 +572,26 @@ def pdf_text(path: Path) -> str | None:
         check=False,
     )
     return result.stdout if result.returncode == 0 else ""
+
+
+def pdf_metadata(path: Path) -> dict[str, str] | None:
+    executable = shutil.which("pdfinfo")
+    if not executable:
+        return None
+    result = subprocess.run(
+        [executable, str(path)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        return {}
+    metadata: dict[str, str] = {}
+    for line in result.stdout.splitlines():
+        key, separator, value = line.partition(":")
+        if separator:
+            metadata[key.strip()] = value.strip()
+    return metadata
 
 
 def check_decks(report: Report) -> None:
@@ -465,6 +690,18 @@ def check_decks(report: Report) -> None:
                 )
                 if "\ufffd" in extracted:
                     report.fail(f"Week {week} PDF contains replacement glyphs")
+            metadata = pdf_metadata(pdf)
+            if metadata is None:
+                report.warn("pdfinfo is unavailable; PDF tag metadata was not checked")
+            else:
+                report.require(
+                    metadata.get("Tagged", "").lower() == "yes",
+                    f"Week {week} PDF reports a tagged structure",
+                )
+                report.require(
+                    metadata.get("Encrypted", "").lower() == "no",
+                    f"Week {week} PDF is not encrypted",
+                )
 
     report.require(total_slides == 214, f"validated all {total_slides} authored slides")
 
@@ -567,7 +804,9 @@ def check_oer_boundary(report: Report) -> None:
         "the authoritative OER catalog is not duplicated inside the fellowship plan",
     )
     report.require(
-        "PDF handout" in readme and "not claimed to be tagged" in readme,
+        "PDF handout" in readme
+        and "Every PDF reports tagged structure" in readme
+        and "reading order remain unaudited" in readme,
         "the package describes PDFs accurately and identifies the transcript alternative",
     )
     report.require(

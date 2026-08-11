@@ -5,7 +5,7 @@
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Atilio Barreda" />
-  <meta name="dcterms.date" content="2026-07-13" />
+  <meta name="dcterms.date" content="2026-08-09" />
   <meta name="keywords" content="database administration, relational
 model, SQL, PostgreSQL, Supabase, MongoDB, cloud databases, open
 educational resources, data systems, career readiness" />
@@ -280,7 +280,7 @@ break-after: avoid;
 <h1 class="title">Operating Cloud Databases</h1>
 <p class="subtitle">PostgreSQL, MongoDB, and Reliable Data Systems</p>
 <p class="author">Atilio Barreda</p>
-<p class="date">2026-07-13</p>
+<p class="date">2026-08-09</p>
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
@@ -5141,14 +5141,20 @@ small.</p>
 <h3 data-number="14.10.1"><span class="header-section-number">14.10.1</span> MongoDB Atlas</h3>
 <div class="sourceCode" id="cb106"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> getpass <span class="im">import</span> getpass</span>
 <span id="cb106-2"><a href="#cb106-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pymongo <span class="im">import</span> MongoClient</span>
-<span id="cb106-3"><a href="#cb106-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb106-4"><a href="#cb106-4" aria-hidden="true" tabindex="-1"></a>mongodb_uri <span class="op">=</span> getpass(<span class="st">&quot;Atlas connection URI: &quot;</span>)</span>
-<span id="cb106-5"><a href="#cb106-5" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> MongoClient(mongodb_uri, serverSelectionTimeoutMS<span class="op">=</span><span class="dv">10000</span>)</span>
-<span id="cb106-6"><a href="#cb106-6" aria-hidden="true" tabindex="-1"></a>client.admin.command(<span class="st">&quot;ping&quot;</span>)</span>
-<span id="cb106-7"><a href="#cb106-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb106-8"><a href="#cb106-8" aria-hidden="true" tabindex="-1"></a>tickets <span class="op">=</span> client[<span class="st">&quot;cst4714_metro_support&quot;</span>][<span class="st">&quot;tickets&quot;</span>]</span>
-<span id="cb106-9"><a href="#cb106-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ticket <span class="kw">in</span> tickets.find({<span class="st">&quot;status&quot;</span>: <span class="st">&quot;open&quot;</span>}, {<span class="st">&quot;_id&quot;</span>: <span class="dv">0</span>, <span class="st">&quot;ticket_id&quot;</span>: <span class="dv">1</span>}):</span>
-<span id="cb106-10"><a href="#cb106-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(ticket)</span></code></pre></div>
+<span id="cb106-3"><a href="#cb106-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pymongo.server_api <span class="im">import</span> ServerApi</span>
+<span id="cb106-4"><a href="#cb106-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb106-5"><a href="#cb106-5" aria-hidden="true" tabindex="-1"></a>mongodb_uri <span class="op">=</span> getpass(<span class="st">&quot;Atlas connection URI: &quot;</span>)</span>
+<span id="cb106-6"><a href="#cb106-6" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> MongoClient(</span>
+<span id="cb106-7"><a href="#cb106-7" aria-hidden="true" tabindex="-1"></a>    mongodb_uri,</span>
+<span id="cb106-8"><a href="#cb106-8" aria-hidden="true" tabindex="-1"></a>    server_api<span class="op">=</span>ServerApi(<span class="st">&quot;1&quot;</span>, strict<span class="op">=</span><span class="va">True</span>, deprecation_errors<span class="op">=</span><span class="va">True</span>),</span>
+<span id="cb106-9"><a href="#cb106-9" aria-hidden="true" tabindex="-1"></a>    serverSelectionTimeoutMS<span class="op">=</span><span class="dv">10000</span>,</span>
+<span id="cb106-10"><a href="#cb106-10" aria-hidden="true" tabindex="-1"></a>    timeoutMS<span class="op">=</span><span class="dv">10000</span>,</span>
+<span id="cb106-11"><a href="#cb106-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb106-12"><a href="#cb106-12" aria-hidden="true" tabindex="-1"></a>client.admin.command(<span class="st">&quot;ping&quot;</span>)</span>
+<span id="cb106-13"><a href="#cb106-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb106-14"><a href="#cb106-14" aria-hidden="true" tabindex="-1"></a>tickets <span class="op">=</span> client[<span class="st">&quot;cst4714_metro_support&quot;</span>][<span class="st">&quot;tickets&quot;</span>]</span>
+<span id="cb106-15"><a href="#cb106-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ticket <span class="kw">in</span> tickets.find({<span class="st">&quot;status&quot;</span>: <span class="st">&quot;open&quot;</span>}, {<span class="st">&quot;_id&quot;</span>: <span class="dv">0</span>, <span class="st">&quot;ticket_id&quot;</span>: <span class="dv">1</span>}):</span>
+<span id="cb106-16"><a href="#cb106-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(ticket)</span></code></pre></div>
 <p>Do not add <code>tlsInsecure=True</code> as a routine fix. It
 disables certificate validation and can hide the real issue. Check the
 URI, current driver, system time, network access list, DNS, and
@@ -5158,15 +5164,23 @@ supported TLS path.</p>
 <h3 data-number="14.10.2"><span class="header-section-number">14.10.2</span> PostgreSQL/Supabase</h3>
 <div class="sourceCode" id="cb107"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> getpass <span class="im">import</span> getpass</span>
 <span id="cb107-2"><a href="#cb107-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> psycopg</span>
-<span id="cb107-3"><a href="#cb107-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb107-4"><a href="#cb107-4" aria-hidden="true" tabindex="-1"></a>database_url <span class="op">=</span> getpass(<span class="st">&quot;PostgreSQL connection URL: &quot;</span>)</span>
-<span id="cb107-5"><a href="#cb107-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> psycopg.<span class="ex">connect</span>(database_url) <span class="im">as</span> connection:</span>
-<span id="cb107-6"><a href="#cb107-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> connection.cursor() <span class="im">as</span> cursor:</span>
-<span id="cb107-7"><a href="#cb107-7" aria-hidden="true" tabindex="-1"></a>        cursor.execute(<span class="st">&quot;SELECT count(*) FROM metro_support.tickets&quot;</span>)</span>
-<span id="cb107-8"><a href="#cb107-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(cursor.fetchone())</span></code></pre></div>
+<span id="cb107-3"><a href="#cb107-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> psycopg.conninfo <span class="im">import</span> conninfo_to_dict</span>
+<span id="cb107-4"><a href="#cb107-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb107-5"><a href="#cb107-5" aria-hidden="true" tabindex="-1"></a>database_url <span class="op">=</span> getpass(<span class="st">&quot;PostgreSQL connection URL: &quot;</span>)</span>
+<span id="cb107-6"><a href="#cb107-6" aria-hidden="true" tabindex="-1"></a>sslmode <span class="op">=</span> conninfo_to_dict(database_url).get(<span class="st">&quot;sslmode&quot;</span>, <span class="st">&quot;prefer&quot;</span>)</span>
+<span id="cb107-7"><a href="#cb107-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> sslmode <span class="kw">not</span> <span class="kw">in</span> {<span class="st">&quot;require&quot;</span>, <span class="st">&quot;verify-ca&quot;</span>, <span class="st">&quot;verify-full&quot;</span>}:</span>
+<span id="cb107-8"><a href="#cb107-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">&quot;Add sslmode=require or a stronger mode to the URL.&quot;</span>)</span>
+<span id="cb107-9"><a href="#cb107-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb107-10"><a href="#cb107-10" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> psycopg.<span class="ex">connect</span>(database_url, connect_timeout<span class="op">=</span><span class="dv">10</span>) <span class="im">as</span> connection:</span>
+<span id="cb107-11"><a href="#cb107-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> connection.cursor() <span class="im">as</span> cursor:</span>
+<span id="cb107-12"><a href="#cb107-12" aria-hidden="true" tabindex="-1"></a>        cursor.execute(<span class="st">&quot;SELECT count(*) FROM metro_support.tickets&quot;</span>)</span>
+<span id="cb107-13"><a href="#cb107-13" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(cursor.fetchone())</span></code></pre></div>
 <p>On a network without direct IPv6 connectivity, use the provider&#39;s
-current IPv4- compatible pooler URI rather than changing database code
-randomly.</p>
+current IPv4- compatible session-pooler URI rather than changing
+database code randomly. <code>sslmode=require</code> prevents an
+unencrypted fallback but does not verify server identity. For
+production, use <code>verify-full</code> with the provider&#39;s CA
+certificate.</p>
 </section>
 </section>
 <section id="8-import-in-small-verifiable-batches" class="level2" data-number="14.11">

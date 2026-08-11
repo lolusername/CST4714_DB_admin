@@ -69,6 +69,13 @@ fallback activity; it does not reproduce their protected content.
   <https://cheatsheetseries.owasp.org/cheatsheets/NoSQL_Security_Cheat_Sheet.html>
 - AWS Prescriptive Guidance, Transactional Outbox pattern:
   <https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html>
+- MongoDB, current PyMongo connection and TLS guidance:
+  <https://www.mongodb.com/docs/languages/python/pymongo-driver/current/connect/>
+  and
+  <https://www.mongodb.com/docs/languages/python/pymongo-driver/current/security/tls/>
+- Supabase, current PostgreSQL connection modes and SSL-mode guidance:
+  <https://supabase.com/docs/guides/database/connecting-to-postgres> and
+  <https://supabase.com/docs/guides/platform/ssl-enforcement>
 
 ## Career Evidence
 

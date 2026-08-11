@@ -142,14 +142,14 @@ or tag is assigned.
 
 ### Completed Candidate Checks
 
-- The structural validator passed 259 checks. Network-enabled live-link mode
-  passed 261 checks across 135 unique external URLs, with no definite 404 or 410
+- The structural validator passed 306 checks. Network-enabled validation passed
+  308 checks across 143 unique external URLs, with no confirmed 404 or 410
   result. Five sources rejected or refused the automated client and remain
   explicitly queued for manual review.
 - All 214 slides passed the PowerPoint boundary test. Every final slide and every
   final PDF contact sheet received visual review after export; all 15 PDFs match
-  their deck page counts, contain extractable text, and show no clipping,
-  overlap, or broken-render artifacts.
+  their deck page counts, report tagged structure, are unencrypted, contain
+  extractable text, and show no clipping, overlap, or broken-render artifacts.
 - Every speaker-note script matches its transcript wording and slide order.
 - The canonical 15-module Markdown text builds reproducibly as self-contained
   HTML, EPUB, and a Word file prepared for Pressbooks import. The HTML contains
@@ -158,7 +158,8 @@ or tag is assigned.
   mobile widths.
 - SHA-256 verification passed for all three publication artifacts. EPUB and DOCX
   archive and XML checks passed; EPUB metadata and navigation are present. The
-  90-page Word export received a complete page-by-page visual review.
+  current 90-page Word export received a complete page-by-page visual review,
+  including the updated Module 13 connection examples.
 - All 68 code cells across the six notebooks executed through the offline paths
   in a clean temporary run with zero error outputs.
 - The Metro Support and Week 7 performance SQL setup files executed in a
@@ -169,12 +170,15 @@ or tag is assigned.
 
 ### Known Candidate Limitations
 
-- PDFs are visually reviewed handouts with extractable text, not confirmed tagged
-  PDFs. Structured Markdown and transcripts are the text alternatives.
+- PDFs report tagged structure and contain extractable text, but tag-tree quality
+  and assistive-technology reading order have not received human review.
+  Structured Markdown and transcripts remain the text alternatives.
 - Standalone HTML structure, focus targets, desktop layout, and mobile reflow were
-  inspected programmatically and visually. A reliable human keyboard sequence
-  and representative screen-reader review have not been completed; both must be
-  repeated in the final publication and LMS environments.
+  inspected programmatically and visually. A representative Safari keyboard
+  sequence successfully focused and activated the skip link and transferred
+  accessibility focus into the main content. Comprehensive keyboard traversal
+  and a representative screen-reader review remain pending; both must be
+  completed in the final publication and LMS environments.
 - Offline notebook paths were executed. Live Atlas and Supabase paths still
   require a pre-course smoke test with temporary course accounts and no saved
   credentials.

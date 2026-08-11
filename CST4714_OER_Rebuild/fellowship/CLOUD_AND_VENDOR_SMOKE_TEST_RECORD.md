@@ -8,7 +8,7 @@ student context. It is evidence for release review, not a claim that account-gat
 work has already been completed.
 
 - **Candidate:** *Operating Cloud Databases*, version `1.0.0-rc.1`
-- **Record updated:** August 9, 2026
+- **Record updated:** August 10, 2026
 - **Publication state:** local release candidate; not approved, tagged,
   deposited, or published
 
@@ -30,14 +30,22 @@ preparing this record. No account credentials were requested or stored.
 ### Notebook execution
 
 - All six notebooks parsed as valid notebook JSON.
-- All 68 code cells executed through the documented offline paths in clean
-  temporary copies.
+- All 68 code cells re-executed through the documented offline paths in clean
+  temporary copies on August 10, 2026 after the cloud connection-safety update.
 - The executed copies produced zero error outputs.
 - Course notebooks were not overwritten with temporary execution output.
+- The canonical builder and checked notebooks match exactly at the cell-source
+  level.
 - Connection cells obtain secrets at runtime rather than embedding them.
 - MongoDB examples do not normalize certificate errors with `tlsInsecure=True`.
 - Supabase guidance distinguishes direct, session-pooler, and transaction-pooler
   connections and identifies the IPv4-compatible session-pooler route.
+- Cloud notebook contracts default to disabled, request secrets through
+  `getpass`, bound connection/operation waits, and require explicit encrypted
+  PostgreSQL transport. The text distinguishes `sslmode=require` encryption from
+  `verify-full` certificate and hostname verification.
+- Atlas notebook contracts use Stable API version 1, bounded server-selection and
+  operation timeouts, an explicit ping, and client cleanup.
 
 ### PostgreSQL fixtures
 
@@ -105,7 +113,10 @@ current connection panel rather than copying an old hostname from course notes.
    transaction pooler only for a transient/serverless pattern that does not
    require prepared statements.
 3. Enter the connection string through the runtime prompt; do not print it.
-4. Connect with certificate validation enabled.
+4. Prefer `sslmode=verify-full` with the current Supabase CA certificate. If the
+   classroom route uses `sslmode=require`, record that it encrypts traffic but
+   does not validate the CA or hostname; never use `disable`, `allow`, or the
+   fallback-capable default `prefer`.
 5. Create or load the small course fixture into the disposable schema.
 6. Verify table names, row counts, one stable identifier, one relationship, and
    one meaningful query.
