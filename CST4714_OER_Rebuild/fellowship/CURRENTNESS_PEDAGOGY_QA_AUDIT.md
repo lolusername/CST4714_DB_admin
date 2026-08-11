@@ -34,10 +34,10 @@ external resources unless their page supplies a compatible open license.
 
 | Design decision in this course | Research basis | Course implementation |
 |---|---|---|
-| Replace long lecture blocks with frequent disciplinary action | [Freeman et al. (2014)](https://doi.org/10.1073/pnas.1319030111) found improved STEM performance under active learning; the [National Academies (2025)](https://doi.org/10.17226/28268) identifies active engagement as a principle of equitable and effective undergraduate STEM teaching | every meeting moves from retrieval and prediction to a worked example, individual practice, evidence, and interpretation |
+| Replace long lecture blocks with frequent disciplinary action | [Freeman et al. (2014)](https://pmc.ncbi.nlm.nih.gov/articles/PMC4060654/) found improved STEM performance under active learning; the [National Academies (2025)](https://doi.org/10.17226/28268) identifies active engagement as a principle of equitable and effective undergraduate STEM teaching | every meeting moves from retrieval and prediction to a worked example, individual practice, evidence, and interpretation |
 | Retrieve prior knowledge before adding new complexity | [Karpicke and Blunt (2011)](https://pubmed.ncbi.nlm.nih.gov/21252317/) found retrieval practice supported meaningful science learning | weekly self-checks and the 15-set retrieval/exit bank repeatedly revisit relational grain, verification, security, and recovery |
 | Give novices complete examples, then fade support | [Vieira, Yan, and Magana (2015)](https://doi.org/10.22369/issn.2153-4136/6/1/1) reports benefits from programming worked examples and elaborated self-explanation for novices | the implementation guide uses Model, Fade, and Build phases; early labs provide commands while later labs provide symptoms or operating promises |
-| Use short formative evidence to decide what happens next | [Morris et al. (2021)](https://doi.org/10.1002/rev3.3292) reviews causal evidence for formative assessment and feedback in higher education; the National Academies emphasizes multiple forms of data for improvement | one compact artifact, one interpretation, retrieval prompts, and exit evidence feed the public data-informed teaching protocol |
+| Use short formative evidence to decide what happens next | [Morris et al. (2021)](https://eric.ed.gov/?id=EJ1319705) reviews causal evidence for formative assessment and feedback in higher education; the National Academies emphasizes multiple forms of data for improvement | one compact artifact, one interpretation, retrieval prompts, and exit evidence feed the public data-informed teaching protocol |
 | Provide equivalent ways to access meaning and show learning | [CAST UDL Guidelines 3.0 (2024)](https://udlguidelines.cast.org/) addresses engagement, representation, and action/expression barriers | Markdown, slides, transcripts, PDF handouts, notebooks, static evidence, local fallbacks, and non-screenshot alternatives preserve the same outcome |
 | Use authentic records without exposing private people | Research on classroom use of real-world data identifies realism and storytelling benefits while warning about privacy and release risk ([Luse and Burkman, 2018](https://aisel.aisnet.org/jmwais/vol2018/iss1/2/)) | two synthetic operational cases support safe repetition; a documented, field-reduced CISA KEV snapshot adds real public-data provenance and ambiguity |
 | Make technical reasoning visible in workplace language | [NACE career-readiness competencies](https://www.naceweb.org/career-readiness/competencies/career-readiness-defined) emphasize critical thinking, communication, professionalism, and technology | claim-evidence-tradeoff writing, incident updates, reproducible artifacts, resume bullets, and bounded STAR-R stories use evidence without inflating experience |
@@ -63,7 +63,7 @@ was operated under a live student account.
 | 6 | least privilege, RLS default deny, owner/bypass behavior, Supabase role context | [PostgreSQL row security](https://www.postgresql.org/docs/current/ddl-rowsecurity.html), [Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security), [OWASP Database Security](https://cheatsheetseries.owasp.org/cheatsheets/Database_Security_Cheat_Sheet.html) | verified; allow and deny evidence is required from the intended role |
 | 7 | `EXPLAIN ANALYZE`, buffers, row estimates, scan judgment, multicolumn indexes | [PostgreSQL `EXPLAIN`](https://www.postgresql.org/docs/current/using-explain.html), [multicolumn indexes](https://www.postgresql.org/docs/current/indexes-multicolumn.html) | verified for PostgreSQL 18; optional work adds machine-readable plan inspection rather than prescribing node names |
 | 8 | logical dumps, tool compatibility, separate restore, untrusted-artifact risk | [`pg_dump`](https://www.postgresql.org/docs/current/app-pgdump.html), [`pg_restore`](https://www.postgresql.org/docs/current/app-pgrestore.html) | verified; candidate now explicitly warns that restoring an untrusted dump can execute source-controlled code |
-| 9 | NoSQL history, JSON grammar, model families, cosine meaning | [RFC 8259](https://www.rfc-editor.org/info/rfc8259/), [Bigtable paper](https://research.google/pubs/bigtable-a-distributed-storage-system-for-structured-data/), [Dynamo paper](https://dl.acm.org/doi/10.1145/1294261.1294281), [MongoDB cosine expression](https://www.mongodb.com/docs/manual/reference/operator/aggregation/similaritycosine/) | verified; the text distinguishes mathematical cosine similarity from product/version availability and from semantic truth |
+| 9 | NoSQL history, JSON grammar, model families, cosine meaning | [RFC 8259](https://www.rfc-editor.org/info/rfc8259/), [Bigtable paper](https://research.google/pubs/bigtable-a-distributed-storage-system-for-structured-data/), [Dynamo paper](https://www.amazon.science/publications/dynamo-amazons-highly-available-key-value-store), [MongoDB cosine expression](https://www.mongodb.com/docs/manual/reference/operator/aggregation/similaritycosine/) | verified; the text distinguishes mathematical cosine similarity from product/version availability and from semantic truth |
 | 10 | Atlas connection boundaries, CRUD evidence, embedding versus referencing | [Atlas connection prerequisites](https://www.mongodb.com/docs/atlas/connect-to-database-deployment/), [MongoDB modeling guidance](https://www.mongodb.com/docs/manual/data-modeling/concepts/embedding-vs-references/) | verified; access patterns, atomicity, duplication, and unbounded growth drive the model decision |
 | 11 | aggregation order, validation, explain evidence, indexed sort | [aggregation optimization](https://www.mongodb.com/docs/manual/core/aggregation-pipeline-optimization/), [schema validation](https://www.mongodb.com/docs/manual/core/schema-validation/), [`$sort`](https://www.mongodb.com/docs/manual/reference/operator/aggregation/sort/) | verified; deterministic tie-breaks and Atlas Free in-memory-sort limits are now explicit |
 | 12 | replica-set roles, read/write concerns, CAP scope, replication versus backup | [read concern](https://www.mongodb.com/docs/manual/reference/read-concern/), [replica-set semantics](https://www.mongodb.com/docs/manual/applications/replication/), [Atlas Free limits](https://www.mongodb.com/docs/atlas/reference/free-shared-limitations/) | verified; Atlas Free remains fixed at three nodes with no native backup or failover testing |
@@ -142,14 +142,18 @@ local candidate commit or tag, the current run must establish:
   cases recorded for later manual verification.
 
 The release checklist remains authoritative for actual results. The August 10
-candidate QA run passed 306 local checks and 308 checks in network-enabled mode
-across 143 unique URLs. No confirmed 404 or 410 result was found; five automated-
-client refusals remain queued for manual review. All 214 final slides and all 15
+candidate QA run passed 383 local checks and 385 checks in network-enabled mode
+across 139 unique URLs. No confirmed 404 or 410 result was found. The sole
+automated-client refusal, the current BLS Database Administrators and Architects
+page, passed independent browser review. All 214 final slides and all 15
 final PDF handouts received visual review; all handouts report tagged structure
-and are unencrypted; the six notebooks re-executed 68 offline code cells without
+and are unencrypted; their title, author, language, and structure-catalog
+metadata pass automated checks; a 214-page render comparison after metadata
+regeneration found zero changed pixels. The six notebooks re-executed 68 offline code cells without
 errors after connection-safety updates; PostgreSQL fixtures executed with
 documented counts; publication checksums and EPUB/DOCX archive/XML checks passed;
-and all 90 pages of the current Word export received visual review.
+official W3C EPUBCheck 5.3.0 reported zero messages under EPUB 3.3 rules; and all
+90 pages of the current Word export received visual review.
 
 Standalone HTML contains one navigation landmark, one focusable main landmark,
 an effective skip target, embedded CSS, and no page-level overflow at tested
@@ -157,8 +161,8 @@ desktop and mobile widths. In Safari, an actual `Option+Tab` and `Return`
 sequence focused and activated the skip link, changed the URL to
 `#main-content`, moved the viewport, and transferred accessibility focus into
 the main container. This representative standalone check does not replace a
-comprehensive keyboard traversal or the pending human screen-reader checks in
-the intended Pressbooks and LMS contexts.
+comprehensive keyboard traversal or any externally assigned human assistive-
+technology review in the intended Pressbooks and LMS contexts.
 
 ## 7. External Gates That Remain Honest Gaps
 
@@ -166,8 +170,8 @@ The following cannot be completed by local authoring alone and must not be
 represented as done:
 
 - OER-team attribution and accessibility approval;
-- comprehensive keyboard and human screen-reader review in the final Pressbooks
-  and LMS environments;
+- comprehensive keyboard review and, if required, qualified external assistive-
+  technology review in the final Pressbooks and LMS environments;
 - Pressbooks import plus Pressbooks-generated Digital PDF, EPUB, and Common
   Cartridge inspection;
 - live Atlas, Supabase, and account-gated vendor completion under temporary

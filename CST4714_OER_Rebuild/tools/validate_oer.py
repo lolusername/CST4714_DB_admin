@@ -27,9 +27,19 @@ WEEK_RE = re.compile(r"week_(\d{2})$")
 MARKDOWN_LINK_RE = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 URL_RE = re.compile(r"https?://[^\s<>\"'\\\]\)]+")
 SLIDE_SECTION_RE = re.compile(r"^## Slide (\d+):[^\n]*\n", re.MULTILINE)
+NON_LINK_URI_PREFIXES = (
+    "http://purl.org/dc/",
+    "http://schemas.openxmlformats.org/",
+    "http://www.idpf.org/",
+    "http://www.w3.org/2001/XMLSchema-instance",
+)
 NS = {
     "a": "http://schemas.openxmlformats.org/drawingml/2006/main",
     "p": "http://schemas.openxmlformats.org/presentationml/2006/main",
+}
+CORE_NS = {
+    "cp": "http://schemas.openxmlformats.org/package/2006/metadata/core-properties",
+    "dc": "http://purl.org/dc/elements/1.1/",
 }
 EPUB_NS = {
     "dc": "http://purl.org/dc/elements/1.1/",
@@ -127,6 +137,23 @@ def check_structure(report: Report) -> None:
             and "Screen-reader test: NOT RUN" in accessibility_text
             and "STANDALONE_HTML_ACCESSIBILITY_QA.md" in fellowship_index,
             "accessibility record distinguishes completed and pending checks",
+        )
+
+    format_report = ROOT / "fellowship/PUBLICATION_FORMAT_QA.md"
+    report.require(
+        format_report.is_file(),
+        "publication-format QA record exists",
+    )
+    if format_report.is_file():
+        format_text = read_text(format_report)
+        fellowship_index = read_text(ROOT / "fellowship/README.md")
+        report.require(
+            "EPUBCheck 5.3.0 result: PASS" in format_text
+            and "0 fatals / 0 errors / 0 warnings / 0 infos" in format_text
+            and "PDF handout accessibility claim: NOT MADE" in format_text
+            and "Screen-reader test: NOT RUN" in format_text
+            and "PUBLICATION_FORMAT_QA.md" in fellowship_index,
+            "publication-format record distinguishes conformance from external review",
         )
 
     unwanted = [
@@ -594,6 +621,25 @@ def pdf_metadata(path: Path) -> dict[str, str] | None:
     return metadata
 
 
+def pdf_catalog(path: Path) -> str | None:
+    executable = shutil.which("mutool")
+    if not executable:
+        return None
+    result = subprocess.run(
+        [executable, "show", "-g", str(path), "trailer/Root"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return result.stdout if result.returncode == 0 else ""
+
+
+def expected_deck_title(transcript: Path) -> str:
+    first_line = read_text(transcript).splitlines()[0]
+    match = re.fullmatch(r"# (Week \d+: .+) - Spoken Transcript", first_line)
+    return match.group(1) if match else ""
+
+
 def check_decks(report: Report) -> None:
     forbidden_directions = re.compile(
         r"\b(?:use this slide|use this as (?:a|the) transition|tell students|"
@@ -617,6 +663,11 @@ def check_decks(report: Report) -> None:
         report.require(pdf.exists(), f"matching PDF exists: {pdf.name}")
         if not transcript.exists():
             continue
+        expected_title = expected_deck_title(transcript)
+        report.require(
+            bool(expected_title),
+            f"Week {week} transcript supplies the canonical presentation title",
+        )
 
         with zipfile.ZipFile(deck) as archive:
             names = archive.namelist()
@@ -645,6 +696,24 @@ def check_decks(report: Report) -> None:
                 )
                 for number in note_numbers
             }
+            try:
+                core = ET.fromstring(archive.read("docProps/core.xml"))
+            except (KeyError, ET.ParseError):
+                core = None
+
+        report.require(core is not None, f"Week {week} deck has valid core metadata")
+        if core is not None:
+            report.require(
+                core.findtext("dc:title", default="", namespaces=CORE_NS)
+                == expected_title
+                and core.findtext("dc:creator", default="", namespaces=CORE_NS)
+                == "Atilio Barreda"
+                and core.findtext("dc:language", default="", namespaces=CORE_NS)
+                == "en-US"
+                and core.findtext("cp:contentStatus", default="", namespaces=CORE_NS)
+                == "Release Candidate",
+                f"Week {week} deck metadata identifies its title, author, language, and status",
+            )
 
         sections = transcript_sections(read_text(transcript))
         report.require(
@@ -701,6 +770,22 @@ def check_decks(report: Report) -> None:
                 report.require(
                     metadata.get("Encrypted", "").lower() == "no",
                     f"Week {week} PDF is not encrypted",
+                )
+                report.require(
+                    metadata.get("Title", "") == expected_title
+                    and metadata.get("Author", "") == "Atilio Barreda",
+                    f"Week {week} PDF metadata identifies its title and author",
+                )
+            catalog = pdf_catalog(pdf)
+            if catalog is None:
+                report.warn("mutool is unavailable; PDF catalog structure was not checked")
+            else:
+                report.require(
+                    "/StructTreeRoot" in catalog
+                    and "/Marked true" in catalog
+                    and "/Lang(en-US)" in catalog
+                    and "/DisplayDocTitle true" in catalog,
+                    f"Week {week} PDF catalog exposes structure, language, and title display",
                 )
 
     report.require(total_slides == 214, f"validated all {total_slides} authored slides")
@@ -806,7 +891,8 @@ def check_oer_boundary(report: Report) -> None:
     report.require(
         "PDF handout" in readme
         and "Every PDF reports tagged structure" in readme
-        and "reading order remain unaudited" in readme,
+        and "tag-tree inspection found insufficient semantics" in readme
+        and "convenience handouts" in readme,
         "the package describes PDFs accurately and identifies the transcript alternative",
     )
     report.require(
@@ -879,7 +965,7 @@ def collect_urls() -> list[str]:
             continue
         for value in URL_RE.findall(read_text(path)):
             cleaned = value.rstrip("\\\"').,;]}")
-            if cleaned:
+            if cleaned and not cleaned.startswith(NON_LINK_URI_PREFIXES):
                 urls.add(cleaned)
     return sorted(urls)
 

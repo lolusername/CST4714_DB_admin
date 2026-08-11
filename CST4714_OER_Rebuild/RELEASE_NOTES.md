@@ -26,23 +26,27 @@ as classroom-piloted or externally reviewed.
 
 ## Candidate Validation
 
-- Structural validation passed 306 checks. Network-enabled validation passed 308
-  checks across 143 unique URLs with no confirmed 404 or 410 result; five
-  automated-client refusals remain manual-review items.
+- Structural validation passed 383 checks. Network-enabled validation passed 385
+  checks across 139 unique URLs with no confirmed 404 or 410 result. The sole
+  bot refusal, the current BLS occupation page, passed independent browser
+  review.
 - All 68 notebook code cells re-executed through offline paths with zero errors
   after the connection-safety update; generated and checked notebook sources
   match exactly.
 - PostgreSQL setup scripts executed in a disposable database with verified row
   counts and 100,000 performance rows.
 - All 214 slides passed boundary checks; every final slide and all 15 exported
-  PDF handouts received visual review.
+  PDF handouts received visual review. Accurate title, author, language, and
+  candidate-status metadata replaced generic exporter values; all 214
+  regenerated PDF pages are pixel-identical to the prior handouts at 96 DPI.
 - Every speaker-note script matches its transcript wording and slide order.
 - The self-contained HTML passed landmark, skip-target, desktop, and mobile
   reflow checks. A representative Safari keyboard sequence successfully focused
   and activated the skip link and transferred accessibility focus into the main
-  content. EPUB and DOCX archive/XML checks and SHA-256 verification passed. The
+  content. EPUB and DOCX archive/XML checks and SHA-256 verification passed. W3C
+  EPUBCheck 5.3.0 returned zero messages under EPUB 3.3 rules. The
   current 90-page Word export received complete visual review, including the
-  updated Module 13 connection examples.
+  updated Module 13 connection examples and replacement Module 9 source link.
 - No credentials, student data, private grading keys, teacher-only cheat sheets,
   or temporary slide-generation files are part of the public package.
 
@@ -52,14 +56,17 @@ as classroom-piloted or externally reviewed.
   HTML, EPUB, and DOCX release-candidate exports have completed local technical
   and visual QA.
 - All PDF handouts report tagged structure, are unencrypted, and contain
-  extractable text, but tag-tree quality and assistive-technology reading order
-  have not received human review.
+  extractable text. Automated inspection found insufficient semantic structures
+  and no figure alternative-text metadata, so they are convenience handouts and
+  are not claimed as accessible PDFs.
 - Live Atlas and Supabase notebook paths require a pre-course smoke test with
   temporary accounts.
 - Account-gated vendor activities require final student-role verification.
-- Comprehensive keyboard and human screen-reader checks must be completed in the
-  final webbook and LMS environment.
-- Five sources that reject automated link clients require manual browser review.
+- Comprehensive keyboard checks remain for the final webbook and LMS. Any
+  institutionally required assistive-technology review is assigned to a
+  qualified external reviewer, not the instructor.
+- The BLS occupation page rejects the automated client but passed browser review
+  on August 10, 2026.
 - Classroom implementation, aggregate learning evidence, and evidence-based
   revision have not yet occurred for this rebuilt edition.
 - OER-team approval, a formal tag, remote push, deposit, and publication are

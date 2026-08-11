@@ -18,9 +18,9 @@ record. Publication begins only after the instructor explicitly approves it.
 | Gate | Evidence currently available | State | What closes the gate |
 |---|---|---|---|
 | Authored scope | Cataloged 15-week course, open text, labs, notebooks, datasets, projects, assessments, decks, scripts, guides, and publication exports | COMPLETE | maintain inventory through release |
-| Technical local QA | 306-check local pass; 308-check network pass over 143 URLs with five automated-client warnings and no confirmed 404/410; current 68-cell notebook execution; PostgreSQL fixtures; all-slide/all-PDF/all-Word-page visual review; HTML reflow/landmarks/representative keyboard entry; EPUB/DOCX/checksum checks | COMPLETE | repeat from the approved release commit before tagging |
+| Technical local QA | 383-check local pass; 385-check network pass over 139 URLs with no confirmed 404/410 and the sole bot refusal manually verified; current 68-cell notebook execution; PostgreSQL fixtures; all-slide/all-PDF/all-Word-page visual review; 214-page PDF render parity; HTML reflow/landmarks/representative keyboard entry; official EPUBCheck 5.3.0 pass; EPUB/DOCX/checksum checks | COMPLETE | repeat from the approved release commit before tagging |
 | Attribution review | Source and license register plus automated completeness checks | SELF-AUDITED | named OER reviewer signs the attribution sample |
-| Accessibility review | Semantic source formats, transcripts, alternatives, visual QA, automated checks | PARTIAL | keyboard and screen-reader review in intended webbook/LMS; record defects and fixes |
+| Accessibility review | Semantic source formats, transcripts, alternatives, visual QA, automated checks | PARTIAL | if required, an external accessibility reviewer checks the intended webbook/LMS and records defects and fixes |
 | Cloud/vendor smoke test | account-free and offline checks | PARTIAL | complete the live rows in the cloud/vendor record |
 | Pressbooks import/export | DOCX import package and metadata prepared | NOT RUN | import privately; inspect webbook, navigation, media, math/code, links, Digital PDF, EPUB, and Common Cartridge |
 | Classroom pilot | instruments, decision rules, and de-identified packet prepared | NOT STARTED | teach the candidate, analyze actual aggregate evidence, revise, and document limits |
@@ -61,8 +61,10 @@ recorded before this gate is represented as complete.
 7. Verify reflow/zoom behavior and that the skip link reaches the main content.
 8. Use a keyboard to traverse navigation, links, code controls, and any embedded
    media without a trap or lost focus.
-9. Use at least one representative screen reader to check title, landmarks,
-   headings, lists, tables, links, code context, and reading order.
+9. If required by the institution or fellowship, assign a qualified external
+   accessibility reviewer to check title, landmarks, headings, lists, tables,
+   links, code context, and reading order with representative assistive
+   technology. This is not an instructor task.
 10. Repeat representative checks in the actual Pressbooks webbook and LMS; a
     standalone HTML result does not prove platform accessibility.
 
@@ -72,15 +74,18 @@ recorded before this gate is represented as complete.
 |---|---|---|---|---|---|
 | Standalone HTML, semantic/reflow precheck | single-page book: cover, TOC, code, and tables | one navigation landmark, one focusable main landmark, valid skip target, embedded CSS, and no desktop/mobile page overflow | | PASS LOCAL | local automated/direct inspection, August 9, 2026 |
 | Standalone HTML, Safari keyboard | skip link and representative content entry | `Option+Tab` focused the skip link; `Return` changed the URL to `#main-content`, moved the viewport, and transferred accessibility focus into the main container; comprehensive traversal and platform repeat remain pending | | PASS REPRESENTATIVE | local direct test, August 9, 2026 |
-| Standalone HTML, screen reader | NOT RUN | human/AT review required | | | |
+| Standalone HTML, external assistive-technology review | NOT RUN | assign to a qualified external reviewer if required | | | |
+| EPUB, W3C EPUBCheck 5.3.0 | complete candidate file | EPUB 3.3 validation completed with zero fatals, errors, warnings, or infos | | PASS CONFORMANCE | local independent validator, August 10, 2026 |
 | EPUB reader | NOT RUN | representative reading-system review required | | | |
 | Pressbooks webbook | NOT RUN | import required | | | |
 | Brightspace/LMS | NOT RUN | course-shell review required | | | |
 
 All 15 PDF handouts report tagged structure, are unencrypted, and contain
-extractable text. They must not be described as accessible PDFs until tag-tree
-quality, reading order, language, headings, lists, tables, links, and alternative
-text receive an appropriate human/assistive-technology audit.
+extractable text. Automated inspection confirmed language and catalog metadata
+but found only `Figure`, `Div`, and `P` structures and no figure alternative-text
+metadata. They are convenience handouts, not accessible PDFs. Any future PDF/UA
+claim requires semantic remediation, logical-order review, and appropriate human
+validation.
 
 ## Private Pressbooks Import Review
 
@@ -92,8 +97,9 @@ rendered it correctly.
 3. Compare chapter count, title order, heading levels, code blocks, tables,
    internal links, external links, lists, callouts, and image alternatives with
    the canonical Markdown/HTML source.
-4. Inspect keyboard navigation, skip behavior, landmarks, page titles, and
-   representative screen-reader output.
+4. Inspect keyboard navigation, skip behavior, landmarks, and page titles; if
+   required, have a qualified external reviewer inspect representative
+   assistive-technology output.
 5. Generate Pressbooks EPUB and Digital PDF; validate structure and visually
    compare representative chapters.
 6. If Common Cartridge is required, import it into a nonstudent LMS shell and

@@ -37,7 +37,7 @@ fallback activity; it does not reproduce their protected content.
 ## Learning Design Evidence
 
 - Freeman et al. (2014), active learning in STEM:
-  <https://doi.org/10.1073/pnas.1319030111>
+  <https://pmc.ncbi.nlm.nih.gov/articles/PMC4060654/>
 - Theobald et al. (2020), active learning and achievement gaps:
   <https://pubmed.ncbi.nlm.nih.gov/32152114/>
 - Vieira, Yan, and Magana (2015), worked examples and self-explanation for
@@ -49,7 +49,7 @@ fallback activity; it does not reproduce their protected content.
 - Karpicke and Blunt (2011), retrieval practice:
   <https://pubmed.ncbi.nlm.nih.gov/21252317/>
 - Morris et al. (2021), formative assessment and feedback in higher education:
-  <https://doi.org/10.1002/rev3.3292>
+  <https://eric.ed.gov/?id=EJ1319705>
 - Luse and Burkman (2018), real-world data in information-systems education:
   <https://aisel.aisnet.org/jmwais/vol2018/iss1/2/>
 - CAST Universal Design for Learning Guidelines 3.0:
@@ -62,7 +62,7 @@ fallback activity; it does not reproduce their protected content.
 - Chang et al., *Bigtable: A Distributed Storage System for Structured Data*:
   <https://research.google/pubs/bigtable-a-distributed-storage-system-for-structured-data/>
 - DeCandia et al., *Dynamo: Amazon's Highly Available Key-value Store*:
-  <https://dl.acm.org/doi/10.1145/1294261.1294281>
+  <https://www.amazon.science/publications/dynamo-amazons-highly-available-key-value-store>
 - OWASP Database Security Cheat Sheet:
   <https://cheatsheetseries.owasp.org/cheatsheets/Database_Security_Cheat_Sheet.html>
 - OWASP NoSQL Security Cheat Sheet:

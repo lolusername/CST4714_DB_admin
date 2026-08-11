@@ -59,24 +59,26 @@ every one of the book's links was not traversed manually.
 
 - A complete keyboard traversal of every navigation and content link was not
   completed.
-- VoiceOver or another screen reader was not used to review spoken output,
-  reading order, table navigation, link context, or code pronunciation.
+- A screen-reader session was not run; human assistive-technology behavior
+  therefore remains externally unverified.
 - The EPUB was not reviewed in a representative reading system.
 - The candidate has not been imported into Pressbooks or Brightspace, so those
   platforms' navigation, focus behavior, transformations, and assistive-
   technology output remain untested.
 - All PDF handouts report tagged structure, are unencrypted, contain extractable
-  text, and were visually reviewed. They are not represented as accessible PDFs
-  until tag-tree quality and assistive-technology reading order receive human
-  review.
+  text, and were visually reviewed. Automated tag-tree inspection found
+  insufficient semantic structures and no figure alternative-text metadata.
+  They are convenience handouts and are not represented as accessible PDFs.
 
 ## Required Retest Before Publication
 
 1. Import the approved candidate into a private Pressbooks book.
 2. Repeat the skip-link sequence and traverse representative navigation, links,
    tables, and code using keyboard input alone.
-3. Use VoiceOver or another representative screen reader to check title,
-   landmarks, headings, lists, tables, links, code context, and reading order.
+3. If required by the institution or fellowship, assign a qualified external
+   accessibility reviewer to check title, landmarks, headings, lists, tables,
+   links, code context, and reading order with representative assistive
+   technology.
 4. Inspect one imported chapter with dense code, one with a table, the table of
    contents, and front/back matter.
 5. Repeat representative checks in the intended Brightspace shell.
@@ -85,6 +87,6 @@ every one of the book's links was not traversed manually.
 
 ## Interpretation
 
-The local HTML has a sound semantic and keyboard-accessible starting point. The
-remaining work is human assistive-technology review and platform verification,
-not authorship of missing chapters, labs, or other semester content.
+The local HTML has a sound semantic and keyboard-accessible starting point. Any
+remaining human assistive-technology review is an external reviewer gate, along
+with platform verification; neither is authorship of missing semester content.

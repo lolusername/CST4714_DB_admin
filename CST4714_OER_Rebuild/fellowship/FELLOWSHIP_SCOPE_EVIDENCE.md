@@ -85,8 +85,8 @@ an unsupported numerical score.
 | Comprehensiveness | Full 15-week progression from relational algebra and SQL review through administration, security, performance, recovery, NoSQL, reliability, scale, integration, and careers | Strong |
 | Attribution | Visible CC BY-NC-SA, MIT, and CC0 terms; source-specific attribution file; separate free-resource catalog; documented CISA transformation | Strong; final OER-team copyright review remains appropriate |
 | Organization | Stable module anatomy, two-class weekly guides, canonical major assignments, course map, recurring Metro Support case, and one evidence cycle | Strong |
-| Accessibility | Semantic Markdown, descriptive links, text tables, exact transcripts, high-contrast slides, multiple formats, credential-safe alternatives, no color-only lab directions, responsive standalone HTML, reported PDF tag structures, and a passing representative Safari skip-link sequence | Substantial but not final: comprehensive keyboard, human screen-reader, Pressbooks/LMS, and PDF tag-quality/reading-order checks remain |
-| Navigation | Central course map and catalog, stable relative links, automated inventory/link checks, and no confirmed broken link in the candidate audit | Strong candidate evidence; three externally blocked URLs require manual review |
+| Accessibility | Semantic Markdown, descriptive links, text tables, exact transcripts, high-contrast slides, multiple formats, credential-safe alternatives, no color-only lab directions, responsive standalone HTML, documented PDF tag-tree limitations, and a passing representative Safari skip-link sequence | Substantial but not final: comprehensive keyboard, Pressbooks/LMS, optional PDF semantic remediation, and any institutionally required external assistive-technology checks remain |
+| Navigation | Central course map and catalog, stable relative links, automated inventory/link checks, and no confirmed broken link in the candidate audit | Strong candidate evidence; the sole bot-protected BLS URL passed independent browser review |
 | Modularity | Each module, lab, notebook, dataset, assessment, and implementation guide can be adopted independently; conceptual goals are separated from vendor interfaces | Strong |
 | Cultural relevance | Diverse synthetic actors, community-service scenarios, privacy-conscious examples, public civic/security data, student-selected final topics, and career genres | Credible foundation; student feedback should test relevance and identify needed local examples |
 
@@ -147,7 +147,8 @@ course content exists:
 - publish and inspect the Pressbooks webbook;
 - generate and inspect Pressbooks Digital PDF, EPUB, and Common Cartridge
   exports;
-- complete keyboard and screen-reader checks in the final publication and LMS;
+- complete keyboard checks and, if required, qualified external assistive-
+  technology review in the final publication and LMS;
 - conduct an OER-team attribution and accessibility review;
 - complete live Atlas, Supabase, and account-gated vendor smoke tests;
 - implement the materials in a scheduled section;

@@ -54,8 +54,9 @@ administration.
 - [x] Every deck passes the slide-boundary test and a full-size visual review.
 - [x] Every PDF page count matches its deck, contains extractable text, and passes
   a separate visual review after export.
-- [x] PDFs are labeled as handouts, not as tagged accessible PDFs unless a tag and
-  reading-order audit has actually been completed.
+- [x] PDFs are labeled as convenience handouts, not accessible PDFs; the
+  automated tag-tree findings and authoritative transcript alternatives are
+  documented.
 
 ## 4. Technical Validation
 
@@ -99,8 +100,9 @@ python CST4714_OER_Rebuild/tools/validate_oer.py --check-urls
   explicit expected output, and text error guidance.
 - [x] Equivalent evidence is available when a screenshot, account, cloud service,
   or live demonstration creates an access barrier.
-- [ ] A keyboard and screen-reader check is completed in the intended publication
-  platform before the course opens.
+- [ ] A comprehensive keyboard check is completed in the intended publication
+  platform; any institutionally required assistive-technology check is assigned
+  to a qualified external reviewer.
 
 ## 6. Licensing, Attribution, and Privacy
 
@@ -142,14 +144,16 @@ or tag is assigned.
 
 ### Completed Candidate Checks
 
-- The structural validator passed 306 checks. Network-enabled validation passed
-  308 checks across 143 unique external URLs, with no confirmed 404 or 410
-  result. Five sources rejected or refused the automated client and remain
-  explicitly queued for manual review.
+- The structural validator passed 383 checks. Network-enabled validation passed
+  385 checks across 139 unique external URLs, with no confirmed 404 or 410
+  result. The sole automated-client refusal was the current BLS Database
+  Administrators and Architects page, which passed independent browser review.
 - All 214 slides passed the PowerPoint boundary test. Every final slide and every
   final PDF contact sheet received visual review after export; all 15 PDFs match
   their deck page counts, report tagged structure, are unencrypted, contain
-  extractable text, and show no clipping, overlap, or broken-render artifacts.
+  extractable text, carry accurate title/author/language metadata, and show no
+  clipping, overlap, or broken-render artifacts. A 96-DPI comparison after the
+  metadata update found all 214 pages pixel-identical to the prior handouts.
 - Every speaker-note script matches its transcript wording and slide order.
 - The canonical 15-module Markdown text builds reproducibly as self-contained
   HTML, EPUB, and a Word file prepared for Pressbooks import. The HTML contains
@@ -157,9 +161,11 @@ or tag is assigned.
   embedded styling, and no page-level horizontal overflow at tested desktop and
   mobile widths.
 - SHA-256 verification passed for all three publication artifacts. EPUB and DOCX
-  archive and XML checks passed; EPUB metadata and navigation are present. The
+  archive and XML checks passed; EPUB metadata and navigation are present. W3C
+  EPUBCheck 5.3.0 validated the EPUB under EPUB 3.3 rules with zero messages. The
   current 90-page Word export received a complete page-by-page visual review,
-  including the updated Module 13 connection examples.
+  including the updated Module 13 connection examples and the replacement Module
+  9 source link.
 - All 68 code cells across the six notebooks executed through the offline paths
   in a clean temporary run with zero error outputs.
 - The Metro Support and Week 7 performance SQL setup files executed in a
@@ -170,22 +176,24 @@ or tag is assigned.
 
 ### Known Candidate Limitations
 
-- PDFs report tagged structure and contain extractable text, but tag-tree quality
-  and assistive-technology reading order have not received human review.
-  Structured Markdown and transcripts remain the text alternatives.
+- PDFs report tagged structure and contain extractable text, but automated
+  inspection found insufficient semantic structures and no figure
+  alternative-text metadata. They are convenience handouts, not accessible
+  PDFs. Structured Markdown and transcripts remain the text alternatives.
 - Standalone HTML structure, focus targets, desktop layout, and mobile reflow were
   inspected programmatically and visually. A representative Safari keyboard
   sequence successfully focused and activated the skip link and transferred
   accessibility focus into the main content. Comprehensive keyboard traversal
-  and a representative screen-reader review remain pending; both must be
-  completed in the final publication and LMS environments.
+  remains pending. Any institutionally required assistive-technology review is
+  an external reviewer gate in the final publication and LMS environments.
 - Offline notebook paths were executed. Live Atlas and Supabase paths still
   require a pre-course smoke test with temporary course accounts and no saved
   credentials.
 - Account-gated vendor activities were checked for current title, URL, role, and
   free enrollment, but not completed under a student account during this audit.
-- Keyboard and screen-reader checks must be repeated in the final LMS or web
-  publication environment.
+- Keyboard checks must be repeated in the final LMS or web publication
+  environment; any required assistive-technology review belongs to the external
+  accessibility reviewer.
 - The Pressbooks import, public webbook URL, and Pressbooks-generated Digital PDF
   and Common Cartridge have not yet received final review.
 - OER-team attribution/accessibility review, classroom pilot evidence,

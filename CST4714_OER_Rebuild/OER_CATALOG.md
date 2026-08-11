@@ -156,9 +156,10 @@ content teaches students directly. Every slide has complete word-for-word spoken
 prose in its PowerPoint speaker notes, and every script is reproduced in a
 matching structured-text transcript. Every deck also has a visually verified PDF
 handout. All 15 PDFs report tagged structure, contain extractable text, and are
-unencrypted. Tag-tree quality and assistive-technology reading order have not
-received human review, so the transcript and module remain the authoritative
-structured-text alternatives.
+unencrypted. Automated tag-tree inspection found only `Figure`, `Div`, and `P`
+structures and no figure alternative-text metadata. The handouts are therefore
+not claimed as accessible PDFs; the transcript and module remain the
+authoritative structured-text alternatives.
 
 | ID | Week and original instructional role | Slides | Published formats | Status |
 |---|---|---:|---|---|

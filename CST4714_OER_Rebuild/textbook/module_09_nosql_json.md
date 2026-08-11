@@ -363,7 +363,8 @@ growing field, and one rule that should be validated.
 ## Further Reading
 
 - RFC 8259, JSON: <https://www.rfc-editor.org/info/rfc8259/>
-- Carlo Strozzi's NoSQL RDBMS: <https://www.strozzi.it/cgi-bin/CSA/tw7/I/en_US/NoSQL/Home%20Page>
+- Debian's preserved package record for Carlo Strozzi's NoSQL RDBMS:
+  <https://sources.debian.org/src/nosql/3.1-4/nosql.lsm/>
 - Google, *Bigtable* paper: <https://research.google/pubs/bigtable-a-distributed-storage-system-for-structured-data/>
 - Amazon, *Dynamo* paper: <https://www.amazon.science/publications/dynamo-amazons-highly-available-key-value-store>
 - Martin Fowler and Pramod Sadalage, NoSQL key points:
