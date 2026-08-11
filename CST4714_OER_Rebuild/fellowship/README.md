@@ -4,6 +4,13 @@ This directory contains project-management, evaluation, production, and reportin
 documents for the OER fellowship. It is deliberately separate from the student
 course materials in the parent directory.
 
+## Start Here
+
+Use [How to Explain and Present This OER Project](HOW_TO_PRESENT_THIS_PROJECT.md)
+for the plain-language project narrative, exact deliverable summary, explanation
+of the latest QA work, recommended live demonstration route, presentation
+outline, word-for-word scripts, and likely reviewer questions.
+
 ## Planning Documents
 
 - [Fellowship project plan](OER_FELLOWSHIP_PROJECT_PLAN.md): rationale, scope,
