@@ -28,7 +28,10 @@ reading to class.
 
 - [Week 1 student deck](week_01_responsibility_relational_thinking.pptx)
 - [Week 1 PDF handout](week_01_responsibility_relational_thinking.pdf)
-- [Week 1 transcript](week_01_responsibility_relational_thinking_transcript.md)
+
+## In-Class Lab
+
+- [Week 1 simple lab](lab_01_application_database_map.md)
 
 ## Day 1: From an App Click to Stored Data
 
@@ -37,11 +40,16 @@ through the application and database stack. Then we tour the Supabase and Atlas
 interfaces and connect their menus to PostgreSQL, MongoDB, networking, identity,
 and data.
 
+Complete the simple in-class lab before the end of Day 1.
+
 ## Day 2: Rebuild Relational Thinking
 
 We use a tiny service-desk dataset to review relation, tuple, attribute, domain,
 schema, instance, primary key, and foreign key. Then we calculate small
 selection, projection, product, join, union, and difference results by hand.
+
+If you want extra practice after class, use the same prompt used in today's
+lab and expand your answer with one more entity and two additional relationships.
 
 ## Optional Industry Extension: Read a Public Architecture Diagram
 
