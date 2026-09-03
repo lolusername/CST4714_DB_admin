@@ -37,19 +37,11 @@ through the application and database stack. Then we tour the Supabase and Atlas
 interfaces and connect their menus to PostgreSQL, MongoDB, networking, identity,
 and data.
 
-Complete [Lab 1: Map an application to its database](lab_01_application_database_map.md).
-
-Submit the URL to your completed `week_01/app_database_map.md` file.
-
 ## Day 2: Rebuild Relational Thinking
 
 We use a tiny service-desk dataset to review relation, tuple, attribute, domain,
 schema, instance, primary key, and foreign key. Then we calculate small
 selection, projection, product, join, union, and difference results by hand.
-
-Complete [Lab 2: Relational reasoning before SQL](lab_02_relational_reasoning.md).
-
-Submit the URL to your completed `week_01/relational_reasoning.md` file.
 
 ## Optional Industry Extension: Read a Public Architecture Diagram
 

@@ -70,22 +70,6 @@ Suppose a ticket form reports success, but the ticket does not appear in the lis
 - CST4714 course textbook, Chapter 1, section 1.6.
 - https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/201
 
-## Slide 9
-
-Today’s work can be completed entirely in GitHub’s browser interface. Open the assigned repository and navigate to the requested folder. GitHub provides two useful editing paths. The pencil button edits the current file, while pressing the period key opens the web editor for the repository. Create a Markdown file with the exact requested name. Markdown uses plain text conventions such as a hash mark for a heading, hyphens for lists, and triple backticks for code. Preview the rendered file before committing it. A commit records the change in the repository history. For submission, provide the URL of the completed file, not the editing screen. This workflow is intentionally small, but it introduces the same versioned writing process used for technical documentation, runbooks, schema notes, and project READMEs.
-
-[Sources]
-- CST4714 Week 1 Lab 1: Map an Application to Its Database.
-- https://docs.github.com/en/repositories/working-with-files/managing-files/editing-files
-- https://docs.github.com/en/codespaces/the-githubdev-web-based-editor
-
-## Slide 10
-
-The first lab turns the system path into a concrete design. Choose one familiar application: a music service, an online store, a game, or a public service. Create the file named app_database_map.md inside the week_01 folder. Begin by listing the important information the application must remember. Then write three questions the application must answer, because useful schemas are shaped by useful questions. Next, trace one action from the client through the API, identity checks, the DBMS, and stored data. Finally, sketch one possible table and one possible JSON document for a small part of the same application. These are early designs, so they do not need to be complete. The assignment is individual and has one submission: the GitHub URL for the completed Markdown file.
-
-[Sources]
-- CST4714 Week 1 Lab 1: Map an Application to Its Database.
-
 ## Slide 11
 
 The second part of Week 1 introduces the relational model. A relation can be displayed as a table, but the model is more precise than a spreadsheet grid. A relation has named attributes, values drawn from domains, tuples that represent facts, and keys that preserve identity. Relational algebra describes how one relation can be transformed into another. Selection keeps rows that satisfy a condition. Projection keeps or computes selected attributes. Join combines related tuples. These operations are the conceptual foundation of SQL, even though SQL has additional features and slightly different semantics. Learning the model gives us a durable way to reason about queries. Instead of memorizing clauses, we can ask what relation exists before an operation, what relation should exist afterward, and which operation bridges the two.
@@ -148,13 +132,6 @@ This example translates one relational expression into SQL. Begin with tickets j
 [Sources]
 - CST4714 course textbook, Chapter 2, sections 2.4 through 2.6.
 - https://www.postgresql.org/docs/current/queries.html
-
-## Slide 19
-
-The second lab practices the connection between a question, a relational operation, and SQL. Use the users and tickets relations shown in today’s materials. In Part A, read three provided relational expressions. For each expression, identify the output attributes and the tuples that would appear. Writing the output relation is the clearest way to verify your interpretation. In Part B, start from two plain-language questions. Write a relational algebra expression using the symbols sigma, pi, and join as needed, then write corresponding SQL. No database connection is required because the purpose is logical reasoning, not command execution. Complete the work individually in relational_reasoning.md and submit the GitHub URL for that single file before leaving class.
-
-[Sources]
-- CST4714 Week 1 Lab 2: Relational Reasoning Without a Database.
 
 ## Slide 20
 
