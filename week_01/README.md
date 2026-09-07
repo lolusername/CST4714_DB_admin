@@ -1,74 +1,96 @@
 # Week 1: How Applications Use Databases
 
-## The Week's Question
+A support request exists in the database, but the staff dashboard does not show
+it. This week we learn enough about applications and relational data to explain
+how that can happen.
 
-What happens between an application's **Submit** button and the data stored in a
-database, and how does the relational model organize those facts?
+## Open in Class
 
-## What You Will Be Able to Do
+- [PowerPoint](week_01_responsibility_relational_thinking.pptx)
+- [PDF handout](week_01_responsibility_relational_thinking.pdf)
+- [Individual lab: Where did the requests go?](lab_01_application_database_map.md)
 
-- distinguish data, a database, a DBMS, and a managed cloud platform;
-- trace a request through a client, application, identity check, DBMS, and stored
-  data;
-- explain how PostgreSQL relates to Supabase and MongoDB relates to Atlas;
-- describe several kinds of technical database work;
-- identify relations, tuples, attributes, domains, keys, and relationships; and
-- use selection, projection, product, join, union, and difference to describe a
-  result before writing SQL.
+No database installation or cloud account is required this week. Use a browser
+and a text editor, or work on paper during the class discussion.
 
 ## Before Class: Assigned Reading
 
-- Read [Chapter 1: How database-backed applications work](../../textbook/module_01_responsibility.md) before Day 1.
-- Before Day 2, read [A Relation Represents One Kind of Fact](../../textbook/module_02_sql.md#a-relation-represents-one-kind-of-fact) and [Relational Algebra Gives Us a Reasoning Vocabulary](../../textbook/module_02_sql.md#relational-algebra-gives-us-a-reasoning-vocabulary) in Chapter 2.
+These short, free readings are available without a textbook download or login.
 
-No reading notes are submitted this week. Bring one question or example from the
-reading to class.
+- Before Day 1, read PostgreSQL's
+  [Architectural Fundamentals](https://www.postgresql.org/docs/current/tutorial-arch.html).
+  Focus on the client, the database server, and why they may run on different computers.
+- Before Day 2, read PostgreSQL's
+  [Relational Concepts](https://www.postgresql.org/docs/current/tutorial-concepts.html)
+  and the refresher below. Focus on what one row represents and how tables connect.
 
-## Class Materials
+No reading response is submitted this week. In class, you will use the ideas to
+explain the lab's missing requests.
 
-- [Week 1 student deck](week_01_responsibility_relational_thinking.pptx)
-- [Week 1 PDF handout](week_01_responsibility_relational_thinking.pdf)
+## Day 1: An Application Request
 
-## In-Class Lab
+An application is the software people interact with. A database holds organized
+data; a **database management system (DBMS)** processes queries and manages access,
+changes, and storage. PostgreSQL and MongoDB are DBMSs. Supabase and Atlas are
+platforms that host and manage database services and provide additional tools.
 
-- [Week 1 simple lab](lab_01_application_database_map.md)
+For a typical support website, the path is:
 
-## Day 1: From an App Click to Stored Data
+```text
+Browser form -> application/API -> database server -> stored ticket
+Browser list <- application/API <- query result    <- stored tickets
+```
 
-We trace a familiar action, such as creating a playlist or support ticket,
-through the application and database stack. Then we tour the Supabase and Atlas
-interfaces and connect their menus to PostgreSQL, MongoDB, networking, identity,
-and data.
+Saving a request and displaying a list are different operations. A successful
+save does not prove that a later query will include the request. We will trace
+both operations, distinguish a permission problem from a query problem, and tour
+the database interfaces in the slides.
 
-Complete the simple in-class lab before the end of Day 1.
+Start the individual lab with the class. Its small dataset is provided in the
+lab itself.
 
-## Day 2: Rebuild Relational Thinking
+## Day 2: Relational Thinking Before SQL
 
-We use a tiny service-desk dataset to review relation, tuple, attribute, domain,
-schema, instance, primary key, and foreign key. Then we calculate small
-selection, projection, product, join, union, and difference results by hand.
+A **relation** is a set of tuples with named attributes. For now, picture a table:
+one tuple is one row, and an attribute is a column. First state what a row means,
+such as "one support request." This is also called the table's **grain**.
 
-If you want extra practice after class, use the same prompt used in today's
-lab and expand your answer with one more entity and two additional relationships.
+A **primary key** uniquely identifies a row. A **foreign key** connects a value
+to a key in another table. A missing assignee does not mean that the ticket is
+missing. In SQL, `NULL` represents a missing or unknown value. It is neither the
+number zero nor the text `"NULL"`.
 
-## Optional Industry Extension: Read a Public Architecture Diagram
+| Operation | Meaning | Support-desk example |
+|---|---|---|
+| Selection, `sigma` | Keep rows satisfying a condition | Tickets whose status is `open` |
+| Projection, `pi` | Keep selected attributes | Only ticket ID and subject |
+| Product | Pair every row on one side with every row on the other | Four tickets and two agents produce eight pairs |
+| Join | Keep pairs satisfying a matching condition | Match each assigned ticket to its agent ID |
+| Union | Combine compatible sets | IDs of tickets reported through either of two channels |
+| Difference | Keep members of one set absent from another | Active ticket IDs missing from the dashboard |
 
-This activity is optional, ungraded, and does not add a submission.
+The slides show the mathematical symbols and small worked results. Mathematical
+relations are sets, so they have no duplicate tuples. SQL query results may
+contain duplicates unless the query removes them. Neither gives a guaranteed
+display order without an explicit ordering rule.
 
-Choose the public architecture page for an application or service you use.
-Identify the client, application or API, identity boundary, database or storage
-service, and one failure point. Compare that published architecture with the
-request path from Day 1 and note one component that the simplified class model
-does not show.
+We will work through small results together, then finish the **same lab**.
+Submit one individual response in Brightspace, following the lab instructions.
 
-## End-of-Week Check
+## GitHub's Online Editor
 
-You should be able to answer these without looking up definitions:
+We will also practice editing a file in a repository you own. Open **Add file >
+Create new file**, name the file `week_01/notes.md`, and enter a heading beginning
+with `#`. Use **Preview** to inspect the formatting, then **Commit changes** to
+save a version. You can return to the file and use its edit button to revise it.
 
-1. What is the difference between PostgreSQL and Supabase?
-2. What does one tuple in the `tickets` relation represent?
-3. How does selection differ from projection?
-4. Why does a join need a matching condition?
+This is a tool demonstration, not an extra assignment. Work in your own repository
+rather than proposing changes to the class repository. GitHub's
+[creating-files guide](https://docs.github.com/en/repositories/working-with-files/managing-files/creating-new-files)
+provides the complete interface instructions.
 
-Week 2 converts the relational operations into executable SQL and provides a
-substantial review for anyone who has not used SQL recently.
+## Check Your Understanding
+
+Explain why a ticket can be stored successfully yet absent from a dashboard.
+Then distinguish selection from projection, and explain what a join's matching
+condition does. These ideas become executable SQL in Week 2.
