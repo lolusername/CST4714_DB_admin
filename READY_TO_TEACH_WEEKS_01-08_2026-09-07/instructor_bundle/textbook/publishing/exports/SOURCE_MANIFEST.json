@@ -1,0 +1,72 @@
+{
+  "title": "Operating Cloud Databases: Chapters 1-8",
+  "status": "unpublished classroom handoff",
+  "sources": [
+    {
+      "path": "textbook/publishing/front_matter.md",
+      "sha256": "b741239e0a9aaa39c8931c83e6205e7ee0b4ab190fd6ed2c12deca995539237e"
+    },
+    {
+      "path": "textbook/publishing/parts/part_1.md",
+      "sha256": "9fb30e21ff70e0f8c91bfd48b440bba99315baf94dcbfeb3c2e13806dede37f7"
+    },
+    {
+      "path": "textbook/module_01_responsibility.md",
+      "sha256": "014e2b0ed65778df69c637a26cedc45c553f8e28624cf6d4ec69d28ffa261d62"
+    },
+    {
+      "path": "textbook/module_02_sql.md",
+      "sha256": "109ff7c45e1514de639e527073c1b9dcf198571544ea4b0c4841721a1243b440"
+    },
+    {
+      "path": "textbook/module_03_schema.md",
+      "sha256": "7c13c6617ec90a067d736274ddb51d67898faade18b475694410e6f4e5df67e4"
+    },
+    {
+      "path": "textbook/publishing/parts/part_2.md",
+      "sha256": "56fbcf271fbbdc232aeb293de1207d13b6eb3bf955eb3a2083069a07716cbba1"
+    },
+    {
+      "path": "textbook/module_04_change.md",
+      "sha256": "70ac6b83c2400d62158596a6a7d5c7bfe2750d2a7b1dcdf037d06c6b51727c65"
+    },
+    {
+      "path": "textbook/module_05_transactions.md",
+      "sha256": "a5f4ff61e71824f5143c1bc9fef813484e246621c68d01c3183bab984fa2115b"
+    },
+    {
+      "path": "textbook/module_06_security.md",
+      "sha256": "cc0cb9d2c84db82d0b68bd58618ebc5644c11fc96844c31a214408ddd28e8e60"
+    },
+    {
+      "path": "textbook/module_07_performance.md",
+      "sha256": "4e695c6f1dec9d6976d33d12ccb873f0d8a3548a3a7953e4e8cfba62ed1dbadb"
+    },
+    {
+      "path": "textbook/module_08_recovery.md",
+      "sha256": "5c045e1c49efc0709173557743cc48bbb4d339c18907d9be5fa6c488ec062138"
+    },
+    {
+      "path": "textbook/publishing/back_matter.md",
+      "sha256": "3cbbcf9eab3f6fd8d5a8028e88abe99defd65a7fadf4482dc8224bab6369785b"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "operating_cloud_databases_second_edition_draft.docx",
+      "sha256": "c4fdde250f654a8cd45f46bdda5e0aa4125dbe7e1e13f26e69f0d3c897c10b95"
+    },
+    {
+      "path": "operating_cloud_databases_second_edition_draft.pdf",
+      "sha256": "4a7c1ebf90c08003c1156609ed6bd3d3b5e489f5556490ecea97757529842c89"
+    },
+    {
+      "path": "operating_cloud_databases_second_edition_draft.html",
+      "sha256": "b223119bc1ff7acd2c20392f402c55eeda63cc189ffc9db63be99f7e2b499801"
+    },
+    {
+      "path": "operating_cloud_databases_second_edition_draft.epub",
+      "sha256": "b130be02428cff5c7b55f5a5686300f75757546c61d705fc4d40e669618a991f"
+    }
+  ]
+}

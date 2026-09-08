@@ -1,0 +1,20 @@
+digraph RelationalJoin {
+  graph [bgcolor="transparent", rankdir=LR, pad=0.25, nodesep=0.35, ranksep=0.55,
+         fontname="Avenir Next"];
+  node [shape=box, style="rounded,filled", fontname="Avenir Next", fontsize=11,
+        color="#1F6F78", fillcolor="#F4F8F7", fontcolor="#16324F", penwidth=1.4,
+        margin="0.15,0.10"];
+  edge [color="#51606D", penwidth=1.5, arrowsize=0.75, fontname="Avenir Next",
+        fontsize=9, fontcolor="#51606D"];
+
+  tickets [label="Tickets relation T\n12 tuples"];
+  users [label="Users relation U\n8 tuples"];
+  product [label="Cartesian product\nT × U\n96 candidate pairs", fillcolor="#FFF4E8", color="#C8653B"];
+  predicate [label="Selection predicate θ\nT.assignee_id = U.user_id", fillcolor="#E9F1F8", color="#2E5F87"];
+  result [label="Theta join\nT ⋈θ U\nmatching pairs only", fillcolor="#EAF4F3", color="#1F6F78"];
+
+  tickets -> product;
+  users -> product;
+  product -> predicate [label="filter pairs"];
+  predicate -> result;
+}

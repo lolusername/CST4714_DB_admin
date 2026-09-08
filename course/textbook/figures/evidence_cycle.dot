@@ -1,0 +1,19 @@
+digraph EvidenceCycle {
+  graph [bgcolor="transparent", rankdir=LR, pad=0.25, nodesep=0.35, ranksep=0.5,
+         fontname="Avenir Next", label="A defensible operating decision is a closed evidence loop",
+         labelloc=t, fontsize=18, fontcolor="#16324F"];
+  node [shape=box, style="rounded,filled", fontname="Avenir Next", fontsize=12,
+        color="#1F6F78", fillcolor="#EAF4F3", fontcolor="#16324F", penwidth=1.5,
+        margin="0.16,0.10"];
+  edge [color="#1F6F78", penwidth=1.7, arrowsize=0.8, fontname="Avenir Next",
+        fontsize=9, fontcolor="#51606D"];
+
+  observe [label="Observe\nstate and symptoms"];
+  question [label="Frame\na testable question", fillcolor="#FFF4E8", color="#C8653B"];
+  change [label="Make one\ncontrolled change"];
+  verify [label="Verify\nresult and side effects", fillcolor="#E9F1F8", color="#2E5F87"];
+  record [label="Record\nevidence and decision"];
+
+  observe -> question -> change -> verify -> record;
+  record -> observe [label="new evidence", constraint=false, color="#C8653B"];
+}

@@ -1,0 +1,20 @@
+digraph PolyglotOutbox {
+  graph [bgcolor="transparent", rankdir=LR, pad=0.25, nodesep=0.35, ranksep=0.5,
+         fontname="Avenir Next"];
+  node [shape=box, style="rounded,filled", fontname="Avenir Next", fontsize=10,
+        color="#1F6F78", fillcolor="#F4F8F7", fontcolor="#16324F", penwidth=1.4,
+        margin="0.14,0.09"];
+  edge [color="#1F6F78", penwidth=1.5, arrowsize=0.75, fontname="Avenir Next",
+        fontsize=9, fontcolor="#51606D"];
+
+  app [label="Application command"];
+  tx [label="One PostgreSQL transaction\n1. business row\n2. outbox event", fillcolor="#EAF4F3"];
+  relay [label="Relay / worker\nretries delivery", fillcolor="#FFF4E8", color="#C8653B"];
+  mongo [label="MongoDB read model\nidempotent upsert", shape=cylinder, fillcolor="#E9F1F8", color="#2E5F87"];
+  evidence [label="Evidence\nevent id + status + timestamps", fillcolor="#FFFFFF"];
+
+  app -> tx [label="commit atomically"];
+  tx -> relay [label="unpublished event"];
+  relay -> mongo [label="at-least-once delivery"];
+  relay -> evidence [label="record outcome"];
+}

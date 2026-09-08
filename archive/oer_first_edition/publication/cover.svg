@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="2560" viewBox="0 0 1600 2560" role="img" aria-labelledby="title desc">
+  <title id="title">Operating Cloud Databases book cover</title>
+  <desc id="desc">A teal and cream cover with connected relational tables, documents, and cloud database symbols.</desc>
+  <rect width="1600" height="2560" fill="#0b4f4a"/>
+  <path d="M0 0H1600V190L0 590Z" fill="#0f766e"/>
+  <circle cx="1390" cy="250" r="330" fill="#dcefeb" opacity="0.18"/>
+  <circle cx="180" cy="2230" r="420" fill="#f4b942" opacity="0.12"/>
+
+  <g opacity="0.34" stroke="#c7ebe5" stroke-width="8" fill="none">
+    <path d="M1050 610L1320 760L1210 1030L910 930Z"/>
+    <path d="M1210 1030L1350 1270L1110 1440L860 1240Z"/>
+    <path d="M910 930L860 1240L590 1130L650 790Z"/>
+  </g>
+  <g fill="#f4b942">
+    <circle cx="1050" cy="610" r="18"/>
+    <circle cx="1320" cy="760" r="18"/>
+    <circle cx="1210" cy="1030" r="18"/>
+    <circle cx="1350" cy="1270" r="18"/>
+    <circle cx="1110" cy="1440" r="18"/>
+    <circle cx="860" cy="1240" r="18"/>
+    <circle cx="590" cy="1130" r="18"/>
+    <circle cx="650" cy="790" r="18"/>
+    <circle cx="910" cy="930" r="18"/>
+  </g>
+
+  <text x="120" y="180" fill="#c7ebe5" font-family="Avenir Next, Segoe UI, sans-serif" font-size="36" font-weight="700" letter-spacing="3">CST4714  |  OPEN COURSE</text>
+
+  <text x="120" y="650" fill="#fbfaf6" font-family="Avenir Next, Segoe UI, sans-serif" font-size="174" font-weight="800">
+    <tspan x="120" dy="0">OPERATING</tspan>
+    <tspan x="120" dy="185">CLOUD</tspan>
+    <tspan x="120" dy="185">DATABASES</tspan>
+  </text>
+
+  <rect x="120" y="1240" width="620" height="12" fill="#f4b942"/>
+  <text x="120" y="1345" fill="#dcefeb" font-family="Avenir Next, Segoe UI, sans-serif" font-size="58" font-weight="500">
+    <tspan x="120" dy="0">PostgreSQL, MongoDB, and</tspan>
+    <tspan x="120" dy="78">Reliable Data Systems</tspan>
+  </text>
+
+  <g transform="translate(120 1660)">
+    <rect width="1360" height="470" rx="34" fill="#fbfaf6"/>
+    <g transform="translate(70 72)">
+      <rect x="0" y="0" width="300" height="220" rx="24" fill="#dcefeb"/>
+      <rect x="455" y="0" width="300" height="220" rx="24" fill="#dcefeb"/>
+      <rect x="910" y="0" width="300" height="220" rx="24" fill="#dcefeb"/>
+      <text x="150" y="98" text-anchor="middle" fill="#0b4f4a" font-family="Avenir Next, Segoe UI, sans-serif" font-size="44" font-weight="750">RELATION</text>
+      <text x="150" y="155" text-anchor="middle" fill="#475569" font-family="SFMono-Regular, Consolas, monospace" font-size="30">rows + rules</text>
+      <text x="605" y="98" text-anchor="middle" fill="#0b4f4a" font-family="Avenir Next, Segoe UI, sans-serif" font-size="44" font-weight="750">DOCUMENT</text>
+      <text x="605" y="155" text-anchor="middle" fill="#475569" font-family="SFMono-Regular, Consolas, monospace" font-size="30">shape + access</text>
+      <text x="1060" y="98" text-anchor="middle" fill="#0b4f4a" font-family="Avenir Next, Segoe UI, sans-serif" font-size="44" font-weight="750">CLOUD</text>
+      <text x="1060" y="155" text-anchor="middle" fill="#475569" font-family="SFMono-Regular, Consolas, monospace" font-size="30">service + evidence</text>
+      <path d="M315 110H430" stroke="#b45309" stroke-width="12"/>
+      <path d="M405 82L433 110L405 138" fill="none" stroke="#b45309" stroke-width="12"/>
+      <path d="M770 110H885" stroke="#b45309" stroke-width="12"/>
+      <path d="M860 82L888 110L860 138" fill="none" stroke="#b45309" stroke-width="12"/>
+    </g>
+    <text x="70" y="390" fill="#111827" font-family="Avenir Next, Segoe UI, sans-serif" font-size="46" font-weight="650">A LAB-FIRST COURSE BUILT AROUND EVIDENCE</text>
+  </g>
+
+  <text x="120" y="2350" fill="#fbfaf6" font-family="Avenir Next, Segoe UI, sans-serif" font-size="58" font-weight="650">ATILIO BARREDA</text>
+  <text x="120" y="2425" fill="#c7ebe5" font-family="Avenir Next, Segoe UI, sans-serif" font-size="38">Version 1.0.0-rc.1  |  CC BY-NC-SA 4.0</text>
+</svg>
