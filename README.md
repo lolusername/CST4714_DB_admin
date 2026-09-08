@@ -39,3 +39,10 @@ All Week 1 materials and readings are free. A browser is enough; no database
 installation or cloud account is required. Later weeks will be added here as
 the semester progresses. For help accessing the materials, email
 [abarreda@citytech.cuny.edu](mailto:abarreda@citytech.cuny.edu).
+
+## Week 2: SQL Review Notebook
+
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/dd91554e176611f52e256cff4c885d31c8c7a452/READY_TO_TEACH_WEEKS_01-08_2026-09-07/instructor_bundle/notebooks/01_relational_sql_review.ipynb)
+
+Open the notebook, save a copy in Drive, and run the cells through
+**Use the Complete Week 2 Lab Dataset** before starting the labs in Brightspace.
