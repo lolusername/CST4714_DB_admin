@@ -1,0 +1,212 @@
+:root {
+  --ink: #111827;
+  --muted: #475569;
+  --teal: #0f766e;
+  --teal-dark: #0b4f4a;
+  --cream: #fbfaf6;
+  --line: #cbd5e1;
+  --code-bg: #eef6f4;
+  --warning-bg: #fff7df;
+}
+
+html {
+  color: var(--ink);
+  background: var(--cream);
+  font-size: 112.5%;
+  line-height: 1.65;
+}
+
+body {
+  max-width: 76ch;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+}
+
+main {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+.skip-link {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 10;
+  padding: 0.65rem 0.9rem;
+  transform: translateY(-160%);
+  border: 0.15rem solid var(--teal-dark);
+  border-radius: 0.25rem;
+  background: white;
+  color: var(--teal-dark);
+  font-weight: 700;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+h1,
+h2,
+h3 {
+  color: var(--teal-dark);
+  font-family: "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  line-height: 1.18;
+}
+
+h1 {
+  margin-top: 4rem;
+  padding-top: 1.25rem;
+  border-top: 0.35rem solid var(--teal);
+  font-size: 2.35rem;
+}
+
+h2 {
+  margin-top: 2.5rem;
+  font-size: 1.65rem;
+}
+
+h3 {
+  margin-top: 1.75rem;
+  font-size: 1.25rem;
+}
+
+a {
+  color: #075e59;
+  text-decoration-thickness: 0.11em;
+  text-underline-offset: 0.16em;
+}
+
+a:focus-visible {
+  outline: 0.2rem solid #b45309;
+  outline-offset: 0.2rem;
+}
+
+code {
+  padding: 0.08em 0.3em;
+  border-radius: 0.2rem;
+  background: var(--code-bg);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+pre {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--line);
+  border-left: 0.35rem solid var(--teal);
+  border-radius: 0.35rem;
+  background: #f8fafc;
+  line-height: 1.5;
+}
+
+pre code {
+  padding: 0;
+  background: transparent;
+}
+
+/* Override Pandoc's generic .sourceCode overflow rule on narrow screens. */
+div.sourceCode,
+pre.sourceCode {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  margin: 1.5rem 0;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+caption {
+  margin-bottom: 0.5rem;
+  color: var(--muted);
+  text-align: left;
+  font-weight: 700;
+}
+
+th,
+td {
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--line);
+  vertical-align: top;
+  text-align: left;
+}
+
+th {
+  background: #dcefeb;
+}
+
+blockquote {
+  margin: 1.5rem 0;
+  padding: 0.8rem 1.15rem;
+  border-left: 0.35rem solid #b45309;
+  background: var(--warning-bg);
+}
+
+nav#TOC {
+  margin: 2rem 0 4rem;
+  padding: 1.5rem;
+  border: 1px solid var(--line);
+  background: white;
+}
+
+main:focus {
+  outline: none;
+}
+
+@media (max-width: 42rem) {
+  html {
+    font-size: 100%;
+  }
+
+  body {
+    padding: 1.25rem 1rem 3rem;
+  }
+
+  h1 {
+    font-size: 1.9rem;
+  }
+
+  table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  th,
+  td {
+    padding: 0.45rem 0.35rem;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media print {
+  body {
+    max-width: none;
+    padding: 0;
+  }
+
+  a {
+    color: var(--ink);
+  }
+
+  pre,
+  table,
+  blockquote {
+    break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+}

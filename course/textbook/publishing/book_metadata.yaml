@@ -1,0 +1,26 @@
+title: "Operating Cloud Databases"
+subtitle: "PostgreSQL, MongoDB, and Reliable Data Systems"
+author:
+  - "Atilio Barreda"
+date: "2026-09-07"
+version: "2.0.0-draft"
+edition: "Second edition draft"
+lang: "en-US"
+rights: "Original instructional prose and media: CC BY-NC-SA 4.0; original code: MIT; original synthetic data: CC0."
+description: >-
+  A beginner-friendly, operations-centered textbook and complete open course that
+  rebuilds relational algebra and SQL before teaching PostgreSQL operations,
+  Supabase, MongoDB Atlas, document modeling, security, performance, recovery,
+  reliability, scaling, polyglot data systems, and career communication.
+keywords:
+  - database administration
+  - relational algebra
+  - SQL
+  - PostgreSQL
+  - Supabase
+  - MongoDB
+  - MongoDB Atlas
+  - cloud databases
+  - NoSQL
+  - recovery
+  - open educational resources

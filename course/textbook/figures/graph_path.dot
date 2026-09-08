@@ -1,0 +1,20 @@
+digraph graph_path {
+  graph [rankdir=LR, bgcolor="transparent", margin=0.04, pad=0.15, nodesep=0.55, ranksep=0.75,
+         fontname="Avenir Next", label="A property graph makes relationships traversable", labelloc="t",
+         fontsize=20, fontcolor="#173652"];
+  node [shape=ellipse, style="filled", fillcolor="#eef7f5", color="#0f766e", penwidth=2,
+        fontname="Avenir Next", fontsize=14, fontcolor="#173652", margin="0.14,0.09"];
+  edge [color="#5d7184", penwidth=2, arrowsize=0.8, fontname="Avenir Next", fontsize=11,
+        fontcolor="#475569"];
+
+  resident [label="Resident\nuser_id: 101"];
+  ticket [label="Ticket\nticket_id: 1001", shape=box, style="rounded,filled", fillcolor="#fff7df", color="#c4612c"];
+  neighborhood [label="Neighborhood\nDowntown"];
+  asset [label="Streetlight\nasset_id: L-44", shape=box, style="rounded,filled"];
+  second_ticket [label="Ticket\nticket_id: 1038", shape=box, style="rounded,filled", fillcolor="#edf4fb", color="#315b7d"];
+
+  resident -> ticket [label="SUBMITTED"];
+  ticket -> neighborhood [label="LOCATED_IN"];
+  ticket -> asset [label="AFFECTS"];
+  asset -> second_ticket [label="HAS_REPORT"];
+}

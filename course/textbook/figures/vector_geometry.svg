@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
+  <title id="title">Cosine similarity compares the angle between two vectors</title>
+  <desc id="desc">Two vectors begin at the same origin. A small angle theta indicates similar direction even though one vector is longer.</desc>
+  <defs>
+    <marker id="arrow-teal" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#0f766e"/></marker>
+    <marker id="arrow-orange" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#c4612c"/></marker>
+  </defs>
+  <rect width="1400" height="760" rx="28" fill="#fbfaf6"/>
+  <text x="700" y="62" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="34" font-weight="700" fill="#173652">The angle between two nonzero vectors</text>
+  <g transform="translate(110 120)">
+    <line x1="90" y1="500" x2="680" y2="500" stroke="#9aa8b5" stroke-width="3"/>
+    <line x1="90" y1="500" x2="90" y2="40" stroke="#9aa8b5" stroke-width="3"/>
+    <text x="690" y="514" font-family="Helvetica Neue, sans-serif" font-size="26" fill="#475569">x</text>
+    <text x="68" y="34" font-family="Helvetica Neue, sans-serif" font-size="26" fill="#475569">y</text>
+    <circle cx="90" cy="500" r="7" fill="#173652"/>
+    <text x="54" y="536" font-family="STIX Two Text, serif" font-size="24" fill="#475569">0</text>
+    <line x1="90" y1="500" x2="606.831" y2="311.889" stroke="#0f766e" stroke-width="8" marker-end="url(#arrow-teal)"/>
+    <line x1="90" y1="500" x2="330" y2="84.308" stroke="#c4612c" stroke-width="8" marker-end="url(#arrow-orange)"/>
+    <text x="620" y="310" font-family="Georgia, serif" font-size="34" font-style="italic" fill="#0f766e">u</text>
+    <text x="345" y="83" font-family="Georgia, serif" font-size="34" font-style="italic" fill="#c4612c">v</text>
+    <path d="M240.351 445.277 A160 160 0 0 0 170 361.436" fill="none" stroke="#173652" stroke-width="4"/>
+    <text x="255" y="374" font-family="Georgia, serif" font-size="34" fill="#173652">θ</text>
+  </g>
+  <g transform="translate(820 176)">
+    <rect x="0" y="0" width="500" height="390" rx="24" fill="#eef7f5" stroke="#0f766e" stroke-width="3"/>
+    <text x="250" y="82" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="29" fill="#173652">cos θ = (u · v) / (‖u‖ ‖v‖)</text>
+    <text x="35" y="154" font-family="Helvetica Neue, sans-serif" font-size="25" fill="#173652">Same direction: cosine = 1</text>
+    <text x="35" y="210" font-family="Helvetica Neue, sans-serif" font-size="25" fill="#173652">Perpendicular: cosine = 0</text>
+    <text x="35" y="266" font-family="Helvetica Neue, sans-serif" font-size="25" fill="#173652">Opposite direction: cosine = −1</text>
+    <text x="35" y="336" font-family="Helvetica Neue, sans-serif" font-size="23" fill="#475569">‖u‖ and ‖v‖ are Euclidean lengths.</text>
+  </g>
+</svg>
