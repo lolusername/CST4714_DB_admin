@@ -1,3 +1,0 @@
-2be736caa35dca63e9bad0a6cbf32af54ecfad50abcad6cec5b3cbf4872d04cf  operating_cloud_databases_v1.0.0-rc.1.html
-d8c02eb91a9bc32622b4255a29c72f1f84525fd2149fe0dcb076be913a379da7  operating_cloud_databases_v1.0.0-rc.1.epub
-8b0080b4a3e67c82d4be0c5b0830ee49bfa5fbf664610bfc231b7970a6c435a1  operating_cloud_databases_v1.0.0-rc.1.docx

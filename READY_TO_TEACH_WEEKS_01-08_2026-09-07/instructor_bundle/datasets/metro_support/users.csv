@@ -1,9 +1,0 @@
-user_id,display_name,email,role,neighborhood,created_at
-101,Maya Chen,maya.chen@example.test,resident,Harbor,2026-01-08T14:20:00Z
-102,Luis Rivera,luis.rivera@example.test,resident,Northside,2026-01-10T09:15:00Z
-103,Amina Yusuf,amina.yusuf@example.test,resident,Central,2026-01-12T18:05:00Z
-104,Jordan Bell,jordan.bell@example.test,resident,Harbor,2026-01-18T11:40:00Z
-201,Priya Shah,priya.shah@example.test,agent,Central,2025-11-03T13:00:00Z
-202,Noah Williams,noah.williams@example.test,agent,Northside,2025-11-05T13:00:00Z
-203,Elena Garcia,elena.garcia@example.test,supervisor,Central,2025-09-14T13:00:00Z
-204,Sam Okafor,sam.okafor@example.test,analyst,Harbor,2025-12-01T13:00:00Z
