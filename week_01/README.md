@@ -1,5 +1,7 @@
 # Week 1: How Applications Use Databases
 
+[Course home](../README.md) | [Next: Week 2](../week_02/README.md)
+
 A support request exists in the database, but the staff dashboard does not show
 it. This week we learn enough about applications and relational data to explain
 how that can happen.
