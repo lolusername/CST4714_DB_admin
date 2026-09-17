@@ -1,23 +1,24 @@
-# Week 3: Build a Dependable PostgreSQL Schema
+# Week 3: Expose and Change Data Safely
 
 ## The Week's Question
 
-How can a schema protect meaning while remaining inspectable and reproducible?
+How can we create a stable data interface and change its underlying schema without
+surprising users or losing the ability to verify and recover?
 
 ## What You Will Be Able to Do
 
-- retrieve and apply cumulative SQL skills before new administration work;
-- inspect schemas, columns, constraints, and indexes through metadata;
-- choose data types, nullability, primary keys, and foreign keys;
-- reject bad states with named constraints; and
-- distinguish an integrity rule from an access structure.
+- create a view with an explicit consumer-facing contract;
+- use identity columns and explain why generated identifiers have gaps;
+- inspect views, columns, defaults, constraints, and dependencies;
+- rehearse a migration, check its result, and explain the repair boundary; and
+- apply expand, migrate, verify, and contract reasoning to a small change.
 
 ## Before Class: Assigned Reading
 
-Use [Chapter 3: A Schema Protects Meaning](../Operating_Cloud_Databases.pdf).
+Use [Chapter 4: Safe Changes Are Planned and Verified](../Operating_Cloud_Databases.pdf).
 
-- **Before Day 1:** read from **"Schema" Has Two Related Meanings** through **Keys Identify and Connect Facts**, then **Inspect Metadata Instead of Guessing**. Connect the design rules to the columns and relationships we inspect in class.
-- **Before Day 2:** read **Constraints Reject Invalid States**, **An Index Is an Access Structure, Not the Rule Itself**, and **Worked Example: Audit the Metro Support Baseline**. Study how an allowed-value rule accepts one change and rejects another.
+- **Before Day 1:** read **Views Create a Query Interface** through **Introspection Reveals the Actual State**. Trace the explicitly committed and rolled-back insertions. Reading examples use separate object names so they can coexist with the lab.
+- **Before Day 2:** read from **What a Migration Must Establish** through **Verification Should Cover Structure and Meaning**. Focus on unknown historical values and compatibility with older clients.
 
 Bring one point you want clarified. Reading supports the in-class work; it does
 not add a separate reading report. Optional textbook practice is not required
@@ -25,63 +26,55 @@ unless the weekly lab assigns it.
 
 ## Class Materials
 
-- [First PostgreSQL session and data loading](materials/datasets/metro_support/README.md#first-postgresql-session)
-- [Metro Support setup SQL](materials/datasets/metro_support/postgres_setup.sql)
-- [Week 3 student deck](week_03_schemas_constraints_integrity.pptx)
-- [Week 3 PDF handout](week_03_schemas_constraints_integrity.pdf)
-- [Week 3 transcript](week_03_schemas_constraints_integrity_transcript.md)
+- [PostgreSQL setup and editor help](materials/datasets/metro_support/README.md#first-postgresql-session)
+- [Week 3 student deck](week_03_views_identity_safe_change.pptx)
+- [Week 3 PDF handout](week_03_views_identity_safe_change.pdf)
+- [Week 3 transcript](week_03_views_identity_safe_change_transcript.md)
 
-## Day 1: Cumulative SQL Clinic and Schema X-Ray
+## Day 1: Views, Identity, and Introspection
 
-Use **slides 1-11**. We work through a category report that counts both all tickets
-and resolved tickets, including categories with no resolutions. Then we review
-schema names, data types, keys, and why one current contact fact belongs in one
-place. We query `information_schema` and PostgreSQL catalogs to compare the
-intended design with the definitions the server actually stores.
+Use **slides 1-10**. The demonstration creates a requester view, reads all seven
+active ticket results, and follows three identity allocations through their
+commit or rollback decisions. In
+[Lab 1: Build a stable query interface](lab_01_views_identity.md), adapt the view
+to an optional assignee and explain the identity gap. The lab includes the
+metadata queries needed to inspect both objects.
 
-Start with the linked **First PostgreSQL session** walkthrough. It explains the
-Supabase SQL Editor, includes a no-account browser PostgreSQL option, and shows
-how to locate the loaded tables. This replaces the DuckDB environment used for
-Week 2's SQL review; it does not add another assignment.
+Keep using your existing practice database. The PGlite browser option also works
+for both of this week's labs. If you used it, return in the same browser profile
+and keep the Day 1 view for Day 2. Your saved SQL file is what you submit, not the
+browser's local database.
 
-Complete [Lab 1: SQL clinic and schema X-ray](lab_01_sql_clinic_schema_xray.md).
+Submit only `week_03_views_identity.sql`.
 
-Submit only `week_03_schema_xray.sql`.
+## Day 2: Migration and Verification
 
-## Day 2: Prevent Misspelled Statuses
+Use **slides 11-21**. Follow the complete `source_channel` rehearsal, compare
+before and after states, and test accepted and rejected values. Then complete
+[Lab 2: Add a field without inventing history](lab_02_safe_migration.md), using
+the slides and chapter as references. Continue in the same database from Day 1;
+do not reset the dataset between these labs.
 
-Use **slides 12-20**. The live example inspects priority values, adds a named
-`CHECK`, and demonstrates a rejected change followed by an accepted change and
-rollback. The lab adapts that example to status. We also distinguish what a
-`CHECK` permits from what `NOT NULL` requires. Index experiments come in Week 7.
+Submit only `week_03_safe_migration.sql`.
 
-Complete [Lab 2: Reject bad states](lab_02_integrity_constraints.md).
-
-Submit only `week_03_integrity_build.sql`.
-
-For support with the lab's explanation, use [Writing About Database Decisions](materials/assessments/critical_writing.md). It develops the response already included in your lab, not an additional assignment.
-
-## Optional Industry Extension: Real-Data Contract Review
+## Optional Industry Extension: Zero-Downtime Change Note
 
 This activity is optional, ungraded, and does not add a submission.
 
-Open the included [CISA KEV teaching sample](materials/datasets/cisa_kev_sample/README.md)
-and select four fields from the real public-data record. Propose a PostgreSQL type,
-nullability rule, and one justified constraint for each. Then invent one bad row
-that each rule should reject. Do not claim that your proposed constraints are
-CISA's production schema; they are a consumer-side contract for one clearly
-stated application, such as a vulnerability-remediation queue.
+Write a seven-sentence change note for replacing a legacy `priority_text` field
+with a constrained `priority_code` while an older client still reads the original
+field. Name the precondition, expand step, backfill, compatibility path,
+verification query, rollback or forward-repair boundary, and remaining risk. The
+challenge is to preserve both old and new readers during the change rather than
+compressing the migration into one destructive command.
 
 ## End-of-Week Self-Check
 
-Explain why each pair is different:
-
-- schema definition versus current data;
-- primary key versus foreign key;
-- `NULL` versus an empty string;
-- constraint versus index; and
-- application validation versus database integrity.
+Explain why a successful `ALTER TABLE` does not by itself confirm that existing
+data, permissions, views, and application queries still work.
 
 ## Reuse
 
-See the [licenses](materials/LICENSE.md) and [source attributions](materials/ATTRIBUTIONS.md). External resources retain their own terms.
+See the [licenses](materials/LICENSE.md) and
+[source attributions](materials/ATTRIBUTIONS.md).
+External resources retain their own terms.

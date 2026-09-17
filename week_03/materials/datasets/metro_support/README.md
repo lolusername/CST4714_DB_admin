@@ -11,12 +11,12 @@ document modeling, aggregation, and recovery.
 - `tickets.csv`: one row per support request.
 - `ticket_events.csv`: status changes and notes over time.
 - [postgres_setup.sql](postgres_setup.sql): creates the PostgreSQL tables, their
-  starting rules, and all sample rows. Use this file for Weeks 3 and 4; you do not
+  starting rules, and all sample rows. Use this file for this week's labs; you do not
   need to import the three CSVs separately.
 
 ## First PostgreSQL Session
 
-Week 2 used DuckDB to practice SQL without a server. Weeks 3 and 4 use PostgreSQL
+Week 2 used DuckDB to practice SQL without a server. This week uses PostgreSQL
 because we are studying its stored definitions, constraints, views, and identity
 columns. Use **one** of the following environments, then follow the shared
 loading instructions below. This setup is part of the lab, not another submission.
@@ -57,7 +57,7 @@ first statement above, and press **Enter** to execute it. Leave extension
 settings unchanged. Paste complete multiline blocks into that prompt, then press
 Enter once. Results appear above the prompt.
 
-This option supports our Weeks 3 and 4 exercises. Its database is stored in this
+This option supports both of this week's exercises. Its database is stored in this
 browser's local storage, not in a Supabase project. Return using the same browser
 profile and keep your SQL file outside the page. Clearing site data, using a
 different profile, or choosing **Clear Playground Database** can remove your
@@ -74,7 +74,7 @@ of its browser PostgreSQL implementation.
 `DROP SCHEMA ... CASCADE` removes the existing `metro_support` schema and objects
 that depend on it, potentially including objects in other schemas. Use a
 dedicated practice environment with no work you need to keep. Do not rerun it
-between the Week 4 labs; the second lab uses the first lab's view.
+between these two labs; the second lab uses the first lab's view.
 
 1. Open [postgres_setup.sql](postgres_setup.sql). On GitHub, use **Raw** to see
    just the SQL. Copy the entire file, including its final count query. The

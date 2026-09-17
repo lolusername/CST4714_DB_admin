@@ -4,34 +4,40 @@
 
 **Contact:** [abarreda@citytech.cuny.edu](mailto:abarreda@citytech.cuny.edu)
 
-This course covers how to model, query, secure, maintain, and recover a database.
-We begin with a substantial review of SQL and the relational model, then work
-with PostgreSQL/Supabase and MongoDB/Atlas. Labs connect these skills to the
-applications and people that depend on a database.
+How do you keep a database useful when people change data at the same time,
+queries give misleading answers, or something breaks? This course combines a
+substantial SQL review with hands-on work in PostgreSQL/Supabase and MongoDB/Atlas.
+You will practice modeling, querying, access control, performance, and recovery.
 
 ## Start Here
 
 - [Course syllabus (PDF)](CST4714_Fall_2026_Syllabus.pdf): schedule, policies, and grading.
 - [Operating Cloud Databases (PDF)](Operating_Cloud_Databases.pdf): the course textbook. Each week's page identifies the assigned chapter and sections.
 
-The textbook and assigned online resources are free. **Brightspace** contains
-announcements, deadlines, submission links, and grades. Graded work is individual.
+**Brightspace has announcements, deadlines, grades, and submission links.**
 
 ## Weekly Materials
 
-Weeks are posted as the semester progresses. Open the week's README for both
-class meetings, assigned reading, slides, labs, and any notebook or sample data.
+Open the week's page for both class meetings, assigned readings, PowerPoint,
+PDF handout, individual labs, and any notebook or sample data.
 
-- [Week 3: Build a Dependable PostgreSQL Schema](week_03/README.md)
+| Week | Topics | Class materials |
+|---|---|---|
+| 1 | Applications, the relational model, and missing dashboard records | [Week 1](week_01/README.md) |
+| 2 | SQL review: filtering, joins, grouping, CTEs, and safe data changes | [Week 2](week_02/README.md) |
+| 3 | Views, identity columns, metadata, and safe schema changes | [Week 3](week_03/README.md) |
+
+Each week has its own README and supporting files in its folder. Additional
+weeks will appear in this table as the semester progresses.
 
 ## Using the Materials
 
-Open PDFs in your browser or download them. Download a PowerPoint to view its
-slides locally. Follow the week's instructions for opening a notebook in Colab
-and for submitting the lab in Brightspace.
+The textbook and linked resources are free. Graded work is individual; follow
+each lab's submission instructions in Brightspace. Download PowerPoints for
+local presentation, or open the PDF handout in your browser.
 
-If an account or technical problem prevents you from completing an activity,
-contact me before paying for a service. Do not post passwords, connection
-strings, or private information in this repository.
+Do not post passwords, connection strings, or private information in this repository.
+For help accessing the materials, email
+[abarreda@citytech.cuny.edu](mailto:abarreda@citytech.cuny.edu).
 
 License and attribution information for the textbook appears in the PDF.
