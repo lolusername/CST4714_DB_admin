@@ -22,7 +22,7 @@ announcements, deadlines, submission links, and grades. Graded work is individua
 Weeks are posted as the semester progresses. Open the week's README for both
 class meetings, assigned reading, slides, labs, and any notebook or sample data.
 
-No weekly materials have been posted here yet.
+- [Week 3: Build a Dependable PostgreSQL Schema](week_03/README.md)
 
 ## Using the Materials
 
