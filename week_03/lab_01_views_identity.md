@@ -18,7 +18,7 @@ A view is a named query. Start with this working version:
 ```sql
 CREATE OR REPLACE VIEW active_ticket_queue AS
 SELECT t.ticket_id, t.subject, t.status, t.priority, t.opened_at
-FROM .tickets AS t
+FROM tickets AS t
 WHERE t.status IN ('new', 'open', 'in_progress');
 
 SELECT * FROM active_ticket_queue ORDER BY ticket_id;
