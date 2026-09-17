@@ -40,4 +40,3 @@ application, such as a staff member choosing which requests to handle first.
 A **constraint** is a rule the database checks when data changes. Rejection can
 be the correct result. An application message is still needed so a person can
 understand and correct the input.
-
