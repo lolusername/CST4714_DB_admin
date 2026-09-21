@@ -26,6 +26,9 @@ unless the weekly lab assigns it.
 
 ## Class Materials
 
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_03/03_views_identity_migration.ipynb)
+
+- [Guided PostgreSQL notebook](03_views_identity_migration.ipynb): dataset introduction, worked examples, and SQL workspaces. It uses a disposable PostgreSQL database in Colab, not a Supabase project.
 - [PostgreSQL setup and editor help](materials/datasets/metro_support/README.md#first-postgresql-session)
 - [Week 3 student deck](week_03_views_identity_safe_change.pptx)
 - [Week 3 PDF handout](week_03_views_identity_safe_change.pdf)
@@ -33,23 +36,27 @@ unless the weekly lab assigns it.
 
 ## Day 1: Views, Identity, and Introspection
 
-Use **slides 1-10**. The demonstration creates a requester view, reads all seven
+Use **slides 1-14**. Begin with slides 2-5 and the notebook's introduction/setup:
+one user row is a person, one ticket row is a request, and one event row is a
+history entry. Confirm **8 users, 12 tickets, 21 events** and inspect ticket 1004
+before creating a view. The demonstration then creates a requester view, reads all seven
 active ticket results, and follows three identity allocations through their
 commit or rollback decisions. In
 [Lab 1: Build a stable query interface](lab_01_views_identity.md), adapt the view
 to an optional assignee and explain the identity gap. The lab includes the
 metadata queries needed to inspect both objects.
 
-Keep using your existing practice database. The PGlite browser option also works
-for both of this week's labs. If you used it, return in the same browser profile
-and keep the Day 1 view for Day 2. Your saved SQL file is what you submit, not the
-browser's local database.
+Choose the linked Colab notebook, your existing Supabase practice database, or
+PGlite. Do not use the Week 2 DuckDB notebook for these PostgreSQL-specific
+exercises. Keep the Day 1 view for Day 2. A Colab runtime can expire; save your
+SQL and use the notebook's restart instructions rather than relying on temporary
+database state. Your saved SQL file is the submission, not an additional notebook.
 
 Submit only `week_03_views_identity.sql`.
 
 ## Day 2: Migration and Verification
 
-Use **slides 11-21**. Follow the complete `source_channel` rehearsal, compare
+Use **slides 15-25**. Follow the complete `source_channel` rehearsal, compare
 before and after states, and test accepted and rejected values. Then complete
 [Lab 2: Add a field without inventing history](lab_02_safe_migration.md), using
 the slides and chapter as references. Continue in the same database from Day 1;

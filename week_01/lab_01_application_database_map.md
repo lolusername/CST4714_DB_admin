@@ -1,5 +1,7 @@
 # Week 1 Lab: Where Did the Requests Go?
 
+[Open in GitHub](https://github.com/lolusername/CST4714_DB_admin/blob/main/week_01/lab_01_application_database_map.md)
+
 The campus repair desk says its dashboard shows **every active request**. A
 student has a confirmation number for a broken bench, but staff cannot find that
 request on the dashboard. Your job is to explain the discrepancy using the data.

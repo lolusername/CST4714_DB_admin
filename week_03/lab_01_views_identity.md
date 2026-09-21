@@ -1,5 +1,9 @@
 # Lab 1: Give the Dashboard a Stable Query
 
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_03/03_views_identity_migration.ipynb)
+
+[Open in GitHub](https://github.com/lolusername/CST4714_DB_admin/blob/main/week_03/lab_01_views_identity.md)
+
 The staff dashboard needs the same active-ticket list every day. Put that query
 behind a view, then investigate why automatically generated IDs sometimes skip.
 
@@ -7,11 +11,20 @@ Work individually in class. Submit one SQL file in Brightspace.
 
 ## 1. Create and Check the View
 
-Use the [Metro Support data](materials/datasets/metro_support/README.md) in a personal
-Supabase/PostgreSQL database or the PGlite browser environment used earlier. If
+Use the linked notebook's **introduction and setup** first, or use the
+[Metro Support data](materials/datasets/metro_support/README.md) in a personal
+Supabase/PostgreSQL database or PGlite. If
 you are starting fresh, follow the dataset's
 [loading instructions](materials/datasets/metro_support/README.md#load-the-course-tables-once).
 Expect 12 tickets. Keep this database and the view you create for Lab 2.
+
+The complete fixture has **8 users, 12 tickets, and 21 events**. A ticket is one
+request; several events can describe its history. The requester is the person
+who reported it, while the assignee is the staff member handling it. Ticket 1004
+has requester 104 and no assignee. Locate that row before joining anything.
+In Colab, the SQL goes inside the notebook's clearly marked SQL strings; keep
+the supplied Python setup unchanged. The notebook is a workspace, not an extra
+submission.
 
 A view is a named query. Start with this working version:
 

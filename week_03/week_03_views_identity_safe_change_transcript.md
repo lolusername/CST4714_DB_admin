@@ -2,7 +2,7 @@
 
 ## Slide 1
 
-Last week we inspected the structure of our support database and added rules that reject invalid values. We saw that a table can contain valid text without containing the particular vocabulary that the application expects. This week we will keep working with that same distinction between a command succeeding and the application receiving the right result.
+Earlier in class we inspected the structure of our support database and added rules that reject invalid values. We saw that a table can contain valid text without containing the particular vocabulary that the application expects. This week we will keep working with that same distinction between a command succeeding and the application receiving the right result.
 
 Our first task is to give a useful query a stable name. The support staff need a list of active tickets, and different screens should not have to reinvent the definition of active. We will create an ordinary view, read its results, and change its interface deliberately. We will also create a small table whose identifiers come from a sequence. A cancelled insertion will help us see why an identifier and a row count mean different things.
 
@@ -11,6 +11,44 @@ On the second day, the organization wants to record whether a request came from 
 You will work individually in your course database. Each day's submission is one SQL file with the relevant queries and short explanatory comments. The purpose of those comments is to state what your change means, including what the data cannot tell us.
 
 ## Slide 2
+
+Before we write a view, we need a shared picture of the records it will read. Metro Support is a fictional public-service help desk. Someone reports a broken streetlight or a missed collection. A member of staff may be assigned to the request, and the system keeps a history of events. None of these people are real. We are using a small synthetic dataset so we can check an answer by looking at individual records.
+
+The users table contains eight people. It includes residents and staff, so a user is not automatically an agent. The tickets table contains twelve requests. One row means one request, not one update and not one person. The ticket_events table contains twenty-one recorded events. Several events can belong to the same ticket.
+
+That last distinction explains why the table counts differ. More event rows do not mean more requests. We will use the current status in tickets to define the active queue: new, open, and in_progress. There are seven active tickets in the starting data. A view will give that query a reusable name. First, however, we will locate an actual ticket and the people linked to it. Knowing what a row means comes before choosing SQL syntax.
+
+[Sources] Original Metro Support synthetic CSVs and postgres_setup.sql, supplied with this week.
+
+## Slide 3
+
+Look at ticket 1001. Its requester_id is 101, which refers to Maya Chen in users. Its assignee_id is 201, which refers to Priya Shah in that same table. The two columns refer to the same kind of identifier, but they express different relationships. Maya reported the problem; Priya is handling it. A join must say which of those relationships we want.
+
+Now compare ticket 1004, the broken bench request. Jordan Bell, user 104, is its requester. The assignee_id is NULL because nobody has been assigned yet. NULL is not another staff identifier, and it is not a zero that we should match to a user. It represents the missing assignment.
+
+The schema requires a requester, but permits an absent assignee. When our demonstration joins a ticket to its required requester, every ticket has a matching user. Your lab will instead retrieve an optional assignee. An inner join there would hide ticket 1004 and the other unassigned request, 1009. A LEFT JOIN keeps the ticket and displays a missing name. That is exactly what a queue for unassigned work needs. These are not arbitrary join exercises: the meaning of the relationship determines which requests the application can show.
+
+## Slide 4
+
+There are three ways to run the PostgreSQL exercises. The linked Week 3 Colab notebook starts a disposable PostgreSQL database inside the notebook runtime. It does not connect to Supabase, and it does not need a cloud password. The notebook explains its setup, loads the complete fixture, and supplies cells for your SQL. Use that route if you want the class examples and your work in one browser document.
+
+If you already have a personal Supabase practice project, use its SQL Editor. A third route is the PGlite browser playground. It also executes PostgreSQL, but its data lives in that browser profile. Choose one route rather than setting up all three. Our earlier DuckDB SQL review is not the correct environment for this identity-column and PostgreSQL-metadata lesson.
+
+In Supabase or PGlite, the provided postgres_setup.sql creates the Metro Support schema and its sample rows. It is a reset script. Its first command removes the old practice schema, so do not run it against a database containing work you need to preserve. The notebook instead creates its own disposable database before using the setup.
+
+After setup, run this small query to identify the database and role that answered. Then check the table counts. Do not repeat the reset between the two labs: the second lab deliberately changes the view and table you made in the first.
+
+## Slide 5
+
+We can now check whether everybody is working with the intended data. The first query returns one named count for each of the three tables. It should show eight users, twelve tickets, and twenty-one events. These are counts of stored rows, not counts of columns or counts of active work. If they differ, stop at setup rather than interpreting a different result as a query mistake.
+
+The second query reads one ticket. We deliberately chose 1004 because its missing assignment will matter in the lab. Its requester is 104, its assignee is NULL, and its status is new. You can read the same values in tickets.csv. That independent view of the source data lets you explain why a later SQL result is right or wrong.
+
+All our examples spell out metro_support before a table name. That is the schema name, a namespace within the database. It avoids relying on a particular editor session's search path. It is not a cloud project name and it does not establish a connection by itself.
+
+Once these results agree, we are ready to name the active-ticket query. Keep the table meanings in mind throughout the view, identity, and migration examples. The commands change stored definitions and data, but the users of the application still need the same requests to remain visible.
+
+## Slide 6
 
 The first row of this comparison is the base table. Our tickets table contains stored ticket records. A SELECT asks PostgreSQL to produce some result from those records. The selected columns and the filter determine what we receive.
 
@@ -22,7 +60,7 @@ A materialized view has a different purpose. It retains previously computed resu
 
 Today we use ordinary views. Creating one does not automatically make its query faster, nor does its name establish a security policy. We will keep those questions separate from the immediate task of defining the right result.
 
-## Slide 3
+## Slide 7
 
 Here is a complete view definition. The words CREATE OR REPLACE VIEW introduce the object name, metro_support.active_ticket_summary. Everything after AS is the SELECT that defines its result. If the view does not exist, PostgreSQL creates it. Replacement has compatibility rules that we will examine shortly.
 
@@ -34,7 +72,7 @@ Running this command saves a definition. It does not itself print the seven tick
 
 Your lab uses a different relationship: the assigned agent. Some tickets have no assigned agent yet. An inner join through assignee_id would remove those tickets. That is why the lab needs a LEFT JOIN even though this requester demonstration uses an ordinary inner join. The join choice follows the meaning of the relationship.
 
-## Slide 4
+## Slide 8
 
 Now we read through the name we just created. FROM refers to active_ticket_summary rather than repeating the underlying tickets-to-users join. We select only two of the four columns the view makes available. A view defines an interface, and a caller can still choose a narrower result from that interface.
 
@@ -46,7 +84,7 @@ Our definition did not copy user names into tickets. It retrieves the current di
 
 When you verify your own view, inspect identifiers as well as a total count. A count of seven alone cannot show that the seven intended tickets survived a join. In the lab, the two unassigned identifiers are especially useful checks.
 
-## Slide 5
+## Slide 9
 
 The lab begins with five named columns in this order: ticket identifier, subject, status, priority, and opening time. We can think of this as an interface that another query already uses. Changing it requires more care than writing a new SELECT that happens to return useful information.
 
@@ -61,7 +99,7 @@ For this lab, preserve the original five outputs, append the assignee name, and 
 [Sources]
 - PostgreSQL 15, CREATE VIEW: https://www.postgresql.org/docs/15/sql-createview.html
 
-## Slide 6
+## Slide 10
 
 Before we change objects, this small query helps establish where the command will run. current_database reports the selected PostgreSQL database. current_user reports the effective database role. current_schema reports the current schema selected from the search path. SHOW search_path displays the configured path used to resolve unqualified object names.
 
@@ -73,7 +111,7 @@ We write metro_support.tickets in our examples. The part before the dot is the s
 
 A successful query in an administrative SQL editor does not prove that an application role has the same access. We will test permissions as particular roles in Week 6. For today, record the context when diagnosing an unexpected result instead of assuming every open connection is interchangeable.
 
-## Slide 7
+## Slide 11
 
 This demonstration table stores notes about database changes. It is intentionally separate from tickets, so we can study identifier allocation without altering the ticket keys. It is also separate from your lab's change_notes table, which lets the demonstration and your own experiment coexist.
 
@@ -85,7 +123,7 @@ The change_name is required text. The created_at column records a timestamp with
 
 Create this demonstration table once. If it already exists from an earlier run, inspect it before expecting identifiers to restart at one. Repeated execution against an existing table and a fresh experiment are different starting states. In your personal lab, the instructions explicitly identify a disposable table that can be recreated for the experiment. That permission does not extend to arbitrary tables in a real database.
 
-## Slide 8
+## Slide 12
 
 This complete batch contains three transactions. Each begins with BEGIN and ends with a deliberate choice. The first inserts Initial view and commits it. RETURNING asks PostgreSQL to display the identifier produced by that insert, so we can observe allocation without guessing what happened.
 
@@ -97,7 +135,7 @@ The explicit commit after the first insert is important. We should not assume th
 
 Run the complete batch rather than leaving it paused inside a transaction while you work elsewhere. An open transaction can retain resources and locks. If an expected failure leaves a transaction aborted, ROLLBACK ends that failed transaction before a new attempt. Here there is no expected SQL error; the cancellation is a deliberate rollback of an otherwise valid insertion.
 
-## Slide 9
+## Slide 13
 
 The table separates allocation from retention. All three inserts received a number. Only the first and third transactions retained a row. A SELECT from demo_change_notes therefore returns identifiers one and three, with their two change descriptions.
 
@@ -112,7 +150,7 @@ For the lab, explain the difference between the values returned by the inserts a
 [Sources]
 - PostgreSQL 15, sequence manipulation functions: https://www.postgresql.org/docs/15/functions-sequence.html
 
-## Slide 10
+## Slide 14
 
 You now have the two worked examples needed for the first lab. The assignment is individual, and all of the work belongs in your own course database. Start with the complete Metro Support baseline rather than one of the smaller examples from the early SQL review.
 
@@ -122,7 +160,7 @@ The second part creates the disposable change_notes table and supplies an explic
 
 Submit week_03_views_identity.sql in Brightspace. Include the working SQL and short comments explaining your join and the identifier result. There is no separate screenshot collection or change report. Keep this database state for Day 2, because the next lab changes the tickets table underneath the view you create today. If something fails, inspect the current definition before rerunning commands that create an object a second time.
 
-## Slide 11
+## Slide 15
 
 We will now change the underlying table while preserving the interface we just built. The new requirement is a source channel for each request. The allowed values will be web, phone, mobile, and unknown.
 
@@ -134,7 +172,7 @@ Our classroom sequence is to inspect, rehearse, verify, roll back, and only then
 
 Continue in the same personal database from Day 1. The view is part of the state we are deliberately preserving, so do not reset it between the two labs.
 
-## Slide 12
+## Slide 16
 
 This comparison gives the change three audiences. First, the historical rows. Before the migration they have no source_channel column. Afterward, the structured value is unknown unless we have a trustworthy record-specific basis for something more precise. Setting every old value to web would make later reporting look complete while adding a claim we cannot support.
 
@@ -146,7 +184,7 @@ Our baseline contains twelve tickets. That small size lets us follow the entire 
 
 The immediate goal is to preserve the meaning of old data while introducing a better field for future data. The migration should improve what we can record without pretending that we already knew it.
 
-## Slide 13
+## Slide 17
 
 The precheck is a set of ordinary queries about the starting state. The first query reads information_schema.columns, which describes the columns PostgreSQL currently exposes to this role. We restrict it to the tickets table in the metro_support schema and to the specific column name source_channel.
 
@@ -158,7 +196,7 @@ The precheck does not prove every possible property of the database. It establis
 
 Keep these queries in your SQL file. They make the intended starting point understandable to another person and help you diagnose a repeat run. We are using executable inspection rather than asking for a separate administrative form.
 
-## Slide 14
+## Slide 18
 
 This is the complete rehearsal. BEGIN establishes the transaction. The first ALTER TABLE adds a text column that is initially allowed to be missing. The UPDATE fills missing historical values with unknown. Its WHERE clause states which rows need the backfill rather than overwriting every value unconditionally.
 
@@ -170,7 +208,7 @@ The grouped SELECT runs before the transaction ends, so it can inspect our uncom
 
 Run this whole batch together in the practice database. If any statement fails and the session remains in an aborted transaction, run ROLLBACK before retrying. The textbook includes optional timeout guardrails and explains what they limit. Our small classroom batch makes the transaction boundaries visible without assuming that every production migration can use exactly this approach.
 
-## Slide 15
+## Slide 19
 
 A successful ALTER TABLE message is useful, but it answers only part of our question. This table organizes the specific outcomes we need to check. During the rehearsal, the new column exists with its intended rules. The historical rows contain unknown, and the existing queue still returns seven tickets.
 
@@ -182,7 +220,7 @@ You can run the metadata and queue queries before and after the batch. If your e
 
 This rehearsal demonstrates that this particular PostgreSQL change is transactional. It does not demonstrate that holding a lock is harmless or that reversing any future data transformation will recover lost detail. Those are additional operating questions. In your SQL file, keep the checks close to the change so another reader can connect the expected result to its purpose.
 
-## Slide 16
+## Slide 20
 
 This is a saved screenshot of the Supabase SQL editor from August 25, 2026. Supabase gives us a browser interface to PostgreSQL, so the transaction language is still SQL. The screenshot shows a small temporary-table rollback check, not the full tickets migration from the preceding slides.
 
@@ -197,7 +235,7 @@ The interface may look different in your current project. The SQL transaction bo
 [Sources]
 - Course screenshot: textbook/figures/cloud_interfaces/supabase_sql_rollback.png, captured August 25, 2026.
 
-## Slide 17
+## Slide 21
 
 Once the rehearsal succeeds and rollback restores the expected starting state, repeat the same migration with COMMIT in place of ROLLBACK. That deliberate change retains the new column and its data. Do not run the ADD COLUMN block again after it has already committed; begin with inspection if you are unsure of the current state.
 
@@ -209,7 +247,7 @@ After this definition runs, read the queue and inspect the new output. You shoul
 
 This is a small example of evolving an interface while preserving existing callers. A caller that selects the original named columns can continue to do so. A caller that needs the new field can request it explicitly. We still need to test real application assumptions rather than infer compatibility from the view name alone.
 
-## Slide 18
+## Slide 22
 
 We will test both sides of the allowed-value rule. The first batch starts a transaction, updates ticket 1004 to mobile, and returns the changed identifier and channel. Because mobile belongs to the allowed list and is not null, the statement succeeds. The returned row shows what the update would retain if we committed it.
 
@@ -221,7 +259,7 @@ If the editor reports that the current transaction is aborted, finish it with RO
 
 Keep the invalid statement commented in the submitted SQL file and record the expected error in a comment. That lets a reader intentionally run the negative test without having a routine execution stop unexpectedly. A useful test suite needs examples that should succeed and examples that should fail. We will carry that habit into later permissions, recovery, and data-loading work.
 
-## Slide 19
+## Slide 23
 
 Before commit, our rehearsal has a clear boundary. ROLLBACK removes the transaction's changes and returns us to the earlier committed state. That is the mechanism we just observed with the column, rules, and backfill.
 
@@ -233,7 +271,7 @@ Finally, a transaction can retain locks while it remains open. Transactional doe
 
 Your explanation should identify which state can be recovered and which facts must survive. That is more informative than promising that every change can always be undone immediately.
 
-## Slide 20
+## Slide 24
 
 The second lab uses the same database and queue from Day 1. Work individually and begin with the supplied precheck. If you have not completed the queue portion of the first lab, finish that before adding the field. The identity experiment is useful background but is not a prerequisite for changing the tickets table.
 
@@ -245,7 +283,7 @@ Submit one file, week_03_safe_migration.sql, in Brightspace. Include the prechec
 
 If your result differs from the expected state, investigate the definition and affected identifiers. A thoughtful diagnosis of the actual state is more useful than rerunning the entire dataset reset and losing the change you were trying to understand.
 
-## Slide 21
+## Slide 25
 
 We began with a reusable query and ended with a change to the data it reads. The connecting idea is that an interface has meaning for the people and software using it. A queue can look plausible while losing unassigned requests, so we verified particular identifiers rather than relying only on a count.
 

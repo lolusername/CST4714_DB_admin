@@ -1,5 +1,7 @@
 # Lab 1: Find the Requests That Need Attention
 
+[Open in GitHub](https://github.com/lolusername/CST4714_DB_admin/blob/main/week_02/lab_01_sql_query_ladder.md)
+
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_02/01_relational_sql_review.ipynb)
 
 Metro Support needs a reliable list of unfinished work. You will write three

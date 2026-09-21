@@ -1,5 +1,9 @@
 # Lab 2: Add a Field Without Inventing History
 
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_03/03_views_identity_migration.ipynb)
+
+[Open in GitHub](https://github.com/lolusername/CST4714_DB_admin/blob/main/week_03/lab_02_safe_migration.md)
+
 Metro Support will collect a request's source channel: web, phone, or mobile.
 Old tickets have no reliable channel field. Some notes mention a mobile form,
 so labeling all old tickets `web` would manufacture information.
@@ -13,6 +17,11 @@ Use the personal database and `active_ticket_queue` view from
 [Lab 1](lab_01_views_identity.md). Do not rerun the dataset reset between these
 labs. If needed, complete Lab 1's view section first; the identity experiment is
 not a prerequisite for this lab.
+
+In Colab, use the same saved notebook and its Day 2 section. If the runtime has
+expired, create a fresh disposable database and rerun your saved Day 1 view SQL
+before this precheck. Do not run the dataset reset over a database whose work
+you intend to keep.
 
 ```sql
 SELECT column_name

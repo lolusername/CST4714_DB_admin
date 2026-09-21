@@ -18,23 +18,33 @@ You will practice modeling, querying, access control, performance, and recovery.
 
 ## Weekly Materials
 
-Open the week's page for both class meetings, assigned readings, PowerPoint,
-PDF handout, individual labs, and any notebook or sample data.
+Choose a week for both class meetings, assigned reading, slides, labs, and any
+notebook or sample data.
 
-| Week | Topics | Class materials |
-|---|---|---|
-| 1 | Applications, the relational model, and missing dashboard records | [Week 1](week_01/README.md) |
-| 2 | SQL review: filtering, joins, grouping, CTEs, and safe data changes | [Week 2](week_02/README.md) |
-| 3 | Views, identity columns, metadata, and safe schema changes | [Week 3](week_03/README.md) |
-
-Each week has its own README and supporting files in its folder. Additional
-weeks will appear in this table as the semester progresses.
+- [Week 1: How Applications Use Databases](week_01/README.md)
+- [Week 2: Major SQL Review Studio](week_02/README.md)
+- [Week 3: Expose and Change Data Safely](week_03/README.md)
+- [Week 4: Reliable SQL Reports](week_04/README.md)
+- [Week 5: Transactions and Concurrency](week_05/README.md)
+- [Week 6: Identity, Permissions, and Row-Level Security](week_06/README.md)
+- [Week 7: Query Plans and Index Design](week_07/README.md)
+- [Week 8: Backup, Recovery, and the Midterm](week_08/README.md)
+- [Week 9: From Tables to Documents](week_09/README.md)
+- [Week 10: MQL and Document Modeling](week_10/README.md)
+- [Week 11: Aggregation, Validation, and MongoDB Index Design](week_11/README.md)
+- [Week 12: Reliability and Logical Recovery in Atlas](week_12/README.md)
+- [Week 13: Capacity, Sharding, and Python Integration](week_13/README.md)
+- [Week 14: Polyglot Incident Response and Final Project Clinic](week_14/README.md)
+- [Week 15: Synthesis, Portfolio Writing, and Final Presentations](week_15/README.md)
 
 ## Using the Materials
 
 The textbook and linked resources are free. Graded work is individual; follow
 each lab's submission instructions in Brightspace. Download PowerPoints for
 local presentation, or open the PDF handout in your browser.
+
+Use **Open in GitHub** to view a lab and **Open in Colab** to launch its notebook
+when one is provided.
 
 Do not post passwords, connection strings, or private information in this repository.
 For help accessing the materials, email

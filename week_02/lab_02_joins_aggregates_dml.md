@@ -1,5 +1,7 @@
 # Lab 2: Repair the Staff Dashboard
 
+[Open in GitHub](https://github.com/lolusername/CST4714_DB_admin/blob/main/week_02/lab_02_joins_aggregates_dml.md)
+
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_02/01_relational_sql_review.ipynb)
 
 The dashboard must show every ticket, report current staff workload, and allow
