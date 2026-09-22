@@ -119,5 +119,7 @@ You are ready for schema administration when you can:
 5. protect an update with a target preview, transaction, `RETURNING`, and
    verification.
 
-Week 3 begins with a cumulative SQL clinic. It is another chance to repair gaps
-before new schema-management material begins.
+[Week 3](../week_03/README.md) uses these queries to build views, examine generated
+identifiers, and rehearse a schema change. Its notebook begins with a dataset
+refresher and PostgreSQL setup. Revisit this week's worked examples if joins or
+transactions still need practice.
