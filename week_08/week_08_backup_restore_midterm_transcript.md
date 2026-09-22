@@ -249,7 +249,7 @@ The statement is specific to the small notebook fixture, where user 101 exists a
 
 ## Slide 16
 
-The lab gives you the complete recovery sequence in one notebook. Download it from the Week 8 guide, open Colab, and use File, then Upload notebook. No Supabase password is required. The setup starts local PostgreSQL inside the runtime and uses uniquely named practice databases.
+The lab gives you the complete recovery sequence in one notebook. Click Open in Colab on the lab page or beside the backup and restore notebook on the Week 8 page. Save a copy in Drive before running it so you can keep your changes and results. You can also download the notebook if you prefer local Jupyter. No Supabase password is required. The setup starts local PostgreSQL inside the runtime and uses uniquely named practice databases.
 
 Run the notebook in order and read the output as you go. The source baseline comes before the dump, which comes before the separate restore. The later cells reuse variables created by earlier cells, so skipping directly to a restore or verification cell can leave required names undefined.
 
@@ -262,6 +262,7 @@ After retaining the output, run the final cleanup cell. It removes this run's pr
 [Sources]
 - Week 8 lab_01_backup_restore.md.
 - Course recovery notebook.
+- https://research.google.com/colaboratory/faq.html
 
 ## Slide 17
 

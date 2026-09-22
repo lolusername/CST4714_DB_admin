@@ -307,7 +307,7 @@ The optional extension asks you to draw and explain this relationship. You do no
 
 This is the setting you will change in the notebook. Use cloud must be true for the connection experiment to run. Keep A change is initially false, meaning A rolls back. For your second run, change only that second setting to true. The table setup and B's SQL should remain unchanged so that the comparison isolates A's decision.
 
-Download Notebook 02, open Colab, and use File, then Upload notebook. In Supabase, use the Connect dialog's Session pooler connection for this exercise. Follow the notebook's SSL instructions and enter the connection URL only when the hidden prompt appears. Do not paste a password-bearing URL into a code cell or a Markdown explanation.
+Open the Lab 2 page and click Open in Colab. Save a copy in Drive so you can keep your changes and results. The weekly page has the same button beside Notebook 02; downloading the file is only necessary if you prefer local Jupyter. In Supabase, use the Connect dialog's Session pooler connection for this exercise. Follow the notebook's SSL instructions and enter the connection URL only when the hidden prompt appears. Do not paste a password-bearing URL into a code cell or a Markdown explanation.
 
 The notebook contains more mechanics than you need to write yourself. It opens labeled connections, starts B's work in a background worker, observes the actual blocking relationship, and ends A before waiting for B to finish. Its cleanup path is designed to avoid leaving a row blocked while you study the output.
 
@@ -318,6 +318,7 @@ Keep your first result in the final Markdown cell before rerunning. Notebook out
 [Sources]
 - Notebook 02 configuration and controlled experiment.
 - https://supabase.com/docs/guides/database/connecting-to-postgres
+- https://research.google.com/colaboratory/faq.html
 
 ## Slide 21
 
