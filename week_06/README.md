@@ -31,6 +31,52 @@ unless the weekly lab assigns it.
 - [Week 6 PDF handout](week_06_identity_permissions_rls.pdf)
 - [Week 6 transcript](week_06_identity_permissions_rls_transcript.md)
 
+## Database Setup
+
+Use your own PostgreSQL/Supabase practice project. If its account or connection
+is not working, use the existing notebook's disposable PostgreSQL setup instead.
+Both routes run the same lab SQL; the notebook does not test Supabase Auth or
+cloud networking.
+
+### PostgreSQL Without a Cloud Database Account
+
+[![Open setup in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_03/03_views_identity_migration.ipynb)
+[View the setup notebook on GitHub](https://github.com/lolusername/CST4714_DB_admin/blob/main/week_03/03_views_identity_migration.ipynb)
+
+1. Open a fresh copy in a Python 3 / CPU runtime. Run from the top through the
+   query under **Read a Few Rows**, then stop before **Day 1: A View Is a Named
+   Query**. The Week 3 title is intentional: you are reusing its setup, not doing
+   its assignment. The fixture should report 8 users, 12 tickets, and 21 events.
+2. Add code cells using **+ Code**. Put each lab SQL block between the triple
+   quotes shown below. Keep each `BEGIN`, role change, query, and `ROLLBACK`
+   together in one call. Do not use **Run all** or the Week 3 export cells.
+3. Save the SQL inside your quotes, including your explanation comments, in a
+   text editor under the filename specified by the current lab. Submit that SQL
+   file, not the Python wrapper or the notebook. Run the lab's cleanup first;
+   then run the notebook's final **Finish: Remove Only This Notebook's Practice
+   Database** cleanup cell when you are done with the runtime.
+
+This small check confirms which database and role receive your SQL:
+
+```python
+run_sql("""
+SELECT current_database(), current_user;
+""")
+```
+
+Replace the SELECT with a lab's setup or test block. The helper prints SELECT
+results even when a batch ends in `ROLLBACK`. An expected permission denial
+appears as a Python `RuntimeError` containing PostgreSQL code `42501`; the
+connection closes and rolls back that transaction. Continue with the next
+separate test cell. A different error is not a successful permission test.
+**Skip the Supabase connection-URI display cell** when using this local route.
+
+Colab still needs a Google account, internet access, and a working runtime.
+An already-running disposable local PostgreSQL server is another option; the
+notebook's setup explains its local-Jupyter settings. Ask for the classroom
+alternative if neither is available. On another day, start fresh if the runtime
+expired. Lab 2 supplies its own setup and does not depend on Lab 1's role.
+
 ## Day 1: Least-Privilege Role
 
 Slides 1-11 explain the permission model and demonstrate a reader of three open

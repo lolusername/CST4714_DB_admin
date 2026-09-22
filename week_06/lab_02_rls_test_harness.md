@@ -9,6 +9,13 @@ rows for different database roles.
 Work individually in your personal PostgreSQL/Supabase practice database.
 Submit one SQL file in Brightspace.
 
+No working cloud connection? Use the
+[disposable PostgreSQL setup](README.md#postgresql-without-a-cloud-database-account).
+Run the SQL blocks below through its `run_sql` helper. This lab creates its own
+roles and table; you do not need to repeat Lab 1. Skip the Supabase display cell
+below on this route. Clean up both roles before the notebook's final database
+cleanup.
+
 ## 1. Create the Small Test Case
 
 Run as the project's administrative database user:

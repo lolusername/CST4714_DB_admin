@@ -9,6 +9,12 @@ Work individually in class. Submit one SQL file in Brightspace. Use your own
 PostgreSQL/Supabase practice project. Roles belong to the database server, so
 do not run this setup in somebody else's or a shared project.
 
+If your cloud connection is unavailable, use the
+[disposable PostgreSQL setup](README.md#postgresql-without-a-cloud-database-account).
+It runs this same lab without a Supabase account. Clean up the role below before
+removing that notebook's practice database; roles belong to the server, not just
+one database.
+
 ## 1. Set Up a Limited Role and View
 
 Use the [Metro Support setup](materials/datasets/metro_support/postgres_setup.sql) if
@@ -50,7 +56,9 @@ FROM metro_support.analyst_ticket_summary ORDER BY ticket_id;
 ROLLBACK;
 ```
 
-You should be able to read 12 tickets under `metro_analyst_lab`. If Supabase's
+You should be able to read 12 tickets under `metro_analyst_lab`. The disposable
+notebook's `run_sql` helper already displays the rows; no connection URI is needed.
+If Supabase's
 editor shows only the final command status, use the Colab cell below to display
 each result through one persistent connection. You do not need to install a
 desktop client or rely on another person's screen.

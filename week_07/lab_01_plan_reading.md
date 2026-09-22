@@ -7,6 +7,13 @@ needs to examine only twenty rows. Use a query plan to find out what it does.
 
 Work individually in class. Submit one SQL file in Brightspace.
 
+If you cannot connect to your cloud database, use the
+[existing disposable PostgreSQL notebook setup](../week_06/README.md#postgresql-without-a-cloud-database-account).
+After its setup, put the complete `performance_lab_setup.sql` script below
+inside one `run_sql(""" ... """)` call in a new code cell. Run this lab's queries
+the same way. Save your SQL and observations before using the notebook's final
+database cleanup. No additional notebook submission is required.
+
 ## 1. Run the Workload
 
 Run [performance_lab_setup.sql](performance_lab_setup.sql) in your personal

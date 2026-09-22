@@ -7,6 +7,11 @@ conclusion explains the mechanism and the cost, even when timing is noisy.
 
 Work individually in class. Submit one SQL file in Brightspace.
 
+Use the same database route as [Lab 1](lab_01_plan_reading.md), including its
+disposable-notebook option if needed. A new runtime is fine: the setup below
+rebuilds this lab's data and removes its previous index. Save your results before
+the notebook's final database cleanup.
+
 ## 1. Record the Same Query Before the Change
 
 The instructor demonstrates a partial index for `in_progress` tickets in
