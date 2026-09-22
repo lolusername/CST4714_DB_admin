@@ -17,14 +17,20 @@ and a text editor, or work on paper during the class discussion.
 
 ## Before Class: Assigned Reading
 
-These short, free readings are available without a textbook download or login.
+Use [Chapter 1: How Database-Backed Applications Work](../Operating_Cloud_Databases.pdf#page=6).
 
-- Before Day 1, read PostgreSQL's
-  [Architectural Fundamentals](https://www.postgresql.org/docs/current/tutorial-arch.html).
-  Focus on the client, the database server, and why they may run on different computers.
-- Before Day 2, read PostgreSQL's
-  [Relational Concepts](https://www.postgresql.org/docs/current/tutorial-concepts.html)
-  and the refresher below. Focus on what one row represents and how tables connect.
+- **Before Day 1:** read **Begin With a Familiar Application Action** through
+  **Read a Cloud Dashboard Without Treating It as the Database**. Follow the
+  request from the browser to storage and distinguish the DBMS from its cloud platform.
+- **Before Day 2:** revisit **Persistence Is Different From What the Screen Shows**,
+  then read **The Same Ticket in Two Database Models** and **Worked Example: Trace
+  One Request**, plus the relational refresher below. Focus on what one row means
+  and why a stored request can be absent from a query result.
+
+For another explanation, PostgreSQL's free
+[Architectural Fundamentals](https://www.postgresql.org/docs/current/tutorial-arch.html)
+and [Relational Concepts](https://www.postgresql.org/docs/current/tutorial-concepts.html)
+are alternatives, not additional required reading.
 
 No reading response is submitted this week. In class, you will use the ideas to
 explain the lab's missing requests.

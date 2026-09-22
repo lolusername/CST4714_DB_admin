@@ -34,12 +34,16 @@ unless the weekly lab assigns it.
 - [Week 13 PDF handout](week_13_scale_integration.pdf)
 - [Week 13 transcript](week_13_scale_integration_transcript.md)
 - [Individual lab for both meetings](lab_01_public_data_integration.md)
+- [Historical CISA teaching sample: JSON, CSV, and source notes](materials/datasets/cisa_kev_sample/README.md)
 
 ## Free External Data
 
 The notebook uses the U.S. Cybersecurity and Infrastructure Security Agency's
 Known Exploited Vulnerabilities catalog through its public JSON feed. The notebook
 includes a small offline fixture and records the source and retrieval date.
+The linked JSON and CSV contain the same 75-record historical sample for the
+textbook's standalone examples. The notebook already includes these records;
+you do not need another download or an additional submission for the lab.
 
 ## Day 1: Evaluate Distribution Without Pretending to Shard
 

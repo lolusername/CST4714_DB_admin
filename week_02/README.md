@@ -24,11 +24,23 @@ remember SQL from an earlier course.
 
 ## Before Class: Assigned Reading
 
-Read these free sections of the PostgreSQL tutorial. Its weather tables are
-examples; our class uses the Metro Support data supplied below.
+Use [Chapter 2: Relational Operations Become Testable SQL](../Operating_Cloud_Databases.pdf#page=16).
 
-- **Before Day 1:** read [Querying a Table](https://www.postgresql.org/docs/current/tutorial-select.html) and [Joins Between Tables](https://www.postgresql.org/docs/current/tutorial-join.html), through the left outer join example. Focus on choosing rows and columns, ordering results, and matching identifiers.
-- **Before Day 2:** read [Aggregate Functions](https://www.postgresql.org/docs/current/tutorial-agg.html) and [Transactions](https://www.postgresql.org/docs/current/tutorial-transactions.html). Focus on what one grouped row represents and what `ROLLBACK` does.
+- **Before Day 1:** read from **A Relation Represents One Kind of Fact** through
+  **Join Related Facts**, plus **NULL Means Missing or Inapplicable**. Focus on
+  the meaning of a row, choosing rows and columns, and matching identifiers.
+- **Before Day 2:** read **Diagnose Duplicate Rows**, **Group and Aggregate**,
+  **Worked Example: Staff Workload Including Zero Counts**, **Subqueries and CTEs
+  Name Intermediate Relations**, and **Review Safe Data Changes**. Trace why the
+  workload includes a staff member with zero and why `ROLLBACK` restores a value.
+
+For another explanation, the free PostgreSQL tutorial covers
+[queries](https://www.postgresql.org/docs/current/tutorial-select.html),
+[joins](https://www.postgresql.org/docs/current/tutorial-join.html),
+[aggregates](https://www.postgresql.org/docs/current/tutorial-agg.html), and
+[transactions](https://www.postgresql.org/docs/current/tutorial-transactions.html).
+Those are alternatives, not another reading assignment; their weather tables
+differ from our Metro Support fixture.
 
 Bring one point you want clarified. Reading supports the in-class work; it does
 not add a separate reading report. Exercises on the linked documentation pages
