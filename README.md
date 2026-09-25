@@ -13,6 +13,8 @@ You will practice modeling, querying, access control, performance, and recovery.
 
 - [Course syllabus (PDF)](CST4714_Fall_2026_Syllabus.pdf): schedule, policies, and grading.
 - [Operating Cloud Databases (PDF)](Operating_Cloud_Databases.pdf): the course textbook. Each week's page identifies the assigned chapter and sections.
+- [Midterm project](week_08/materials/assignments/midterm_project.md)
+- [Final cloud database project](week_12/materials/assignments/final_project.md)
 
 **Brightspace has announcements, deadlines, grades, and submission links.**
 
@@ -29,8 +31,15 @@ notebook or sample data.
 - [Week 6: Identity, Permissions, and Row-Level Security](week_06/README.md)
 - [Week 7: Query Plans and Index Design](week_07/README.md)
 - [Week 8: Backup, Recovery, and the Midterm](week_08/README.md)
+- [Week 9: From Tables to Documents](week_09/README.md)
+- [Week 10: MQL and Document Modeling](week_10/README.md)
+- [Week 11: Aggregation, Validation, and MongoDB Index Design](week_11/README.md)
+- [Week 12: Reliability and Logical Recovery in Atlas](week_12/README.md)
+- [Week 13: Capacity, Sharding, and Python Integration](week_13/README.md)
+- [Week 14: Polyglot Incident Response and Final Project Clinic](week_14/README.md)
+- [Week 15: Synthesis, Portfolio Writing, and Final Presentations](week_15/README.md)
 
-Weeks 1–8 are available now. Later weeks will be posted as the semester progresses.
+All 15 weeks are available. Use Brightspace for assigned deadlines and submissions.
 
 ## Using the Materials
 
