@@ -71,7 +71,7 @@ what blocked it, how the transaction decision changed the stored data, and one
 reason the classroom choice cannot be applied blindly to a real application.
 Use one run's actual PIDs and blocking result, or label your supplied trace.
 
-**Submit:** `02_postgres_transactions_locks.ipynb`, including the comparison and
+**Submit:** colab link, including the comparison and
 short update. No screenshots, separate incident form, or additional report.
 Confirm the connections are closed and `lock_lab` was removed. Remove any
 accidentally saved credentials before submission.
