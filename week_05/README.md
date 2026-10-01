@@ -36,9 +36,9 @@ unless the weekly lab assigns it.
 
 Slides 1-9 teach the complete assignment rehearsal, its stored outcomes, a failed
 pair, and the distinction between an error and an UPDATE that matches no rows.
-The instructor's example assigns Noah and ends with rollback in the source
-schema. Your lab uses Priya and separate disposable tables. After committing
-that assignment, you test an outdated request to assign the same ticket to Noah.
+The instructor's example assigns Agent 202 and ends with rollback in the source
+schema. Your lab uses Agent 201 and separate disposable tables. After committing
+that assignment, you test an outdated request to assign the same ticket to Agent 202.
 Read both the empty UPDATE result and the unchanged current record before
 deciding what an application should tell its caller.
 
@@ -48,10 +48,14 @@ Submit only `week_05_transaction_outcomes.sql`.
 
 ## Day 2: Controlled Blocking Incident
 
-Slides 10-23 introduce sessions, MVCC, isolation, activity diagnostics, and the
+Slides 10-25 introduce sessions, MVCC, isolation, activity diagnostics, and the
 consequences of ending a blocking transaction. The instructor demonstrates the
 notebook's rollback case. You predict and test the commit alternative, keeping
 the fixture and competing update unchanged.
+
+**First-time connection:** slides **20-22** and the notebook's **First-Time Setup:
+Colab and Supabase** explain how the tools fit together, how to prepare the
+Session pooler URL, and what confirms the connection and starting row.
 
 Complete [Lab 2: The query finished, but which change survived?](lab_02_blocking_incident.md).
 

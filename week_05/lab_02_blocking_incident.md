@@ -11,6 +11,25 @@ or roll back the blocking transaction?
 Work individually in class. Use only your personal course database. Submit one
 completed notebook in Brightspace, with its short explanation in the notebook.
 
+## Before the Experiment: Connect Colab to Supabase
+
+**Lab 2 is the assignment. The notebook runs in Colab and connects to your
+Supabase PostgreSQL database.** Your earlier use of Supabase's SQL editor does
+not automatically connect Colab. Use your existing personal course project.
+
+Follow **First-Time Setup: Colab and Supabase** near the top of the notebook.
+It walks through saving a Colab copy, finding **Connect > Session pooler**,
+replacing the password placeholder, adding `sslmode=require`, and entering the
+URL at the hidden prompt. PowerPoint slides **20-22** show the same walkthrough.
+
+Run code cells in order. Before continuing to the experiment, confirm:
+
+- Section 1 prints **Opened Session A, Session B, and the diagnostic session.**
+- Section 2 prints `Starting row: (1004, 'medium', 'open')`.
+
+If a connection fails, stop before Section 2 and use the notebook's setup checks.
+Today uses the disposable `lock_lab` table and does not require Day 1's event IDs.
+
 ## 1. Follow the Rollback Example
 
 Click **Open in Colab** above and save a working copy in Drive. You can also
@@ -22,6 +41,10 @@ Set `USE_CLOUD = True` and leave `KEEP_A_CHANGE = False`. Run from top to bottom
 The notebook creates a disposable row, captures a real wait, rolls back A, and
 lets B commit before the experiment cell ends. It also shows what an ordinary
 reader could see while A's change was uncommitted.
+
+**Where to look:** Section 4 runs the experiment. Section 5 displays the captured
+blocker relationship. Section 6 prints the final row. Both runs should finish
+successfully; this lab does not ask for a duplicate-key error.
 
 In the final Markdown cell, keep the final priority and status. Identify B's
 blocking PID from `pg_blocking_pids`, rather than guessing from which row of the

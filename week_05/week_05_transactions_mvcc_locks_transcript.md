@@ -16,11 +16,11 @@ The important distinction throughout the week is between the command we issued a
 
 ## Slide 2
 
-Here is the assignment we will use in the demonstration. Ticket 1004 starts without an assignee, and its status is new. We want to assign it to Noah, whose user identifier is 202, and change the status to in progress. Those are changes to the current ticket row.
+Here is the assignment we will use in the demonstration. Ticket 1004 starts without an assignee, and its status is new. We want to assign it to Agent 202, whose user identifier is 202, and change the status to in progress. Those are changes to the current ticket row.
 
 The second record is an event. Event 5998 does not yet exist. It will say that this assignment happened, identify the actor, and record the old and new statuses. The ticket answers who is responsible now. The event explains how the ticket reached that state. These records serve different purposes, so keeping history does not mean that we should remove the current state from the ticket.
 
-Imagine that we update the ticket successfully and then lose the connection before inserting the event. A staff member might see Noah as the assignee, while someone reviewing the history finds no corresponding assignment. Each table could still contain individually valid rows. The application action would nevertheless be incomplete.
+Imagine that we update the ticket successfully and then lose the connection before inserting the event. A staff member might see Agent 202 as the assignee, while someone reviewing the history finds no corresponding assignment. Each table could still contain individually valid rows. The application action would nevertheless be incomplete.
 
 A transaction gives us a place to say that these related changes belong together. That statement is about the application meaning of the work. PostgreSQL does not automatically know that any two nearby SQL commands should share a decision. We have to define the boundary. In the student lab the assignee and event identifier differ, and the tables are disposable copies, but the relationship between current state and recorded history is the same.
 
@@ -47,7 +47,7 @@ For our first SQL demonstration, we will run the whole block and end with rollba
 
 This is the complete rehearsal, starting from the supplied fixture. Begin opens the transaction. The update identifies ticket 1004 and also checks that its current status is new. The status condition expresses the transition we intend: assign a request that has not yet moved into progress.
 
-The set clause changes the assignee to Noah and the status to in progress. Returning asks PostgreSQL to send back the affected ticket identifier, assignee, and status. For this fixture, that result is 1004, 202, and in progress. It lets us inspect the row changed by this statement.
+The set clause changes the assignee to Agent 202 and the status to in progress. Returning asks PostgreSQL to send back the affected ticket identifier, assignee, and status. For this fixture, that result is 1004, 202, and in progress. It lets us inspect the row changed by this statement.
 
 The insert then creates event 5998. Read its column list together with its values. The event belongs to ticket 1004, actor 202 made the change, and the old and new status fields describe the transition. The note is explanatory text, and now supplies the transaction timestamp. We use a fixed event identifier to keep the classroom example easy to inspect. A real application would normally generate identifiers and manage retries explicitly.
 
@@ -59,7 +59,7 @@ The final rollback discards both changes. Run this as one complete block in the 
 
 ## Slide 5
 
-The table separates three observation points. Inside the transaction, our connection sees Noah's assignment and, after the insert, the new event. Those changes are available to our own transaction even though we have not committed them.
+The table separates three observation points. Inside the transaction, our connection sees Agent 202's assignment and, after the insert, the new event. Those changes are available to our own transaction even though we have not committed them.
 
 After rollback, a fresh query shows the original ticket: no assignee and status new. Querying event 5998 returns no row. Rollback did not replace the event with a blank event. It discarded that insertion, so the record does not exist.
 
@@ -126,15 +126,15 @@ Finally, our transaction covers database effects within its boundary. If a progr
 
 Your first lab now applies the transaction example in disposable tables. The setup creates transaction_lab and copies the source tickets and events. It explicitly adds the primary keys that the failure test needs. Create table as copies query results; it does not promise to recreate every constraint or operational property of the source tables.
 
-The proposed assignment in your lab is to Priya, user 201, and the new event is 5999. Start by checking ticket 1004's actual initial state. Run the rehearsal ending in rollback, then query the ticket and event afterward. Next, keep the approved pair by replacing that ending with commit and check the stored result again.
+The proposed assignment in your lab is to Agent 201, user 201, and the new event is 5999. Start by checking ticket 1004's actual initial state. Run the rehearsal ending in rollback, then query the ticket and event afterward. Next, run the separate committed-transaction block supplied in the lab and check the stored result again.
 
-The next experiment starts a new transaction, changes priority, and deliberately attempts to insert the already approved event key. Run rollback separately after the expected error. Your checks should distinguish the discarded new priority from the earlier committed assignment and event, which remain.
+The next experiment starts a new transaction, changes priority, and deliberately copies the seeded event 5001 into the same table. Its primary key already exists after setup, so the insert raises a duplicate-key error even if you have not committed event 5999. A rolled-back insertion of 5999 does not leave a duplicate key behind. Run rollback separately after the expected error. Your checks should distinguish the discarded new priority from the earlier committed assignment and event, which remain.
 
-Then compare that failure with the outdated assignment request. Imagine another screen still labels this ticket new and submits an assignment to Noah, user 202. The supplied UPDATE includes the condition that status must be new. Because your earlier assignment already moved the ticket to in_progress, this UPDATE returns no rows. There is no SQL exception. The following SELECT still shows Priya, user 201. We have not inserted a history event for this attempt because there was no assignment to record.
+Then compare that failure with the outdated assignment request. Imagine another screen still labels this ticket new and submits an assignment to Agent 202, user 202. The supplied UPDATE includes the condition that status must be new. Because your earlier assignment already moved the ticket to in_progress, this UPDATE returns no rows. There is no SQL exception. The following SELECT still shows Agent 201, user 201. We have not inserted a history event for this attempt because there was no assignment to record.
 
 Use short comments in the same SQL file to explain what happened. The explanation should answer why putting the update and insert in separate committed transactions could leave the application's current state and history inconsistent. It should not just say that transactions are safer.
 
-Add one sentence for the application developer: check the returned ticket before writing history or announcing success. If no row was returned, inspect the current record rather than telling the caller that Noah now has the ticket. An outdated status and a missing ticket can both produce an empty result, so the count tells us that our requested change did not happen, but does not by itself diagnose every cause.
+Add one sentence for the application developer: check the returned ticket before writing history or announcing success. If no row was returned, inspect the current record rather than telling the caller that Agent 202 now has the ticket. An outdated status and a missing ticket can both produce an empty result, so the count tells us that our requested change did not happen, but does not by itself diagnose every cause.
 
 Keep the expected-error batch clearly labeled so someone rerunning your file knows where execution pauses. If you restart the full exercise, use its disposable setup rather than resetting the source schema. There is one submission: your SQL file with the queries, observed results, and explanation. No second database session is required for this first lab.
 
@@ -305,22 +305,52 @@ The optional extension asks you to draw and explain this relationship. You do no
 
 ## Slide 20
 
-This is the setting you will change in the notebook. Use cloud must be true for the connection experiment to run. Keep A change is initially false, meaning A rolls back. For your second run, change only that second setting to true. The table setup and B's SQL should remain unchanged so that the comparison isolates A's decision.
+Pause here to connect the assignment to the tools students will use. Lab 2 is the assignment. Notebook 02 is the file containing its code and writing space. Colab runs that file in a hosted Python runtime. Supabase hosts the PostgreSQL database. The notebook sends SQL to that database through three separate connections.
 
-Open the Lab 2 page and click Open in Colab. Save a copy in Drive so you can keep your changes and results. The weekly page has the same button beside Notebook 02; downloading the file is only necessary if you prefer local Jupyter. In Supabase, use the Connect dialog's Session pooler connection for this exercise. Follow the notebook's SSL instructions and enter the connection URL only when the hidden prompt appears. Do not paste a password-bearing URL into a code cell or a Markdown explanation.
+Open the Lab 2 page from the Week 5 README and click Open in Colab. Choose File, then Save a copy in Drive. Work in that copy so the two results and your comparison remain available. Keep the existing personal course project open in a separate Supabase tab. You do not need a new database project or another copy of the Metro Support dataset for this exercise.
 
-The notebook contains more mechanics than you need to write yourself. It opens labeled connections, starts B's work in a background worker, observes the actual blocking relationship, and ends A before waiting for B to finish. Its cleanup path is designed to avoid leaving a row blocked while you study the output.
+When we used Supabase's SQL editor, it already had access to the project's database. Colab runs elsewhere and needs connection details. Today's code runs in the Colab cells. Do not paste Python into the SQL editor, and do not treat two browser tabs as two controlled PostgreSQL sessions. The notebook creates and labels the actual connections.
 
-Read the SQL and the explicit commit-or-rollback decision carefully. The concurrency scaffolding is supplied so you can investigate database behavior without first building a concurrent client application. That is different from ignoring what the notebook does. You should still be able to identify which connection writes, which one observes, and where each transaction ends.
-
-Keep your first result in the final Markdown cell before rerunning. Notebook output is replaced as cells execute again, while the Markdown comparison can preserve both observations. Run cleanup after each experiment.
+The connection walkthrough is also near the top of the notebook, before any credentials are requested. Students can follow it while you demonstrate. The notebook creates its own disposable lock_lab row, beginning with medium priority and open status. The earlier transaction_lab event IDs do not control this experiment.
 
 [Sources]
-- Notebook 02 configuration and controlled experiment.
-- https://supabase.com/docs/guides/database/connecting-to-postgres
+- Week 5, Lab 2 and Notebook 02 introduction.
 - https://research.google.com/colaboratory/faq.html
 
 ## Slide 21
+
+In the existing Supabase course project, click Connect and choose Session pooler. Copy the PostgreSQL URI shown for that method. It begins with postgresql://. The project's HTTPS API URL and its API keys serve a different interface. This notebook uses a PostgreSQL connection string.
+
+Keep the actual host, port, and username from the copied string. Replace the literal [YOUR-PASSWORD] placeholder with the database password chosen for that project. It is not the password used to sign into the Supabase website. If you do not know the database password, stop and resolve that access before continuing. Do not guess a hostname or paste a credential into a shared slide, chat, or saved notebook cell.
+
+Reserved characters inside a password need percent encoding in a URI. For example, an at sign becomes %40, a hash becomes %23, and a percent sign becomes %25. Encode the password component only, once. The notebook explains this next to the connection steps. A malformed URI can fail before PostgreSQL even checks the password.
+
+The notebook requires an encrypted connection. If the copied URL ends in /postgres and has no query parameters, append ?sslmode=require. If it already has other query parameters, use &sslmode=require. If sslmode is already present, set that existing value to require or keep verify-ca or verify-full. Do not add two conflicting sslmode parameters. The require mode encrypts this classroom connection but does not verify the server hostname. A production configuration uses verify-full and an appropriate CA certificate.
+
+Prepare the URL privately, then paste it only into the hidden prompt in Colab. The next slide shows exactly which cells to run and what success looks like. The notebook clears its URL variable after opening the connections and does not intentionally save the prompt input in the file.
+
+[Sources]
+- Notebook 02 connection validation.
+- https://supabase.com/docs/guides/database/connecting-to-postgres
+- https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING-URIS
+- https://www.postgresql.org/docs/current/libpq-ssl.html
+
+## Slide 22
+
+Return to the Colab copy and find the configuration cell near the top. Set USE_CLOUD to True and leave KEEP_A_CHANGE False for the first run. A downloaded notebook defaults to USE_CLOUD False, which skips all database connections and offers an interpretation trace. Seeing that trace does not mean a cloud connection worked.
+
+Run the code cells from the top in order, beginning with the psycopg installation cell, then the configuration cell. In Section 1, run the connection cell. It displays Paste the temporary PostgreSQL connection URL. Paste the prepared URL into that hidden input and press Enter. It is normal for the cell to wait while it needs your input.
+
+Proceed when the output says Opened Session A, Session B, and the diagnostic session. Then run Section 2. It creates the disposable schema and prints Starting row: (1004, 'medium', 'open'). These are two separate checkpoints from two cells. If a connection fails, stop before setup and inspect the selected connection method, database password, URL syntax, SSL setting, and whether the project is running. A skipped cloud path means USE_CLOUD is still False or its configuration cell was not rerun.
+
+Section 3 defines and displays A's SQL. Section 4 runs the actual concurrent experiment. It captures B waiting, rolls A back, and waits for B to finish before returning. Section 5 prints that captured activity. Under B, the blocking_pids list should contain A's PID. Section 6 prints A's decision and the final row, which should be (1004, 'medium', 'in_progress') for this rollback case. By the time those results display, the controlled wait has ended.
+
+Run Section 7 cleanup and record the first result in the final Markdown comparison. Change only KEEP_A_CHANGE to True and rerun from configuration through cleanup. Keep USE_CLOUD True. The new setup restores the same starting row, and the second final row should be (1004, 'high', 'in_progress'). Both runs should finish successfully. Students do not need to produce a duplicate-key error in this lab.
+
+[Sources]
+- Notebook 02 configuration, connection, setup, experiment, diagnostic output, final state, and cleanup cells.
+
+## Slide 23
 
 Your individual lab compares two resolutions of the same controlled wait. Start with the rollback case, follow the captured relationship from B's PID to A's PID, and keep the final priority and status in the comparison cell. The order of rows in the output is not the definition of which session blocks another; the blocking-PID result establishes that relationship.
 
@@ -335,7 +365,7 @@ Submit the completed notebook with the comparison and explanation in its final M
 [Sources]
 - Week 5, Lab 2: The Query Finished, but Which Change Survived?
 
-## Slide 22
+## Slide 24
 
 This short update explains the rollback case in ordinary technical language. It identifies the status update as the waiting operation, ties the wait to A's uncommitted change of the same row, and points to the captured PID relationship. Then it states what happened to the actual data after A rolled back and B committed.
 
@@ -351,7 +381,7 @@ This kind of writing is useful in interviews as well. Instead of saying only tha
 - Course writing guide, Write an Incident Update.
 - Notebook 02 lab comparison.
 
-## Slide 23
+## Slide 25
 
 We can now describe several claims that initially sound similar but require different checks. A statement succeeded. A transaction committed. A waiting query finished. The application retained the intended state. Those are not interchangeable statements.
 
