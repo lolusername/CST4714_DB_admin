@@ -109,7 +109,7 @@ write-up, then explain what happened and how a team prevents it. No SQL.
 
 Complete [In-Class Writing Response: When MVCC Goes Wrong](in_class_writing_mvcc_wraparound.md).
 
-Submit only `week_06_wraparound_response.md`.
+Paste your response as text into the Brightspace assignment. No file to upload.
 
 ## Optional Industry Extension: Permission Escape Room
 

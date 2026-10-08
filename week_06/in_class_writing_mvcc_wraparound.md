@@ -1,6 +1,6 @@
 # In-Class Writing Response: When MVCC Goes Wrong
 
-**Week 6. Individual. About 30 minutes. Submit one file in Brightspace: `week_06_wraparound_response.md`.**
+**Week 6. Individual. About 30 minutes. Paste your response as text into the Brightspace assignment.**
 
 No SQL, no screenshots, no database work. Read one short incident report, then write a reflection on what happened and how a team prevents it.
 
@@ -46,7 +46,7 @@ Suggested shape: one paragraph on the problem and why PostgreSQL intervened, one
 
 ## Submit
 
-One file, `week_06_wraparound_response.md`, in Brightspace. Plain text is fine. No separate report, no screenshots.
+Paste your response into the Brightspace assignment text box. No file, no screenshots, no separate report.
 
 ## Why this sits in Week 6
 
