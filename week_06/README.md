@@ -102,6 +102,15 @@ Submit only `week_06_rls_test.sql`.
 
 For support with the lab's explanation, use [Writing About Database Decisions](materials/assessments/critical_writing.md). It develops the response already included in your lab, not an additional assignment.
 
+## In-Class Writing: When MVCC Goes Wrong
+
+A short reflection on Sentry's 2015 PostgreSQL outage: read the incident
+write-up, then explain what happened and how a team prevents it. No SQL.
+
+Complete [In-Class Writing Response: When MVCC Goes Wrong](in_class_writing_mvcc_wraparound.md).
+
+Submit only `week_06_wraparound_response.md`.
+
 ## Optional Industry Extension: Permission Escape Room
 
 This activity is optional, ungraded, and does not add a submission.
