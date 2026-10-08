@@ -1,6 +1,6 @@
 # In-Class Writing Response: When MVCC Goes Wrong
 
-**Week 6. Individual. About 30 minutes. Paste your response as text into the Brightspace assignment.**
+**Week 6. Individual. About 30 minutes.**
 
 No SQL, no screenshots, no database work. Read one short incident report, then write a reflection on what happened and how a team prevents it.
 
@@ -43,10 +43,6 @@ Requirements:
 - Distinguish **availability** (is the service up) from **correctness** (is the data right). The whole incident is about trading one for the other.
 
 Suggested shape: one paragraph on the problem and why PostgreSQL intervened, one on the recovery tradeoff, one on prevention.
-
-## Submit
-
-Paste your response into the Brightspace assignment text box. No file, no screenshots, no separate report.
 
 ## Why this sits in Week 6
 
