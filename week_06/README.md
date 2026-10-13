@@ -20,6 +20,7 @@ Use [Chapter 6: Access Should Be Useful and Limited](../Operating_Cloud_Database
 
 - **Before Day 1:** read through **Test Both an Allowed and a Denied Action**, plus the limited reporting-view worked example.
 - **Before Day 2:** read the Supabase identity, row-security, secret-handling, and network-control sections. Distinguish database roles from individual application users.
+- **Before the in-class writing:** read the Chapter 5 section *Vacuum Keeps MVCC Honest* in [the textbook](../Operating_Cloud_Databases.pdf). It covers row versions, vacuum, autovacuum tuning, wraparound protection, and the Sentry case.
 
 Bring one point you want clarified. Reading supports the in-class work; it does
 not add a separate reading report. Optional textbook practice is not required
@@ -90,7 +91,7 @@ Submit only `week_06_least_privilege.sql`.
 
 ## Day 2: Row-Level Security Test Harness
 
-Slides 12-24 show the four-row ownership case, a direct lookup, and the effect
+Slides 12-23 show the four-row ownership case, a direct lookup, and the effect
 of adding a row. The instructor's new row belongs to Resident A. In your separate
 lab, add a row for Resident 102 and test both residents again. The Supabase token
 and UUID examples explain the real-application connection; they do not require
@@ -106,6 +107,12 @@ For support with the lab's explanation, use [Writing About Database Decisions](m
 
 A short reflection on Sentry's 2015 PostgreSQL outage: read the incident
 write-up, then explain what happened and how a team prevents it. No SQL.
+
+Slides 24-33 of the Week 6 deck give the background you need: how an update
+makes a new row version, why transaction IDs wrap around, what vacuum and
+autovacuum do, why teams tune autovacuum and the trap in doing so, what
+wraparound protection does, the Sentry timeline, and two queries that show how
+close any database is. Slide 33 is the writing prompt.
 
 Complete [In-Class Writing Response: When MVCC Goes Wrong](in_class_writing_mvcc_wraparound.md).
 

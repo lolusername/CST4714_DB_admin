@@ -15,6 +15,8 @@ session and lock views reveal who is waiting on whom?
 
 ## Before Class: Assigned Reading
 
+Read the [textbook corrections](../COURSE_CORRECTIONS.md) with the assigned sections.
+
 Use [Chapter 5: Transactions Coordinate Competing Work](../Operating_Cloud_Databases.pdf).
 
 supasbase password encoding: https://supabase.com/docs/guides/database/connecting-to-postgres
@@ -55,14 +57,22 @@ consequences of ending a blocking transaction. The instructor demonstrates the
 notebook's rollback case. You predict and test the commit alternative, keeping
 the fixture and competing update unchanged.
 
+**Before the diagnostic query:** a PostgreSQL session uses a server process
+called a backend. Its **PID** is that process identifier, not a user or ticket
+ID. `SELECT pg_backend_pid();` identifies the backend for the connection running
+the query. In slides **15-16**, read the waiting session's `pg_blocking_pids`
+list to find its blockers. The notebook captures these IDs from its own open
+connections; a later SQL Editor request may use a different backend.
+
 **First-time connection:** slides **20-22** and the notebook's **First-Time Setup:
 Colab and Supabase** explain how the tools fit together, how to prepare the
 Session pooler URL, and what confirms the connection and starting row.
 
 Complete [Lab 2: The query finished, but which change survived?](lab_02_blocking_incident.md).
 
-Submit only the completed `02_postgres_transactions_locks.ipynb` notebook. The
-credential prompt does not save your connection string in the file.
+Submit the sharing link to your completed Colab notebook in Brightspace, as
+stated in Lab 2. The credential prompt does not save your connection string
+in the file.
 
 For support with the lab's explanation, use [Writing About Database Decisions](materials/assessments/critical_writing.md). It develops the response already included in your lab, not an additional assignment.
 

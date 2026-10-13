@@ -11,6 +11,9 @@ https://blog.sentry.io/transaction-id-wraparound-in-postgres/
 
 ## What happened, in brief
 
+Slides 24 to 33 of the Week 6 deck walk through this background with real
+PostgreSQL 16 numbers. The summary below is enough to start reading.
+
 On Monday, July 20, 2015, the hosted Sentry service was down for most of the US working day. Nobody attacked it and no disk failed. PostgreSQL stopped accepting writes on purpose.
 
 Here is the background you need. Last week you learned that PostgreSQL keeps several versions of a row so readers and writers do not block each other (MVCC). Every transaction that changes data gets a transaction ID, and PostgreSQL uses those IDs to decide which row version each transaction can see. The IDs come from a counter with about two billion usable values. Routine maintenance, called vacuuming, retires old versions and marks old rows as permanently visible so the counter can safely keep going. If that maintenance falls far enough behind, the counter runs out of room. At that point PostgreSQL refuses new writes rather than reuse IDs, because reuse would make deleted rows reappear, updates revert, and constraints break. This is called transaction ID wraparound protection. It is PostgreSQL choosing to be unavailable instead of wrong.
