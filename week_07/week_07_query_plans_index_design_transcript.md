@@ -206,11 +206,51 @@ Now for the research lab, which takes the rest of class except the last five min
 
 Open the Week 7 README and click Open in Colab. Then choose File, Save a copy in Drive, and rename your copy Lastname_Week07_Research, using your own last name. You need no Supabase login, no password, and no installation. The notebook runs Python on data that is already inside it.
 
-The lab has four steps. First, spend about ten minutes inspecting the data. Run the cells from the top and fill in the observation table. You will run the ticket filter twice, once with open and once with new, so record the first list before you change it. Second, spend about ten minutes reading the two short PostgreSQL documentation pages linked in the notebook, and read only the paragraphs the notebook points to. Third, spend about twenty-five minutes writing. You write between one hundred eighty and two hundred fifty words in total, across three response cells. Connect what you saw in the data to what the sources say, and describe one test you plan to run in PostgreSQL. Label your expected result as a prediction. Fourth, spend about five minutes checking that every claim matches an output above it.
+The lab has four steps, shown on these cards: inspect the data for about ten minutes, read two short sources for about ten minutes, write for about twenty-five minutes, and check your work for about five minutes. I will put each step on the screen when it is time, so you always know what to do next.
 
 This writing gives you a head start on Part 4 of your README. Keep in mind that Python results describe the data. They do not show how PostgreSQL will run the query.
 
 ## Slide 19
+
+Step one is inspecting the data, for about ten minutes. Run the code cells from the top. The first output gives you three counts, and they go in the first row of your observation table.
+
+The next cell lists tickets with one status, newest first. Run it with the status set to open, and write down the ticket IDs in order. Then change the status to new, run it again, and write down that list too. Record the first list before you change anything, because the second run replaces the output.
+
+Then inspect one ticket. Ticket 1004 is already filled in, and you may switch to another ID you saw. Record its status and its requester.
+
+Two details trip people up. A blank assignee means nobody has been assigned yet; every ticket still has a requester. And MAX_ROWS is a ceiling of twenty, not a promise that twenty tickets match.
+
+## Slide 20
+
+Step two is reading, for about ten minutes. If your observation table is not finished, finish it first, then open the two PostgreSQL documentation pages linked in the notebook. Read only the parts shown on this slide.
+
+On the first page, Indexes Introduction, read the opening example through the paragraph that begins, Once an index is created. Then read the final paragraph, about keeping an index synchronized with its table. Skip the discussion of operator classes.
+
+On the second page, Indexes and ORDER BY, read the first three paragraphs, through the discussion of ORDER BY with LIMIT. The later examples are optional.
+
+As you read, look for the three things at the bottom of the slide: what an index might let PostgreSQL avoid, why PostgreSQL might still choose another plan, and what extra work an index adds. Keep both links, because your writing uses them.
+
+## Slide 21
+
+Step three is writing, and it takes about twenty-five minutes. You write between one hundred eighty and two hundred fifty words in total, spread across the three response cells, A, B, and C. The table shows what each one needs.
+
+Cell A, about fifty to seventy words, says what the newest-open-tickets query must return. Use two specific observations from your notebook, and explain why LIMIT 20 can return fewer than twenty rows in this dataset.
+
+Cell B, about eighty to one hundred ten words, explains how an index could help the filter or the ordering, and names one cost. Use one idea from each source and keep both links. Then explain why finding an index definition online does not prove that this small database will run faster.
+
+Cell C, about fifty to seventy words, describes one before-and-after test you will run in PostgreSQL for the midterm: what stays the same, which results and plan evidence you will compare, and what would make you keep or reconsider the index. Label your expected outcome as a prediction, and finish with one question you still need answered.
+
+Write in your own words. To edit a response cell, double-click it.
+
+## Slide 22
+
+Step four is checking your work, for about five minutes before you submit. Go down the checklist on the left.
+
+Every row of your observation table should come from your own outputs. Cells A, B, and C should hold your writing in place of the prompts, between one hundred eighty and two hundred fifty words in total. Both source links should still be there. Every observation you wrote should match an output above it, and your expected test result should be labeled as a prediction. If a cell failed to run, say so, and label any supplied example you used. Never invent an observation.
+
+The box on the right shows what I look for: accurate observations, a connection between the two sources and this dataset, a test that compares the same query and results, and a clear line between what you observed and what you predict.
+
+## Slide 23
 
 We have five minutes left, so it is time to save and submit.
 
