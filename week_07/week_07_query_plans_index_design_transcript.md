@@ -204,7 +204,7 @@ Now I will take your questions about any part of the midterm. When we finish, op
 
 Now for the research lab, which takes the rest of class except the last five minutes.
 
-Open the Week 7 README and click Open in Colab. Then choose File, Save a copy in Drive, and rename your copy Lastname_Week07_Research, using your own last name. You need no Supabase login, no password, and no installation. The notebook runs Python on data that is already inside it.
+Open the Week 7 README and click Open in Colab. Then choose File, Save a copy in Drive, and rename your copy Lastname_Week07_Research, using your own last name. You need no Supabase login, no password, and no installation. The notebook runs Python on data that is already inside it. Near the top, it shows the query from Part 4 of the midterm, the one that lists the newest open tickets. Everything you do today is about that query.
 
 The lab has four steps, shown on these cards: inspect the data for about ten minutes, read two short sources for about ten minutes, write for about twenty-five minutes, and check your work for about five minutes. I will put each step on the screen when it is time, so you always know what to do next.
 
@@ -234,7 +234,7 @@ As you read, look for the three things at the bottom of the slide: what an index
 
 Step three is writing, and it takes about twenty-five minutes. You write between one hundred eighty and two hundred fifty words in total, spread across the three response cells, A, B, and C. The table shows what each one needs.
 
-Cell A, about fifty to seventy words, says what the newest-open-tickets query must return. Use two specific observations from your notebook, and explain why LIMIT 20 can return fewer than twenty rows in this dataset.
+Cell A, about fifty to seventy words, says what the query at the top of the notebook must return. Use two specific observations from your notebook, and explain why LIMIT 20 can return fewer than twenty rows in this dataset.
 
 Cell B, about eighty to one hundred ten words, explains how an index could help the filter or the ordering, and names one cost. Use one idea from each source and keep both links. Then explain why finding an index definition online does not prove that this small database will run faster.
 
