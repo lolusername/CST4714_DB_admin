@@ -9,6 +9,7 @@ Today we walk through the Metro Support project and its rubric, then investigate
 - [Midterm instructions and rubric](../week_08/materials/assignments/midterm_project.md)
 - [Midterm SQL starter](../week_08/materials/assignments/midterm_starter.sql)
 - [Final README template](../week_08/materials/assignments/midterm_README_template.md)
+- [Step-by-step midterm guide with expected results](../week_08/materials/assignments/midterm_guide.md)
 - [Class slides](week_07_query_plans_index_design.pptx)
 - [Slide handout](week_07_query_plans_index_design.pdf)
 - [Transcript](week_07_query_plans_index_design_transcript.md)

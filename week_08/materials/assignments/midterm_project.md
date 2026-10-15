@@ -1,6 +1,6 @@
 # Midterm Project Metro Support
 
-CST4714 Database Administration · Atilio Barreda · Individual project · 30% of the course grade
+CST4714 Database Administration · Individual project · 30% of the course grade
 
 ## What you are making
 
@@ -13,6 +13,7 @@ We introduce the project in Week 7 and cover the recovery portion in Week 8. Use
 - Save [midterm_starter.sql](midterm_starter.sql) as **midterm.sql**.
 - Save [midterm_README_template.md](midterm_README_template.md) as **README.md**.
 - Use the [Week 5 blocking notebook](../notebooks/02_postgres_transactions_locks.ipynb) for Part 3. You may reuse your own Week 5 observations.
+- Use the [step-by-step midterm guide](midterm_guide.md) to see the expected results and where each result goes in your README. It explains these requirements without changing them.
 
 The starter includes all three tables and the seed data. You may use this supplied code. Your work is to complete the marked sections, record what actually happened, and explain the results in your own words. Work in your personal Supabase practice project or a local/instructor-provided PostgreSQL database.
 
