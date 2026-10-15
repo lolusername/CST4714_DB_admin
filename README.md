@@ -29,7 +29,7 @@ notebook or sample data.
 - [Week 4: Reliable SQL Reports](week_04/README.md)
 - [Week 5: Transactions and Concurrency](week_05/README.md)
 - [Week 6: Identity, Permissions, and Row-Level Security](week_06/README.md)
-- [Week 7: Query Plans and Index Design](week_07/README.md)
+- [Week 7: Midterm Explanation and Preliminary Research](week_07/README.md)
 - [Week 8: Backup, Recovery, and the Midterm](week_08/README.md)
 - [Week 9: From Tables to Documents](week_09/README.md)
 - [Week 10: MQL and Document Modeling](week_10/README.md)

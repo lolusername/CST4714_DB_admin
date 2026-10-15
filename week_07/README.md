@@ -1,77 +1,42 @@
-# Week 7: Query Plans and Index Design
+# Week 7 Midterm Explanation and Preliminary Research
 
-## The Week's Question
+**One 100-minute meeting: 45 minutes explaining the midterm, 50 minutes of research and writing in Colab, and 5 minutes to save and submit.**
 
-How can we explain a query plan, test one index hypothesis, and decide whether the
-benefit is worth the cost?
+Today we walk through the Metro Support project and its rubric, then investigate the data and plan the index experiment. The notebook is today's classwork. The completed midterm remains a separate two-file submission.
 
-## What You Will Be Able to Do
+## Materials
 
-- convert a slow-query complaint into a reproducible workload statement;
-- distinguish estimated and actual plan rows;
-- recognize scan, sort, join, and aggregate nodes;
-- interpret loops and buffer counters without double-counting work;
-- test a composite index on a deterministic larger fixture; and
-- write a keep/remove/test-further recommendation with a real tradeoff.
+- [Midterm instructions and rubric](../week_08/materials/assignments/midterm_project.md)
+- [Midterm SQL starter](../week_08/materials/assignments/midterm_starter.sql)
+- [Final README template](../week_08/materials/assignments/midterm_README_template.md)
+- [Class slides](week_07_query_plans_index_design.pptx)
+- [Slide handout](week_07_query_plans_index_design.pdf)
+- [Transcript](week_07_query_plans_index_design_transcript.md)
+- [Today's research lab](lab_midterm_research.md)
+- [Colab notebook to download](07_midterm_preliminary_research.ipynb)
 
-## Before Class: Assigned Reading
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_07/07_midterm_preliminary_research.ipynb)
 
-Use [Chapter 7: Performance Work Begins With Measurement](../Operating_Cloud_Databases.pdf).
+Open the notebook with the button above and choose **File > Save a copy in Drive**. The data and code are included. No Supabase connection or package installation is needed today. You can also download the notebook and use File > Upload notebook at [Colab](https://colab.research.google.com/).
 
-- **Before Day 1:** read through **Selectivity Explains Many Scan Decisions**, including the actual plan excerpt and row-flow diagram.
-- **Before Day 2:** read the B-tree, partial-index, cost, and worked-experiment sections. An improvement must preserve the returned ticket IDs.
+## Class schedule
 
-Bring one point you want clarified. Reading supports the in-class work; it does
-not add a separate reading report. Optional textbook practice is not required
-unless the weekly lab assigns it.
+| Minutes | Work |
+|---|---|
+| 0 to 10 | Explain the case, the two final files, and what the supplied starter already includes |
+| 10 to 30 | Walk through the five project parts and the evidence each needs |
+| 30 to 40 | Explain the rubric, show how the README records results, and distinguish observed results from predictions |
+| 40 to 45 | Questions and opening the notebook |
+| 45 to 55 | Inspect the supplied data in Colab |
+| 55 to 65 | Read the two short documentation sections |
+| 65 to 90 | Write 180–250 words and plan one PostgreSQL test |
+| 90 to 95 | Review your observations and remaining question |
+| 95 to 100 | Download and submit the completed notebook |
 
-## Class Materials
+## Today's submission and the completed midterm
 
-- [Performance fixture setup](performance_lab_setup.sql)
-- [Week 7 student deck](week_07_query_plans_index_design.pptx)
-- [Week 7 PDF handout](week_07_query_plans_index_design.pdf)
-- [Week 7 transcript](week_07_query_plans_index_design_transcript.md)
+Submit **Lastname_Week07_Research.ipynb** for today's classwork, including outputs and writing. There is no separate writing document or index-lab SQL submission today. Reuse the research in your final README after testing your predictions.
 
-## Day 1: Read the Plan Before Changing Anything
+The final midterm is individual, worth 30% of the course grade, and submitted as **midterm.sql** plus **README.md** in one ZIP. The notebook does not replace either final file. Recovery is taught in Week 8; use the final deadline posted in Brightspace.
 
-Slides 1-12 teach the workload, actual row flow, plan measurements, and selectivity.
-The demonstration uses twenty newest `in_progress` tickets in `performance_demo`.
-Your lab uses `open` tickets in `performance_lab`, then changes the limit to test
-whether fewer returned rows necessarily mean less scanning.
-
-Complete [Lab 1: Why Does a Twenty-Row Result Read So Much Data?](lab_01_plan_reading.md).
-
-Submit only `week_07_plan_reading.sql`.
-
-## Day 2: Test One Index Hypothesis
-
-Slides 13-24 explain B-tree ordering, composite and partial indexes, and a complete
-before/after demonstration. The instructor tests a partial index for the
-in-progress queue. You test a composite index for the open queue and write a
-short recommendation from your own results.
-
-Complete [Lab 2: Does This Index Earn Its Space?](lab_02_index_experiment.md).
-
-Submit only `week_07_index_decision.sql`.
-
-For support with the lab's explanation, use [Writing About Database Decisions](materials/assessments/critical_writing.md). It develops the response already included in your lab, not an additional assignment.
-
-## Optional Industry Extension: Machine-Readable Plan Detective
-
-This activity is optional, ungraded, and does not add a submission.
-
-Run one safe `SELECT` from the performance fixture with
-`EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)`. Locate the top node, actual and
-estimated rows, loops, shared-buffer activity, planning time, and execution time.
-Write a tiny SQL or Python expression that extracts one field, or simply annotate
-the JSON in a text editor. Explain why a machine-readable plan helps regression
-testing but still cannot decide by itself whether an index should remain.
-
-## End-of-Week Self-Check
-
-Explain why neither "sequential scan" nor "index scan" is automatically a good or
-bad result.
-
-## Reuse
-
-See the [licenses](materials/LICENSE.md) and [source attributions](materials/ATTRIBUTIONS.md). External resources retain their own terms.
+The larger [index experiment](lab_single_session.md), advanced plan operators, and partial indexes are optional reference. They are outside today's required work. Today's Python results describe the CSV dataset; they do not prove how PostgreSQL will execute the query.
