@@ -6,7 +6,7 @@ Speaker notes for the five-slide class deck. Allow 45 minutes for the project ex
 
 ## Slide 1
 
-Today is the midterm explanation and preliminary research lab. Spend 45 minutes walking through the actual project handout, SQL starter, README template, and rubric. Then give students 50 minutes for the research notebook and five minutes to download and submit it. The larger index demonstration is optional reference for another time.
+Today is the midterm explanation and preliminary research lab. Spend 45 minutes walking through the actual project handout, SQL starter, README template, and rubric. Then give students 50 minutes for the research notebook and five minutes to save it, share it, and submit the link. The larger index demonstration is optional reference for another time.
 
 The notebook uses supplied CSV data and Python. It does not require Supabase or execute PostgreSQL transactions or query plans. Its writing prepares students to run and explain their midterm work later.
 
@@ -26,9 +26,9 @@ Spend time on questions and examples of acceptable evidence. You do not need to 
 
 ## Slide 4
 
-Today's lab has one submission: Lastname_Week07_Research.ipynb with code outputs, the observation table, and 180 to 250 words across three response cells. Students inspect data, read two short official documentation excerpts, and propose one PostgreSQL test. They can reuse the writing in their final README after testing their predictions.
+Today's lab has one submission: the sharing link to each student's saved Colab copy, Lastname_Week07_Research, with code outputs, the observation table, and 180 to 250 words across three response cells. Students inspect data, read two short official documentation excerpts, and propose one PostgreSQL test. They can reuse the writing in their final README after testing their predictions.
 
-The final midterm remains midterm.sql and README.md in one ZIP. Today's notebook is classwork and does not replace those files. Students download their notebook with File > Download > Download .ipynb. There is no separate writing document or Colab sharing-link submission.
+The final midterm remains midterm.sql and README.md in one ZIP. Today's notebook is classwork and does not replace those files. Students choose Share, give the instructor viewer access, and paste the link into Brightspace. There is no separate writing document or file upload.
 
 ## Slide 5
 

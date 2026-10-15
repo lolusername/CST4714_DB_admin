@@ -13,7 +13,7 @@ Today we walk through the Metro Support project and its rubric, then investigate
 - [Slide handout](week_07_query_plans_index_design.pdf)
 - [Transcript](week_07_query_plans_index_design_transcript.md)
 - [Today's research lab](lab_midterm_research.md)
-- [Colab notebook to download](07_midterm_preliminary_research.ipynb)
+- [Colab notebook](07_midterm_preliminary_research.ipynb)
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_07/07_midterm_preliminary_research.ipynb)
 
@@ -31,11 +31,11 @@ Open the notebook with the button above and choose **File > Save a copy in Drive
 | 55 to 65 | Read the two short documentation sections |
 | 65 to 90 | Write 180–250 words and plan one PostgreSQL test |
 | 90 to 95 | Review your observations and remaining question |
-| 95 to 100 | Download and submit the completed notebook |
+| 95 to 100 | Save your Colab copy and submit its sharing link |
 
 ## Today's submission and the completed midterm
 
-Submit **Lastname_Week07_Research.ipynb** for today's classwork, including outputs and writing. There is no separate writing document or index-lab SQL submission today. Reuse the research in your final README after testing your predictions.
+Submit the **sharing link** to your saved Colab copy, **Lastname_Week07_Research**, for today's classwork. Use **Share** to give the instructor viewer access, and make sure the outputs and writing are saved in the copy. There is no separate writing document or index-lab SQL submission today. Reuse the research in your final README after testing your predictions.
 
 The final midterm is individual, worth 30% of the course grade, and submitted as **midterm.sql** plus **README.md** in one ZIP. The notebook does not replace either final file. Recovery is taught in Week 8; use the final deadline posted in Brightspace.
 

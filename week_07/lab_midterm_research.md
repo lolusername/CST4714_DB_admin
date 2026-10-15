@@ -17,8 +17,8 @@ The notebook includes all data and code. No installation, Supabase login, or dat
 3. **Write, about 25 minutes.** Write 180–250 words total: your data question, what the sources suggest, and one proposed PostgreSQL test with an expected result and a remaining question. Link both sources where you use them.
 4. **Check, about 5 minutes.** Compare your observations with your outputs and make sure your predicted test result is labeled as a prediction.
 
-## Submit one notebook
+## Submit one Colab link
 
-Choose **File > Download > Download .ipynb**. Submit Lastname_Week07_Research.ipynb with the code outputs, observation table, and writing through today's classwork assignment. No separate report, screenshots, or sharing link.
+Run every cell, then choose **File > Save** so your outputs and writing are stored in your Drive copy. Choose **Share** and give the instructor viewer access, then copy the link. Submit that sharing link to **Lastname_Week07_Research** in today's classwork assignment in Brightspace. Submit your saved copy's link, not the starter notebook's GitHub or Colab link. No file upload, separate report, or screenshots.
 
 I will look for accurate observations, a connection between the two sources and this dataset, a test that compares the same query and results, and a clear distinction between what you observed and what you predict. You can revise and reuse the writing in your final midterm README. The final midterm still uses midterm.sql and README.md.
