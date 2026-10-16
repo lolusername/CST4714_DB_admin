@@ -1,0 +1,56 @@
+1
+00:00:02,100 --> 00:00:03,600
+Composite indexes: column order matters. INDEX ON tickets (status, opened_at DESC)
+
+2
+00:00:06,600 --> 00:00:09,600
+tickets: stored in the order they arrived. Statuses are mixed together.
+
+3
+00:00:10,100 --> 00:00:17,600
+No index: scan all 12, keep the 5 open ones, SORT them, then keep 3.
+
+4
+00:00:18,100 --> 00:00:28,100
+12 rows read and a sort, to return 3 rows.
+
+5
+00:00:28,600 --> 00:00:31,100
+Sorted by status first. Inside each status, newest first.
+
+6
+00:00:31,600 --> 00:00:35,100
+Like a phone book: by last name, then first name within each last name.
+
+7
+00:00:35,600 --> 00:00:39,000
+With the index: jump straight to the first 'open' entry...
+
+8
+00:00:39,500 --> 00:00:42,000
+...read 3 entries already in date order, and STOP. No scan. No sort.
+
+9
+00:00:42,500 --> 00:00:46,500
+In the lab it's LIMIT 20 on 100,000 rows: the same idea, much bigger savings.
+
+10
+00:00:47,000 --> 00:00:47,800
+Now filter only on the SECOND column...
+
+11
+00:00:48,300 --> 00:00:51,300
+The matches are scattered across every status group: no single stretch of the index to read.
+
+12
+00:00:51,800 --> 00:00:54,800
+Phone book again: easy to find "Smith, John". Hard to find every "John".
+
+13
+00:00:55,300 --> 00:00:57,800
+For this query, an index that starts with opened_at would fit better.
+
+14
+00:00:59,400 --> 00:01:08,200
+Remember: A composite index sorts by the 1st column, then the 2nd within it. WHERE on the 1st column + ORDER BY the 2nd: jump in, read in order, stop. Filter only on the 2nd column: matches are scattered. Choose column order from the real query, not a rule of thumb.
+

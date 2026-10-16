@@ -36,6 +36,17 @@ unless the weekly lab assigns it.
 - [Individual lab for both meetings](lab_01_public_data_integration.md)
 - [Historical CISA teaching sample: JSON, CSV, and source notes](materials/datasets/cisa_kev_sample/README.md)
 
+<!-- videos:start -->
+## Videos
+
+Short silent animations with captions (3 for this week). Each has a subtitle file; see [all Week 13 videos](videos/README.md).
+
+- [Capacity: measure before you scale](videos/01_capacity_before_scaling.mp4) (1:17): Twenty invented requests average 93 ms while the 95th percentile is 500 ms. Then compare the scaling options by what each one leaves behind, and see why three replicas are copies while three shards are portions.
+- [Shard keys: distribution and targeting](videos/02_shard_keys.mp4) (1:37): Using the 75-record CISA fixture, a ranged dateAdded key sends all 15 later records to the last range, while a hashed cveID spreads them 3, 3, 6, 3. Hashing cannot split a repeated value, and a query without the shard key goes to every shard.
+- [A repeatable Python import](videos/03_repeatable_import.mp4) (1:28): A Python client connects with a hidden URI, TLS checks on, and timeouts, then imports by a stable key so a second run leaves 75 records instead of 150. A failed write shows the difference between a transaction's rollback and a rerunnable, per-document loop.
+
+<!-- videos:end -->
+
 ## Free External Data
 
 The notebook uses the U.S. Cybersecurity and Infrastructure Security Agency's

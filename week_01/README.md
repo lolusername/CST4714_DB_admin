@@ -15,6 +15,17 @@ how that can happen.
 No database installation or cloud account is required this week. Use a browser
 and a text editor, or work on paper during the class discussion.
 
+<!-- videos:start -->
+## Videos
+
+Short silent animations with captions (3 for this week). Each has a subtitle file; see [all Week 1 videos](videos/README.md).
+
+- [Following one request](videos/01_request_path.mp4) (1:24): A new ticket travels from the browser through the API, identity checks, and the DBMS to a committed row. A lost reply is not a lost write, and the dashboard is a separate read.
+- [Selection and projection](videos/02_selection_projection.mp4) (1:34): Selection keeps the rows that satisfy a condition; projection keeps the columns you name. Neither changes the stored table, and a valid condition can still encode the wrong business rule.
+- [Where did the requests go?](videos/03_missing_requests.mp4) (1:18): The dashboard keeps active tickets, then keeps only those with a matching agent. NULL assignees match nothing, so two stored requests never reach the screen.
+
+<!-- videos:end -->
+
 ## Before Class: Assigned Reading
 
 Use [Chapter 1: How Database-Backed Applications Work](../Operating_Cloud_Databases.pdf#page=6).

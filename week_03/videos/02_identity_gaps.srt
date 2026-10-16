@@ -1,0 +1,68 @@
+1
+00:00:02,100 --> 00:00:03,600
+Why identity values have gaps. A generated ID identifies a row. It does not count rows.
+
+2
+00:00:07,500 --> 00:00:09,500
+When an insert leaves note_id out, PostgreSQL takes the next value from a sequence.
+
+3
+00:00:10,000 --> 00:00:14,966
+PRIMARY KEY is a separate clause: it requires the value to be unique and present.
+
+4
+00:00:15,466 --> 00:00:19,833
+The insert returns 1. Until COMMIT, the row is pending.
+
+5
+00:00:20,333 --> 00:00:21,933
+This insert also gets a number: 2.
+
+6
+00:00:22,433 --> 00:00:27,800
+ROLLBACK discards the row, but the sequence still says next: 3.
+
+7
+00:00:28,300 --> 00:00:32,700
+The three inserts returned 1, 2, and 3.
+
+8
+00:00:33,200 --> 00:00:35,200
+Two rows, largest ID 3. The largest ID is not a row count.
+
+9
+00:00:35,700 --> 00:00:43,533
+Nothing was lost: row 2 was rolled back, its allocation was not.
+
+10
+00:00:44,033 --> 00:00:48,066
+Session B didn't wait to see whether A would commit. It just took the next number.
+
+11
+00:00:48,566 --> 00:00:51,066
+Gapless numbers would make every insert wait for the one before it. Gaps are the price.
+
+12
+00:00:51,566 --> 00:00:54,066
+Failed inserts and sequence caching also leave gaps, so a gap alone can't tell you its history.
+
+13
+00:00:54,566 --> 00:01:00,633
+Need consecutive invoice numbers? That's a separately designed process.
+
+14
+00:01:01,133 --> 00:01:07,233
+The import supplied 6 itself. The sequence still says next: 6.
+
+15
+00:01:07,733 --> 00:01:09,733
+Generated 6 collides with the imported 6. The primary key refuses the row.
+
+16
+00:01:10,233 --> 00:01:12,733
+That failed insert still used up 6. After an import, check and adjust the sequence deliberately.
+
+17
+00:01:14,333 --> 00:01:24,333
+Remember: An identity column takes values from a sequence. ROLLBACK removes the row, not the sequence allocation. Gaps are normal: rollbacks, failed inserts, caching. Use count(*) to count rows; use keys to identify them. Explicit IDs don't advance the sequence: check it after imports.
+

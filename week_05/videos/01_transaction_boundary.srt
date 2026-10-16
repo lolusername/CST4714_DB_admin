@@ -1,0 +1,80 @@
+1
+00:00:02,100 --> 00:00:03,600
+One assignment, one transaction. BEGIN draws a boundary. COMMIT or ROLLBACK ends it.
+
+2
+00:00:07,100 --> 00:00:09,100
+Ticket 1004 is unassigned and new. Event 5001 is existing history.
+
+3
+00:00:09,600 --> 00:00:11,600
+Assigning it to Agent 202 changes the ticket AND adds an event.
+
+4
+00:00:12,100 --> 00:00:16,500
+If only one of the two is saved, the ticket and its history disagree.
+
+5
+00:00:17,000 --> 00:00:19,066
+BEGIN opens a transaction. Nothing is decided yet.
+
+6
+00:00:19,566 --> 00:00:22,933
+The UPDATE returns 1004, 202, in_progress: the row this statement changed.
+
+7
+00:00:23,433 --> 00:00:28,000
+Yellow = uncommitted. This session can see both changes; nothing is committed.
+
+8
+00:00:28,500 --> 00:00:31,900
+ROLLBACK discards both. A fresh query shows NULL, new, and no event 5998.
+
+9
+00:00:32,400 --> 00:00:35,300
+Same starting state, same pair, but ending with COMMIT instead:
+
+10
+00:00:35,800 --> 00:00:38,300
+Both changes remain together. ROLLBACK and COMMIT are alternatives, not two steps.
+
+11
+00:00:38,800 --> 00:00:42,000
+A later ROLLBACK cannot undo a completed COMMIT.
+
+12
+00:00:42,500 --> 00:00:46,366
+Back to the original fixture. This time the second statement is wrong.
+
+13
+00:00:46,866 --> 00:00:50,133
+The UPDATE succeeds: priority is urgent, uncommitted.
+
+14
+00:00:50,633 --> 00:00:54,800
+Event 5001 already exists, so the INSERT is rejected. The transaction is now failed.
+
+15
+00:00:55,300 --> 00:00:57,800
+After ROLLBACK, priority is low again. The urgent change never stood alone.
+
+16
+00:00:58,300 --> 00:01:04,600
+Event 5001 is untouched: the error refused a duplicate; it erased nothing.
+
+17
+00:01:05,100 --> 00:01:08,600
+Ticket 1004 is new, not resolved. Nothing matches, and that is valid SQL.
+
+18
+00:01:09,100 --> 00:01:12,600
+Nothing in the database stops a history event for an assignment that never happened.
+
+19
+00:01:13,100 --> 00:01:16,100
+The application must check for one returned ticket before writing history or committing.
+
+20
+00:01:17,700 --> 00:01:27,700
+Remember: A transaction makes related changes commit together or not at all. Your own session sees its uncommitted work; that is not a commit. After an error, the transaction is failed: end it with ROLLBACK. An UPDATE that matches zero rows is not an error. Verify the stored state with a fresh query afterwards.
+

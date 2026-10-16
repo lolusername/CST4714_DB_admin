@@ -1,0 +1,68 @@
+1
+00:00:02,100 --> 00:00:03,600
+Counting workload, including zero. How many active tickets does each staff member have?
+
+2
+00:00:06,500 --> 00:00:09,000
+Goal: one row per staff member, including anyone with no active work.
+
+3
+00:00:09,500 --> 00:00:15,900
+Active means new, open, or in_progress. Let's run it step by step.
+
+4
+00:00:16,400 --> 00:00:18,900
+Staff = agents and the supervisor: 201, 202, 203. Residents and the analyst are outside this report.
+
+5
+00:00:19,400 --> 00:00:23,800
+This WHERE filters the preserved left side, so it can't drop a staff member with no tickets.
+
+6
+00:00:24,300 --> 00:00:31,200
+The status test sits in ON, so it only decides which tickets may match.
+
+7
+00:00:31,700 --> 00:00:35,200
+203 matches no active ticket, yet the left join keeps ONE row for 203, with NULL ticket columns.
+
+8
+00:00:35,700 --> 00:00:42,700
+1004 and 1009 have no assignee, so they match no staff member.
+
+9
+00:00:43,200 --> 00:00:47,200
+count(t.ticket_id) counts non-NULL ticket IDs. For 203 that is 0.
+
+10
+00:00:47,700 --> 00:00:53,600
+count(*) counts rows, including 203's placeholder row: it would claim 1.
+
+11
+00:00:54,100 --> 00:00:56,600
+203's row has t.status = NULL. The WHERE test is unknown, so the row is dropped.
+
+12
+00:00:57,100 --> 00:01:01,600
+203 vanishes from the report: the left join now behaves like an inner join.
+
+13
+00:01:02,100 --> 00:01:06,500
+Keep the status test in ON: it limits which tickets match, not which staff appear.
+
+14
+00:01:07,000 --> 00:01:10,000
+Totals reconcile: nothing was lost. Unassigned work is nobody's workload.
+
+15
+00:01:10,500 --> 00:01:13,000
+Verify one count directly: Agent 201 has 1001, 1006, and 1011. Three.
+
+16
+00:01:13,500 --> 00:01:16,000
+A real dashboard could show this staff report plus a separate unassigned queue.
+
+17
+00:01:17,600 --> 00:01:27,600
+Remember: Start FROM the population the report must keep: here, staff. LEFT JOIN gives an unmatched staff member one row with NULL ticket columns. count(t.ticket_id) gives 0 for that row; count(*) gives 1. A WHERE test on the right side can turn a left join back into an inner one. Verify one count with a direct list, and reconcile the totals.
+

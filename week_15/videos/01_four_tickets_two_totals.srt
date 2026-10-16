@@ -1,0 +1,80 @@
+1
+00:00:02,100 --> 00:00:03,600
+Four tickets, two totals. One small report that uses the whole course
+
+2
+00:00:07,500 --> 00:00:09,000
+Is the database losing a ticket?
+
+3
+00:00:09,500 --> 00:00:15,500
+Before touching the SQL, decide whether these two numbers SHOULD be equal.
+
+4
+00:00:16,000 --> 00:00:21,500
+Three staff. Four tickets. Ticket 3 has no assignee: NULL means "not assigned yet".
+
+5
+00:00:22,000 --> 00:00:24,000
+Population A: every active ticket, assigned or not. That is 3.
+
+6
+00:00:24,500 --> 00:00:28,900
+Agent 203 has no tickets, ticket 3 has no staff. Both are legitimate data.
+
+7
+00:00:29,400 --> 00:00:32,400
+Staff on the left. A match needs the right assignee AND an active status.
+
+8
+00:00:32,900 --> 00:00:36,900
+Ticket 2 is 201's too, but resolved: it fails the ON test.
+
+9
+00:00:37,400 --> 00:00:40,900
+No match for 203: the join KEEPS the staff row and fills ticket columns with NULL.
+
+10
+00:00:41,400 --> 00:00:44,400
+count(t.ticket_id) skips that NULL, so 203 gets a real zero.
+
+11
+00:00:44,900 --> 00:00:48,400
+Ticket 3 matches nobody: NULL equals no staff ID. Left join keeps staff, not tickets.
+
+12
+00:00:48,900 --> 00:00:50,900
+Neither query is wrong. They count different populations.
+
+13
+00:00:51,400 --> 00:00:56,700
+The dashboard needs a labeled "unassigned" queue, not a fake assignee.
+
+14
+00:00:57,200 --> 00:00:59,200
+count(*) counts 203's placeholder row: a ticket that does not exist.
+
+15
+00:00:59,700 --> 00:01:05,200
+Its total matches the backlog by accident. Check row 203, not just the total.
+
+16
+00:01:05,700 --> 00:01:08,200
+Status test in WHERE: it runs after the join, and 203's NULL row is filtered out.
+
+17
+00:01:08,700 --> 00:01:11,200
+Counterexample technique: one small case that makes two similar queries disagree.
+
+18
+00:01:14,400 --> 00:01:16,900
+Matching counts, different records. Equal totals prove little.
+
+19
+00:01:17,400 --> 00:01:20,400
+Define each population, then explain the gap with actual record IDs.
+
+20
+00:01:22,000 --> 00:01:32,000
+Remember: When two totals disagree, define each population first. A LEFT JOIN preserves the left side, not the right. count(column) skips NULLs; count(*) counts placeholder rows. On an outer join, a test in ON and a test in WHERE differ. Explain the gap with record IDs, not totals.
+

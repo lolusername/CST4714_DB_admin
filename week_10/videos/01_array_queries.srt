@@ -1,0 +1,56 @@
+1
+00:00:02,100 --> 00:00:03,600
+Querying inside documents. Dot paths, arrays, and when $elemMatch matters
+
+2
+00:00:07,500 --> 00:00:12,400
+Ticket 1001 embeds two events: a resident created it, an agent was assigned.
+
+3
+00:00:12,900 --> 00:00:18,100
+A dotted path, in quotes, looks inside the nested requester document.
+
+4
+00:00:18,600 --> 00:00:24,000
+A plain value on an array field matches when the array contains it.
+
+5
+00:00:24,500 --> 00:00:27,000
+A tempting filter: two dotted conditions on the events array.
+
+6
+00:00:27,500 --> 00:00:29,800
+Condition 1, type "created": satisfied by event 5001.
+
+7
+00:00:30,300 --> 00:00:32,600
+Condition 2, actor_role "agent": satisfied by event 5002.
+
+8
+00:00:33,100 --> 00:00:34,900
+Each condition holds somewhere in the array, so the document matches.
+
+9
+00:00:35,400 --> 00:00:39,900
+But no single event says an agent created it. Valid query, wrong question.
+
+10
+00:00:40,400 --> 00:00:47,200
+$elemMatch tests each element against BOTH conditions together.
+
+11
+00:00:47,700 --> 00:00:52,900
+No event is both 'created' and by an agent. The empty result is the right answer.
+
+12
+00:00:53,400 --> 00:00:56,900
+Event 5002 satisfies both conditions, so ticket 1001 qualifies.
+
+13
+00:00:57,400 --> 00:01:00,400
+It comes back with both stored events. Shaping the array is a separate projection job.
+
+14
+00:01:02,000 --> 00:01:12,000
+Remember: "requester.user_id" reaches into a nested document. { tags: "safety" } matches if the array CONTAINS "safety". Separate dotted conditions may be met by different elements. $elemMatch: all conditions must hold in ONE element. $elemMatch in a filter picks documents; it does not trim the array.
+

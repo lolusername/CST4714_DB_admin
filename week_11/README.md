@@ -32,6 +32,17 @@ unless the weekly lab assigns it.
 - [Week 11 PDF handout](week_11_aggregation_validation_indexes.pdf)
 - [Week 11 transcript](week_11_aggregation_validation_indexes_transcript.md)
 
+<!-- videos:start -->
+## Videos
+
+Short silent animations with captions (3 for this week). Each has a subtitle file; see [all Week 11 videos](videos/README.md).
+
+- [Follow the documents through a pipeline](videos/01_pipeline_grain.mp4) (1:11): Four tickets flow through $match, $group, and $sort, with the grain labeled after each stage. Then $unwind turns tickets into events, and two streams of three documents turn out to count different tickets.
+- [Schema validation: which documents may exist?](videos/02_schema_validation.mp4) (1:05): Five writes meet the chapter's $jsonSchema rule: a date-shaped string, a status outside the list, and a missing opened_at are rejected, while a valid ticket and an extra optional field pass. Adding the rule does not fix documents already stored.
+- [Did the index change the work?](videos/03_explain_counts.mp4) (1:18): The course's 10,000-ticket sort demo read through explain("executionStats"): newest 20 open tickets cost COLLSCAN + SORT over 10,000 documents before the index and IXSCAN + FETCH of 20 after. In a pipeline the index serves only the early stages, and moving $limit changes the answer.
+
+<!-- videos:end -->
+
 ## Free External Resources
 
 - [Improving Performance of $sort stages (Lab Only)](https://learn.mongodb.com/courses/improving-performance-of-sort-stages-lab-only)

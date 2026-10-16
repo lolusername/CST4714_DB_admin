@@ -336,6 +336,10 @@ Before leaving the practice environment, we finish the notebook cleanup and remo
 
 Sources: Original career-communication example tied to Week 11 work. Notebook 07 and the implementation guide define their respective cleanup boundaries.
 
+## Slide 29
+
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Follow the documents through a pipeline (1:11); Schema validation: which documents may exist? (1:05); Did the index change the work? (1:18). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 11 README. The diagrams are schematic illustrations, not benchmarks.
+
 ## License
 
 Original course prose is licensed under CC BY-NC-SA 4.0. Source-specific notices control adapted material and external images. The transcript and the PowerPoint notes contain the same spoken script.

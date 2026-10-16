@@ -408,6 +408,10 @@ When translating your own final project, use the same pattern of concrete proble
 [Sources]
 - CST4714 textbook, Chapters 14 and 15, and Notebook 08.
 
+## Slide 31
+
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Polyglot persistence: one owner per fact (1:30); Keeping two databases consistent: outbox and version guard (1:42); Triage a cross-database incident (1:24). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 14 README. The diagrams are schematic illustrations, not benchmarks.
+
 ## License
 
 Original course prose is licensed under CC BY 4.0. Source-specific notices control adapted material and external images. The transcript and the PowerPoint notes contain the same spoken script.

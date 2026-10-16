@@ -360,6 +360,10 @@ The same habits carry into the next week. Before recommending more capacity or s
 
 Sources: Authored career account based on the current Week 12 work; syllabus Week 13 capacity, sharding, and Python integration handoff. This is a model to adapt, not a claim about unperformed professional experience.
 
+## Slide 31
+
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Replica sets: oplog, lag, and elections (1:24); Write concern, read preference, and read concern (1:39); Replication is not backup: logical recovery (1:31). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 12 README. The diagrams are schematic illustrations, not benchmarks.
+
 ## License
 
 Original course prose is licensed under CC BY 4.0. Source-specific notices control adapted material and external images. The transcript and the PowerPoint notes contain the same spoken script.

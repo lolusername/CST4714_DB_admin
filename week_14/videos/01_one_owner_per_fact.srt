@@ -1,0 +1,76 @@
+1
+00:00:02,100 --> 00:00:03,600
+Which database owns this fact? Polyglot persistence: one owner per fact, everything else derived
+
+2
+00:00:06,500 --> 00:00:09,000
+Same ticket, two screens, two statuses.
+
+3
+00:00:09,500 --> 00:00:13,000
+Both databases answer their own queries. Nothing is down. They still disagree.
+
+4
+00:00:13,500 --> 00:00:18,000
+Before fixing anything, ask: which copy IS the fact?
+
+5
+00:00:18,500 --> 00:00:22,000
+Each store is chosen for a specific responsibility, not to look advanced.
+
+6
+00:00:22,500 --> 00:00:24,500
+Ownership is per fact. "PostgreSQL is the source of truth" is too broad:
+
+7
+00:00:25,000 --> 00:00:29,900
+a filename in PostgreSQL cannot rebuild the attachment bytes.
+
+8
+00:00:30,400 --> 00:00:31,900
+Without an owner, "keep both in sync" is a circular promise.
+
+9
+00:00:32,400 --> 00:00:38,600
+Answer each question once, in writing, for this one fact.
+
+10
+00:00:39,100 --> 00:00:42,100
+Tempting: make the screens agree by copying the resident value back.
+
+11
+00:00:42,600 --> 00:00:48,100
+They agree now, and the stale value has become the "truth". Wrong direction.
+
+12
+00:00:48,600 --> 00:00:54,600
+Repairs flow from the owner to the derived copy, and are recorded.
+
+13
+00:00:55,100 --> 00:00:58,600
+Staff close the ticket. The authoritative value changes first.
+
+14
+00:00:59,100 --> 00:01:02,600
+The projection follows after some lag. If it silently stopped, it would be wrong.
+
+15
+00:01:03,100 --> 00:01:08,500
+The snapshot keeps 'open' on purpose. Old is not the same as wrong.
+
+16
+00:01:09,000 --> 00:01:11,500
+Every obligation doubles, and new ones appear at the boundary.
+
+17
+00:01:12,000 --> 00:01:14,500
+Small team, workload fits one model? One database is often the stronger design.
+
+18
+00:01:15,000 --> 00:01:18,000
+Use two when the benefit is concrete, ownership is explicit, and you can run both.
+
+19
+00:01:19,600 --> 00:01:29,600
+Remember: Polyglot = different stores for different responsibilities. Each duplicated fact needs ONE authoritative owner. Copies are projections or snapshots: name how and when they refresh. Repairs flow from the owner to the copy, never the reverse. A second database must earn its operating cost.
+

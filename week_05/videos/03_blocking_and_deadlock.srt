@@ -1,0 +1,72 @@
+1
+00:00:02,100 --> 00:00:03,600
+Who is waiting on whom? Blocking, diagnosis, and why a deadlock is different
+
+2
+00:00:07,500 --> 00:00:13,700
+Two separate connections, each served by its own backend process (PID).
+
+3
+00:00:14,200 --> 00:00:18,400
+A changes the priority and stops, without COMMIT or ROLLBACK.
+
+4
+00:00:18,900 --> 00:00:21,400
+B wants the same row. Different column, same row: B waits for A.
+
+5
+00:00:21,900 --> 00:00:25,800
+A plain SELECT would not wait; it reads the committed version (low).
+
+6
+00:00:26,300 --> 00:00:30,300
+A stuck connection can't inspect itself. A third session observes.
+
+7
+00:00:30,800 --> 00:00:34,600
+Read the waiter's row: 7332's blocking list is {7310}. B waits for A.
+
+8
+00:00:35,100 --> 00:00:38,100
+A is 'idle in transaction': idle, yet holding the row. Its empty list ≠ holds no locks.
+
+9
+00:00:38,600 --> 00:00:42,800
+A PID identifies a server process, not a user or a ticket. These numbers are illustrative.
+
+10
+00:00:43,300 --> 00:00:47,600
+Killing B, the waiter, fixes nothing: A would still hold the row.
+
+11
+00:00:48,100 --> 00:00:51,600
+Decided case: A rolls back. B finishes. Final row: low, in_progress.
+
+12
+00:00:52,100 --> 00:00:55,300
+Both endings let B finish, but they keep different data. Report the final row, not the spinner.
+
+13
+00:00:58,800 --> 00:01:02,400
+A has updated 1001. B has updated 1002.
+
+14
+00:01:02,900 --> 00:01:05,400
+Now each wants the other's row. A waits for B, and B waits for A.
+
+15
+00:01:05,900 --> 00:01:09,900
+Neither can finish by waiting. PostgreSQL detects the cycle.
+
+16
+00:01:10,400 --> 00:01:13,400
+It aborts one transaction (here B) so the other can continue. Which one is not up to you.
+
+17
+00:01:13,900 --> 00:01:16,900
+Retry the WHOLE aborted transaction. Taking rows in one consistent order prevents this cycle.
+
+18
+00:01:18,500 --> 00:01:28,500
+Remember: Two writers on the same row: the second one waits. pg_blocking_pids(waiter) names the blocker. Direction matters. 'idle in transaction' can be the one holding everyone up. Ending the blocker decides the data: check the final row. A deadlock is a cycle: PostgreSQL aborts one; retry the whole transaction.
+

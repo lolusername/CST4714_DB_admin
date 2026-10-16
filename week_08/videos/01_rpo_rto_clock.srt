@@ -1,0 +1,88 @@
+1
+00:00:02,100 --> 00:00:03,600
+RPO and RTO on the clock. How much data can we lose? How long can service be down?
+
+2
+00:00:07,500 --> 00:00:10,400
+The operator meant to remove one test event. There is no WHERE clause.
+
+3
+00:00:10,900 --> 00:00:13,400
+Every event row is deleted, and COMMIT makes the deletion durable.
+
+4
+00:00:13,900 --> 00:00:17,800
+Nothing crashed. Restarting the server brings nothing back.
+
+5
+00:00:18,300 --> 00:00:20,300
+A replica copies the deletion too. High availability is not a backup.
+
+6
+00:00:20,800 --> 00:00:22,800
+Recovery needs an earlier state kept OUTSIDE the active database.
+
+7
+00:00:25,300 --> 00:00:26,900
+An illustrative scenario from the chapter. Follow the arithmetic.
+
+8
+00:00:27,400 --> 00:00:29,400
+t_r (14:00): the newest state we can actually recover.
+
+9
+00:00:29,900 --> 00:00:31,900
+t_f (14:17): the failure. The harmful DELETE commits.
+
+10
+00:00:32,400 --> 00:00:34,400
+14:21: an operator notices. Users were affected before this.
+
+11
+00:00:34,900 --> 00:00:37,300
+t_a (14:29): restore and checks done. Service is acceptable again.
+
+12
+00:00:37,800 --> 00:00:41,000
+Data-loss window: 14:17 − 14:00 = 17 minutes of changes this export can't return.
+
+13
+00:00:41,500 --> 00:00:45,500
+Recovery duration: 14:29 − 14:17 = 12 minutes, measured from the failure.
+
+14
+00:00:46,000 --> 00:00:51,600
+Starting at 14:21 gives 8 minutes and hides 4 minutes of detection delay.
+
+15
+00:00:52,100 --> 00:00:54,100
+Suppose the service promised an RPO of 5 minutes.
+
+16
+00:00:54,600 --> 00:00:58,200
+17 minutes of possible loss is more than 5. The RPO is missed.
+
+17
+00:00:58,700 --> 00:01:00,300
+And an RTO of 10 minutes: 12 is more than 10. Missed again.
+
+18
+00:01:00,800 --> 00:01:03,200
+We did recover. We did not keep the promise. Those are different outcomes.
+
+19
+00:01:06,500 --> 00:01:11,900
+The same 17-minute gap can hold 3 writes or thousands. Time is not a row count.
+
+20
+00:01:12,400 --> 00:01:14,800
+A logical export represents its consistent snapshot, not the time the file finished.
+
+21
+00:01:15,300 --> 00:01:17,700
+Other history sources may hold some later writes. State which sources your numbers assume.
+
+22
+00:01:19,300 --> 00:01:29,300
+Remember: A committed mistake survives restarts and is copied by replicas. RPO limits the data-loss window:  t_f − t_r  (failure − newest recoverable state). RTO limits the recovery duration:  t_a − t_f  (start the clock at the failure). Writing a target down does not meet it. Measure it in a restore drill. A time gap is not a row count. Say which state your artifact represents.
+

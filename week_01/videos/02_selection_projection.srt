@@ -1,0 +1,80 @@
+1
+00:00:02,100 --> 00:00:03,600
+Selection and projection. Choosing rows, choosing columns, and changing nothing.
+
+2
+00:00:07,700 --> 00:00:10,700
+The lab's four tickets (subjects shortened). Each row is one support request.
+
+3
+00:00:11,200 --> 00:00:14,200
+ticket_id is the primary key: unique, never NULL. Follow IDs, not positions.
+
+4
+00:00:14,700 --> 00:00:18,100
+NULL here means nobody is assigned yet. The ticket itself is not missing.
+
+5
+00:00:18,600 --> 00:00:22,500
+Selection tests each row against a condition and keeps the rows where it is true.
+
+6
+00:00:23,000 --> 00:00:25,500
+One row passes. 1003, 1004, and 1009 fail the test...
+
+7
+00:00:26,000 --> 00:00:29,400
+...but they are still in the table. Nothing was changed or deleted.
+
+8
+00:00:29,900 --> 00:00:30,900
+If a dashboard used status = 'open', every new request would vanish.
+
+9
+00:00:31,400 --> 00:00:39,900
+The query runs with no error. It just answers a different question.
+
+10
+00:00:40,400 --> 00:00:45,400
+The condition is where the business rule lives. Write it down, then check it.
+
+11
+00:00:45,900 --> 00:00:48,500
+Projection keeps the attributes you name. There is no row condition here.
+
+12
+00:00:49,000 --> 00:00:51,000
+All four tickets remain, each with two columns. The stored table keeps every column.
+
+13
+00:00:51,500 --> 00:00:57,700
+Hiding a column on a screen is not, by itself, security.
+
+14
+00:00:58,200 --> 00:01:00,400
+Tickets 1001 and 1003 both have 201, so SQL shows 201 twice.
+
+15
+00:01:00,900 --> 00:01:05,200
+A mathematical relation is a set: identical tuples collapse. SQL keeps them.
+
+16
+00:01:05,700 --> 00:01:12,900
+To remove repeats, ask for it with DISTINCT. Neither result has a guaranteed order.
+
+17
+00:01:13,400 --> 00:01:15,900
+Relational selection is the row filter. In SQL it lives in WHERE.
+
+18
+00:01:16,400 --> 00:01:18,900
+The list after the SELECT keyword is projection.
+
+19
+00:01:19,400 --> 00:01:21,900
+Together: choose the rows, then choose the columns.
+
+20
+00:01:23,500 --> 00:01:33,500
+Remember: Selection (σ) keeps rows that satisfy a condition: SQL's WHERE. Projection (π) keeps the columns you name: SQL's SELECT list. Neither one changes or deletes stored rows. Valid SQL can still encode the wrong business rule. SQL keeps repeated rows unless you ask for DISTINCT.
+

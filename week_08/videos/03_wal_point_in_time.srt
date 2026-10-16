@@ -1,0 +1,76 @@
+1
+00:00:02,100 --> 00:00:03,600
+Point-in-time recovery. A base backup plus an unbroken chain of write-ahead log
+
+2
+00:00:07,500 --> 00:00:09,900
+Every committed change is first described in the write-ahead log (WAL).
+
+3
+00:00:10,400 --> 00:00:11,600
+Records accumulate in order, filling log segments one after another.
+
+4
+00:00:12,100 --> 00:00:15,100
+They describe low-level changes to recover the database, not a business event spreadsheet.
+
+5
+00:00:15,600 --> 00:00:18,800
+The 14:17 DELETE from the incident is in the log too, as one more committed change.
+
+6
+00:00:19,300 --> 00:00:20,900
+A base backup copies the database's storage at one point. Here, 13:00.
+
+7
+00:00:21,400 --> 00:00:24,000
+The archived WAL from that point on must be retained, segment by segment.
+
+8
+00:00:24,500 --> 00:00:29,000
+Choose a recovery target, such as a time just before the harmful commit.
+
+9
+00:00:29,500 --> 00:00:34,600
+Restore the base backup somewhere separate, then replay the log forward.
+
+10
+00:00:35,100 --> 00:00:37,900
+Replay stops at the target. The DELETE is never applied to this copy.
+
+11
+00:00:38,400 --> 00:00:40,600
+Compared with the 14:00 export, the recoverable point moves much closer to the failure.
+
+12
+00:00:41,100 --> 00:00:46,900
+Valid writes after 14:17 still need a decision: reconcile them, don't silently drop them.
+
+13
+00:00:47,400 --> 00:00:52,500
+Suppose segment 4 was never archived, or was deleted by a retention job.
+
+14
+00:00:53,000 --> 00:00:55,000
+Replay cannot skip a gap. It cannot reach 14:16 using later segments.
+
+15
+00:00:55,500 --> 00:00:57,700
+A base backup that doesn't match the server version or the log breaks the chain too.
+
+16
+00:01:00,200 --> 00:01:03,200
+A logical dump rebuilds objects from one snapshot. The lab uses free tools.
+
+17
+00:01:03,700 --> 00:01:05,900
+Physical recovery reaches precise points, but only where the platform supports it.
+
+18
+00:01:06,400 --> 00:01:08,800
+Supabase Free shows no automatic backups. Check your plan before you promise an RPO.
+
+19
+00:01:10,400 --> 00:01:20,400
+Remember: WAL records the information needed to redo committed changes, in order. Physical recovery: restore a base backup, then replay retained WAL. Stop at a chosen target, e.g. just before a harmful commit. One missing segment or an incompatible base backup breaks the chain. It needs platform support and practice. A plan is not a tested drill.
+

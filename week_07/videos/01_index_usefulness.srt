@@ -1,0 +1,80 @@
+1
+00:00:02,100 --> 00:00:03,600
+When does an index help? It depends on the query, the column, and the data.
+
+2
+00:00:07,700 --> 00:00:10,200
+Rows are stored in the order they arrived, not sorted by last name.
+
+3
+00:00:10,700 --> 00:00:14,266
+With no index on lname, the only way is to check every row.
+
+4
+00:00:14,766 --> 00:00:23,866
+Two rows match. Finding the first one did not end the scan: there could be more.
+
+5
+00:00:24,366 --> 00:00:26,366
+The index keeps the last names SORTED, each with the location of its row.
+
+6
+00:00:26,866 --> 00:00:33,466
+Creating it does not reorder the table. The table stays exactly as it was.
+
+7
+00:00:33,966 --> 00:00:35,466
+Sorted order puts both Barreda entries side by side: one small key range.
+
+8
+00:00:35,966 --> 00:00:39,266
+SELECT * also needs id and fname, so each match is fetched from the table.
+
+9
+00:00:39,766 --> 00:00:41,266
+Same two rows, different route.
+
+10
+00:00:41,766 --> 00:00:47,966
+On a table this tiny, PostgreSQL may still choose a Seq Scan. The win grows with the table.
+
+11
+00:00:48,466 --> 00:00:52,033
+This query asks for every row. The index can't eliminate any of them.
+
+12
+00:00:52,533 --> 00:00:58,733
+Reading the table straight through is cheaper than walking the index and fetching every row.
+
+13
+00:00:59,233 --> 00:01:03,800
+A sorted list of LAST names can't find a FIRST name. Full scan again.
+
+14
+00:01:04,300 --> 00:01:10,500
+The name users_lname_idx is only a label. ON users (lname) decides which column is indexed.
+
+15
+00:01:11,000 --> 00:01:13,800
+The table just adds the row at the end...
+
+16
+00:01:14,300 --> 00:01:16,800
+...but the index must put the new key in sorted order. One INSERT, two structures to update.
+
+17
+00:01:17,300 --> 00:01:20,800
+Deletes and changes to lname cost index work too. Keep an index only when the reads it speeds up are worth that.
+
+18
+00:01:24,300 --> 00:01:28,400
+PostgreSQL estimates the cost of each route and picks one. Any of these can be the right answer.
+
+19
+00:01:28,900 --> 00:01:32,400
+Compare the plan, rows, and buffers before and after, on the same query and data. Confirm the same results.
+
+20
+00:01:34,000 --> 00:01:44,000
+Remember: An index is a sorted copy of a column plus row locations. It helps when the WHERE clause uses that column and few rows match. No WHERE, or a different column: it can't skip anything. Every INSERT / UPDATE / DELETE also maintains the index. Don't guess: check the chosen plan with EXPLAIN.
+

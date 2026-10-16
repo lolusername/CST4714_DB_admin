@@ -35,6 +35,17 @@ unless the weekly lab assigns it.
 - [Week 12 PDF handout](week_12_mongodb_reliability.pdf)
 - [Week 12 transcript](week_12_mongodb_reliability_transcript.md)
 
+<!-- videos:start -->
+## Videos
+
+Short silent animations with captions (3 for this week). Each has a subtitle file; see [all Week 12 videos](videos/README.md).
+
+- [Replica sets: oplog, lag, and elections](videos/01_replica_set_election.mp4) (1:24): A primary records ticket 1099 in its oplog and two secondaries copy it at different speeds. When the primary is lost, a voting majority can elect a new one, but two isolated survivors cannot.
+- [Write concern, read preference, and read concern](videos/02_write_read_concern.mp4) (1:39): Follow submission-1099 while member C is cut off: which acknowledgments w:1, majority, and w:3 can collect, why a timeout means "unknown", and why a read from C can miss a write that A and B kept.
+- [Replication is not backup: logical recovery](videos/03_logical_recovery.mp4) (1:31): A deletion replicates to every member, so only a separate artifact still holds the five tickets. Restore it into a separate target, then catch a wrong subject that the count and ID checks miss and repair it from the saved version.
+
+<!-- videos:end -->
+
 ## Free External References
 
 - [Atlas Free cluster limits](https://www.mongodb.com/docs/atlas/reference/free-shared-limitations/)

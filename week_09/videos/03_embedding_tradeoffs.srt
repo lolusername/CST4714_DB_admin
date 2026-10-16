@@ -1,0 +1,72 @@
+1
+00:00:02,100 --> 00:00:03,600
+What embedding costs over time. Copied names, growing arrays, and a bounded preview
+
+2
+00:00:08,900 --> 00:00:11,500
+Each embedded ticket carries a COPY of user 101's display name.
+
+3
+00:00:12,000 --> 00:00:14,600
+User 101 changes their display name. One authoritative record is updated.
+
+4
+00:00:15,100 --> 00:00:22,200
+The copies don't change by themselves. Are they now wrong?
+
+5
+00:00:22,700 --> 00:00:25,300
+Same text, different meaning: a stale current name is a bug; a labeled snapshot is history.
+
+6
+00:00:25,800 --> 00:00:28,000
+Decide the meaning before the change. You can't relabel a stale value as history later.
+
+7
+00:00:30,500 --> 00:00:32,700
+Two events fit comfortably inside one ticket document.
+
+8
+00:00:33,200 --> 00:00:35,333
+But tickets keep collecting events, for years.
+
+9
+00:00:35,833 --> 00:00:40,633
+The document grows without bound. Every read of the ticket carries it all.
+
+10
+00:00:41,133 --> 00:00:42,933
+A cross-ticket report must dig into every ticket's nested array.
+
+11
+00:00:47,233 --> 00:00:50,533
+The ticket page reads a small preview. The full history lives on its own.
+
+12
+00:00:51,033 --> 00:00:53,333
+Event 6 arrives. Write 1: append it to the separate history.
+
+13
+00:00:53,833 --> 00:00:58,133
+Between the two writes, a reader can see a preview that is behind.
+
+14
+00:00:58,633 --> 00:01:01,233
+Write 2: the preview gains event 6 and drops event 1, its oldest.
+
+15
+00:01:01,733 --> 00:01:03,933
+Event 1 is still in the history. The bound limits the preview, not retention.
+
+16
+00:01:04,433 --> 00:01:06,233
+Two documents, two writes: not automatically one atomic change.
+
+17
+00:01:06,733 --> 00:01:09,133
+Name the refresh rule and the acceptable lag. Later weeks cover the database's guarantees.
+
+18
+00:01:10,733 --> 00:01:20,733
+Remember: An embedded copy needs a stated meaning: current name or snapshot? A stale "current" copy is a bug; a labeled snapshot is history. Unbounded arrays make documents grow and reports dig through them. Hybrid: bounded preview in the ticket, full history kept separately. Two writes are not automatically atomic. Write down the refresh rule.
+

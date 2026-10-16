@@ -260,6 +260,10 @@ Make sure you submit the link to your own saved copy, Lastname_Week07_Research. 
 
 Before you go, keep the two submissions separate in your mind. Today's notebook is classwork, and you submit its link now. The midterm is midterm.sql and README.md in one ZIP, due on the date in Brightspace. Next week, we cover backup and restore, and then we hold the midterm clinic. Bring one question and one working part of your project. Thank you, everyone, and I will see you next week.
 
+## Slide 24
+
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: When does an index help? (1:44); Reading a query plan (0:55); Selectivity: why a Seq Scan can beat an index (1:07); How a B-tree index finds rows (0:58); Composite indexes: column order matters (1:08); Testing an index hypothesis (1:03). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 7 README. The diagrams are schematic illustrations, not benchmarks.
+
 ## License
 
 Original course prose is licensed under CC BY-NC-SA 4.0. Source-specific notices control adapted material and external images. The transcript and the PowerPoint notes contain the same spoken script.

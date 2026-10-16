@@ -33,6 +33,17 @@ unless the weekly lab assigns it.
 - [Week 10 PDF handout](week_10_mql_document_modeling.pdf)
 - [Week 10 transcript](week_10_mql_document_modeling_transcript.md)
 
+<!-- videos:start -->
+## Videos
+
+Short silent animations with captions (3 for this week). Each has a subtitle file; see [all Week 10 videos](videos/README.md).
+
+- [Querying inside documents: arrays and $elemMatch](videos/01_array_queries.mp4) (1:12): Dot paths reach into nested documents, and two dotted conditions on an array can be met by different elements. $elemMatch requires one element to meet both, and it filters documents without trimming the array.
+- [Did the write do what you meant?](videos/02_update_results.mp4) (1:06): An updateOne with an expected-state filter changes status and appends an event in one atomic document write. Reading matchedCount and modifiedCount separates success, no match, and already-current values, and replaceOne is shown dropping omitted fields.
+- [Embed or reference? Let the workload decide](videos/03_embed_or_reference.mp4) (1:21): Five access patterns for the ticket page are tested against an embedded events array that keeps growing and a referenced design read in three steps. A contact correction changes one person document, and a new event adds a history document without growing the ticket.
+
+<!-- videos:end -->
+
 ## Free External Resources With Distinct Roles
 
 - **Instructor live demonstration:** [Modeling Data Relationships: Lesson 3, Modeling One-to-One](https://learn.mongodb.com/learn/course/modeling-data-relationships/lesson-3-modeling-one-to-one/learn). The instructor works the one-to-one example and its Practice activity, not Lesson 4.

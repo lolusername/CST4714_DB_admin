@@ -1,0 +1,40 @@
+1
+00:00:02,100 --> 00:00:03,600
+How a B-tree index finds rows. PostgreSQL's default index: a shallow, sorted tree of pages
+
+2
+00:00:08,700 --> 00:00:13,200
+Index on tickets(ticket_id): 900 tickets. Keys in each page split the search into ranges.
+
+3
+00:00:13,700 --> 00:00:16,200
+Root: 437 is between 300 and 600  →  go to the middle child.
+
+4
+00:00:16,700 --> 00:00:20,500
+Next page: 437 is between 400 and 500  →  that leaf.
+
+5
+00:00:21,000 --> 00:00:26,000
+The leaf entry for 437 points straight to its row. 3 index pages instead of checking 900 rows.
+
+6
+00:00:26,500 --> 00:00:28,700
+Range: find the START (450) the same way...
+
+7
+00:00:29,200 --> 00:00:32,000
+...then walk RIGHT along the linked leaves until passing the end (720).
+
+8
+00:00:32,500 --> 00:00:35,500
+Leaves are already in order, so ranges and ORDER BY ticket_id need no sorting.
+
+9
+00:00:43,200 --> 00:00:46,700
+Levels grow like a logarithm, not like the row count. (A growth model, not a millisecond prediction.)
+
+10
+00:00:48,300 --> 00:00:58,300
+Remember: Each step down the tree throws away most of the keys. Equality:  WHERE ticket_id = 437  →  a few page reads. Ranges and ORDER BY: walk sideways along linked leaves. Depth grows very slowly: ~4 levels for a billion rows. Many matches still means many table rows to fetch.
+

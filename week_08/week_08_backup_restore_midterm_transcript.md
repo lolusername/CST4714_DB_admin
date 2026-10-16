@@ -394,6 +394,10 @@ Next week we begin NoSQL models and JSON. We will compare them with relational s
 - Course Week 8 guide and canonical midterm assignment.
 - Course syllabus, Weeks 8 and 9.
 
+## Slide 25
+
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: RPO and RTO on the clock (1:29); Dump, restore, verify (1:35); Point-in-time recovery with WAL (1:20). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 8 README. The diagrams are schematic illustrations, not benchmarks.
+
 ## License
 
 Original course prose is licensed under CC BY-NC-SA 4.0. Source-specific notices control adapted material and external images. The transcript and the PowerPoint notes contain the same spoken script.

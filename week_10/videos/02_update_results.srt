@@ -1,0 +1,56 @@
+1
+00:00:02,100 --> 00:00:03,600
+Did the write do what you meant? Update operators, matchedCount, and modifiedCount
+
+2
+00:00:06,900 --> 00:00:10,300
+Ticket 1001 is open, assigned to 201, with two embedded events.
+
+3
+00:00:10,800 --> 00:00:13,100
+The filter names the ticket AND the state we expect it to be in.
+
+4
+00:00:13,600 --> 00:00:17,500
+Both hold, so the document matches.
+
+5
+00:00:18,000 --> 00:00:21,500
+$set changed two fields, $push appended event 5099: one document modified.
+
+6
+00:00:22,000 --> 00:00:28,300
+All of it is ONE single-document write. No reader sees the new status without its event.
+
+7
+00:00:28,800 --> 00:00:30,800
+Ticket 1001 is no longer "open", so nothing matches: 0 and 0.
+
+8
+00:00:31,300 --> 00:00:37,300
+No duplicate 5099. That's the expected-state filter working, not a connection failure.
+
+9
+00:00:37,800 --> 00:00:40,300
+Found the document, but it already holds that value: matched 1, modified 0.
+
+10
+00:00:40,800 --> 00:00:45,800
+modifiedCount 0 alone can't tell you which case happened. Read both, then read the document.
+
+11
+00:00:46,300 --> 00:00:48,900
+A replacement document becomes the ENTIRE body (the _id is kept).
+
+12
+00:00:49,400 --> 00:00:51,900
+Every omitted field, including the event history, would be gone.
+
+13
+00:00:52,400 --> 00:00:54,900
+Choose updateOne with operators on purpose, and verify by reading the final document.
+
+14
+00:00:56,500 --> 00:01:06,500
+Remember: Put the expected current state in the update filter. $set changes named fields; $push appends to an array. One updateOne on one document is atomic: no half-written ticket. matched 1 / modified 0 = found, value already there. 0 / 0 = no match. replaceOne swaps the whole body. Read the final document.
+

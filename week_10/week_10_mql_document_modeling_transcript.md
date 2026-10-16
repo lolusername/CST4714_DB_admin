@@ -393,6 +393,10 @@ Adapt that language to what you actually performed. If you used the local teachi
 
 The next lesson builds on these foundations. We will aggregate results across documents and enforce document rules. Keep the same habit: state the question, identify the unit of data, predict an observable result, and check what the system actually did.
 
+## Slide 29
+
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Querying inside documents: arrays and $elemMatch (1:12); Did the write do what you meant? (1:06); Embed or reference? Let the workload decide (1:21). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 10 README. The diagrams are schematic illustrations, not benchmarks.
+
 ## License
 
 Original course prose is licensed under CC BY-NC-SA 4.0. Source-specific notices control adapted material and external images. The transcript and the PowerPoint notes contain the same spoken script.

@@ -1,0 +1,48 @@
+1
+00:00:02,100 --> 00:00:03,600
+Reading a Query Plan. SQL describes the answer. The plan describes the work.
+
+2
+00:00:06,100 --> 00:00:07,600
+Your SQL says WHAT you want: the 20 newest open tickets.
+
+3
+00:00:08,100 --> 00:00:12,600
+It never says HOW to find them. Choosing the how is the planner's job.
+
+4
+00:00:13,100 --> 00:00:14,600
+EXPLAIN shows the plan: a tree. Each child feeds rows UP to its parent.
+
+5
+00:00:15,100 --> 00:00:20,900
+Read it inside out: start at the deepest node.
+
+6
+00:00:21,400 --> 00:00:25,200
+Seq Scan reads all 100,000 rows: keeps 2,000 open ones, removes 98,000.
+
+7
+00:00:25,700 --> 00:00:28,200
+Sort receives 2,000 candidates and compares them to find the newest.
+
+8
+00:00:28,700 --> 00:00:30,900
+Limit stops after 20. Only 20 rows come out of the top...
+
+9
+00:00:31,400 --> 00:00:34,400
+...but 100,000 were examined to get them. "rows=20" at the top is not "20 rows of work".
+
+10
+00:00:40,500 --> 00:00:42,500
+Compare estimated rows with actual rows: a big gap means the planner guessed wrong.
+
+11
+00:00:43,000 --> 00:00:45,000
+cost=... is in planner units, NOT milliseconds.
+
+12
+00:00:46,600 --> 00:00:55,400
+Remember: SQL = the answer you want.  Plan = the work to get it. Read plans inside out: the deepest node runs first. Rows flow up; the top count hides the work below. EXPLAIN estimates.  EXPLAIN ANALYZE really runs it.
+

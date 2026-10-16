@@ -1,0 +1,64 @@
+1
+00:00:02,100 --> 00:00:03,600
+Capacity: measure before you scale. "Will it scale?" has no answer without a workload.
+
+2
+00:00:09,500 --> 00:00:12,000
+Eighteen requests take 20 ms, one takes 500, one takes 1,000.
+
+3
+00:00:12,500 --> 00:00:14,800
+The mean is 93 ms. Sounds quick.
+
+4
+00:00:15,300 --> 00:00:17,300
+Nearest-rank 95th percentile: rank 19 of the sorted values is 500 ms.
+
+5
+00:00:17,800 --> 00:00:20,300
+Same data, two stories. Name the percentile method, sample size, and window.
+
+6
+00:00:20,800 --> 00:00:22,600
+Throughput (requests per second) is a different measurement again.
+
+7
+00:00:23,100 --> 00:00:25,600
+So is the working set: the data and index pages the workload keeps touching, versus memory.
+
+8
+00:00:28,100 --> 00:00:33,100
+Each option relieves a different pressure and leaves a decision behind.
+
+9
+00:00:33,600 --> 00:00:35,800
+Don't shard a bad query just to run the bad query on more machines.
+
+10
+00:00:36,300 --> 00:00:38,500
+For a 75-record catalog, the honest answer is tuning, or keeping it small.
+
+11
+00:00:41,400 --> 00:00:45,300
+A replica set: every member keeps the same 75 logical records. Protection, not three times the room.
+
+12
+00:00:45,800 --> 00:00:50,400
+Three shards: each OWNS a portion. Still one logical collection of 75.
+
+13
+00:00:50,900 --> 00:00:53,700
+Each portion still needs protection from member failure. The even split is only an illustration.
+
+14
+00:00:59,400 --> 00:01:02,200
+The multiplier is an assumption, not a billing rule. Retention and growth can change everything.
+
+15
+00:01:02,700 --> 00:01:05,000
+1 MiB = 1,048,576 bytes; 1 MB = 1,000,000. Keep units explicit against a quota.
+
+16
+00:01:06,600 --> 00:01:16,600
+Remember: Latency (one request) and throughput (work per second) differ. Report a percentile with its method: the mean hides the tail. Remove waste first; every scaling step leaves a new job behind. Replicas are copies. Shards are portions, each usually replicated. Projections are assumptions to measure and revise.
+

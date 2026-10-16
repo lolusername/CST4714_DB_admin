@@ -1,0 +1,72 @@
+1
+00:00:02,100 --> 00:00:03,600
+NULL: why = NULL finds nothing. Missing is not zero, not blank, and not equal to anything.
+
+2
+00:00:07,000 --> 00:00:09,000
+Metro Support baseline: 12 tickets. 1004 and 1009 have no assignee yet.
+
+3
+00:00:09,500 --> 00:00:12,900
+NULL means missing. It is not zero, not empty text, not a staff member.
+
+4
+00:00:13,400 --> 00:00:15,700
+The query everyone writes first. Evaluate it row by row.
+
+5
+00:00:16,200 --> 00:00:20,700
+201 = NULL? Unknown. Even NULL = NULL is unknown: two missing values are not known to be equal.
+
+6
+00:00:21,200 --> 00:00:23,200
+No row is TRUE, so no row is kept. The query runs fine and returns nothing.
+
+7
+00:00:23,700 --> 00:00:28,400
+An empty result here does not mean every ticket is assigned.
+
+8
+00:00:28,900 --> 00:00:32,700
+IS NULL is built to test for a missing value: true or false, never unknown.
+
+9
+00:00:33,200 --> 00:00:36,700
+It finds exactly the two unassigned tickets.
+
+10
+00:00:37,200 --> 00:00:41,900
+Together the two predicates cover the whole table. That is a check you can run.
+
+11
+00:00:42,400 --> 00:00:44,900
+NULL also changes what an aggregate counts.
+
+12
+00:00:45,400 --> 00:00:50,600
+count(*) counts rows. count(column) counts only rows where that column is not NULL.
+
+13
+00:00:51,100 --> 00:00:53,100
+Question: which users are assigned to no ticket?
+
+14
+00:00:53,600 --> 00:00:58,600
+The subquery's list contains NULL, from tickets 1004 and 1009.
+
+15
+00:00:59,100 --> 00:01:02,600
+TRUE AND UNKNOWN is UNKNOWN. Every user fails the same way: zero rows.
+
+16
+00:01:03,100 --> 00:01:05,600
+NOT EXISTS asks whether a matching row exists. NULL assignments simply never match.
+
+17
+00:01:06,100 --> 00:01:08,100
+It returns all six non-assignees, residents and the analyst included.
+
+18
+00:01:09,700 --> 00:01:19,700
+Remember: NULL means missing or inapplicable, not zero or empty text. Any ordinary comparison with NULL is UNKNOWN, even NULL = NULL. WHERE keeps only TRUE rows: FALSE and UNKNOWN are both dropped. Use IS NULL / IS NOT NULL; count(column) skips NULLs. NOT IN over a list with NULL can return nothing; prefer NOT EXISTS.
+

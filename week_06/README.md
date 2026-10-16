@@ -32,6 +32,17 @@ unless the weekly lab assigns it.
 - [Week 6 PDF handout](week_06_identity_permissions_rls.pdf)
 - [Week 6 transcript](week_06_identity_permissions_rls_transcript.md)
 
+<!-- videos:start -->
+## Videos
+
+Short silent animations with captions (3 for this week). Each has a subtitle file; see [all Week 6 videos](videos/README.md).
+
+- [Least privilege: roles and grants](videos/01_roles_and_grants.mp4) (1:24): A NOLOGIN group role gets schema USAGE and SELECT on one reporting view, and nothing else. Test one allowed read and two denied actions that fail with 42501, and see why a REVOKE alone does not prove the access is gone.
+- [Row-level security: USING and WITH CHECK](videos/02_row_level_security.mp4) (1:30): Two residents run the same SELECT on one table and get different rows, because the policy compares owner_role with current_user. Guessing another ID returns zero rows, while inserting a row with a false owner raises an error.
+- [Who is asking? Gates, roles, and tokens](videos/03_who_is_asking.mp4) (1:33): A query must pass network, TLS, authentication, privilege, and row-policy gates, and each failure looks different. In Supabase, many users share the authenticated role and the policy tells them apart with auth.uid(), while owners and BYPASSRLS roles skip the policy entirely.
+
+<!-- videos:end -->
+
 ## Database Setup
 
 Use your own PostgreSQL/Supabase practice project. If its account or connection

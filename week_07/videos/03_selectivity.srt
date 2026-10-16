@@ -1,0 +1,48 @@
+1
+00:00:02,100 --> 00:00:03,600
+Why didn't it use my index? Selectivity: what fraction of the rows does the query need?
+
+2
+00:00:07,600 --> 00:00:12,100
+A table lives on disk in pages. Reading a page costs work, whether you need 1 row from it or all 5.
+
+3
+00:00:12,600 --> 00:00:14,100
+4 of 200 rows match  →  selectivity = 2%
+
+4
+00:00:14,600 --> 00:00:18,600
+Index path: look up matches in the index, then jump to each page that has one.
+
+5
+00:00:19,100 --> 00:00:23,100
+Seq Scan: read every page once, in order, and test each row.
+
+6
+00:00:23,600 --> 00:00:29,000
+4 pages vs 40: the index wins easily.
+
+7
+00:00:29,500 --> 00:00:31,000
+160 of 200 rows match  →  selectivity = 80%
+
+8
+00:00:31,500 --> 00:00:36,000
+Index path: look up matches in the index, then jump to each page that has one.
+
+9
+00:00:36,500 --> 00:00:40,500
+Seq Scan: read every page once, in order, and test each row.
+
+10
+00:00:41,000 --> 00:00:44,400
+Every page has a match, so the index can't skip any. Reading them straight through is cheaper.
+
+11
+00:00:50,500 --> 00:00:54,000
+There is no magic cutoff. The planner ESTIMATES the cost of each path and picks the cheaper one.
+
+12
+00:00:56,600 --> 00:01:06,600
+Seq Scan ≠ "the index is missing": Selectivity = matching rows ÷ total rows. Few rows needed (low %): an index can skip most pages. Most rows needed (high %): just read every page once. Small tables: a scan is cheap anyway. The index may not match the query's column.
+

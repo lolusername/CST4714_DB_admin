@@ -1,0 +1,72 @@
+1
+00:00:02,100 --> 00:00:03,600
+Triage a cross-database incident. Where did progress stop, and which way does the repair go?
+
+2
+00:00:06,500 --> 00:00:09,200
+A resident complains. First, recall the design, not the symptom.
+
+3
+00:00:09,700 --> 00:00:15,800
+The owner is known before the incident: PostgreSQL. So trace from there.
+
+4
+00:00:16,300 --> 00:00:18,366
+published proves the relay sent it, not that anyone received it
+
+5
+00:00:18,866 --> 00:00:20,933
+received: the event reached the consumer
+
+6
+00:00:21,433 --> 00:00:24,366
+a timeout alone is ambiguous: the write may or may not have happened
+
+7
+00:00:24,866 --> 00:00:26,933
+the retry path cannot make progress
+
+8
+00:00:27,433 --> 00:00:30,433
+this later read establishes that the projection is behind
+
+9
+00:00:30,933 --> 00:00:36,333
+Committed, recorded, published, received... but not applied.
+
+10
+00:00:36,833 --> 00:00:43,233
+Agreement from the wrong direction is not a repair.
+
+11
+00:00:43,733 --> 00:00:45,733
+Because the consumer is idempotent and version-guarded, replay is safe.
+
+12
+00:00:46,233 --> 00:00:53,233
+"Or newer": another accepted update may have arrived while it was paused.
+
+13
+00:00:53,733 --> 00:00:55,233
+A count check passes: 3 and 3.
+
+14
+00:00:55,733 --> 00:00:58,600
+Compare the UNION of IDs, then the owned fields: status and version.
+
+15
+00:00:59,100 --> 00:01:01,600
+1010 has equal versions and a wrong status: comparing versions alone misses it.
+
+16
+00:01:02,100 --> 00:01:09,500
+Investigate 9999 before deleting it. Rebuild from the owner, then verify.
+
+17
+00:01:10,000 --> 00:01:12,500
+Label the repair as proposed until you have checked it.
+
+18
+00:01:14,100 --> 00:01:24,100
+Remember: Start from the owner: PostgreSQL holds the accepted status. Follow one event ID: committed, recorded, published, received, applied. A timeout is ambiguous. A later read is evidence. Repair the stuck path; never revert the owner to match a stale copy. Equal counts prove little: compare IDs and owned values.
+

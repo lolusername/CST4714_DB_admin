@@ -397,6 +397,10 @@ Next we will ask who should be allowed to perform each operation. That introduce
 - Course Chapter 5 and Week 5 individual labs.
 - Course Chapter 6 preview, Access Should Be Useful and Limited.
 
+## Slide 26
+
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: One assignment, one transaction (1:28); Row versions and snapshots (1:22); Who is waiting on whom? (1:28). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 5 README. The diagrams are schematic illustrations, not benchmarks.
+
 ## License
 
 Original course prose is licensed under CC BY-NC-SA 4.0. Source-specific notices control adapted material and external images. The transcript and the PowerPoint notes contain the same spoken script.

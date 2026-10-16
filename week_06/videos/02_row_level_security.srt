@@ -1,0 +1,52 @@
+1
+00:00:02,100 --> 00:00:03,600
+Row-level security. Same table, same query, different rows for each actor
+
+2
+00:00:06,800 --> 00:00:12,900
+Ownership is stored in a column. Both residents are NOLOGIN practice roles.
+
+3
+00:00:13,400 --> 00:00:19,400
+With only a grant, Maya can read every row. A grant knows nothing about owner_role.
+
+4
+00:00:19,900 --> 00:00:23,800
+RLS is on but no policy allows anything yet, so Maya sees no rows.
+
+5
+00:00:24,300 --> 00:00:30,100
+For every row, PostgreSQL checks: does owner_role equal current_user?
+
+6
+00:00:30,600 --> 00:00:38,200
+Maya's query had no ownership filter. The policy supplied it.
+
+7
+00:00:38,700 --> 00:00:46,900
+Same SQL, different actor, different rows. Nothing was deleted.
+
+8
+00:00:47,400 --> 00:00:58,300
+Row 2 exists, but not for Maya. The answer is empty, not 'permission denied'.
+
+9
+00:00:58,800 --> 00:01:04,100
+Jordan inserts a row Jordan owns: the new row passes WITH CHECK.
+
+10
+00:01:04,600 --> 00:01:12,400
+A false owner is rejected with an ERROR. There is no row to quietly leave out.
+
+11
+00:01:12,900 --> 00:01:15,400
+The savepoint recovers the failed transaction and keeps the allowed insert.
+
+12
+00:01:15,900 --> 00:01:18,400
+The policy compared each new row to the actor. No list of IDs to maintain.
+
+13
+00:01:20,000 --> 00:01:30,000
+Remember: The grant decides WHETHER a role may read; the policy decides WHICH rows. RLS enabled + no matching policy = no rows (default deny). USING filters existing rows: other people's rows just aren't there. WITH CHECK tests new rows: a false owner is an error (42501). Never 'fix' a failing test with USING (true).
+

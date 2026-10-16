@@ -1,0 +1,84 @@
+1
+00:00:02,100 --> 00:00:03,600
+Replica sets: oplog, lag, and elections. One ordered change history, three members, and no instant failover.
+
+2
+00:00:07,900 --> 00:00:09,700
+A replica set: members that maintain the same logical dataset.
+
+3
+00:00:10,200 --> 00:00:14,100
+Under normal operation, only the primary (A) accepts writes.
+
+4
+00:00:14,600 --> 00:00:17,400
+A applies the insert and records it as entry #1 in its oplog: an ordered log of data changes.
+
+5
+00:00:17,900 --> 00:00:19,700
+Secondaries fetch entries from that history and apply them to their own copies.
+
+6
+00:00:20,200 --> 00:00:23,400
+Replication is asynchronous. More writes arrive; B keeps up, C falls behind.
+
+7
+00:00:23,900 --> 00:00:26,800
+C is lagging. Its data is older, which is not the same as lost: it is still catching up.
+
+8
+00:00:27,300 --> 00:00:31,233
+A keeps only a bounded window of recent entries. Watch the oldest ones drop off.
+
+9
+00:00:31,733 --> 00:00:34,733
+C fell behind the retained history. Incremental catch-up is no longer enough: C needs resynchronization.
+
+10
+00:00:35,233 --> 00:00:38,333
+A bounded replication log is not an archive of every earlier state.
+
+11
+00:00:38,833 --> 00:00:42,633
+Start again with all three members caught up. Now A fails.
+
+12
+00:00:43,133 --> 00:00:46,333
+B and C stop hearing from A. Noticing the failure takes time.
+
+13
+00:00:46,833 --> 00:00:50,033
+B and C can still talk. Two of three votes is a majority, so an eligible member can be elected.
+
+14
+00:00:50,533 --> 00:00:53,733
+Here B becomes the new primary (one possible outcome).
+
+15
+00:00:54,233 --> 00:00:55,733
+The driver discovers the new topology and sends writes to B.
+
+16
+00:00:56,233 --> 00:01:00,133
+Until then, some operations fail or wait. Don't promise a fixed number of seconds.
+
+17
+00:01:00,633 --> 00:01:02,633
+Different failure: A is lost AND B and C cannot reach each other.
+
+18
+00:01:03,133 --> 00:01:06,133
+Each survivor has one vote out of three. Neither can become primary.
+
+19
+00:01:06,633 --> 00:01:09,633
+Why so strict? If isolated members promoted themselves, two primaries could accept conflicting writes.
+
+20
+00:01:10,133 --> 00:01:12,633
+Atlas Free runs a fixed three-node replica set and does not offer failover testing. Reason about it here.
+
+21
+00:01:14,233 --> 00:01:24,233
+Remember: The primary accepts writes and records them in its oplog. Secondaries copy and apply entries asynchronously: they can lag. The oplog is bounded: it is not an archive of old states. A new primary needs a voting majority (2 of 3 here). Detection, election, and reconnection take time.
+

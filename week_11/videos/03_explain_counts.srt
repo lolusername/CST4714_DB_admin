@@ -1,0 +1,64 @@
+1
+00:00:02,100 --> 00:00:03,600
+Did the index change the work? Reading explain("executionStats") for the newest-20 open queue
+
+2
+00:00:08,300 --> 00:00:10,800
+The course demo: every fifth ticket is open, so 2,000 open and 8,000 resolved.
+
+3
+00:00:11,300 --> 00:00:13,800
+Green squares stand for the open share (schematic). Opening dates rise left to right, row by row.
+
+4
+00:00:14,300 --> 00:00:20,900
+The page wants only 20. But limit(20) caps what is RETURNED, not what is examined.
+
+5
+00:00:21,400 --> 00:00:25,100
+COLLSCAN: every document is read to find the 2,000 open ones.
+
+6
+00:00:25,600 --> 00:00:31,000
+All open candidates are sorted in memory to pick the newest 20.
+
+7
+00:00:31,500 --> 00:00:34,500
+Entries are ordered by status, then newest first (ticket_id breaks ties).
+
+8
+00:00:35,000 --> 00:00:38,200
+IXSCAN jumps to the open section and reads 20 keys, already in order. No SORT.
+
+9
+00:00:38,700 --> 00:00:41,200
+FETCH then reads those 20 documents. Same 20 answers, far less examined.
+
+10
+00:00:41,700 --> 00:00:44,700
+Squares are schematic. Counts are from the course's local MongoDB 8.0 demo, not an Atlas benchmark.
+
+11
+00:00:45,200 --> 00:00:47,400
+Docs examined isn't zero: this is not a covered query, and that's fine.
+
+12
+00:00:50,900 --> 00:00:55,900
+An early $match and $sort may use the index. After $group or $unwind, documents are new.
+
+13
+00:00:56,400 --> 00:01:00,200
+Filter first: the newest OPEN ticket is 1001.
+
+14
+00:01:00,700 --> 00:01:03,200
+Limit first: keep 1004, then filter it out. Less work, different question.
+
+15
+00:01:03,700 --> 00:01:05,900
+Same pipeline, same data, before and after: then compare the counts.
+
+16
+00:01:07,500 --> 00:01:17,500
+Remember: limit(20) caps results, not the documents examined. Read nReturned, totalDocsExamined, totalKeysExamined together. COLLSCAN + SORT vs IXSCAN + FETCH: same 20 answers, different work. An index serves the start of a pipeline, before $group / $unwind. Reordering $limit or $match can change the answer. Check results first.
+

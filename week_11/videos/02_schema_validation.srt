@@ -1,0 +1,52 @@
+1
+00:00:02,100 --> 00:00:03,600
+Schema validation: which documents may exist? A focused $jsonSchema rule checks every relevant write
+
+2
+00:00:06,500 --> 00:00:10,000
+Installed with collMod on tickets. It checks presence, types, and allowed values.
+
+3
+00:00:10,500 --> 00:00:14,800
+Every insert or update to tickets must pass through it.
+
+4
+00:00:15,300 --> 00:00:20,000
+Every required field present, every value the right type and in the list.
+
+5
+00:00:20,500 --> 00:00:24,300
+It LOOKS like a date, but it's a string. bsonType "date" refuses it.
+
+6
+00:00:24,800 --> 00:00:28,500
+Read 1004 afterwards: its opened_at is still a BSON Date.
+
+7
+00:00:29,000 --> 00:00:33,700
+"almost_done" is not in the status list.
+
+8
+00:00:34,200 --> 00:00:39,200
+opened_at is required, and it is missing.
+
+9
+00:00:39,700 --> 00:00:42,700
+An extra optional field is fine. A focused rule protects core meaning, not every field.
+
+10
+00:00:43,200 --> 00:00:46,700
+enum checks a value is in the list. It can't stop reopening a closed ticket.
+
+11
+00:00:47,200 --> 00:00:50,200
+A document stored BEFORE the rule may still be invalid. collMod does not scan or fix it.
+
+12
+00:00:50,700 --> 00:00:53,200
+Audit and migrate existing documents, then tighten the rule. Record the rollout.
+
+13
+00:00:54,800 --> 00:01:04,800
+Remember: required = the field is present. bsonType = its type. enum = allowed values. A date-shaped string is not a BSON date: rejected, code 121. Focused rules still allow intentional extra fields. Adding a rule does not scan or repair stored documents. Audit first. Test one valid and several invalid writes; don't just say "it's on".
+

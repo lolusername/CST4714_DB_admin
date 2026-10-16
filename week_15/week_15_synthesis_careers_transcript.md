@@ -357,6 +357,10 @@ Across this course, the recurring work has been to define data meaning, choose a
 - Course textbook, Chapter 15, next-skill planning.
 - Course recovery and integration notebooks.
 
+## Slide 27
+
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Four tickets, two totals: the course in one report (1:32); From lab evidence to a portfolio bullet (1:11); Presenting a technical decision (1:19). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 15 README. The diagrams are schematic illustrations, not benchmarks.
+
 ## License
 
 Original course prose is licensed under CC BY 4.0. Source-specific notices control adapted material and external images. The transcript and the PowerPoint notes contain the same spoken script.

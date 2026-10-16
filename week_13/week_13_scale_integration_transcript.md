@@ -438,6 +438,10 @@ For your project, discuss one source, one important query, and a measured condit
 
 Next week, we will extend these ideas to an application that uses more than one store. Stable identifiers, repeat behavior, and explicit verification will help us diagnose why two copies can disagree and how to repair them without creating another inconsistency.
 
+## Slide 33
+
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Capacity: measure before you scale (1:17); Shard keys: distribution and targeting (1:37); A repeatable Python import (1:28). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 13 README. The diagrams are schematic illustrations, not benchmarks.
+
 ## License
 
 Original course prose is licensed under CC BY 4.0. Source-specific notices control adapted material and external images. The transcript and the PowerPoint notes contain the same spoken script.

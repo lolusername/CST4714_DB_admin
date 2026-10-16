@@ -1,0 +1,76 @@
+1
+00:00:02,100 --> 00:00:03,600
+Following one request. From Submit to a stored row, and back again.
+
+2
+00:00:08,266 --> 00:00:11,766
+The browser almost never talks to the database directly.
+
+3
+00:00:12,266 --> 00:00:14,866
+1. The browser collects the form and sends an HTTP request.
+
+4
+00:00:15,366 --> 00:00:18,966
+2. The API receives it and checks that the request is well formed.
+
+5
+00:00:19,466 --> 00:00:20,966
+3. The application establishes identity and decides what is allowed.
+
+6
+00:00:21,466 --> 00:00:25,566
+A field in the body is input, not proof of who sent it.
+
+7
+00:00:26,066 --> 00:00:30,166
+4–5. The application sends SQL; the DBMS checks it before changing anything.
+
+8
+00:00:30,666 --> 00:00:34,766
+6. The row is stored and the transaction commits.
+
+9
+00:00:35,266 --> 00:00:37,566
+7. The result travels back, and the browser shows a confirmation.
+
+10
+00:00:38,066 --> 00:00:42,066
+Same request, but now the network drops the reply on its way back.
+
+11
+00:00:42,566 --> 00:00:45,566
+The resident sees an error, yet the ticket exists.
+
+12
+00:00:46,066 --> 00:00:48,066
+Pressing Submit again could store a second copy of the same request.
+
+13
+00:00:48,566 --> 00:00:50,566
+"No success message" is not the same as "no change".
+
+14
+00:00:51,066 --> 00:00:57,366
+Later chapters handle this with transactions, operation IDs, and retries.
+
+15
+00:00:57,866 --> 00:01:00,866
+Showing a list later is a different operation: a query with its own conditions.
+
+16
+00:01:01,366 --> 00:01:03,866
+A successful save does not prove that a later query will include the row.
+
+17
+00:01:04,366 --> 00:01:09,700
+When something fails, ask where. Check one layer at a time.
+
+18
+00:01:10,200 --> 00:01:12,700
+Random changes to several layers at once hide the real cause.
+
+19
+00:01:14,300 --> 00:01:24,300
+Remember: A request crosses several layers before it becomes stored data. Fields in a request body are input, not proof of identity. "The client saw no success" ≠ "the database made no change". Showing a list is a separate read with its own conditions. Find the failing layer before changing anything.
+

@@ -1,0 +1,60 @@
+1
+00:00:02,100 --> 00:00:03,600
+A view stores a query, not rows. Every read runs the definition against the current data
+
+2
+00:00:07,900 --> 00:00:12,500
+Twelve tickets on the full baseline. Two have no assignee yet: 1004 and 1009.
+
+3
+00:00:13,000 --> 00:00:15,000
+Running CREATE VIEW stores the query under a name. It returns no tickets.
+
+4
+00:00:15,500 --> 00:00:18,900
+Columns are shortened here; the chapter's view also exposes priority, subject, and opened_at.
+
+5
+00:00:19,400 --> 00:00:25,100
+PostgreSQL plugs the stored definition into this query and runs it on the current rows.
+
+6
+00:00:25,600 --> 00:00:28,100
+Seven active tickets. The LEFT JOIN keeps 1004 and 1009 with a NULL assignee_name.
+
+7
+00:00:28,600 --> 00:00:30,600
+An inner join would silently drop them. Check the IDs, not just the count.
+
+8
+00:00:31,100 --> 00:00:36,300
+A view is not automatically faster: the whole statement is planned and run each time.
+
+9
+00:00:36,800 --> 00:00:43,400
+Ticket 1001 is resolved and the change is committed.
+
+10
+00:00:43,900 --> 00:00:46,400
+Six rows now. Nobody deleted 1001 from the view; the filter just evaluates differently.
+
+11
+00:00:46,900 --> 00:00:52,800
+There is no separate queue table to synchronize.
+
+12
+00:00:53,300 --> 00:00:57,700
+A materialized view holds rows computed earlier. It still lists 1001 as open.
+
+13
+00:00:58,200 --> 00:01:00,200
+REFRESH recomputes it. Fast to read can still mean too old to trust.
+
+14
+00:01:00,700 --> 00:01:02,700
+Using one needs a refresh policy and an acceptable staleness limit.
+
+15
+00:01:04,300 --> 00:01:14,300
+Remember: An ordinary view stores a SELECT definition under a name. Each read runs it on current data: no copy to keep in sync. LEFT JOIN keeps unassigned tickets; their assignee_name is NULL. Not automatically faster, not a backup, not a security policy. A materialized view stores rows: only as fresh as its last REFRESH.
+

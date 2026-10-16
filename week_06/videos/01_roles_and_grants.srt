@@ -1,0 +1,60 @@
+1
+00:00:02,100 --> 00:00:03,600
+Least privilege: roles and grants. Give the role its job, then prove it can't do more
+
+2
+00:00:07,500 --> 00:00:11,500
+A NOLOGIN role has no password. It only collects privileges.
+
+3
+00:00:12,000 --> 00:00:14,300
+Membership lets your login act as the role for a test: SET LOCAL ROLE.
+
+4
+00:00:14,800 --> 00:00:20,300
+Then session_user is still your login; current_user is metro_analyst.
+
+5
+00:00:20,800 --> 00:00:25,000
+The analyst needs ticket summaries. Not emails, not notes, no edits.
+
+6
+00:00:25,500 --> 00:00:29,700
+USAGE on the schema only lets the role look up objects inside it.
+
+7
+00:00:30,200 --> 00:00:36,700
+SELECT on the view, and nothing on the base tables.
+
+8
+00:00:37,200 --> 00:00:40,200
+Allowed. The view reads tickets using its OWNER's privileges, not the analyst's.
+
+9
+00:00:40,700 --> 00:00:47,700
+That is what lets a view expose chosen columns without a grant on the table.
+
+10
+00:00:48,200 --> 00:00:53,500
+Denied: permission denied for table users, SQLSTATE 42501.
+
+11
+00:00:54,000 --> 00:00:56,500
+Denied again. Inside BEGIN ... ROLLBACK, even a wrong grant changes nothing.
+
+12
+00:00:57,000 --> 00:01:04,600
+42501 is the passing result. A typo or a network error is not.
+
+13
+00:01:05,100 --> 00:01:09,200
+Suppose SELECT on tickets had also been granted to PUBLIC.
+
+14
+00:01:09,700 --> 00:01:12,900
+Revoking the direct grant leaves the PUBLIC path. Trust the test result, not the REVOKE.
+
+15
+00:01:14,500 --> 00:01:24,500
+Remember: A NOLOGIN group role holds privileges; logins become members. Reaching a table needs schema USAGE plus a privilege on the object. A normal view checks base tables with its OWNER's privileges. Test one allowed AND one denied action. Denied = SQLSTATE 42501. Privileges can also arrive through memberships and PUBLIC.
+

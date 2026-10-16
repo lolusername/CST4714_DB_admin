@@ -402,6 +402,10 @@ Let's be equally precise about what we have not shown. We have not shown that ev
 
 Run your cleanup before you leave. Keep the SQL and your observations in your file, and never the credentials. Next week we turn to performance. Once a query is correct and permitted, how much work does PostgreSQL do to answer it, and how do we read its plan.
 
+## Slide 35
+
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Least privilege: roles and grants (1:24); Row-level security: USING and WITH CHECK (1:30); Who is asking? Gates, roles, and tokens (1:33). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 6 README. The diagrams are schematic illustrations, not benchmarks.
+
 ## License
 
 Original course prose is licensed under CC BY-NC-SA 4.0. Source-specific notices control adapted material and external images. The transcript and the PowerPoint notes contain the same spoken script.

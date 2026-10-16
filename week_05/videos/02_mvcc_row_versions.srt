@@ -1,0 +1,64 @@
+1
+00:00:02,100 --> 00:00:03,600
+Row versions and snapshots. How PostgreSQL lets a reader and a writer share one row
+
+2
+00:00:06,500 --> 00:00:08,500
+xmin is the transaction that inserted this version: 733 (illustrative IDs).
+
+3
+00:00:09,000 --> 00:00:13,800
+xmax = 0: no deleting or replacing transaction is recorded.
+
+4
+00:00:14,300 --> 00:00:17,800
+The UPDATE adds a replacement version and stamps 735 into the old one's xmax.
+
+5
+00:00:18,300 --> 00:00:24,200
+Not two tickets: two versions of one logical row, each with visibility rules.
+
+6
+00:00:24,700 --> 00:00:27,700
+A transaction sees its own changes: A reads high.
+
+7
+00:00:28,200 --> 00:00:30,700
+B reads the last committed version, low. It does not wait for A.
+
+8
+00:00:31,200 --> 00:00:38,100
+xmax = 735 alone doesn't hide the old version: 735 has not committed.
+
+9
+00:00:38,600 --> 00:00:44,600
+In Read Committed (the default), each statement takes a new snapshot: B now sees high.
+
+10
+00:00:45,100 --> 00:00:48,100
+A Repeatable Read transaction keeps the snapshot from its first statement: still low.
+
+11
+00:00:48,600 --> 00:00:52,000
+A's commit was not lost. It is outside that older snapshot; a new transaction sees high.
+
+12
+00:00:52,500 --> 00:00:59,100
+While that old snapshot is open, the low version must stay. Long transactions delay cleanup.
+
+13
+00:00:59,600 --> 00:01:03,600
+Now no snapshot needs the low version. It is a dead row version.
+
+14
+00:01:04,100 --> 00:01:07,100
+VACUUM (usually autovacuum) marks that space reusable. Routine maintenance, not a malfunction.
+
+15
+00:01:07,600 --> 00:01:10,600
+MVCC is not a history log. To keep what changed, record it on purpose, like ticket_events.
+
+16
+00:01:12,200 --> 00:01:22,200
+Remember: An UPDATE writes a new row version; it does not overwrite in place. xmin = inserting transaction, xmax = replacing (or locking) one. Each read sees the version its snapshot allows. Read Committed: new snapshot per statement. Repeatable Read: per transaction. VACUUM reclaims old versions once no snapshot needs them.
+

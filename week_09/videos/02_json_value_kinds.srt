@@ -1,0 +1,72 @@
+1
+00:00:02,100 --> 00:00:03,600
+Strict JSON, from the punctuation up. Six value kinds, and why valid is only the first check
+
+2
+00:00:06,900 --> 00:00:13,100
+The chapter's example ticket. One object, with named members inside.
+
+3
+00:00:13,600 --> 00:00:15,200
+Number, boolean, null, string, array, object. That is all JSON has.
+
+4
+00:00:15,700 --> 00:00:19,666
+null has no quotes. "null" in quotes would be a four-letter string.
+
+5
+00:00:20,166 --> 00:00:22,166
+Braces enclose an object, brackets an array. Indentation is only for readers.
+
+6
+00:00:22,666 --> 00:00:24,666
+Objects are unordered name/value pairs. If order matters, use an array.
+
+7
+00:00:27,166 --> 00:00:31,166
+It looks like a Python dictionary. A JSON parser rejects it.
+
+8
+00:00:31,666 --> 00:00:34,466
+Two separate errors. A parser reports the first place it gets stuck.
+
+9
+00:00:34,966 --> 00:00:37,166
+Double quotes, no final comma: valid JSON.
+
+10
+00:00:37,666 --> 00:00:40,066
+Some parsers accept extensions, so "my parser accepted it" doesn't prove it is portable.
+
+11
+00:00:45,966 --> 00:00:47,466
+Four objects about ticket 1004 that say four different things.
+
+12
+00:00:47,966 --> 00:00:50,166
+Is missing the same as null? JSON doesn't decide. The application's contract does.
+
+13
+00:00:50,666 --> 00:00:52,866
+An empty events list doesn't say whether history is absent or just not included.
+
+14
+00:00:55,366 --> 00:00:59,166
+JSON has no date type. A timestamp is text in an agreed format.
+
+15
+00:00:59,666 --> 00:01:01,866
+MongoDB stores BSON, which has Date and ObjectId types. The sender decides.
+
+16
+00:01:02,366 --> 00:01:05,166
+Don't assume a date-looking string quietly becomes a Date.
+
+17
+00:01:05,666 --> 00:01:08,066
+Valid JSON, a good document model, and a stored BSON document are three different claims.
+
+18
+00:01:09,666 --> 00:01:19,666
+Remember: Six kinds: object, array, string, number, true/false, null. Double quotes only. No trailing commas, comments, NaN, or dates. Missing, null, [ ] and 0 can mean different things: define the contract. JSON has no date type. MongoDB stores BSON, which does. Valid syntax is not a good data model.
+

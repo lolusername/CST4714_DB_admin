@@ -1,0 +1,68 @@
+1
+00:00:02,100 --> 00:00:03,600
+Embed or reference? Model the ticket page from how it is read and written
+
+2
+00:00:08,100 --> 00:00:14,000
+A diagram without a workload isn't a design. These five needs decide where events live.
+
+3
+00:00:14,500 --> 00:00:20,000
+One read returns the ticket and its events. An append is one atomic document write.
+
+4
+00:00:20,500 --> 00:00:24,200
+But every event makes this one document bigger, without a bound.
+
+5
+00:00:24,700 --> 00:00:28,700
+Patterns 4 and 5 push back: unbounded growth, and every report digs through every ticket.
+
+6
+00:00:31,900 --> 00:00:35,400
+The ticket stores requester_id. Each event is its own document pointing back to ticket 1001.
+
+7
+00:00:35,900 --> 00:00:37,700
+Read 1: findOne ticket 1001
+
+8
+00:00:38,200 --> 00:00:40,000
+Read 2: findOne user_id = requester_id
+
+9
+00:00:40,500 --> 00:00:43,000
+Read 3: find ticket 1001, sort newest, limit 2
+
+10
+00:00:43,500 --> 00:00:48,900
+Three reads build the page: the cost is extra retrieval. History stays complete and queryable.
+
+11
+00:00:49,400 --> 00:00:52,900
+Contact correction: one person document changes. No ticket holds a copy to fix.
+
+12
+00:00:53,400 --> 00:00:56,400
+New event 5998: a new history document. The ticket does not grow.
+
+13
+00:00:56,900 --> 00:01:00,100
+The page now shows 5998 and 5002. 5001 is still stored: count = 3.
+
+14
+00:01:00,600 --> 00:01:03,100
+requester_id: 101 is not a foreign key. Nothing checks that person 101 exists.
+
+15
+00:01:03,600 --> 00:01:06,100
+Three reads are not one atomic snapshot. A change can land between them.
+
+16
+00:01:06,600 --> 00:01:09,600
+A hybrid (copy the latest two into the ticket) needs a refresh rule. Not automatically better.
+
+17
+00:01:11,200 --> 00:01:21,200
+Remember: Start from the reads, writes, growth, and owner of each fact. Embed what is read together, owned, and bounded. Reference what grows without bound or is shared and changes. A reference is not a foreign key; the app must keep it valid. Pick the simplest design that meets the stated workload.
+

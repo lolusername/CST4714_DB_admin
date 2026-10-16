@@ -1,0 +1,80 @@
+1
+00:00:02,100 --> 00:00:03,600
+A repeatable Python import. Connect carefully, key on a stable ID, and design the second run.
+
+2
+00:00:07,400 --> 00:00:09,900
+The credential is typed at a hidden prompt: never in a cell, screenshot, or output.
+
+3
+00:00:10,400 --> 00:00:12,900
+Encrypted, with certificate and hostname checks ON. Disabling them is not a fix.
+
+4
+00:00:13,400 --> 00:00:15,900
+Ten-second limits: a bad connection fails with a reason instead of hanging.
+
+5
+00:00:16,400 --> 00:00:19,500
+Creating a client sends nothing. The ping is a real round trip.
+
+6
+00:00:20,000 --> 00:00:22,300
+In Colab, the access-list entry is the runtime's IP /32, not your laptop's.
+
+7
+00:00:28,000 --> 00:00:30,600
+%s marks a value. The driver sends it apart from the SQL, so it can never become SQL code.
+
+8
+00:00:31,100 --> 00:00:33,100
+The comma makes (known_id,) a one-item tuple. No quotes around %s.
+
+9
+00:00:33,600 --> 00:00:36,400
+Table and column NAMES can't be %s: choose them from an allowed list and compose with sql.Identifier.
+
+10
+00:00:38,900 --> 00:00:42,000
+Run 1 on an empty target: both programs load the 75 checked records.
+
+11
+00:00:42,500 --> 00:00:45,100
+Run 2: same source, same target. Only the import cell runs again.
+
+12
+00:00:45,600 --> 00:00:48,200
+Append: every record twice. Upsert: each cveID is matched and replaced, no second copy.
+
+13
+00:00:48,700 --> 00:00:51,000
+Resetting the target before each run would only test a first import twice.
+
+14
+00:00:51,500 --> 00:00:53,800
+Equal counts can still hide a wrong value: compare a known record's fields too.
+
+15
+00:00:56,300 --> 00:01:00,100
+Three invented readings. The third write fails. What happens to the first two?
+
+16
+00:01:00,600 --> 00:01:03,600
+The transaction undoes its earlier writes. Each replace_one is atomic only for its own document.
+
+17
+00:01:04,100 --> 00:01:10,400
+This loop requests no transaction; MongoDB supports them where the deployment allows.
+
+18
+00:01:10,900 --> 00:01:13,700
+Rerunning the unchanged source matches r1 and r2 by ID and finishes r3. Then verify again.
+
+19
+00:01:14,200 --> 00:01:16,500
+Neither property keeps old versions or removes records a later feed drops.
+
+20
+00:01:18,100 --> 00:01:28,100
+Remember: Hidden prompt for the URI; TLS checks stay on; set timeouts. A ping proves reachability, not a correct dataset. Bind values with %s; choose names from an allowed list. Upsert on a stable key: the second run must meet the first. Atomicity (what succeeds together) ≠ idempotency (what a repeat does).
+

@@ -1,0 +1,88 @@
+1
+00:00:02,100 --> 00:00:03,600
+Dump, restore, verify. A backup matters only when recovery works.
+
+2
+00:00:06,500 --> 00:00:08,500
+Someone exports each table as a CSV, one file at a time.
+
+3
+00:00:09,000 --> 00:00:13,000
+Between the two downloads, the application keeps writing.
+
+4
+00:00:13,500 --> 00:00:15,500
+The files capture different moments: an event whose parent is missing.
+
+5
+00:00:16,000 --> 00:00:18,000
+And CSV rows carry no keys, checks, indexes, or grants: rows without rules.
+
+6
+00:00:23,100 --> 00:00:25,100
+A logical dump rebuilds the meaning of objects, not a byte copy of storage files.
+
+7
+00:00:25,600 --> 00:00:27,600
+Scope is a choice: this schema only. Roles and other project services are not in it.
+
+8
+00:00:31,300 --> 00:00:33,800
+The archive's table of contents: the expected objects appear.
+
+9
+00:00:34,300 --> 00:00:37,100
+A checksum detects later changes to the bytes, compared with a trusted earlier hash.
+
+10
+00:00:37,600 --> 00:00:39,800
+Neither proves PostgreSQL can restore it. And an untrusted dump can run SQL.
+
+11
+00:00:44,300 --> 00:00:50,100
+First create a different, empty database just for this drill.
+
+12
+00:00:50,600 --> 00:00:52,400
+The source is never overwritten. If the restore fails, the original is still there.
+
+13
+00:00:52,900 --> 00:00:55,300
+--exit-on-error stops at the first error; --single-transaction leaves nothing half-restored.
+
+14
+00:00:55,800 --> 00:00:58,200
+--no-owner and --no-privileges skip owners and grants: access must be reviewed separately.
+
+15
+00:00:58,700 --> 00:01:00,900
+Both databases share one temporary server here. Real backups need an independent location.
+
+16
+00:01:05,266 --> 00:01:06,766
+Structure, counts, a relationship check, and a grouped report all match.
+
+17
+00:01:07,266 --> 00:01:10,966
+But suppose the restore changed ticket 1001's subject. Every check above still passes.
+
+18
+00:01:11,466 --> 00:01:14,966
+A known-record check catches it: same counts, different meaning.
+
+19
+00:01:15,466 --> 00:01:17,966
+Behavior: does the restored status rule still reject a bad value?
+
+20
+00:01:18,466 --> 00:01:21,266
+Pass only on the check-constraint code and the exact constraint name.
+
+21
+00:01:21,766 --> 00:01:23,766
+Any error is not a test. ROLLBACK keeps the data clean either way.
+
+22
+00:01:25,366 --> 00:01:35,366
+Remember: pg_dump exports related tables from one consistent snapshot. A list or checksum describes the file. Only a restore tests it. Restore into a separate, empty target. Never over the only copy. Counts, a known record, and a constraint test catch different failures. Say what you did not check: roles, grants, the app connection.
+

@@ -36,6 +36,17 @@ unless the weekly lab assigns it.
 - [Week 5 PDF handout](week_05_transactions_mvcc_locks.pdf)
 - [Week 5 transcript](week_05_transactions_mvcc_locks_transcript.md)
 
+<!-- videos:start -->
+## Videos
+
+Short silent animations with captions (3 for this week). Each has a subtitle file; see [all Week 5 videos](videos/README.md).
+
+- [One assignment, one transaction](videos/01_transaction_boundary.mp4) (1:28): Assigning ticket 1004 changes the ticket and writes event 5998, so both belong in one transaction. Watch ROLLBACK and COMMIT end it, a duplicate-key error fail the pair, and an UPDATE match zero rows without any error.
+- [Row versions and snapshots](videos/02_mvcc_row_versions.mp4) (1:22): An UPDATE to ticket 1004 writes a new row version stamped with transaction IDs. See which version each session reads before and after the commit, and why VACUUM can reclaim the old version only when no snapshot needs it.
+- [Who is waiting on whom?](videos/03_blocking_and_deadlock.mp4) (1:28): Session A updates ticket 1004 and leaves its transaction open, so Session B waits. A third session uses pg_blocking_pids to find the blocker, and ending A decides which data survives. A deadlock is different: it is a cycle that PostgreSQL breaks by aborting one transaction.
+
+<!-- videos:end -->
+
 ## Day 1: Transaction Outcomes
 
 Slides 1-9 teach the complete assignment rehearsal, its stored outcomes, a failed

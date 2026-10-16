@@ -455,6 +455,10 @@ Today your concrete artifact is two JSON examples with the same selected facts. 
 [Sources]
 - Course-created example of technical design writing. It describes a proposal, not a measured deployment.
 
+## Slide 33
+
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Same facts, two shapes (1:16); Strict JSON, from the punctuation up (1:20); What embedding costs over time (1:21). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 9 README. The diagrams are schematic illustrations, not benchmarks.
+
 ## License
 
 Original course prose is licensed under CC BY-NC-SA 4.0. Source-specific notices control adapted material and external images. The transcript and the PowerPoint notes contain the same spoken script.

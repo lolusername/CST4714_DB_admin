@@ -31,6 +31,17 @@ unless the weekly lab assigns it.
 - [Week 9 PDF handout](week_09_nosql_models_json.pdf)
 - [Week 9 transcript](week_09_nosql_models_json_transcript.md)
 
+<!-- videos:start -->
+## Videos
+
+Short silent animations with captions (3 for this week). Each has a subtitle file; see [all Week 9 videos](videos/README.md).
+
+- [Same facts, two shapes](videos/01_rows_to_documents.mp4) (1:16): Ticket 1001's CSV rows become a referenced JSON object, where IDs connect three arrays, and an embedded ticket document, where containment connects the events. Both keep the same facts but make different reads and changes direct.
+- [Strict JSON, from the punctuation up](videos/02_json_value_kinds.mp4) (1:20): The six JSON value kinds and their punctuation, a repair of single quotes and a trailing comma, and why missing, null, empty, and zero differ. JSON has no date type; MongoDB stores BSON, and the sender decides what becomes a Date.
+- [What embedding costs over time](videos/03_embedding_tradeoffs.mp4) (1:21): An embedded copy of a user's name goes stale after a name change unless its meaning is defined, and an embedded events array grows without bound. A hybrid keeps a bounded recent-event preview plus a separate history, which takes two writes and a refresh rule.
+
+<!-- videos:end -->
+
 ## Free External Resources
 
 - [Getting Started with MongoDB Atlas](https://learn.mongodb.com/courses/getting-started-with-mongodb-atlas): orientation, especially the Atlas overview, deployment, and interface lessons. No completion screenshot is required this week.

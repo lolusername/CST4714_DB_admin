@@ -1,0 +1,72 @@
+1
+00:00:02,100 --> 00:00:03,600
+Where did the requests go? Stored rows, a dashboard rule, and two missing tickets.
+
+2
+00:00:06,500 --> 00:00:10,000
+The lab's stored rows: four tickets and two agents.
+
+3
+00:00:10,500 --> 00:00:12,500
+The dashboard shows only 1001. The promise needs 1001, 1004, and 1009.
+
+4
+00:00:13,000 --> 00:00:20,766
+Yet 1004 and 1009 are right there in the table. Nothing was deleted.
+
+5
+00:00:21,266 --> 00:00:25,666
+1001, 1004, and 1009 survive. The status rule matches the promise.
+
+6
+00:00:26,166 --> 00:00:28,866
+Pair every active ticket with every agent: 3 × 2 = 6 pairs.
+
+7
+00:00:29,366 --> 00:00:31,366
+Most pairs are nonsense: 1001 sits next to Agent 202. The ON condition decides which pairs survive.
+
+8
+00:00:31,866 --> 00:00:34,266
+Test each pair: does assignee_id equal agent_id?
+
+9
+00:00:34,766 --> 00:00:38,266
+NULL = 201 is not true; it is unknown. Only pairs that test true are kept.
+
+10
+00:00:38,766 --> 00:00:40,766
+One pair survives: 1001 with Agent 201. That is the whole dashboard.
+
+11
+00:00:41,266 --> 00:00:45,666
+This is what the rule means. PostgreSQL need not build all pairs to compute it.
+
+12
+00:00:46,166 --> 00:00:48,166
+Change the data, not the rule: ticket 1004 now has assignee 202.
+
+13
+00:00:48,666 --> 00:00:51,166
+Now 1004 finds a match and appears on the dashboard.
+
+14
+00:00:51,666 --> 00:00:54,666
+1009 is still unassigned, so the promise is still broken.
+
+15
+00:00:55,166 --> 00:00:59,866
+Undo the change. Assigning tickets just to make them visible hides the real problem.
+
+16
+00:01:00,366 --> 00:01:02,866
+An active ticket stays even when no agent matches. The gap is labeled, not invented.
+
+17
+00:01:03,366 --> 00:01:06,366
+No fake agent, no edited rows, no restored backup. Next week this becomes a LEFT JOIN.
+
+18
+00:01:07,966 --> 00:01:17,966
+Remember: A stored row and a query result can contain different rows. A product pairs every ticket with every agent; a join keeps matching pairs. NULL matches nothing, so an inner match drops unassigned tickets. Fix the rule, not the data: keep the ticket, label the missing agent. Check IDs, not just counts, against the promise.
+

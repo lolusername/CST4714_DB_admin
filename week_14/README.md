@@ -32,6 +32,17 @@ unless the weekly lab assigns it.
 - [Guided incident notebook](materials/notebooks/08_polyglot_incident.ipynb), using SQLite and Python without a database account or package installation
 - [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_14/materials/notebooks/08_polyglot_incident.ipynb) for Lab 1; save a working copy in Drive.
 
+<!-- videos:start -->
+## Videos
+
+Short silent animations with captions (3 for this week). Each has a subtitle file; see [all Week 14 videos](videos/README.md).
+
+- [Polyglot persistence: one owner per fact](videos/01_one_owner_per_fact.mp4) (1:30): Two healthy databases can still show two different ticket statuses. Naming one authoritative owner for each fact tells you which copy is derived, how it is refreshed, and which direction a repair must go.
+- [Keeping two databases consistent: outbox and version guard](videos/02_outbox_and_versions.mp4) (1:42): A dual write can commit in PostgreSQL and fail in MongoDB. A transactional outbox records the change and its event together, and a version-checked consumer ignores duplicate and late deliveries.
+- [Triage a cross-database incident](videos/03_incident_triage.mp4) (1:24): Follow ticket 1008 from commit to event to consumer to projection, find where progress stopped, and repair in the owner's direction. Then check more than one record, because equal counts can hide missing, extra, and wrong values.
+
+<!-- videos:end -->
+
 ## Day 1: Individual Polyglot Incident Room
 
 Use **slides 1-22** for the transaction, delivery, and reconciliation examples.

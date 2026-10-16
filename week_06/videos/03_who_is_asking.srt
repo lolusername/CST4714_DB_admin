@@ -1,0 +1,60 @@
+1
+00:00:02,100 --> 00:00:03,600
+Who is asking? Gates, shared database roles, and the user inside the token
+
+2
+00:00:07,000 --> 00:00:19,566
+A remote query must pass every gate, in order. Passing one proves nothing about the next.
+
+3
+00:00:20,066 --> 00:00:23,866
+Each failed gate has its own symptom. Zero rows can be a correct policy result.
+
+4
+00:00:24,366 --> 00:00:30,766
+More GRANTs can't fix the first three, and at the last two they hide the real problem.
+
+5
+00:00:31,266 --> 00:00:37,166
+Supabase maps every signed-in request to one shared role: authenticated.
+
+6
+00:00:37,666 --> 00:00:44,366
+auth.uid() returns the user ID from the verified token: A sees 1001 and 1005.
+
+7
+00:00:44,866 --> 00:00:47,866
+Same role, same SQL, different token: B sees 1007. The role is not the person.
+
+8
+00:00:48,366 --> 00:00:57,666
+The ID must come from a token the server verified, never from the request body.
+
+9
+00:00:58,166 --> 00:01:00,466
+A visitor without a token runs as anon, and auth.uid() is NULL.
+
+10
+00:01:00,966 --> 00:01:03,966
+Even where an ownership check runs, NULL equality is never true: no row qualifies.
+
+11
+00:01:04,466 --> 00:01:11,366
+Week 2's three-valued logic, now doing security work.
+
+12
+00:01:11,866 --> 00:01:14,866
+These roles bypass RLS and see every row. RLS is not a defense against an unrestricted admin.
+
+13
+00:01:15,366 --> 00:01:18,366
+The Supabase SQL editor usually runs elevated, so its full result proves nothing about residents.
+
+14
+00:01:18,866 --> 00:01:21,366
+Test as the role, token, and request path the application actually uses.
+
+15
+00:01:22,966 --> 00:01:32,966
+Remember: Find the failing gate before changing permissions. App users share one database role, e.g. authenticated. The verified token's user ID (auth.uid()) tells the policy who it is. No user → NULL → the equality is not true → no rows. Owners, superusers and BYPASSRLS roles skip RLS: test as the app's role.
+

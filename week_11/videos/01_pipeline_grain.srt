@@ -1,0 +1,60 @@
+1
+00:00:02,100 --> 00:00:03,600
+Follow the documents through a pipeline. At every stage: what does ONE document represent?
+
+2
+00:00:07,100 --> 00:00:11,500
+Orange labels are the grain: what one document means after each stage.
+
+3
+00:00:12,000 --> 00:00:15,400
+Four tickets in the collection. One of them, 1003, is resolved.
+
+4
+00:00:15,900 --> 00:00:20,400
+$match keeps the 3 active tickets. 1003 stays stored; it just isn't in this stream.
+
+5
+00:00:20,900 --> 00:00:23,400
+"$category" reads each ticket's field. Tickets with the same value merge into one new document.
+
+6
+00:00:23,900 --> 00:00:28,000
+$sum: 1 counts members. After $group, a document is a category, not a ticket.
+
+7
+00:00:28,500 --> 00:00:31,000
+$group promises no order. $sort orders by count, then _id. Same two documents.
+
+8
+00:00:31,500 --> 00:00:33,500
+4 → 3 → 2 → 2: each drop means something different.
+
+9
+00:00:36,000 --> 00:00:42,400
+Active tickets 1001, 1002, 1004 have 2, 1, and 0 events.
+
+10
+00:00:42,900 --> 00:00:46,900
+Both streams hold 3 documents. A test of the grand total passes.
+
+11
+00:00:47,400 --> 00:00:49,900
+But 1001 appears twice and 1004 vanished. Same total, different tickets.
+
+12
+00:00:50,400 --> 00:00:53,400
+An urgent count over the events stream would report 2 urgent streetlights. Only 1001 is.
+
+13
+00:00:53,900 --> 00:00:55,900
+For a ticket report, aggregate before unwinding.
+
+14
+00:00:56,400 --> 00:00:59,400
+preserveNullAndEmptyArrays brings 1004 back, but 1001 is still counted twice.
+
+15
+00:01:01,000 --> 00:01:11,000
+Remember: Each stage receives the previous stage's output stream. $match removes documents; the grain stays one per ticket. $group makes one NEW document per _id (here, per category). $unwind makes one document per array element: events, not tickets. Equal totals can hide a missing and a duplicated ticket.
+

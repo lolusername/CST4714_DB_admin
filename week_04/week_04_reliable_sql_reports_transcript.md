@@ -246,6 +246,10 @@ This leads into next week's work on transactions and isolation. We will not solv
 
 For today, keep the boundaries honest. Your report is tested against the supplied state and ordering rule. You have not proven that two separate reports run at different moments always describe the same snapshot. Save your SQL, finish the notebook cleanup when you no longer need its temporary database, and keep any project connection details private. The transferable skill is not one particular query: it is explaining exactly what a result means and how you checked it.
 
+## Slide 25
+
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: What does one row mean after a join? (1:16); Counting workload, including zero (1:28); A view stores a query, not rows (1:14). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 4 README. The diagrams are schematic illustrations, not benchmarks.
+
 ## License
 
 Original course prose is licensed under CC BY-NC-SA 4.0. Source-specific notices control adapted material and external images. The transcript and the PowerPoint notes contain the same spoken script.

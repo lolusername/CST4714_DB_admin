@@ -34,6 +34,17 @@ unless the weekly lab assigns it.
 - [Week 3 PDF handout](week_03_views_identity_safe_change.pdf)
 - [Week 3 transcript](week_03_views_identity_safe_change_transcript.md)
 
+<!-- videos:start -->
+## Videos
+
+Short silent animations with captions (3 for this week). Each has a subtitle file; see [all Week 3 videos](videos/README.md).
+
+- [A view stores a query, not rows](videos/01_view_stored_query.mp4) (1:14): The active-queue view saves a SELECT definition and runs it against current data each time, so a resolved ticket simply stops appearing. A materialized view stores rows instead and stays stale until it is refreshed.
+- [Why identity values have gaps](videos/02_identity_gaps.mp4) (1:24): Three inserts receive IDs 1, 2, and 3, but the rolled-back one leaves only rows 1 and 3, because sequence allocations are not undone. An explicitly supplied ID does not advance the sequence and can collide with a later generated value.
+- [Adding a required field without inventing history](videos/03_add_required_column.mp4) (1:27): The source_channel rehearsal adds a column, backfills unknown, adds a CHECK, default, and NOT NULL, verifies, and rolls back. An older client that omits the column gets the default, and an open ALTER TABLE makes other sessions wait.
+
+<!-- videos:end -->
+
 ## Day 1: Views, Identity, and Introspection
 
 Use **slides 1-14**. Begin with slides 2-5 and the notebook's introduction/setup:

@@ -1,0 +1,76 @@
+1
+00:00:02,100 --> 00:00:03,600
+Same facts, two shapes. Turning three CSV tables into JSON for ticket 1001
+
+2
+00:00:07,500 --> 00:00:10,100
+The chapter's worked example: ticket 1001, users 101 and 201, events 5001 and 5002.
+
+3
+00:00:10,600 --> 00:00:12,800
+requester_id and assignee_id point at users by ID.
+
+4
+00:00:13,300 --> 00:00:15,300
+Each event names its ticket with ticket_id. CSV text alone enforces none of this.
+
+5
+00:00:18,300 --> 00:00:19,800
+One JSON object holding three arrays: it mirrors the three CSV tables.
+
+6
+00:00:20,300 --> 00:00:22,500
+It is interchange text, not three MongoDB collections.
+
+7
+00:00:23,000 --> 00:00:24,600
+The ticket page starts at the ticket...
+
+8
+00:00:25,100 --> 00:00:26,900
+...looks up users 101 and 201 to get their names...
+
+9
+00:00:27,400 --> 00:00:29,000
+...and finds every event whose ticket_id is 1001. Three places to gather.
+
+10
+00:00:29,500 --> 00:00:34,100
+Each user's name appears exactly once. A name change updates one record.
+
+11
+00:00:34,600 --> 00:00:37,600
+Now the ticket itself is the outer object.
+
+12
+00:00:38,100 --> 00:00:41,900
+Requester and assignee become nested objects, carrying copies of the names.
+
+13
+00:00:42,400 --> 00:00:46,400
+Events drop ticket_id: the containing ticket already says whose they are.
+
+14
+00:00:46,900 --> 00:00:49,100
+Same ticket, same users, same two events and timestamps. One document read returns the page.
+
+15
+00:00:53,600 --> 00:00:55,800
+Access patterns from the chapter. Each shape makes different work direct.
+
+16
+00:00:56,300 --> 00:00:58,300
+Embedding makes the page and one-ticket changes direct, single-document atomic.
+
+17
+00:00:58,800 --> 00:01:01,200
+Separate events support long history and cross-ticket reports, at the cost of a second query.
+
+18
+00:01:01,700 --> 00:01:04,100
+The question is not "which JSON is correct?" but "which reads and changes matter most?"
+
+19
+00:01:05,700 --> 00:01:15,700
+Remember: Keep the facts equal first, then compare the arrangement. Referenced: IDs carry relationships; each user's name appears once. Embedded: containment carries relationships; one read gets the page. Embedding copies shared facts and lets arrays grow. Ask which shape makes the important reads and changes direct.
+

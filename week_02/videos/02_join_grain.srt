@@ -1,0 +1,68 @@
+1
+00:00:02,100 --> 00:00:03,600
+What does one row mean after a join? Joins can drop rows, keep them, or multiply them.
+
+2
+00:00:06,500 --> 00:00:09,500
+Every ticket paired with every user: the Cartesian product.
+
+3
+00:00:10,000 --> 00:00:12,500
+12 tickets × 8 users = 96 candidate pairs. Most of them are nonsense.
+
+4
+00:00:13,000 --> 00:00:17,200
+The join condition keeps only pairs where the assignee is that user.
+
+5
+00:00:17,700 --> 00:00:19,700
+Columns 1004 and 1009 stay empty: NULL equals no user.
+
+6
+00:00:20,200 --> 00:00:22,700
+Leave out the condition and all 96 pairs come back. Joins use the condition you write.
+
+7
+00:00:23,200 --> 00:00:25,200
+This is the meaning. PostgreSQL does not have to build all 96 pairs to compute it.
+
+8
+00:00:29,900 --> 00:00:34,600
+Inner join: only matching pairs. Two real requests silently disappear.
+
+9
+00:00:35,100 --> 00:00:37,100
+Left join: every ticket on the left side stays. No match? The user columns are NULL.
+
+10
+00:00:37,600 --> 00:00:39,600
+No fake "Unassigned" user, no edited rows. The fix is the join type.
+
+11
+00:00:40,100 --> 00:00:42,100
+Neither is wrong in general: the join type is a statement about the question.
+
+12
+00:00:45,400 --> 00:00:48,600
+Each ticket pairs with every one of its events.
+
+13
+00:00:49,100 --> 00:00:54,100
+Ticket 1003 has three events, so it appears in three result rows.
+
+14
+00:00:54,600 --> 00:00:57,100
+After this join, a row is a ticket-event pair. count(*) counts 21 pairs.
+
+15
+00:00:57,600 --> 00:01:00,600
+Counting distinct ticket IDs answers a different question: 12 tickets.
+
+16
+00:01:01,100 --> 00:01:03,600
+Decide what one row means first. DISTINCT does not repair a wrong grain.
+
+17
+00:01:06,200 --> 00:01:16,200
+Before you count, ask what one row means: A join is a filtered product: the ON condition decides which pairs survive. INNER JOIN drops tickets whose assignee is NULL: 10 rows, not 12. LEFT JOIN keeps every ticket and fills the missing side with NULL. Joining events makes one row per ticket-event pair: 21 rows. Repeated IDs are not automatically a bug. Check the grain first.
+

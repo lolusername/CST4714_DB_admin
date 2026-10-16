@@ -38,6 +38,17 @@ It uses Python's SQLite library and synthetic records. Colab requires a Google
 sign-in; no Atlas/Supabase account, database password, or package installation
 is needed.
 
+<!-- videos:start -->
+## Videos
+
+Short silent animations with captions (3 for this week). Each has a subtitle file; see [all Week 15 videos](videos/README.md).
+
+- [Four tickets, two totals: the course in one report](videos/01_four_tickets_two_totals.mp4) (1:32): The backlog says three active tickets but staff counts add up to two. Define each population, trace the left join, break it on purpose, and recognize the same check in restores and projections.
+- [From lab evidence to a portfolio bullet](videos/02_evidence_to_bullet.mp4) (1:11): A tool list says little. Gather the query, result, and experiment you actually ran, build a resume bullet and a STAR-R story where every phrase points to that evidence, and cut claims you cannot support.
+- [Presenting a technical decision](videos/03_presenting_a_decision.mp4) (1:19): Answer "why did you add that index?" with decision, result, and tradeoff, reason through "PostgreSQL or MongoDB?" from stated assumptions, and plan a demonstration with a safe, non-live fallback.
+
+<!-- videos:end -->
+
 ## Day 1: Integrated Review and Portfolio Project
 
 Use **slides 1-18** alongside the review notebook and individual concept lab.

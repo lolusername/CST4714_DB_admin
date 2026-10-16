@@ -1,0 +1,60 @@
+1
+00:00:02,100 --> 00:00:03,600
+Presenting a technical decision. Decision, result, tradeoff, and the assumptions behind them
+
+2
+00:00:06,500 --> 00:00:10,600
+No query, no plan, no cost. Nothing to follow up on.
+
+3
+00:00:11,100 --> 00:00:13,700
+Decision: what you chose, for which query.
+
+4
+00:00:14,200 --> 00:00:16,800
+Result: what you observed on stated data.
+
+5
+00:00:17,300 --> 00:00:19,300
+Tradeoff: what it costs and what you will watch.
+
+6
+00:00:19,800 --> 00:00:23,200
+Describe the observed plan change. Do not invent "3x faster" from one run.
+
+7
+00:00:23,700 --> 00:00:34,200
+There is no single correct database. The reasoning is what gets evaluated.
+
+8
+00:00:34,700 --> 00:00:37,200
+Choosing PostgreSQL does not by itself stop overlapping appointments. Test the rule.
+
+9
+00:00:37,700 --> 00:00:43,100
+"My data is JSON" decides nothing: PostgreSQL stores JSON, MongoDB can reference.
+
+10
+00:00:43,600 --> 00:00:49,100
+Who needs what, one relationship, one query result, one decision you tested.
+
+11
+00:00:49,600 --> 00:00:53,100
+Never depend on one live request. Keep a static fallback and label it.
+
+12
+00:00:53,600 --> 00:00:59,000
+Nothing secret goes on the projector. Present prepared, redacted results.
+
+13
+00:00:59,500 --> 00:01:03,900
+Unless your work established them, these claims come out.
+
+14
+00:01:04,400 --> 00:01:07,400
+Honest scope plus concrete reasoning beats inflated certainty.
+
+15
+00:01:09,000 --> 00:01:19,000
+Remember: Decision → result → tradeoff, tied to one query and workload. Report what you observed; never invent a speedup. Design questions: ask, assume, choose simpler, name a test. Demo from prepared, redacted output with a non-live fallback. State scope: what the check covered and what it did not.
+

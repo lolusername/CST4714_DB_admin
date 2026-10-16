@@ -73,6 +73,17 @@ the SQL statements and `--` comments, leaving out Python wrappers such as
 `con.sql(...).show()`. The notebook itself is practice material, not an extra
 submission.
 
+<!-- videos:start -->
+## Videos
+
+Short silent animations with captions (3 for this week). Each has a subtitle file; see [all Week 2 videos](videos/README.md).
+
+- [NULL: why = NULL finds nothing](videos/01_null_logic.mp4) (1:20): Comparing anything with NULL gives unknown, and WHERE keeps only true. IS NULL finds the two unassigned tickets, and the same logic explains why NOT IN can return no rows at all.
+- [What does one row mean after a join?](videos/02_join_grain.mp4) (1:16): A join is a filtered product: 96 ticket-user pairs become 10 matches. An inner join drops unassigned tickets, a left join keeps all 12, and joining events changes the grain to 21 ticket-event rows.
+- [Counting workload, including zero](videos/03_zero_counts.mp4) (1:28): Start from staff, left join active tickets, then group. count(t.ticket_id) gives Agent 203 a zero where count(*) would say one, and moving the status test into WHERE makes 203 vanish.
+
+<!-- videos:end -->
+
 ## Day 1: Query Ladder
 
 We translate relational operations into `SELECT`, `FROM`, `WHERE`, `ORDER BY`,

@@ -1,0 +1,76 @@
+1
+00:00:02,100 --> 00:00:03,600
+Shard keys: distribution and targeting. Which records land together, and which shards must a query visit?
+
+2
+00:00:06,500 --> 00:00:09,500
+The application talks to mongos, a router. It never needs to know where a record lives.
+
+3
+00:00:10,000 --> 00:00:13,000
+Config servers hold the cluster metadata, including which shard owns which key range.
+
+4
+00:00:13,500 --> 00:00:15,500
+Each shard stores part of the collection and is normally its own replica set.
+
+5
+00:00:16,000 --> 00:00:18,200
+Atlas Free cannot create this. We analyze candidate keys instead of measuring a cluster.
+
+6
+00:00:22,300 --> 00:00:24,800
+Cardinality counts distinct values. Frequency asks how often the most common one repeats.
+
+7
+00:00:25,300 --> 00:00:27,800
+These describe stored records, not traffic: one popular ID could still get most requests.
+
+8
+00:00:31,300 --> 00:00:37,800
+Sort by dateAdded. The oldest 60 records set three boundaries: 15 per range.
+
+9
+00:00:38,300 --> 00:00:40,800
+All 15 land in the open-ended last range. Monotonic keys make a write hotspot there.
+
+10
+00:00:41,300 --> 00:00:50,300
+Ranges still serve date-window queries well. Real MongoDB also splits and rebalances ranges.
+
+11
+00:00:50,800 --> 00:00:53,000
+The same 15 records: 3, 3, 6, 3. Check: they add up to 15.
+
+12
+00:00:53,500 --> 00:01:00,400
+Distinct IDs give the hash something to spread. Neighboring dates no longer sit together.
+
+13
+00:01:00,900 --> 00:01:02,900
+Key on vendor instead: all 16 Microsoft records hash to the same bucket.
+
+14
+00:01:03,400 --> 00:01:05,400
+Same input, same hash. Hashing can't split a repeated value.
+
+15
+00:01:09,900 --> 00:01:15,366
+The filter carries the shard-key value, so mongos can target one shard.
+
+16
+00:01:15,866 --> 00:01:18,066
+No shard key in the filter: the query may go to every shard (scatter-gather).
+
+17
+00:01:18,566 --> 00:01:21,366
+A vendor index helps inside each shard, but it doesn't tell the router which shards to skip.
+
+18
+00:01:21,866 --> 00:01:24,666
+Counting all records by vendor needs every shard anyway: that's the question's cost, not a mistake.
+
+19
+00:01:27,266 --> 00:01:37,266
+Four shard-key questions: Cardinality: how many distinct values? Frequency: does one value dominate? Hashing can't split it. Monotonicity: do new values pile into the last range? Targeting: do common queries include the key? Measure the real queries; no single property guarantees all four.
+

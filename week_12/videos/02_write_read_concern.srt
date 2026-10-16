@@ -1,0 +1,88 @@
+1
+00:00:02,100 --> 00:00:03,600
+Write concern and read concern. What must be acknowledged, and which state can a read return?
+
+2
+00:00:08,500 --> 00:00:10,000
+Three voting, data-bearing members. C is cut off from A and B.
+
+3
+00:00:10,500 --> 00:00:14,000
+The stable _id names this one submission attempt. Keep an eye on it.
+
+4
+00:00:14,500 --> 00:00:16,900
+A applies the insert and records it in its oplog.
+
+5
+00:00:17,400 --> 00:00:20,400
+B has made the oplog entry durable, but has not yet applied it to its collection.
+
+6
+00:00:20,900 --> 00:00:23,700
+MongoDB 8.0+, default journaling: majority waits for durable oplog entries, not for applying.
+
+7
+00:00:24,200 --> 00:00:27,200
+So the client can hear "success" while B's collection still looks old.
+
+8
+00:00:27,700 --> 00:00:32,800
+Later B applies it. C never received it: it stays absent the whole time.
+
+9
+00:00:33,300 --> 00:00:36,800
+w: 1 asks only the primary. If A fails right after, that write may exist nowhere else.
+
+10
+00:00:37,300 --> 00:00:40,800
+Majority here is two. Count your own voting members; don't reuse "2" blindly.
+
+11
+00:00:41,300 --> 00:00:43,800
+w: 3 needs C, which is unreachable. A stronger-sounding setting cannot finish.
+
+12
+00:00:47,100 --> 00:00:51,800
+Suppose the client asked for w: 3. A and B hold the write, C cannot answer.
+
+13
+00:00:52,300 --> 00:00:56,300
+The wait stopped. The write was not undone: A and B still have it.
+
+14
+00:00:56,800 --> 00:00:59,800
+Read back by the stable _id, and check the content matches the request.
+
+15
+00:01:00,300 --> 00:01:06,100
+A retry with the same _id cannot create a second copy. A fresh _id could: two tickets for one resident.
+
+16
+00:01:06,600 --> 00:01:09,400
+Read preference is routing. Sent to the primary, this read finds the ticket.
+
+17
+00:01:09,900 --> 00:01:12,700
+If a read lands on C, it finds nothing. That shows the state C saw, not that the write failed.
+
+18
+00:01:13,200 --> 00:01:15,000
+Read concern is about state: "majority" returns majority-committed data...
+
+19
+00:01:15,500 --> 00:01:18,300
+...but C's older majority-committed data can still predate 1099. Majority is not "latest everywhere".
+
+20
+00:01:18,800 --> 00:01:22,600
+During this partition, a read on C can return older data or wait/fail. That is the CAP choice.
+
+21
+00:01:23,100 --> 00:01:26,100
+For a confirmation page, tie the read to the write: one documented recipe (timeouts still possible).
+
+22
+00:01:28,700 --> 00:01:38,700
+Three separate questions: Write concern: what must acknowledge before my write returns? Read preference: which member may answer my read? Read concern: which state may that read return? A timeout means "unknown": read back by a stable _id. A miss on a lagging or isolated member is not proof of failure.
+

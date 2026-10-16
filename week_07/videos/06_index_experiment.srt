@@ -1,0 +1,40 @@
+1
+00:00:02,100 --> 00:00:03,600
+Testing an index hypothesis. Measure, change one thing, measure again, then decide
+
+2
+00:00:09,200 --> 00:00:13,700
+Run the analyzed query on the disposable lab data. Run it twice.
+
+3
+00:00:14,200 --> 00:00:19,600
+Record: scan node, rows, any sort, time, and buffers.
+
+4
+00:00:20,100 --> 00:00:24,100
+Write the prediction down BEFORE you test it.
+
+5
+00:00:24,600 --> 00:00:29,500
+Change exactly one thing: add the candidate index.
+
+6
+00:00:30,000 --> 00:00:34,500
+Same query, run twice again. The Seq Scan and the Sort are gone.
+
+7
+00:00:35,000 --> 00:00:43,800
+Now check the ANSWER: same 20 ticket IDs as before? A faster wrong answer is not an optimization.
+
+8
+00:00:44,300 --> 00:00:47,300
+Keep the index only if this query matters enough to the real workload to pay that cost.
+
+9
+00:00:47,800 --> 00:00:51,300
+Timing on a small, warm practice database varies. Plan shape, rows and buffers are steadier evidence.
+
+10
+00:00:52,900 --> 00:01:02,900
+Remember: Measure the baseline first (twice). Change ONE thing; keep the query identical. Compare plan shape, rows, sort, and buffers, not just one timing. Check the answer is the same 20 tickets. Keep the index only if the benefit is worth its write and storage cost.
+

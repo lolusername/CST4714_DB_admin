@@ -295,6 +295,10 @@ These are skills you can describe concretely in a technical interview. You could
 
 Next week we will look more closely at transactions that overlap. The same BEGIN, COMMIT, and ROLLBACK statements will help us explain what another session can see and why one operation sometimes waits for another.
 
+## Slide 26
+
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: A view stores a query, not rows (1:14); Why identity values have gaps (1:24); Adding a required field without inventing history (1:27). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 3 README. The diagrams are schematic illustrations, not benchmarks.
+
 ## License
 
 Original course prose is licensed under CC BY-NC-SA 4.0. Source-specific notices control adapted material and external images. The transcript and the PowerPoint notes contain the same spoken script.

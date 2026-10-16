@@ -1,0 +1,84 @@
+1
+00:00:02,100 --> 00:00:03,600
+Adding a required field without inventing history. Rehearse the source_channel migration, then decide
+
+2
+00:00:07,700 --> 00:00:11,500
+The new requirement: record whether each request came by web, phone, or mobile.
+
+3
+00:00:12,000 --> 00:00:14,900
+Guardrails: lock_timeout limits waiting for a lock; statement_timeout limits run time.
+
+4
+00:00:15,400 --> 00:00:18,400
+The column appears, NULL on all 12 rows: the old tickets never recorded a channel.
+
+5
+00:00:18,900 --> 00:00:22,800
+ADD COLUMN takes a strong lock. Even a plain read in another session waits until we finish.
+
+6
+00:00:23,300 --> 00:00:27,500
+Backfill 'unknown', not 'web'. Ticket 1001's note mentions a mobile form, but one clue can't label every row.
+
+7
+00:00:28,000 --> 00:00:30,700
+The named CHECK validates all 12 existing rows: 'unknown' is allowed.
+
+8
+00:00:31,200 --> 00:00:35,100
+CHECK limits the words. NOT NULL requires a value. DEFAULT fills a value a writer leaves out.
+
+9
+00:00:35,600 --> 00:00:39,300
+Verify before deciding: inside the transaction, unknown = 12.
+
+10
+00:00:39,800 --> 00:00:42,300
+ROLLBACK removes the column, the rules, and the backfill together, and releases the lock.
+
+11
+00:00:42,800 --> 00:00:46,200
+To keep it, run the same verified block with COMMIT. Run it once.
+
+12
+00:00:46,700 --> 00:00:49,600
+Suppose the migration is committed. Now test the writers, each in a transaction you roll back.
+
+13
+00:00:50,100 --> 00:00:52,800
+An old INSERT that omits the column still works: DEFAULT supplies 'unknown'.
+
+14
+00:00:53,300 --> 00:00:56,000
+Omitting a column and sending NULL are different. NOT NULL refuses the NULL.
+
+15
+00:00:56,500 --> 00:00:59,200
+'mobile' is allowed. We roll it back rather than invent 1004's history.
+
+16
+00:00:59,700 --> 00:01:01,500
+'fax' is refused by the named CHECK. The stored value is unchanged.
+
+17
+00:01:02,000 --> 00:01:04,000
+The database can enforce an allowed word. It can't prove the word is true.
+
+18
+00:01:06,500 --> 00:01:09,000
+During the rehearsal, rollback is a clean undo.
+
+19
+00:01:09,500 --> 00:01:12,000
+After commit, an 'opposite command' is not automatically a recovery plan.
+
+20
+00:01:12,500 --> 00:01:15,000
+On a large, busy table, plan batches, lock time, and deployment order too. Check current docs.
+
+21
+00:01:16,600 --> 00:01:26,600
+Remember: Historical rows get 'unknown': don't invent facts nobody recorded. CHECK limits words, NOT NULL requires a value, DEFAULT fills omissions. Verify structure AND meaning before choosing COMMIT or ROLLBACK. Transactional DDL is reversible, but its locks still make others wait. After real data arrives, prefer a forward fix to dropping the column.
+

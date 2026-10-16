@@ -35,6 +35,17 @@ unless the weekly lab assigns it.
 - [Week 8 PDF handout](week_08_backup_restore_midterm.pdf)
 - [Week 8 transcript](week_08_backup_restore_midterm_transcript.md)
 
+<!-- videos:start -->
+## Videos
+
+Short silent animations with captions (3 for this week). Each has a subtitle file; see [all Week 8 videos](videos/README.md).
+
+- [RPO and RTO on the clock](videos/01_rpo_rto_clock.mp4) (1:29): A committed DELETE survives restarts and is copied to a replica, so recovery needs an earlier state. The chapter's 14:00 / 14:17 / 14:29 scenario shows a 17-minute data-loss window and a 12-minute recovery, missing both a 5-minute RPO and a 10-minute RTO.
+- [Dump, restore, verify](videos/02_dump_restore_verify.mp4) (1:35): pg_dump captures one consistent snapshot, unlike CSVs downloaded at different moments. The archive is restored into a separate empty database, then checked with counts, a known ticket, and an expected constraint failure.
+- [Point-in-time recovery with WAL](videos/03_wal_point_in_time.mp4) (1:20): A schematic of physical recovery: restore a base backup, then replay retained write-ahead log up to a target just before the harmful 14:17 DELETE. A single missing log segment stops the replay short of the target.
+
+<!-- videos:end -->
+
 ## Day 1: Perform and Verify a Logical Restore
 
 Complete [Lab: Backup, restore, and check the result](lab_01_backup_restore.md).

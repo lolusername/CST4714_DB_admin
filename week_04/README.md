@@ -32,6 +32,17 @@ Supabase SQL Editor or PGlite can run the same SQL. Use one route. Save your SQL
 outside the temporary runtime; the labs each require one SQL file, not another
 notebook submission.
 
+<!-- videos:start -->
+## Videos
+
+Short silent animations with captions (3 for this week). Each has a subtitle file; see [all Week 4 videos](videos/README.md).
+
+- [What does one row mean after a join?](videos/02_join_grain.mp4) (1:16): A join is a filtered product: 96 ticket-user pairs become 10 matches. An inner join drops unassigned tickets, a left join keeps all 12, and joining events changes the grain to 21 ticket-event rows.
+- [Counting workload, including zero](videos/03_zero_counts.mp4) (1:28): Start from staff, left join active tickets, then group. count(t.ticket_id) gives Agent 203 a zero where count(*) would say one, and moving the status test into WHERE makes 203 vanish.
+- [A view stores a query, not rows](videos/01_view_stored_query.mp4) (1:14): The active-queue view saves a SELECT definition and runs it against current data each time, so a resolved ticket simply stops appearing. A materialized view stores rows instead and stays stale until it is refreshed.
+
+<!-- videos:end -->
+
 ## Day 1: Count Requests, Not Ticket-Event Pairs
 
 Use **slides 1-12** and the notebook's Day 1 sections. Introduce the data before
