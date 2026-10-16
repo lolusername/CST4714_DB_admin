@@ -9,7 +9,11 @@ requires decisions about identifiers, dates, trustworthy sources, and the questi
 the data can actually answer. Investigate a bounded public dataset before adding
 more infrastructure.
 
-Work individually in class across the week's meetings. Submit one notebook.
+Work individually in class and submit one notebook. Follow the
+[holiday-week plan](README.md#fall-2026-holiday-week-plan) when this lesson falls
+in Thanksgiving week: complete the core task with the embedded snapshot and
+SQLite during the scheduled meeting. Cloud paths and the live feed are optional
+extensions; unfinished guided work continues in the next scheduled class.
 
 ## 1. Inspect the Data and Its Shape
 
@@ -30,12 +34,13 @@ behavior and whether a small classroom database needs sharding at all. The range
 and hash demonstration is a simulation, not a benchmark of an Atlas sharded
 cluster. Other candidate keys are optional exploration.
 
-Keep this notebook for Day 2. There is no separate Day 1 submission.
+Continue to Part 2 in the same notebook. There is no separate Part 1 submission.
 
 ## 2. Load, Rerun, and Explain
 
 In **Section 3**, set `TARGET` to `"sqlite"`, `"atlas"`, or `"postgres"`.
-Only one target is required. SQLite needs no database account or package download.
+Only one target is required. Use SQLite for the holiday-week core task; it needs
+no database account or package download.
 Cloud connections use hidden prompts, an Atlas runtime-IP rule or Supabase
 session-pooler URI where needed, and unique practice objects. If you want to try a
 second target, clean up the first run before starting another.

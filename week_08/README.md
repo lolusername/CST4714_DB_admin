@@ -16,10 +16,12 @@ restored result works?
 
 ## Before Class: Assigned Reading
 
+Read the [textbook corrections](../COURSE_CORRECTIONS.md) with the assigned sections.
+
 Use [Chapter 8: A Backup Matters Only When Recovery Works](../Operating_Cloud_Databases.pdf).
 
 - **Before Day 1:** read the recovery concepts through **Free-Tier Recovery** and **Verify Structure, Data, and Behavior**. Use the command explanations as a reference while running the restore notebook.
-- **Before Day 2:** read **Worked Example: A Recovery Runbook Entry** and **Safe Migrations and Recovery Are Connected**. Revisit the earlier chapters relevant to your midterm case.
+- **Before Day 2:** read **Worked Example: A Recovery Runbook Entry** and **Safe Migrations and Recovery Are Connected**. Revisit Chapter 3's **Keys Identify and Connect Facts** and **Constraints Reject Invalid States** for the midterm schema work. In class, identify the supplied schema's keys and three non-key integrity controls, then explain which invalid state each prevents. This refresh is part of midterm preparation, not another submission.
 
 Bring one point you want clarified. Reading supports the in-class work; it does
 not add a separate reading report. Optional textbook practice is not required
@@ -51,6 +53,8 @@ Short silent animations with captions (3 for this week). Each has a subtitle fil
 Complete [Lab: Backup, restore, and check the result](lab_01_backup_restore.md).
 
 Submit only the completed `03_postgres_backup_restore.ipynb` notebook.
+
+The midterm starts in Week 7. Use this week to add the recovery plan and finish the same two-file package.
 
 ## Day 2: Midterm Operations Clinic
 

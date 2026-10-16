@@ -2,37 +2,35 @@
 
 ## Slide 1
 
-Our final review begins with a report that looks suspicious. The support dashboard says three tickets are active. When we add the staff members' active-ticket counts, we get two. Before changing code, we need to decide whether those numbers should be equal. A staff workload report and a complete backlog report can both be correct while describing different populations. We will inspect four records so that every part of the explanation remains visible.
+Welcome to Week 15, our last week together. I want to start with a report that looks wrong. Look at the three lines on the slide. Three active tickets. Two assigned tickets. One report to explain. The support dashboard says three tickets are active, but when you add up every staff member's active count, you get two. So is the database losing a ticket? Before anyone touches the code, we have to decide whether those two numbers should even be equal. A staff workload report and a full backlog report can both be correct and still be counting different things.
 
-This example brings several course ideas together. We will use SQL to select tickets, follow a left join, and count matched records. We will temporarily change an assignment and roll it back. We will represent the same facts as documents, then look at a restore whose row count matches even though one value is wrong. The point is to explain a result through the records and the operations that produced it. The notebook gives us a small system we can change without touching a cloud project.
+We will work this out with just four tickets, so every record stays visible. On the way we will touch almost everything from the semester: selecting rows, a left join, counting, a transaction we roll back, the same facts as JSON, and a restore whose row count matches even though a value is wrong.
 
-Today you will use one concept for an individual GitHub guide. A single README containing a small example and your explanation can be the complete artifact. On our second meeting, we will present final projects and practice explaining technical decisions in interviews. The final-project assignment remains the source of its requirements. The review and career practice do not create several additional reports or require a new web application.
+Here is the plan. Day 1 is this worked review, and then you build one individual GitHub concept guide, which is a single README. Day 2 is final demonstrations and interview practice. Your demonstration slot follows the schedule in Brightspace, and slots may continue into the final exam meeting. The final-project assignment is still the source of its requirements. Nothing today adds extra reports or asks you to build a new application.
 
 [Sources]
 - Course textbook, Chapter 15, and Notebook 09: Four Tickets, Two Different Totals.
 
 ## Slide 2
 
-This diagram reconnects the questions we have asked throughout the course. Purpose comes first because the same stored facts can support different decisions. A manager assigning today's work needs a different report from someone checking whether the organization has an unassigned backlog. We cannot assess the report merely by asking whether its SQL ran without an error.
+Here is the frame for the whole review: six questions you can ask about any database system. They map onto the semester.
 
-Model asks what one record means and how identities connect. In our example, staff and tickets are different populations. An assignment refers to a staff identity, while a missing assignment is represented explicitly. Protection includes both valid states and permitted actions. A constraint can reject an invalid status without deciding which employee has permission to close a ticket.
+Purpose comes first. Which user, and which decision, does this support? It comes first because the same stored facts can support different decisions. A manager handing out today's work needs a different report from someone checking for an unassigned backlog, and "the SQL ran without an error" does not tell you which one you built. Model: what does one record mean, and how do identities connect? In our example, staff and tickets are different populations. Protect: which bad states and which unauthorized actions are refused? Those are two different things. A constraint can reject a bogus status, but it does not decide who is allowed to close a ticket. Perform: which query shapes matter, and what measured work supports them? An index decision needs a workload and a comparison, not just an index that exists. Recover: which failure do we tolerate, and how do we verify the restore? Reproduce: can someone else follow your setup without you handing them a password?
 
-Performance concerns the work required by a particular query. An index decision needs a stable workload and a comparison, not just the existence of an index. Recovery asks which state can be reconstructed and how we check it. Finally, reproducibility asks whether another person can follow our setup, run the relevant operation, and understand its result without receiving our password.
-
-You can use this diagram to organize a final demonstration. You do not need to speak equally long about every part. Choose a path through your own project that explains its purpose, one meaningful operation, and an operational decision. When a follow-up exposes a gap, identify the specific test that would resolve it.
+Read the line at the bottom. One ticket report connects data meaning with operational decisions. You can use these six as a path through your final demonstration. You do not need equal time on each one. Pick the ones your project actually tests.
 
 [Sources]
 - Course textbook, Chapter 15, system-review framework.
 
 ## Slide 3
 
-We will use Notebook 09 for this review. Choose Open in Colab on the weekly page and run the cells in order. Colab requires a Google account and an internet connection; an Atlas or Supabase account is not needed. Local Jupyter works too. The code uses Python's SQLite interface, which is already available in the intended Python environment. There is no package-installation cell and no connection string to enter.
+This is our tool for Day 1, Notebook 09, Four Tickets, Two Different Totals. Choose Open in Colab on the weekly page and run the cells in order. Colab needs a Google sign-in, but you do not need an Atlas or Supabase account, a database password, or any package installation. Local Jupyter works too.
 
-SQLite executes real SQL inside the Python process. The database in this notebook lives in memory. It is separate from your Supabase project and your Atlas cluster, so the example cannot accidentally change either of them. Closing the connection removes that in-memory database. The setup cell can create a fresh version if we want to repeat the exercise.
+Look at the table. First row: SQLite runs inside Python, so this is real SQL with real constraints, a real rollback, and an isolated restore. But the database lives in memory, inside the notebook, completely separate from your Supabase project and your Atlas cluster. Why do it this way? Because today I want you changing things freely, and nothing you do here can damage a cloud project.
 
-That simplicity has a clear boundary. SQLite does not reproduce PostgreSQL's role system, its multi-session lock behavior, or Supabase's authenticated request path. It does not run a MongoDB replica set. We use it here to inspect query meaning, a constraint failure, explicit rollback, and a small logical restore. Later cells convert records to Python dictionaries and JSON. A displayed MongoDB pipeline is a comparison, not an instruction that the notebook secretly sends to Atlas.
+Second row: later cells turn the same ticket facts into Python dictionaries and JSON. Third row: the MongoDB pipeline you will see is a reference printed on the page. It is a comparable grouping, not a live Atlas connection. The notebook never sends it anywhere.
 
-Each code cell has an explanation before it and an interpretation afterward. Run the notebook in order once. Then return to the controlled assignment cell to test one changed input. There is no separate notebook submission for today's review.
+Let's be honest about the boundary. SQLite does not have PostgreSQL's roles, its lock behavior between sessions, or Supabase's request path, and it is not a replica set. We use it for query meaning, a constraint failure, rollback, and a small restore. Run it once in order, then go back to the assignment cell and change one input. There is no notebook submission.
 
 [Sources]
 - Notebook 09, setup and execution boundaries.
@@ -40,26 +38,24 @@ Each code cell has an explanation before it and an interpretation afterward. Run
 
 ## Slide 4
 
-The left table contains three staff members. Priya has identity 201, Noah has identity 202, and Elena has identity 203. The right table contains four tickets. Ticket 1 belongs to Priya and is open. Ticket 2 also belongs to Priya, but it is resolved. Ticket 3 is new and has no assignee. Ticket 4 belongs to Noah and is open.
+Here is the entire dataset. Look at the left table first: three staff members, Agent 201, Agent 202, and Agent 203. One row per staff member. Now the right table: four tickets. Ticket 1 is assigned to 201 and open. Ticket 2 is also assigned to 201, but resolved. Ticket 3 is new and has NULL in assignee_id. Ticket 4 is assigned to 202 and open.
 
-For this example, active means new, open, or in progress. Resolved is outside that category. We should therefore expect three active tickets before we run any query. Two of them have assignees. Elena is a legitimate staff member even though no ticket points to her. Ticket 3 is a legitimate ticket even though it does not point to any staff member.
+Read the definition at the bottom, because everything today depends on it. Active means new, open, or in_progress. So before we run a single query, we can predict the answer: tickets 1, 3, and 4 are active. That is three. Two of them have an assignee. Agent 203 is a real staff member with no tickets at all. Ticket 3 is a real ticket with no staff member at all. Both are legitimate. Nothing here is broken data.
 
-The distinction matters for modeling. A staff primary key identifies a person in the staff table. The ticket primary key identifies a ticket. The optional foreign key connects those identities when an assignment exists. SQL NULL is how this schema represents the absent assignment. It is not the staff identity zero, an empty staff name, or an instruction to discard the ticket.
-
-The notebook creates these rows directly so that we can inspect the complete example. It also enables SQLite foreign-key checking and defines a status constraint. Those choices make later changes meaningful. We can distinguish an allowed unassigned ticket from a reference to a staff member who does not exist.
+Why does that NULL matter so much? Because it is the schema's way of saying "no assignment yet." It does not mean staff ID zero, it does not mean an empty name, and it is definitely not a reason to throw the ticket away. The notebook also turns on SQLite's foreign-key checking and adds a CHECK constraint on status. Those two choices let it tell an allowed unassigned ticket apart from a reference to a staff member who does not exist. Keep these two tables in your head. Every number today comes from them.
 
 [Sources]
 - Notebook 09, original synthetic staff and ticket fixture.
 
 ## Slide 5
 
-This first query asks for active tickets. The FROM clause identifies the input table. The WHERE condition keeps rows whose status belongs to our active set. The SELECT list chooses the fields we want to see. ORDER BY makes the displayed order predictable, which is useful when we compare results in a notebook or explain them to another person.
+First query: which tickets are active? Read it the way the database does. FROM tickets is the input. WHERE keeps the rows whose status is in our active set. SELECT picks the three columns we want to see. ORDER BY ticket_id makes the order predictable, so when you compare your output with mine, the rows line up.
 
-The result contains ticket identities 1, 3, and 4. Ticket 2 is resolved, so it does not satisfy the condition. Ticket 3 remains because its status is new. Its missing assignee is irrelevant to this filter. We did not ask whether a ticket had a staff assignment.
+The result is IDs 1, 3, and 4. Active-ticket count: 3. Ticket 2 is gone because it is resolved. Now look at ticket 3. It is still there, even with no assignee. Why? Because we never asked about assignment. The filter only looked at status.
 
-This reconnects selection and projection from relational algebra. Selection chooses rows according to a predicate. Projection chooses attributes. SQL has additional details, including duplicates and NULL, so the correspondence does not mean every SQL behavior is identical to a mathematical set operation. For this small query, each returned row still represents one ticket, and the selected ticket identity lets us verify exactly which tickets contributed.
+This is the relational algebra from Week 2. Read the box. WHERE selects matching rows. That is selection. SELECT chooses columns. That is projection. SQL has extra wrinkles, like duplicates and NULL, so it is not identical to the math, but the last line holds here: the result still has one row per ticket. And because we kept ticket_id in the output, we can check exactly which tickets contributed. A count with no IDs behind it is much harder to argue about.
 
-In the Python output, the missing assignee appears as None. That is the Python value used for the SQL NULL we selected. It does not indicate that Python lost the row. Before comparing this count with another report, state the population in words: all tickets whose current status is active, including those with no assignment.
+When you run this in Python, ticket 3's assignee prints as None. That is just Python's spelling of SQL NULL. The row was not lost. So say the population out loud: all tickets that are currently active, including unassigned ones. That sentence is what we compare against next.
 
 [Sources]
 - Notebook 09, active_sql.
@@ -67,13 +63,15 @@ In the Python output, the missing assignee appears as None. That is the Python v
 
 ## Slide 6
 
-Before we aggregate anything, consider the rows that a staff-first left join produces. The matching condition requires both a matching assignee identity and an active ticket status. Priya matches ticket 1. Her resolved ticket 2 does not satisfy the active-status part. Noah matches ticket 4. Elena has no matching active ticket, but the left join preserves her staff row and fills the ticket fields with NULL.
+Before we count anything, I want you to see the rows a left join actually produces. Staff is on the left. The matching rule has two parts: the assignee has to equal the staff ID, and the ticket has to be active.
 
-That last row is a joined result row. It is not a newly created ticket. The database has not assigned ticket 3 to Elena, and it has not inserted anything into the tickets table. The NULL ticket fields let the query retain a staff member who has no match.
+First row: Agent 201 matches ticket 1, open. Ticket 2 also belongs to 201, but it is resolved, so it fails the active part and does not match. Second row: Agent 202 matches ticket 4. The third row is the interesting one. Agent 203 has no matching active ticket, but because staff is on the left, the join keeps that staff row anyway and fills the ticket columns with NULL.
 
-Where is ticket 3? Its assignee is NULL, so it does not equal any staff identity in the matching condition. A left join preserves the rows from its left input, which is staff here. It does not promise to preserve every row from the tickets input. That is why inspecting the direction and matching rule is more informative than remembering only the phrase left join.
+That NULL row is a joined result row. It is not a ticket. Nobody inserted anything, and ticket 3 has not been assigned to Agent 203.
 
-If Priya had two active tickets, she would produce two matching rows before grouping. If another staff member had no tickets, that person would receive another NULL-extended row. These small variations help us predict which expression we should count. We want the matched ticket identity, not every row produced by the join.
+So where is ticket 3? Read the second line in the box. Its assignee is NULL, and NULL does not equal any staff ID, so it matches nobody. A left join promises to keep every row from the left side. It makes no promise about the right side. That is why I want you to look at which side is preserved and what the match rule is, instead of just remembering the words "left join."
+
+Now predict: if Agent 201 had two active tickets, you would get two rows for that agent before grouping. Which brings us to the real question. Which column do we count?
 
 [Sources]
 - Course textbook, Chapter 15, worked SQL example.
@@ -81,13 +79,15 @@ If Priya had two active tickets, she would produce two matching rows before grou
 
 ## Slide 7
 
-Here is the complete staff report. The selected staff identity and name identify the group. COUNT of the ticket identity calculates the number of matching tickets in that group. We group by both the identity and name, and we sort by identity for a stable display.
+Here is the full staff report. Read it top to bottom. We select the agent ID and the name, plus COUNT of t.ticket_id as active_count. FROM staff on the left, LEFT JOIN tickets. The ON clause has the two-part match we just traced: the assignee equals the agent, and the status is active. Then GROUP BY the agent ID and name, and ORDER BY the agent ID.
 
-The ON condition has two parts. The assignee identity must equal the staff identity, and the ticket must have an active status. Both parts help decide whether a ticket is a match. Because this is a left join, a staff member with no qualifying ticket still appears. That preservation is part of the question we are answering: include every staff member, including those with zero active tickets.
+Two choices make this report correct, and I want you to be able to explain both. First, the status test lives inside ON. Read the first line of the box. The ON condition defines a matching active ticket. Because "active" is part of what counts as a match, the left join can still keep a staff member with zero matches. And that is the question we were asked: every staff member, including zero.
 
-COUNT of a column ignores NULL values in that column. Elena's joined row has a NULL ticket identity, so it contributes zero to this count. Priya and Noah each have one actual matched ticket identity. This gives us one, one, and zero without inventing a fake ticket or requiring a special row for Elena in the ticket table.
+Second, look at what we count. COUNT of a column skips NULLs. Agent 203's placeholder row has a NULL ticket_id, so it adds nothing. That is how we get a real zero without inventing a fake ticket.
 
-The identity in the grouping is important too. Two staff members could have the same display name. Grouping only by name could merge their workloads. A readable name is useful for the report, but it should not silently replace the entity's identity. In the notebook, report_sql holds this statement so we can rerun the unchanged report after a controlled data change.
+One more detail. Why group by the ID and not just the name? Because two people can share a display name. Group only by name and you could quietly merge two people's workloads into one. The name is for reading. The ID is the identity.
+
+In the notebook, this statement is saved as report_sql, so we can rerun the exact same report after we change the data.
 
 [Sources]
 - Notebook 09, report_sql.
@@ -95,26 +95,28 @@ The identity in the grouping is important too. Two staff members could have the 
 
 ## Slide 8
 
-The result is Priya one, Noah one, and Elena zero. Adding those counts gives two assigned active tickets. Our earlier query found three active tickets because it also included ticket 3, the unassigned ticket. We can reconcile the populations explicitly: two assigned active tickets plus one unassigned active ticket equals three active tickets altogether.
+And here is the result. Agent 201, one. Agent 202, one. Agent 203, zero. Add them up and you get two. Our first query said three active tickets. So which query is wrong?
 
-That explanation is different from saying the database lost a row. The staff report did exactly what its join and count requested. The issue is whether the dashboard describes the report clearly and whether the manager also needs to see the unassigned category. If the manager uses only this staff table as a complete backlog, the missing category becomes an application-design problem even though the SQL is valid.
+Neither one. Look at the line across the middle: assigned active, 2. Unassigned active, 1. All active, 3. Two plus one is three. The difference is ticket 3, the unassigned one. The staff report did exactly what the join and the count asked for. It counts tickets that belong to staff, and ticket 3 belongs to nobody.
 
-One solution is to show an unassigned queue alongside staff workloads. Another is to design a combined report with an explicitly labeled unassigned category. The appropriate shape depends on the decision the interface supports. We should not assign the ticket to a nonexistent person just to make a sum match.
+So the real problem is not the SQL. It is whether the dashboard says what it is showing. If a manager looks at this staff table and treats it as the whole backlog, ticket 3 is invisible to them. That is an application design problem, even though every query is valid. Read the bottom line: a staff workload report needs a separate unassigned category to describe the full backlog. You could show an unassigned queue next to the staff counts, or add a clearly labeled unassigned row. What you must not do is assign the ticket to a made-up person just to make the sum match.
 
-This is a useful operational habit: compare independently defined populations, then explain the difference through record identities. A total is informative only when we know what contributes to it. The same habit applies to event counts, document groups, restored records, and synchronized copies. In each case, a plausible number still needs a clear interpretation.
+Here is the habit I want you to keep. When two totals disagree, define each population, then explain the gap with actual record IDs. It works the same way for event counts, document groups, restores, and synchronized copies.
 
 [Sources]
 - Notebook 09, active and staff query results.
 
 ## Slide 9
 
-Two small edits can make this report wrong in different ways. First, replacing COUNT of the ticket identity with COUNT star counts every joined row. Elena has one joined placeholder row, so COUNT star gives her one. That is an incorrect workload for Elena, even though the sum now happens to equal the backlog count of three.
+Now let's break the report on purpose, two different ways, because that is how you prove you understand the correct version.
 
-This coincidence is why checking only a grand total can be dangerous. The report has not found the unassigned ticket. It has counted a placeholder belonging to a different population. Looking at Elena's result and the actual ticket identities reveals the error immediately.
+Look at the table. The first row is our correct report: count ticket IDs, with the status test in ON. Agent 203 gets zero.
 
-The second edit moves the active-status test into WHERE after the join. Elena's ticket status is NULL in the unmatched row. The condition is not true for that row, so WHERE removes her. The output now omits a staff member whom the question required us to include. Filtering the right-side records in ON and filtering joined rows in WHERE have different meanings for an outer join.
+Second row: swap in COUNT star. COUNT star counts every row, including Agent 203's NULL placeholder. So Agent 203 gets one, for a ticket that does not exist. And here is the trap, in the box at the bottom. The COUNT star version totals 3. One plus one plus one. It matches the backlog, by accident. It did not find ticket 3. It counted a placeholder from a completely different population. If you only check the grand total, you would sign off on a wrong report. Check Agent 203's row and the error is obvious.
 
-The notebook runs both versions so you can compare them with the original. This is a counterexample technique: choose a small case that exposes the difference between two apparently similar queries. A staff member with no matching ticket is especially useful here. When you adapt this for your guide, explain the individual result as well as the total, rather than deciding correctness from whichever sum looks familiar.
+Third row: keep COUNT of ticket IDs, but move the status test into WHERE. Now the filter runs after the join. Agent 203's row has a NULL status, so the condition is not true, and WHERE throws the row away. Agent 203 is absent from the report entirely, which breaks the one thing the question asked for. On an outer join, filtering in ON and filtering in WHERE mean different things.
+
+The notebook runs both broken versions next to the original. This is the counterexample technique: pick one small case, here a staff member with no tickets, that makes two similar queries disagree.
 
 [Sources]
 - Notebook 09, COUNT(*) and WHERE counterexamples.
@@ -122,13 +124,15 @@ The notebook runs both versions so you can compare them with the original. This 
 
 ## Slide 10
 
-Now we change one fact. Ticket 3 becomes assigned to Elena. We leave its status as new, so it remains active. During that change, Elena's active count becomes one. Priya and Noah still have one each. The assigned total becomes three, while the overall active-ticket total remains three because we have not opened, resolved, inserted, or deleted any ticket.
+Now we change exactly one fact and watch what moves. Here is the SQL outline: BEGIN, assign ticket 3 to Agent 203, run the staff report and the active-ticket query again, then ROLLBACK.
 
-The SQL outline shows a transaction beginning before the update and a rollback after we inspect the reports. The notebook uses a Python value for the target staff identity and binds it through a question-mark placeholder. It also places rollback in a finally block so that the controlled change is undone even if reading a result raises an exception.
+Predict before you look. Ticket 3's status stays new, so it is still active. Now read the first result line. During the change: Agent 201, 1. Agent 202, 1. Agent 203, 1. All active: 3. Agent 203 went from zero to one, and the assigned total went from two to three. The active total did not move, because we did not open, resolve, insert, or delete anything. We only changed who the ticket belongs to.
 
-After rollback, the original unassigned state returns. Elena has zero again, and the assigned total returns to two. We can rerun the cell without accumulating assignments. That repeatability makes it useful for testing an explanation rather than changing a real workload.
+Second line. After rollback: Agent 201, 1. Agent 202, 1. Agent 203, 0. All active, still 3. We are back where we started. That is why the change sits inside a transaction. You can run the cell as many times as you want and nothing piles up.
 
-Try a different existing staff identity when you are ready to adapt the example. Predict which individual count changes and which total stays fixed. The foreign key should reject an identity absent from staff. Our deliberate transaction is a rehearsal boundary, not an instruction to roll back arbitrary work in somebody else's database. It operates only on this notebook's disposable in-memory data.
+Look at the small note at the bottom. The notebook does not paste the ID into the SQL string. It binds a target ID through a placeholder, and it puts the rollback in a finally block, so the change is undone even if reading a result throws an error.
+
+When you adapt this, try a different staff ID and predict which count moves and which total stays put. An ID that is not in the staff table should be rejected by the foreign key. And remember, this rollback is a rehearsal on disposable data.
 
 [Sources]
 - Notebook 09, TARGET_ASSIGNEE experiment.
@@ -136,13 +140,15 @@ Try a different existing staff identity when you are ready to adapt the example.
 
 ## Slide 11
 
-This second transaction makes two attempts. Assigning ticket 3 to Elena is valid. Changing its status to finished violates the CHECK rule, because our schema allows new, open, in progress, and resolved. The database rejects that invalid status, and Python reports an expected integrity error.
+This transaction makes two moves, and they end up in different places. Read the table from the top.
 
-We then explicitly roll back the transaction. That rollback discards the earlier successful assignment as well. Reading ticket 3 afterward gives an unassigned ticket with status new. The result connects two separate mechanisms: a constraint decides whether a value is acceptable, while the transaction boundary determines which provisional changes become permanent or are undone together.
+Step one: assign ticket 3 to Agent 203. That is valid, so it succeeds, provisionally. Step two: set the status to finished. Our CHECK constraint only allows new, open, in progress, and resolved, so the database rejects finished, and Python reports an integrity error. We expected that error. Step three: ROLLBACK in the finally block. And here is the point. That rollback throws away the assignment too, even though the assignment was perfectly valid. Step four: read ticket 3 again. assignee_id is NULL, and status is new. Exactly where it started.
 
-Be careful about the SQLite behavior here. A failed statement does not generally prove that every preceding statement in the same transaction has been undone. Our code establishes that outcome by issuing rollback. PostgreSQL has its own transaction-error behavior, which we studied earlier. We should not generalize every detail of one engine's error handling from this small local example.
+So we have two mechanisms doing two jobs. The constraint decides whether a value is acceptable. The transaction decides which changes become permanent together, or get undone together.
 
-This also gives us a precise communication example. We can say that we attempted an invalid status, observed a constraint rejection, rolled back the controlled transaction, and checked the remaining values. We cannot call that a permission test. The notebook did not switch users or test an unauthorized request. Naming the mechanism accurately helps another person understand both what worked and what we would need to test separately.
+Now read the box at the bottom carefully, because this is easy to get wrong. It was our explicit rollback that undid the assignment. In SQLite, the failed statement by itself does not establish that the earlier statement was undone. PostgreSQL handles an error inside a transaction in its own way, which we studied earlier, so do not generalize one engine's behavior from this tiny example.
+
+And name what you tested accurately. This was a constraint test with a rollback. It was not a permission test. Nobody switched users.
 
 [Sources]
 - Notebook 09, expected constraint failure and rollback.
@@ -150,13 +156,13 @@ This also gives us a precise communication example. We can say that we attempted
 
 ## Slide 12
 
-Here is ticket 3 represented as JSON. The ticket identity is stored under underscore id. The assignee is null, and the status is new. The notebook builds similar dictionaries for all four tickets and serializes them as JSON text. SQL NULL appeared as Python None when we fetched rows, and JSON serialization represents that missing assignment with JSON null.
+Here is the same ticket 3, now as JSON. Look at the three fields. _id is 3. assignee_id is null. status is new. The notebook does this for all four tickets.
 
-Those spelling differences belong to different languages. They do not indicate different business facts in this example. JSON property names and string values use double quotes. JSON null has no quotes, because it is a value rather than the text spelling of a value. The notebook uses a serializer so that it does not have to build JSON by concatenating strings.
+Notice how the spelling changes as we move between languages. In SQL it was NULL. When Python fetched the row, it became None. Now in JSON it is null, lowercase, with no quotes, because it is a value, not the text "null." Three spellings, one fact: there is no assignment. The notebook uses a JSON serializer for this instead of gluing strings together, which is how you avoid broken quotes.
 
-The document still means one ticket. assignee_id remains a reference to staff rather than an embedded staff profile. Merely changing from a table row to a JSON object does not create a staff assignment, enforce a relationship automatically, or decide which records a report should include.
+Now read the box. Each document still means one ticket. assignee_id remains a reference to a staff member, not an embedded staff profile. And the last line is the one I care about most: changing the representation does not assign ticket 3 to a staff member. Moving from a row to a document does not create relationships, does not enforce them, and does not decide which records a report includes. Those are still your design decisions.
 
-We previously considered embedding and referencing based on access patterns and update responsibilities. Those decisions remain relevant. For today's comparison, keeping the same facts and identities lets us isolate the reporting question. The notebook creates JSON in memory and displays it. It does not create a collection in Atlas, and it does not transfer credentials or account information anywhere.
+We talked about embedding versus referencing when we did document modeling, and that reasoning still applies. Today we keep the same facts and the same IDs on purpose, so the only thing that changes is the representation. That isolates the reporting question. And to be clear, this JSON lives in memory. Nothing is sent to Atlas.
 
 [Sources]
 - Notebook 09, document conversion.
@@ -164,13 +170,15 @@ We previously considered embedding and referencing based on access patterns and 
 
 ## Slide 13
 
-This MongoDB reference pipeline starts from tickets. The match stage keeps documents whose status belongs to the same active set used by our SQL query. The group stage uses assignee_id as the group key and adds one for each qualifying ticket. With the four supplied documents, identities 201 and 202 each have a count of one, and the null group also has a count of one.
+Here is the comparable grouping in MongoDB. Read the pipeline. The match stage keeps documents whose status is in the same active set we used in SQL. Then the group stage uses assignee_id as the group key and adds one for each ticket.
 
-There is no Elena group because there is no active ticket assigned to Elena. The pipeline starts from the ticket population. It has no input document representing a staff member with zero tickets. The unassigned ticket, however, is in that input, so it contributes to the null group. These results are consistent with the same underlying records we inspected earlier.
+Look at the results. 201 has 1. 202 has 1. And null has 1. That null group is ticket 3, the unassigned ticket. It is in the input, so it gets counted, just under null.
 
-The displayed pipeline does not promise an output order. A sort stage would be needed if a particular display order were part of the requirement. The notebook executes a small Python grouping loop to illustrate the calculation without a cloud connection. That loop is not a MongoDB query engine or a substitute for testing MongoDB-specific behavior on a server.
+Now the important line: there is no Agent 203 group. Why not? Because this pipeline starts from tickets. There is no input document for a staff member with zero tickets, so there is nothing to group. Compare that with the SQL report, which started from staff and kept Agent 203. Same records, different starting population, different answer. Switching query languages did not settle the population question for us. If you wanted a zero-inclusive staff report here, you would have to start from the staff population, or combine the two on purpose.
 
-To build a zero-inclusive staff report with documents, we would need to start with or combine the staff population deliberately. Changing query languages does not settle the population question for us. A useful explanation begins with the input records, the stage that changes their meaning, and the records absent from that input.
+Also notice that group order is unspecified. If the order matters to the reader, add a sort stage.
+
+And read the bottom box honestly. This pipeline is a reference for a collection containing these four documents. The notebook actually runs a small Python grouping model that does the same calculation. It is not MongoDB and it is not Atlas, so it does not test any server behavior.
 
 [Sources]
 - Notebook 09, Python grouping and MQL reference.
@@ -178,13 +186,15 @@ To build a zero-inclusive staff report with documents, we would need to start wi
 
 ## Slide 14
 
-Our restore example starts correctly. The notebook exports the SQLite database as SQL statements, creates a separate in-memory connection, and executes those statements there. Comparing the ordered ticket rows initially reports a match. We then deliberately change ticket 1 only in the restored copy, setting its status to resolved instead of open.
+This slide is about why a row count is not a restore check. The notebook exports the SQLite database as SQL statements, builds a separate in-memory database, and runs those statements there. The first comparison says everything matches. Then the notebook does something deliberate: it changes ticket 1 only in the restored copy, from open to resolved.
 
-Both databases still contain four tickets. Ticket 3 remains unassigned in both. A row-count check therefore passes, even though the two versions of ticket 1 disagree. Comparing ordered identities and values detects the wrong status. The original database stays unchanged, and the restore cell can recreate its own target before repeating the experiment.
+Read the table. Number of tickets: 4 in the source, 4 in the copy. Ticket 3's assignment: NULL and NULL. So a count check passes. But look at the middle row. Ticket 1 is open in the source and resolved in the copy. If you only counted rows, you would call this restore good, and a manager would see a closed ticket that is actually still open.
 
-This reconnects our PostgreSQL and MongoDB recovery lessons. A successful command and the expected number of rows are useful checks, but neither establishes every relevant property of the restored system. We also need known records, types, relationships, and behavior appropriate to the artifact and platform. Permission and service configuration may require separate restoration or reconstruction.
+What catches it? Comparing the ordered IDs and their values. That is the second line in the box. The original database is never touched, and the cell rebuilds its own target before you rerun it.
 
-The notebook's export lives only in a Python variable. It demonstrates a logical restore mechanism, but it is not a durable off-machine backup. Losing the notebook process would lose that variable too. When explaining your actual recovery work, distinguish the artifact you preserved, the target you reconstructed, and the checks you performed. The small example gives us a clear failure to reason about without pretending to reproduce a cloud disaster.
+This connects back to our recovery work in PostgreSQL and MongoDB. A successful restore command and the right number of rows are useful signals, but you also need known records, relationships, and rules. Permissions and service settings may need their own rebuild.
+
+Now read the last line. The SQL dump lives in memory, in a Python variable. It demonstrates the mechanism, but it is not a durable off-machine backup. If the notebook process dies, the dump dies with it.
 
 [Sources]
 - Notebook 09, isolated SQLite restore and deliberate wrong-value comparison.
@@ -192,13 +202,17 @@ The notebook's export lives only in a Python variable. It demonstrates a logical
 
 ## Slide 15
 
-The review notebook reconnects several ideas, but some claims need their original platform and request path. For access control, an administrator's successful read does not tell us whether the intended application user has the right access. A meaningful test uses that identity for an allowed operation and an operation that should be denied. An integrity constraint and an access policy answer different questions.
+Our notebook covers a lot, but some claims need the real platform. This table points each concern back to the kind of test you already ran in your completed course work.
 
-For performance, keep the query, parameters, dataset, and returned records consistent while you compare the plan and examined work. An index changes maintenance and storage costs too. A tiny example can show query meaning without supporting a claim about production latency. Use the earlier measured lab when describing your index investigation.
+Access: read as the intended user, then attempt a forbidden action. Why both? Because an administrator's successful read tells you nothing about what the application user can do. And remember that a CHECK constraint is not an access policy. They answer different questions.
 
-For recovery, reconstruct an isolated target and check relevant data and rules. The exact commands differ between PostgreSQL and MongoDB. A text export does not automatically carry every setting of the original service. For a system with two stores, identify which record owns a fact before deciding which copy should repair the other. Matching counts alone do not settle that question either.
+Performance: compare the same query and the same returned records before and after an index. Keep the query, the parameters, and the data fixed, or the comparison means nothing. An index also costs storage and write work. A four-row example can show query meaning, but it cannot support a claim about speed, so use your measured lab for that.
 
-These are useful final-project review prompts. Choose the operation that your project actually implements and explain its result. If a test has not run, identify it as a proposed next check. That lets your audience distinguish your completed work from your plan while keeping the technical discussion specific and useful.
+Recovery: check the isolated restore's data and its required rules, the way we did on the last slide, but on the real engine.
+
+Multiple stores: compare authoritative IDs and values with the derived copy. Decide which store owns a fact before deciding which copy repairs the other.
+
+Now read the box. SQLite here does not reproduce Supabase row-level security, PostgreSQL lock diagnosis, or Atlas replication. If your demonstration makes one of those claims, back it with the earlier lab. And if a test has not run yet, call it a proposed next check. That lets your audience tell your completed work apart from your plans.
 
 [Sources]
 - Course textbook, Chapters 6, 7, 8, 12, 14, and 15.
@@ -206,13 +220,13 @@ These are useful final-project review prompts. Choose the operation that your pr
 
 ## Slide 16
 
-A concept guide can fit in one README. The title on this example names a concrete question: why an active ticket can be absent from a staff report. The opening tells the reader which idea the example teaches. The example section supplies the small dataset, the query, and the relevant output. The explanation connects that output to the preserved population and the matching rule.
+Now we shift to your Day 1 lab, the concept guide. This is what one looks like, and it all fits in a single README.
 
-The text on this slide is a structure to fill, not a completed submission. Your contribution is the explanation of a small variation that you understand. You might assign the unassigned ticket to a different person, add a staff member with no tickets, or compare the two count expressions. Another course concept is equally valid if you can show its mechanism clearly.
+Look at the title: "Why an active ticket is absent from a staff report." It is a question, and a concrete one. That is much better than a title like "SQL Joins," because it tells the reader exactly which puzzle they are about to understand. Under it, one sentence saying the example uses a left join and one unassigned ticket. Then a section called Example and result, with the small setup, the query, and the output. Then Explanation, where you explain the preserved population and the example you changed.
 
-A reader also needs enough environment information to reproduce the example. If your code uses this notebook, say that it runs with Python and SQLite. If it requires PostgreSQL or MongoDB, identify that requirement instead. Explain the run order, what the operation can change, and how to clean up the disposable objects. These can be concise sentences within the same guide.
+Read the box at the bottom. This is README structure, not a completed submission, so please do not just copy it. Your contribution is the explanation of a small change you understand. You could assign the unassigned ticket to someone else, add another staff member with no tickets, or compare the two COUNT expressions. Or pick a different concept from the course entirely.
 
-Include a limitation and source credit. You do not need separate documents for setup, evidence, reflection, and a runbook. A small script or notebook can help when the code is easier to run as a file, but code inside well-labeled Markdown fences is a valid option for this lab.
+The second line of the box lists what else a reader needs: the tool, the run order, cleanup, one limit, and source credit. If your example uses this notebook, say that it runs with Python and SQLite. Each of those can be one sentence. You do not need separate files for setup, evidence, and reflection.
 
 [Sources]
 - Week 15 individual GitHub concept lab.
@@ -220,13 +234,15 @@ Include a limitation and source credit. You do not need separate documents for s
 
 ## Slide 17
 
-GitHub lets you write this guide in the browser. Create a repository and include a README, or open a repository you already own. Open README.md and select the pencil icon to edit it. You need permission to change the repository. Editing a file in somebody else's repository may instead start a proposed contribution, which is unnecessary for this assignment.
+Here is how to build the guide entirely in the browser. No terminal, and no Git installed on your machine.
 
-Markdown headings and code fences make the file readable. A heading begins with a hash sign followed by a space. A code fence begins with three backticks and a language name such as sql or python. Put the code on the following lines, then end the block with another line of three backticks. The language label helps GitHub format the code, but it does not execute the program or verify its correctness.
+Read the steps. Create a repository with a README, or open one you own. Open README.md and select the pencil icon. You need permission to change that repository. If you try to edit somebody else's, GitHub will offer to start a proposed contribution instead, and you do not need that.
 
-Use Preview to inspect the rendered guide. Check that the code stays inside its block, that the expected result is clearly labeled, and that any links point to the intended material. Commit changes with a short message describing the update. A commit records a version of the file. It does not make an untested result become an observed result.
+Third step: code goes inside fenced blocks. Look at the example on the right. Three backticks and the word sql, then the query on its own line, then three backticks to close the block. The language label tells GitHub how to color the code. It does not run the code, and it does not check that it is right. That is still your job.
 
-For public work, inspect the published page while signed out. For private work, give the instructor access through the repository's collaboration settings. Never put a password or service key into the README to make an example easier to run. A runtime prompt or a clearly marked placeholder is the appropriate boundary.
+Then use Preview. Make sure the code stays inside its block, the expected result is clearly labeled, and your links work. Then Commit changes, with a message that says what you did. A commit records a version of the file. It does not turn a predicted result into an observed one.
+
+If the repository is public, open the link while signed out to make sure it works. If you keep it private, give me access, and if you are not sure which account to add, ask me in class. And never put a password or service key in the README to make an example easier to run. Use a clearly marked placeholder.
 
 [Sources]
 - https://docs.github.com/en/repositories/working-with-files/managing-files/editing-files
@@ -234,26 +250,26 @@ For public work, inspect the published page while signed out. For private work, 
 
 ## Slide 18
 
-The final in-class lab is individual work. Choose one database concept and develop a small example that teaches it. You can begin with the review notebook or use another course exercise that you completed. Change one input or query, predict its effect, and explain the resulting behavior in your own words. The purpose is to make the mechanism understandable to another beginner.
+Here is the lab itself. It is individual work, and we do it in class.
 
-A single README can contain the whole guide. Include the example, its result, and the explanation, with the environment and safe run order. State cleanup, one limitation, and any source you adapted. A separate notebook or code file is optional. You do not need a full application, a slide deck, or a second reflection report.
+Read the four lines. Choose one concept and a small example. You can start from the review notebook, or use another course exercise you completed. Change one input or query, predict what will happen, then explain the result in your own words. Why predict first? Because explaining a result you predicted shows you understand the mechanism, not just that you ran a cell. Put the example and the explanation in one README. Then review the files before you share them: no credentials, no real personal data, and any cleanup touches only your example's disposable data.
 
-If the guide is a static worked explanation rather than an executed demonstration, label the result as predicted. A carefully checked explanation is valid, but its wording should not imply that you ran a cloud operation you did not run. If you adapt course material, keep its relevant attribution and license notice. Your own changed example and explanation should be easy to identify.
+If your guide is a worked explanation that you did not execute, label the result as predicted. That is a valid guide. Just do not word it as if you ran something you did not run. And if you adapted course material, keep its credit and license notice.
 
-Before sharing, review the files and saved outputs for secrets or real personal information. Submit the public or instructor-accessible URL in Brightspace with one sentence naming the concept and result. If an account or accessibility barrier prevents GitHub use, we can use the equivalent private file path described in the lab rather than inventing another assignment.
+Now the submission box. Submit one public or instructor-accessible URL in Brightspace, with one sentence naming the concept and the result. That is the whole submission. A separate notebook, a presentation, or a full application is not required. And if an account or accessibility barrier keeps you off GitHub, the lab allows a local Markdown or code file instead. Talk to me in class rather than inventing another assignment.
 
 [Sources]
 - Week 15 individual GitHub concept lab.
 
 ## Slide 19
 
-Our second meeting focuses on your final demonstrations. Use the canonical final-project assignment for the required work and the demonstration length. You can present from your notebook, code, and prepared results. You do not need to build a new presentation just to introduce a project that already has a clear executable explanation.
+This starts the Day 2 material: final demonstrations. Your requirements come from the canonical final-project assignment, not from this slide. Your demonstration slot follows the schedule in Brightspace, and demonstrations may run across our Week 15 meetings and the final exam meeting, so we are not trying to fit everyone into one class.
 
-Begin with the user problem. For a support system, perhaps staff need a current queue and managers need a workload summary. Show enough of the model to explain one relationship or document boundary. Then choose a query whose result matters to that user. Explain what one output row or document means and why the result answers the question.
+Read the three lines. A user problem. A model and query you can explain. An operational decision you tested. That is the arc. Start with who needs what. For a support system, maybe staff need a current queue and a manager needs a workload summary. Show just enough of the model to explain one relationship or one document boundary. Then show a query whose result matters to that user, and say what one output row or document means.
 
-Next, show an operational decision from your project. That might be an index comparison, an allowed and denied access test, or a recovery procedure and its verification. Connect the decision to the workload rather than presenting a list of features. State the limitation that matters for interpreting the result and the improvement you would test next.
+Then show one operational decision: an index comparison, an allowed and denied access test, or a restore and how you verified it. Tie the decision to the workload, and state the limitation that matters.
 
-Keep a saved-output fallback in case the connection fails during your demonstration. Say that it is a saved result and identify its context. Do not expose a secrets page or paste a credential into the projector view. The audience should be able to follow the database reasoning even if the cloud dashboard is unavailable. Presenting a controlled result clearly is more useful than improvising a risky account change in front of the room.
+Look at the second box. Present from your notebook, code, or prepared results. A new deck is optional. Keep a saved-output fallback in case the connection fails, and if you use it, say that it is a saved result. Never show a secrets page or paste a credential on the projector. A controlled result explained clearly beats improvising a risky account change in front of the room.
 
 [Sources]
 - Canonical final-project assignment, Presentation and Submission sections.
@@ -261,13 +277,13 @@ Keep a saved-output fallback in case the connection fails during your demonstrat
 
 ## Slide 20
 
-Here is a complete explanation of our review query. The support manager needs to see staff workload, including staff with zero active tickets. I keep staff on the left of the join and make active status part of the matching condition. I count matching ticket identities rather than all joined rows. The result is Priya one, Noah one, and Elena zero.
+Here is what a complete query explanation sounds like, using our review example. Read it with me.
 
-I then compare that assigned workload with the active-ticket query. The latter also contains ticket 3, which has no assignee. That record explains the difference between the staff total of two and the complete active total of three. If the manager needs the full backlog, I would show an explicitly labeled unassigned category instead of pretending every active ticket belongs to a staff member.
+"The support manager needs to see staff workload, including zero." That is the user need. "I kept staff on the left and counted matching ticket IDs." That is the query decision, and notice it is really two decisions, not one. "The result was Agent 201 1, Agent 202 1, Agent 203 0." That is a concrete result, with names and numbers. "Ticket 3 was still active but unassigned, so I identified it as a separate part of the backlog." That is the implication for the report.
 
-Notice the sequence. It gives the user need, the query decision, a concrete result, and the implication for the report. It also leaves room for a technical follow-up. Someone can ask what happens if a staff member has two tickets, if a ticket is reassigned, or if the active-status condition moves to WHERE. We can answer by following the same records and testing one change.
+Notice the sequence: need, decision, result, implication. It is short, and it invites good follow-up questions. What if a staff member has two tickets? What if ticket 3 gets reassigned? What if the status test moves into WHERE? You can answer every one of those by following the same four tickets and testing one change. That is the payoff of choosing a small example you fully understand.
 
-This particular explanation belongs to the four-row review example. In your final demonstration, use the corresponding facts and observed output from your own project. You do not need to memorize this paragraph. You need to make the relationship between your question, code, and result equally clear.
+Now read the box at the bottom. This describes the four-row review example. In your final demonstration, describe your own project and the output you actually observed. You do not need to memorize this paragraph. What you need is to make the link between your question, your code, and your result just as clear as it is here.
 
 [Sources]
 - Notebook 09, report and counterfactual results.
@@ -275,13 +291,13 @@ This particular explanation belongs to the four-row review example. In your fina
 
 ## Slide 21
 
-The first statement says only that you used SQL in a class. It names a topic but gives a reader little basis for understanding your skill. The second statement names an investigation: diagnosing a zero-inclusive staff report with joins and NULL-aware counts, then testing an assignment change to distinguish the staff workload from the full backlog.
+Let's turn the same work into a resume bullet. Look at the first one: "Used SQL in a database class." That names a topic. A reader learns nothing about what you can actually do.
 
-That is a useful resume bullet if it describes work you actually did and understand. It identifies a technical action and a result without inventing a dramatic business impact. You do not need a percentage improvement when your result was a corrected interpretation or a reproducible counterexample. If you have a measured performance result from another lab, use its actual context and comparison rather than borrowing one for this example.
+Now the second one. "Diagnosed a zero-inclusive staff report with SQL joins and NULL-aware counts, then tested an assignment change to distinguish the assigned workload from the full backlog." It names an investigation, the techniques, and a result. And notice what it does not do. It does not invent a percentage or a dramatic business impact. When your result is a corrected interpretation or a reproducible counterexample, say exactly that. If you have a real measured result from another lab, use that one, with its real context.
 
-The environment should be accurate. This review ran in SQLite inside Python. It does not become a Supabase deployment simply because Supabase was part of the course. If you independently ran the equivalent SQL against your PostgreSQL project, describe that work and its result. A project label or education section can make the classroom context clear without weakening a precise technical statement.
+Read the box. Use this wording only after doing and understanding the work. And name the actual environment. This review ran in SQLite inside Python. It does not become a Supabase deployment just because Supabase was part of the course. If you ran the equivalent SQL against your own PostgreSQL project, say that.
 
-An interviewer may ask you to explain any term in the bullet. Be ready to show what NULL-aware counting means, why the join preserves Elena, and what the assignment experiment changed. Choose a statement whose details you can discuss, rather than a longer list that includes work you only watched or planned.
+Here is the test for any bullet. An interviewer can point at any phrase and say "tell me about that." Can you explain what NULL-aware counting means? Why the join keeps Agent 203? What the assignment experiment changed? If yes, keep the bullet. If you only watched the work, leave it off.
 
 [Sources]
 - Course textbook, Chapter 15, portfolio and resume writing.
@@ -289,13 +305,15 @@ An interviewer may ask you to explain any term in the bullet. Be ready to show w
 
 ## Slide 22
 
-STAR-R gives an incident explanation a useful order: situation, task, action, result, and reflection. Here is one way to tell the review story. A dashboard showed a backlog of three active tickets, but the staff workload counts summed to two. My task was to explain the difference without hiding an active ticket or assigning it to the wrong person.
+Interviewers often ask, "Tell me about a problem you investigated." STAR-R gives your answer a shape: situation, task, action, result, and reflection. Let's walk the table.
 
-I traced the matched rows of the left join and compared them with the active-ticket population. I tested an assignment change inside a transaction and read the report before rolling that change back. The unassigned ticket explained the original gap. Assigning it to Elena changed the staff total without changing the number of active tickets, and rollback restored the starting state.
+Situation: the backlog count was 3, but staff counts summed to 2. Task: explain the discrepancy without hiding a ticket, and without assigning it to the wrong person. Action: I traced the matched rows of the left join and tested an assignment inside a transaction. Result: the unassigned ticket explained the gap, and rollback restored the starting state. Reflection: the report needs a named unassigned category for the whole backlog.
 
-My reflection was that a complete backlog view needs an explicitly labeled unassigned category. A report can execute successfully and still be misunderstood if its population is unclear. In a real application, I would also check the interface labels and the other workflows that consume the report.
+Why the extra R? Because reflection is where you show judgment. Anyone can describe what they did. Saying what you would change in the design is what makes an interviewer believe you would handle it well on the job.
 
-This story is grounded in a small classroom experiment, and that context is enough. The action is specific, and the result is observable. Practice an equivalent outline individually using one thing you completed. You can keep it in your notes or concept guide. It is not another graded submission. The outline supports conversation, so expect a follow-up rather than treating the opening answer as a script that must end the discussion.
+Notice that the result is observable. Three versus two, and then explained. That is what makes the story believable. It is a small classroom experiment, and that is fine. Say so. A specific small story beats a vague big one.
+
+Read the line at the bottom. Practice your own version individually, in your notes, using one thing you completed. This is not another submission. And remember that the outline is the start of a conversation, not a speech that ends it. Expect a follow-up question, which is exactly what the next slide is about.
 
 [Sources]
 - Course textbook, Chapter 15, STAR-R framework.
@@ -303,13 +321,13 @@ This story is grounded in a small classroom experiment, and that context is enou
 
 ## Slide 23
 
-Suppose the interviewer asks what changes if ticket 3 is assigned to Elena. Begin with the fact that changes: its assignee identity becomes 203. Its status remains new, so it stays in the active-ticket population. The staff join now finds a qualifying ticket for Elena, and her count changes from zero to one.
+Here is a typical follow-up: "What changes if ticket 3 is assigned to Agent 203?" Let's answer it the way I want you to answer every follow-up. Start with the one fact that changes, and follow it through.
 
-Priya and Noah keep their counts of one. The staff total rises from two to three, while the overall active total remains three. No ticket was inserted or removed, and no status changed. The controlled rollback returns ticket 3 to the unassigned state, which returns Elena's count to zero and the assigned total to two.
+Ticket 3's assignee becomes 203. Its status stays new, so it is still active. Now read the answer on the slide. Agent 203's count changes from 0 to 1, because the join now finds a qualifying ticket. The assigned total changes from 2 to 3. The active total stays 3, because no ticket changed status, and nothing was inserted or removed. Agents 201 and 202 keep their count of one each. And rolling back restores the earlier assignment and report: Agent 203 back to zero, and the assigned total back to two.
 
-We can check that explanation by running the report and active-ticket query before, during, and after the transaction. The important comparison is the same queries against one deliberately changed fact. If we also changed status or inserted rows, we would need to account for those effects separately.
+Look at the line at the bottom. Explain the mechanism, then identify the query or experiment that checks it. Here, that means running the report and the active-ticket query before, during, and after the transaction. Same queries, one deliberately changed fact.
 
-This is how a follow-up can become an opportunity to reason. You do not have to produce an unfamiliar command immediately. State the assumption, follow the data through the operation, predict the result, and identify a way to test it. If the question changes a property your experiment did not cover, say so. A precise next test is more useful than confidently applying an unrelated rule from memory.
+Why does this matter in an interview? Because you do not have to produce some unfamiliar command on the spot. State your assumption, follow the data through the operation, predict the result, and name the test. If the question changes something your experiment did not cover, say so. A precise next test is worth more than a confident rule you half remember.
 
 [Sources]
 - Notebook 09, controlled assignment experiment.
@@ -317,13 +335,15 @@ This is how a follow-up can become an opportunity to reason. You do not have to 
 
 ## Slide 24
 
-If someone asks whether you would choose PostgreSQL or MongoDB, begin with the workload. Suppose appointments connect known clients with shared time slots and require rules about valid relationships. Relational tables, keys, and transactions are a reasonable starting design. Preventing overlapping appointments would still require an explicit scheduling rule and a tested implementation. Merely choosing PostgreSQL does not automatically prevent every conflict.
+Another classic interview question: "Would you choose PostgreSQL or MongoDB?" The honest answer starts with the workload, and then you actually say what the workload is. Look at the table.
 
-Now suppose the workload stores variable form snapshots that are usually read as complete records. A document model may fit that access pattern, provided we define identity, validation, and the update behavior. We would still consider how large the records can become and whether any shared facts need an authoritative location.
+First row: appointments share clients and time slots. Lots of shared facts, relationships, and rules about what is valid. So a reasonable starting design is relational tables, keys, constraints, and transactions. But be careful. Choosing PostgreSQL does not automatically stop overlapping appointments. You would still need an explicit scheduling rule, and you would test it.
 
-Neither example makes the format an exclusive product capability. PostgreSQL can store JSON, and MongoDB can represent references. The decision includes query shapes, relationships, transaction boundaries, access, growth, and recovery. The simplest design that meets those needs is a sensible starting point.
+Second row: variable form snapshots that are read as complete records. That access pattern fits a document model, as long as you define clear identity and validation, and think about how large the documents can grow.
 
-If the system genuinely has both responsibilities, a second store can be justified, but it adds synchronization and recovery work. Our previous incident showed why a derived copy can lag behind an accepted source update. Explain what benefit would justify that cost and what measurement could change your decision. A beginner can give a thoughtful design answer by stating assumptions and tradeoffs without claiming experience operating every alternative at scale.
+Third row: both responsibilities exist. Then a second store might be justified, but only if its benefit pays for the synchronization and recovery work. You saw that cost last week in our incident, where a derived copy fell behind an accepted update in the source.
+
+Now read the bottom box. PostgreSQL can store JSON. MongoDB can reference documents. So "my data is JSON" does not decide anything. A format label alone does not decide which system fits. The decision comes from query shapes, relationships, transactions, access, growth, and recovery. State your assumptions and your tradeoffs. That is a strong answer, even without years of experience running both systems.
 
 [Sources]
 - Course textbook, Chapters 9, 10, 14, and 15.
@@ -331,13 +351,15 @@ If the system genuinely has both responsibilities, a second store can be justifi
 
 ## Slide 25
 
-The table connects course actions with workplace responsibilities. Correcting a report and checking its population can matter in application support or data analysis. Testing a permission boundary supports database administration and security work. Comparing query plans can matter to backend development as well as database performance. Restoring a separate target and checking it belongs to operational recovery, while repeatable imports connect with data integration.
+This table connects work you did in this course to responsibilities you will see in job postings. Read across each row.
 
-These responsibilities overlap. A small organization may assign several of them to one person, while a larger organization may distribute them across specialized roles. The O*NET database-administrator profile is one reference for the vocabulary of database changes, access, performance, and recovery. It does not mean one introductory course satisfies every requirement of every job with that title.
+Correct a report and verify its population: that is application support and data analysis. Test a permission boundary: database administration and security support. Compare plans and index costs: backend development and database performance. Restore and check a separate target: database operations and recovery. Load data repeatedly without duplicate identities: data integration and engineering.
 
-When you read a posting, connect one requested action to a specific piece of your work. If it mentions troubleshooting, identify the incident you investigated and the query or observation that supported your diagnosis. If it mentions automation, identify a repeatable import or restore procedure rather than listing Python by itself. Then separate completed experience from a skill you want to develop next.
+Now read the box at the bottom, because it keeps you honest. These responsibilities overlap across roles. At a small company, one person might do all five. At a large one, they are split across teams. The O*NET profile for database administrators is a good reference for this vocabulary. But one course does not establish all the requirements of a job, and nobody expects it to.
 
-The final GitHub guide can help because it gives you a small example to discuss. It should be understandable and technically specific even to somebody who was not in our class. A useful portfolio item does not have to demonstrate every responsibility in this table. Depth in one clearly explained workflow gives a reader something concrete to evaluate.
+So here is how to use a posting. Pick one action it asks for and connect it to one specific piece of your work. If it says troubleshooting, name the incident you investigated and the query that supported your diagnosis. If it says automation, name a repeatable import or restore, not just "Python." Then separate what you have done from what you want to learn next.
+
+Your GitHub guide helps here. It is one small example you can discuss in depth, and depth in one clearly explained workflow gives a reader something real to evaluate.
 
 [Sources]
 - https://www.onetonline.org/link/summary/15-1242.00
@@ -345,13 +367,15 @@ The final GitHub guide can help because it gives you a small example to discuss.
 
 ## Slide 26
 
-Choose your next learning project from a specific gap rather than a long list of product names. If a role asks for operational scripting, you might automate a logical restore into a disposable target. The script could check known record identities and values, verify a required constraint, and report a failed check clearly. That builds on a workflow you have already studied while adding one new responsibility.
+Last slide. What do you learn next? My advice is to choose one gap in a role that interests you, not a list of product names.
 
-Begin with a manual procedure that you understand. Identify what can change, what must remain untouched, and how you will recognize success or failure. Then automate one part. A script that reliably reports a mismatch is useful even when the example dataset is small. You can later extend it with scheduling, monitoring, or a larger fixture as separate learning steps.
+Read the three lines. Choose one gap. Build one small experiment that addresses it. Describe the result and the next question it raises.
 
-Keep the explanation alongside the code. Name the environment, input, observed result, and remaining limitation. If an experiment fails, record what failed and the next diagnostic question. That record can become an interview example because it shows how you investigate, not only which tool you opened.
+Look at the example. If a role asks for operational scripting, you could automate a logical restore into a disposable target, check known records and constraints, and report a failure clearly. Why is that a good project? Because it builds on a workflow you already understand, the restore check from slide 14, and adds exactly one new responsibility, automation. Start with the manual procedure. Know what can change, what must stay untouched, and what success and failure look like. Then automate one piece. A script that reliably reports a mismatch is useful even on a small dataset. Scheduling and monitoring can come later, as separate steps.
 
-Across this course, the recurring work has been to define data meaning, choose a mechanism, predict behavior, and check the actual result. SQL and MQL syntax will continue to evolve, and workplaces will use different platforms. Your ability to explain a query population, a transaction boundary, an access decision, or a recovery check gives you a way to approach those unfamiliar systems deliberately.
+Keep the explanation next to the code: the environment, the input, the observed result, and the limit. If it fails, write down what failed and your next question. That record is an interview story.
+
+Read the last line. Keep expanding a workflow you can explain rather than adding tool names. That has been the whole course: define what the data means, choose a mechanism, predict, and check the actual result. Syntax and platforms will change. That habit transfers. Thank you for a great semester.
 
 [Sources]
 - Course textbook, Chapter 15, next-skill planning.
@@ -363,4 +387,4 @@ These short animations go with this week's reading. Students can watch them befo
 
 ## License
 
-Original course prose is licensed under CC BY 4.0. Source-specific notices control adapted material and external images. The transcript and the PowerPoint notes contain the same spoken script.
+Original course prose is licensed under CC BY-NC-SA 4.0. Source-specific notices control adapted material and external images. The transcript and the PowerPoint notes contain the same spoken script.

@@ -2,13 +2,15 @@
 
 ## Slide 1
 
-So far, we have used rollback to rehearse changes and we have checked whether individual rows satisfy rules. Today we connect those ideas to an application action that changes more than one record. Assigning a repair request changes the ticket, but it also creates history. A useful system needs those two facts to agree.
+Welcome to Week 5. Up to now we have mostly looked at one statement at a time. Does this query return the right rows? Does this row satisfy the rule? This week we ask what happens when one action needs more than one statement, and what happens when more than one person acts at the same moment.
 
-Our first meeting follows one assignment from its starting state through a rehearsal, a committed result, and a failed attempt. We will read actual SQL and compare stored values. You will not need to invent a transaction framework or learn a new programming language to complete that lab. The statements are familiar. The new question is where their common decision boundary belongs.
+Look at the two lines on the slide. One assignment changes two records. Two sessions can compete for one row. Those are our two days.
 
-In the second meeting, we introduce independent database sessions. One session changes a ticket's priority while another tries to change its status. We will see why an ordinary reader can still obtain a result while the second writer waits. Then we will compare two ways to end the transaction that is holding up the writer.
+On Day 1 we follow one ticket assignment. Assigning a ticket changes the ticket, and it also writes a history event. We rehearse it, we commit it, and we make it fail on purpose, and every time we check what was actually stored. The SQL is familiar. The new question is where the decision boundary goes.
 
-The important distinction throughout the week is between the command we issued and the result we established. An update can return a row before anything commits. A query can finish while keeping the wrong business outcome. The database gives us ways to inspect those differences. Our job is to read them and explain what they mean for the application.
+On Day 2 we open separate database sessions. One changes a ticket's priority and does not commit. Another tries to change the same ticket's status and has to wait. We will see why a plain reader still gets an answer, and we will compare two ways to release the waiting writer.
+
+Why does this matter? Because "the statement succeeded" and "the right thing was saved" are different claims. An update can return a row before anything commits. A query can finish and still keep the wrong data. This week you learn to tell those apart, and to prove which one happened.
 
 [Sources]
 - Course textbook, Chapter 5, Transactions Coordinate Competing Work.
@@ -16,13 +18,13 @@ The important distinction throughout the week is between the command we issued a
 
 ## Slide 2
 
-Here is the assignment we will use in the demonstration. Ticket 1004 starts without an assignee, and its status is new. We want to assign it to Agent 202, whose user identifier is 202, and change the status to in progress. Those are changes to the current ticket row.
+Here is the assignment we will use all through Day 1. Look at the first row of the table. Ticket 1004 has no assignee, and its status is new. We want to give it to Agent 202, whose user ID is also 202, and move it to in_progress. That is a change to the current ticket row.
 
-The second record is an event. Event 5998 does not yet exist. It will say that this assignment happened, identify the actor, and record the old and new statuses. The ticket answers who is responsible now. The event explains how the ticket reached that state. These records serve different purposes, so keeping history does not mean that we should remove the current state from the ticket.
+Now the second row. Event 5998 does not exist yet. When we create it, it records that this assignment happened: who made it, the old status, and the new status. So the ticket answers "who is responsible right now," and the event answers "how did it get that way." They do different jobs, which is why we keep both.
 
-Imagine that we update the ticket successfully and then lose the connection before inserting the event. A staff member might see Agent 202 as the assignee, while someone reviewing the history finds no corresponding assignment. Each table could still contain individually valid rows. The application action would nevertheless be incomplete.
+Here is the problem. Imagine the ticket update succeeds, and then the connection drops before the event is inserted. A staff member sees Agent 202 on the ticket. Someone reviewing the history finds no assignment at all. Each table, on its own, looks perfectly valid. The action is still only half done.
 
-A transaction gives us a place to say that these related changes belong together. That statement is about the application meaning of the work. PostgreSQL does not automatically know that any two nearby SQL commands should share a decision. We have to define the boundary. In the student lab the assignee and event identifier differ, and the tables are disposable copies, but the relationship between current state and recorded history is the same.
+Read the line at the bottom. Two successful SQL statements are not automatically one transaction. PostgreSQL has no idea that these two commands belong together. We have to say so. That is what a transaction is for: drawing a boundary around changes that mean one thing to the application. In your lab the agent and the event number are different, and the tables are disposable copies, but the relationship between current state and history is exactly the same.
 
 [Sources]
 - Course Metro Support fixture and Chapter 5 assignment example.
@@ -30,13 +32,13 @@ A transaction gives us a place to say that these related changes belong together
 
 ## Slide 3
 
-Read this diagram as a choice of endings. Begin opens an explicit transaction. We then perform the update and insert, and we can inspect our work from that connection. If the operation is ready to keep, commit completes it. If we decide to discard the uncommitted work, rollback completes it instead.
+This diagram is about endings. BEGIN opens a transaction. Then we do the work, the UPDATE and the INSERT, and we can inspect that work from our own connection. Then there are two ways out. COMMIT keeps the changes. ROLLBACK discards them.
 
-Commit and rollback are not consecutive steps in a checklist. Once the transaction has committed, issuing rollback afterward does not take us back to the original rows. Correcting a committed mistake generally requires another change, using the facts we now know. That connects directly to last week's distinction between rehearsing a migration and repairing a system after it has collected new data.
+Notice that they are alternatives, not two steps in a checklist. You pick one. And look at the line at the bottom: a later ROLLBACK does not reverse a completed COMMIT. Once you commit, the change is real, and other people may already be reading it. If it was a mistake, fixing it means writing another change based on what you know now. That is the same distinction we made when we rehearsed a migration earlier in the course. Rehearsing a change is cheap. Repairing a live system after it has collected new data is not.
 
-There is also a difference between a transaction and the interface displaying it. Closing a window is not a reliable substitute for issuing the appropriate transaction command. A client may keep a connection alive, and an open transaction can retain resources even while no person appears to be working.
+One more thing. Closing a browser tab is not a transaction command. A client can keep a connection alive in the background, and an open transaction keeps holding resources even when nobody seems to be working. End your transactions on purpose.
 
-For our first SQL demonstration, we will run the whole block and end with rollback. That keeps the shared source fixture unchanged. In your lab you will use an isolated copy and deliberately keep the approved assignment with commit. When you inspect your results, always attach the observation to a point in this diagram. A value visible while work is open is not the same observation as a value returned by a new query after the transaction ends.
+In my demonstration I run the whole block and end with ROLLBACK, so the shared fixture stays unchanged. In your lab you work on a copy and actually COMMIT the approved assignment. Whenever you write down an observation, say where in this diagram you made it. A value you see while the transaction is open is a different fact from what a fresh query shows after it ends.
 
 [Sources]
 - Course Chapter 4 and Chapter 5 transaction-boundary discussion.
@@ -45,13 +47,15 @@ For our first SQL demonstration, we will run the whole block and end with rollba
 
 ## Slide 4
 
-This is the complete rehearsal, starting from the supplied fixture. Begin opens the transaction. The update identifies ticket 1004 and also checks that its current status is new. The status condition expresses the transition we intend: assign a request that has not yet moved into progress.
+Here is the complete rehearsal, starting from the supplied fixture.
 
-The set clause changes the assignee to Agent 202 and the status to in progress. Returning asks PostgreSQL to send back the affected ticket identifier, assignee, and status. For this fixture, that result is 1004, 202, and in progress. It lets us inspect the row changed by this statement.
+BEGIN opens the transaction. The UPDATE targets ticket 1004, and look at the WHERE clause. It also requires status equals new. That is not decoration. It states the transition we mean: we are assigning a ticket that nobody has picked up yet. If someone already moved it, we do not want to quietly overwrite their work.
 
-The insert then creates event 5998. Read its column list together with its values. The event belongs to ticket 1004, actor 202 made the change, and the old and new status fields describe the transition. The note is explanatory text, and now supplies the transaction timestamp. We use a fixed event identifier to keep the classroom example easy to inspect. A real application would normally generate identifiers and manage retries explicitly.
+SET puts Agent 202 on the ticket and changes the status to in_progress. RETURNING sends back the row this statement actually changed. For this fixture you get 1004, 202, in_progress. That is our evidence of what the statement touched.
 
-The final rollback discards both changes. Run this as one complete block in the editor so the transaction does not remain open while we discuss it. PostgreSQL may show a successful command or a returned row before that final decision. Neither means the assignment has been retained. We will establish the outcome with fresh queries next. Also notice that this demonstration uses the source schema, while the lab creates separate copies before it commits anything.
+Then the INSERT creates event 5998. Read the column list against the values: ticket 1004, actor 202, type status_changed, old status new, new status in_progress, a short note, and now for the timestamp. I use a fixed event ID so the example is easy to check. A real application would normally generate IDs.
+
+Then ROLLBACK discards both changes. Run the whole block at once, so the transaction is not left open while we talk. Here is the trap. You may see a returned row or a success message before that ROLLBACK, and neither one means the assignment was kept. Also, a web editor may show you only the last result, which is the ROLLBACK. That is why Lab 1 gives you a small Colab helper that prints every result in order. On the next slide we prove what survived.
 
 [Sources]
 - Course Chapter 5 worked assignment and Metro Support fixture.
@@ -59,15 +63,17 @@ The final rollback discards both changes. Run this as one complete block in the 
 
 ## Slide 5
 
-The table separates three observation points. Inside the transaction, our connection sees Agent 202's assignment and, after the insert, the new event. Those changes are available to our own transaction even though we have not committed them.
+How do we know what actually happened? We ask, at the right moment. This table has three moments.
 
-After rollback, a fresh query shows the original ticket: no assignee and status new. Querying event 5998 returns no row. Rollback did not replace the event with a blank event. It discarded that insertion, so the record does not exist.
+First row: inside the transaction. Our own connection sees ticket 1004 with 202 and in_progress, and after the INSERT, event 5998 is present. We can see our own uncommitted work, even though nothing has been committed.
 
-The last row describes the alternative ending. If we run the same successful pair from the same initial state and commit, the ticket and event both remain. This is a comparison of two possible completed transactions, not a suggestion to append commit after the rollback we just ran.
+Second row: after ROLLBACK. Run a fresh query and the ticket is back to NULL and new. Query event 5998 and you get no row. Rollback did not leave a blank event behind. It discarded the insertion, so the record simply does not exist.
 
-The queries at the bottom inspect the specific objects we changed. Counting all tickets would not answer whether the assignment survived because an update does not necessarily change the number of ticket rows. Similarly, counting all events would be less precise than asking for the particular event identifier. We want a check whose result directly answers the claim.
+Third row is the other possible ending. If we started from the same state, ran the same successful pair, and committed, both changes would remain: 202, in_progress, and event 5998 present. That is a comparison between two endings. It is not a suggestion to type COMMIT after the ROLLBACK we just ran.
 
-In your SQL file, a brief comment can record these observations. You do not need a separate report for each query. What matters is that someone reading the file can distinguish the value returned during the transaction from the state that persisted after it ended. That distinction will also help when we introduce concurrent readers in the second meeting.
+Now look at the two queries at the bottom. They ask about exactly the objects we changed, ticket 1004 and event 5998. Why not count all the tickets? Because an update does not change how many tickets there are. The count would look identical whether the assignment survived or not. Choose the check whose answer directly proves your claim.
+
+In your SQL file, a short comment for each observation is enough. Someone reading it should be able to tell what you saw during the transaction apart from what persisted after it ended.
 
 [Sources]
 - Course Chapter 5 and the actual assignment rehearsal.
@@ -75,15 +81,15 @@ In your SQL file, a brief comment can record these observations. You do not need
 
 ## Slide 6
 
-Now we deliberately make the second statement fail. The update proposes changing ticket 1004's priority to urgent. The next statement attempts to insert a copy of event 5001 back into the same event table. That event already exists, including its primary key, so the insert violates the uniqueness rule.
+Now let's break it on purpose. The UPDATE sets ticket 1004's priority to urgent. Then the INSERT tries to copy event 5001 back into the events table. Event 5001 already exists, primary key and all, so this insert has to fail.
 
-The insert-select form here is simply a compact way to copy an existing row with all its required values. It is deliberately wrong for this test. We expect PostgreSQL to reject it with SQLSTATE 23505, a unique violation. Rejection is the useful result because it lets us investigate the transaction boundary around the earlier update.
+The INSERT with a SELECT is just a compact way to copy an existing row with every required value. It is deliberately wrong. We expect PostgreSQL to reject it with a unique violation, SQLSTATE 23505. And that rejection is the useful result, because now we can ask the interesting question: what happened to the UPDATE before it, the one that succeeded?
 
-After the error, run the lower block separately. Rollback ends the failed transaction, and the select checks the priority. It should still be low. The earlier urgent update was inside the same transaction as the rejected insert, so that proposed change did not become a separate committed fact.
+Look at the lower block. After the error, I run it separately. ROLLBACK ends the failed transaction, and then I check the priority. It says low. The urgent change was inside the same transaction as the rejected insert, so it never became a committed fact on its own. The pair goes together or not at all.
 
-An editor may stop execution when it encounters the error. That is why the rollback is a separate action here, rather than an instruction to assume the rest of a batch ran. If the client has already ended the failed transaction, the extra rollback may report that no transaction is active; the final query still establishes the result.
+Why run the lower block separately? Because the editor may stop at the error, so do not assume the rest of the batch ran. If your client has already ended the failed transaction, the extra ROLLBACK may just tell you there is no transaction in progress. That is fine. The SELECT still gives you the answer.
 
-The failure does not erase event 5001. It rejects a new duplicate and leaves the earlier committed event intact. In the lab you will make the same distinction using your already approved event and a new proposed priority change.
+And notice what the failure did not do. It did not erase event 5001. It refused a new duplicate and left the committed history alone.
 
 [Sources]
 - Course Chapter 5 failed-transaction explanation.
@@ -92,15 +98,15 @@ The failure does not erase event 5001. It rejects a new duplicate and leaves the
 
 ## Slide 7
 
-This update also fails to accomplish the proposed assignment, but it does so in a different sense. The where clause requires ticket 1004 to have status resolved. In our initial fixture its status is new, so no row matches. PostgreSQL can execute that request correctly and return no rows.
+Here is a different kind of failure, and it is sneakier. This UPDATE says: assign ticket 1004 to Agent 202, but only if its status is resolved. Ticket 1004 is new, so nothing matches. Watch what PostgreSQL does. No error. RETURNING gives back zero rows, and the statement completes normally.
 
-There is no constraint violation here. A request to update all rows satisfying a condition is allowed to match an empty set. That means a later insert in the same transaction would not automatically be stopped merely because this update affected nothing.
+That is correct behavior. "Update every row that matches this condition" is allowed to match nothing. No constraint is broken. Which means that if the next statement in the transaction inserted an event, nothing in the database would stop it.
 
-Suppose application code ignored the returned result, inserted an event claiming an assignment, and committed. It could record an event for an assignment that never happened. Wrapping the statements in begin and commit would not invent the missing business check. The application must examine the affected-row result and decide whether to continue or roll back.
+Now picture application code that never looks at that result. It runs the update, runs an insert that says "assigned to Agent 202," and commits. You now have a history event for an assignment that never happened. Wrapping it in BEGIN and COMMIT did nothing to prevent that, because a transaction does not know your business rule. Only the code can see that zero rows came back and decide to stop and roll back.
 
-This is one reason we distinguish database errors from application outcomes. A duplicate key is an enforced-rule failure. Zero affected rows is a valid SQL outcome that may or may not satisfy what the person requested. In another workflow, doing nothing when a request has already been resolved could be exactly the desired behavior.
+That is why we keep two ideas separate. A duplicate key is a database rule being enforced. Zero affected rows is a perfectly valid result that may or may not be what the person wanted. In some workflows, doing nothing to an already resolved ticket is exactly right.
 
-For this course, you do not need to build the complete retry logic yet. You do need to explain why checking returning is useful and why its absence matters. Our rehearsal still ends in rollback so the example leaves the source fixture alone. The broader habit is to connect a successful statement to the particular application fact it was supposed to establish.
+You do need to explain why checking RETURNING matters. Read the line at the bottom of the slide: application code must inspect the result before writing history or announcing an assignment.
 
 [Sources]
 - Course Chapter 5, Keeping State and History Together.
@@ -108,15 +114,17 @@ For this course, you do not need to build the complete retry logic yet. You do n
 
 ## Slide 8
 
-We now have examples to attach to the four letters in ACID. Atomicity concerns the transaction boundary. In our successful pair, the assignment and history commit together. In the failed pair, the new priority does not survive on its own.
+Now we can attach real examples to the four letters in ACID.
 
-Consistency concerns maintaining valid state. Declared constraints are part of that, but application logic is also necessary. The zero-row example showed how valid statements could still fail to represent the intended assignment. Do not confuse this use of consistency with the later question of when a replica sees a new value. Those are related database topics, but they ask different questions.
+Atomicity is the boundary. In our successful pair, the assignment and its history commit together. In our failed pair, the urgent priority did not survive on its own.
 
-Isolation concerns concurrent work. When several sessions operate at once, the selected isolation rules determine what their reads can see and how conflicting operations behave. We will make that visible with a reader and competing writer in the second meeting.
+Consistency means the data stays valid. Declared rules are part of that, like the primary key that rejected the copy of event 5001. But look at the second row of the table: correct application logic is part of it too. The zero-row update showed that valid statements can still fail to record the intended assignment. And do not mix this up with the other "consistency" you will hear about later, when a replica sees a new value.
 
-Durability concerns committed work surviving the failures covered by the system's configuration and mechanisms. It does not mean a record can never be deleted. A later authorized delete can itself be a durable transaction. That is one reason backups and recovery remain necessary.
+Isolation is about concurrent work. When several sessions run at once, what can each one see, and what happens when they conflict? That is Day 2.
 
-Finally, our transaction covers database effects within its boundary. If a program sends an email before committing, a database rollback does not retrieve that email from the recipient. Last week we also saw that a sequence can leave gaps after rollback. These limits do not make transactions unhelpful. They tell us precisely which coordination problem a transaction solves and where an application needs additional design.
+Durability means a successful commit survives the failures the system is configured to handle. It does not mean the data can never be deleted. An authorized delete later is itself a durable transaction. That is one reason backups and recovery still matter.
+
+Now read the line at the bottom. A transaction covers database effects only. If your program sends an email and then rolls back, that email is already in someone's inbox. And earlier in the course we saw that a sequence can leave gaps after a rollback. These limits tell you exactly which problem a transaction solves, and where the application has to do more.
 
 [Sources]
 - Course Chapter 5, ACID and rollback boundaries.
@@ -124,19 +132,17 @@ Finally, our transaction covers database effects within its boundary. If a progr
 
 ## Slide 9
 
-Your first lab now applies the transaction example in disposable tables. The setup creates transaction_lab and copies the source tickets and events. It explicitly adds the primary keys that the failure test needs. Create table as copies query results; it does not promise to recreate every constraint or operational property of the source tables.
+Here is Lab 1. You work alone, in a schema called transaction_lab, which holds copies of the source tickets and events. The setup also adds the primary keys explicitly, because CREATE TABLE AS copies the data but not every constraint, and the failure test needs that key.
 
-The proposed assignment in your lab is to Agent 201, user 201, and the new event is 5999. Start by checking ticket 1004's actual initial state. Run the rehearsal ending in rollback, then query the ticket and event afterward. Next, run the separate committed-transaction block supplied in the lab and check the stored result again.
+Your assignment goes to Agent 201, user 201, and your event is 5999. First check that ticket 1004 is unassigned and new. Run the rehearsal ending in ROLLBACK and confirm nothing stuck. Then run the committed version and confirm that it did.
 
-The next experiment starts a new transaction, changes priority, and deliberately copies the seeded event 5001 into the same table. Its primary key already exists after setup, so the insert raises a duplicate-key error even if you have not committed event 5999. A rolled-back insertion of 5999 does not leave a duplicate key behind. Run rollback separately after the expected error. Your checks should distinguish the discarded new priority from the earlier committed assignment and event, which remain.
+Next, the failed pair. Change the priority and copy event 5001 again. You get the duplicate-key error. Run ROLLBACK separately, then check that the new priority is gone while Agent 201's assignment and event 5999 are still there.
 
-Then compare that failure with the outdated assignment request. Imagine another screen still labels this ticket new and submits an assignment to Agent 202, user 202. The supplied UPDATE includes the condition that status must be new. Because your earlier assignment already moved the ticket to in_progress, this UPDATE returns no rows. There is no SQL exception. The following SELECT still shows Agent 201, user 201. We have not inserted a history event for this attempt because there was no assignment to record.
+Last, the outdated request. Another screen still thinks the ticket is new and tries to assign it to Agent 202. The UPDATE requires status new, but you already moved it to in_progress, so it returns no rows and raises no error. The SELECT still shows 201. We write no event, because nothing was assigned.
 
-Use short comments in the same SQL file to explain what happened. The explanation should answer why putting the update and insert in separate committed transactions could leave the application's current state and history inconsistent. It should not just say that transactions are safer.
+In short SQL comments, explain why the update and insert must commit together. Add one sentence for the developer: check the returned ticket before writing history or announcing success. An empty result could mean an outdated status or a missing ticket, so look at the current record.
 
-Add one sentence for the application developer: check the returned ticket before writing history or announcing success. If no row was returned, inspect the current record rather than telling the caller that Agent 202 now has the ticket. An outdated status and a missing ticket can both produce an empty result, so the count tells us that our requested change did not happen, but does not by itself diagnose every cause.
-
-Keep the expected-error batch clearly labeled so someone rerunning your file knows where execution pauses. If you restart the full exercise, use its disposable setup rather than resetting the source schema. There is one submission: your SQL file with the queries, observed results, and explanation. No second database session is required for this first lab.
+To see every result, use the Colab helper in the lab. Submit one file, week_05_transaction_outcomes.sql.
 
 [Sources]
 - Week 5, Lab 1: Assign a Ticket and Record Its History Together.
@@ -145,30 +151,30 @@ Keep the expected-error batch clearly labeled so someone rerunning your file kno
 
 ## Slide 10
 
-In the first meeting we kept our attention on one connection and the boundary around related changes. Today we keep the same habit of checking actual state, but introduce concurrent sessions. That means separate connections whose transactions can overlap in time.
+Welcome back. On Day 1 we stayed on one connection and asked where the boundary around related changes belongs. Today we keep the same habit of checking the actual stored state, but now there is more than one session: separate connections whose transactions overlap in time.
 
-The situation is deliberately small. Session A changes a ticket's priority and leaves that transaction open. Session B wants to change the same ticket's status. A third connection observes the situation. The small fixture lets us account for every value without trying to diagnose a complicated application at the same time.
+The setup is deliberately tiny. Session A changes a ticket's priority and leaves its transaction open. Session B wants to change the same ticket's status. A third connection just watches. Small enough that we can account for every value.
 
-Before we look at activity views, we need to understand what readers and writers are allowed to see. An ordinary reader can obtain a committed version of the row while A's proposed change remains uncommitted. A competing update is different because it needs to coordinate with the transaction already changing that row.
+Look at the two lines on the slide. A reader can see committed data while a second writer waits. Those are two different behaviors, and we take them one at a time. A plain reader gets a committed version of the row even while A's change is uncommitted. A second writer is different. It has to coordinate with the transaction that is already changing that row, so it waits.
 
-We will capture that wait, release A, and inspect the final ticket. Then you will change just A's transaction decision and repeat the experiment. Both runs can restore progress, but they keep different data. That comparison is the reason the lab goes beyond identifying a process number.
+Then we capture that wait, release A, and inspect the final ticket. In the lab you change just one thing, how A's transaction ends, and run it again. Read the line at the bottom: you compare two ways to end the blocking transaction. Both endings let B finish, but they keep different data.
 
-The notebook supplies the connection and concurrency mechanics. You are responsible for following the SQL, predicting the result, and interpreting the captured relationship. We are not asking you to learn thread programming before you can understand a database lock. The required new skills are observing transaction state and connecting a resolution decision to its stored outcome.
+The notebook handles the connections and the concurrency. You do not need to learn thread programming. Your job is to follow the SQL, predict the result, and explain what you saw.
 
 [Sources]
 - Course Chapter 5, Waiting Is a Relationship Between Sessions.
 
 ## Slide 11
 
-A database session is the server-side context associated with a connection. Its transaction state is independent of another connection's state, even if the same person opened both and both use the same database role.
+Let's be precise about what a session is. A database session is the server-side context for one connection. Its transaction state belongs to that connection alone. So even if the same person opens two connections with the same database role, they are independent. A's open transaction is A's business, not B's.
 
-Session A in this experiment changes priority and remains uncommitted. Session B sends the competing status update. The diagnostic connection queries activity and blocking information without needing to borrow either worker's connection. Keeping these roles separate is useful because a connection waiting for its command to finish cannot also be used as if it were a free interactive observer.
+Look at the three boxes. Session A changes the priority and leaves it uncommitted. Session B changes the status and waits for the same row. The diagnostic connection reads activity and blocking relationships. Why a third one? Because a connection stuck waiting for its own command cannot also be used to look around. You need a free observer.
 
-The notebook opens three named connections and uses a Supabase session-pooler connection for this exercise. A session pool keeps a connection associated with a database session. A transaction pool has a different lifecycle, which can make session-level labels and settings unsuitable for the observations we are teaching. Two web editor tabs are not a substitute we can assume has the same behavior.
+Now read the line under the boxes. A browser tab is not necessarily a persistent database session. That is why we do not do this with two editor tabs. The notebook opens and labels three connections through Supabase's Session pooler. Session mode keeps each connection tied to one database session. A transaction pooler hands connections around between transactions, which would break exactly the things we are trying to observe.
 
-The fixture is also separate. It uses lock_lab.tickets with one row, ticket 1004, starting at medium priority and open status. That starting state is intentionally different from the full Metro Support ticket. The simplified table focuses the experiment on one priority change and one status change. You should use the starting row printed by this notebook rather than copy the source dataset's values from memory.
+The fixture is separate too. Look at the bottom: lock_lab.tickets, row 1004, medium and open. That is not the Metro Support ticket from Day 1, and that is on purpose. One priority change and one status change, nothing else. Use the starting row the notebook prints, not values from memory.
 
-Only run this in your personal practice environment. The setup recreates the disposable schema, and cleanup removes it. It does not need to reset your earlier course tables.
+Run this only in your own practice project. Setup recreates the disposable schema, and cleanup removes it.
 
 [Sources]
 - Notebook 02 connection and fixture code.
@@ -176,15 +182,15 @@ Only run this in your personal practice environment. The setup recreates the dis
 
 ## Slide 12
 
-MVCC stands for multi-version concurrency control. Instead of treating an update as immediately replacing the only readable value, PostgreSQL maintains row versions and determines which versions are visible to a particular read.
+MVCC stands for multi-version concurrency control, and it explains the first surprise of the day. When A updates a row, PostgreSQL does not overwrite the only copy. It keeps row versions, and it decides which version each read is allowed to see.
 
-In our experiment, the committed starting row is medium and open. Session A's uncommitted update creates a proposed high-priority version. A can see that change because a transaction reads its own earlier writes. The ordinary diagnostic reader, using its own statement, still sees medium and open. It does not have to show A's uncommitted value just because A has already received an update result.
+Look at the two boxes on top. The committed version of 1004 is medium and open. A's update creates a new, uncommitted version: high and open. Now look at the two boxes below. A sees its own change, high, because a transaction always sees its own earlier writes. But an ordinary reader on another connection sees medium and open. It does not wait for A, and it does not see A's uncommitted value just because A already got an update result back.
 
-The notebook queries that reader before starting B's competing write, so you can compare both observations directly. This is a concrete example of visibility, rather than only a definition of the acronym. We will separately observe that B's update waits for the same row. Reader visibility and writer coordination are different parts of the behavior.
+The notebook runs that reader before B even starts, so you can compare both observations directly. B's update waiting for the row is a separate behavior, which we get to in two slides.
 
-These versions do not mean the application has two tickets. They are internal representations of the same logical row with different visibility conditions. They also do not replace the event history from the first lab. Old versions can become obsolete and be reclaimed by database maintenance. If the application needs a lasting record of an assignment, it must store that history deliberately.
+Two things MVCC is not. It is not two tickets. These are internal versions of one logical row. And read the line at the bottom: old versions are not a permanent event archive. Database maintenance reclaims versions that nobody can see anymore. If you need a lasting record of what changed, you store it on purpose, like the events table from Day 1.
 
-Long-running transactions can keep old versions relevant and complicate cleanup. That gives us another reason to finish transactions promptly. The exact set of values visible across multiple reads depends on the isolation level, which is the next distinction.
+Also, a long-running transaction can keep old versions relevant and get in the way of that cleanup. One more reason to finish transactions promptly.
 
 [Sources]
 - Course Chapter 5, MVCC Lets Readers and Writers Coexist.
@@ -192,15 +198,15 @@ Long-running transactions can keep old versions relevant and complicate cleanup.
 
 ## Slide 13
 
-This comparison uses a separate reasoning example. A reads a priority value of low. B then changes that value to high and commits. A has not ended its transaction and reads the row again. The question is whether that second ordinary read should use a new snapshot or retain the earlier snapshot.
+This slide uses a separate thought experiment, so read the line at the top. A reads the priority and gets low. Then B changes it to high and commits. A has not finished its transaction, and it reads the row again. Does A see high or low? It depends on A's isolation level.
 
-At Read Committed, PostgreSQL's default, the second statement receives a new snapshot and can see high. That can be useful for an interactive queue where recently committed updates should appear. It also means that two reads inside one transaction are not guaranteed to show identical data.
+First row, Read Committed, which is PostgreSQL's default. Each statement starts a new snapshot, so A's second read sees high. That suits a live work queue. But it means two reads inside one transaction can disagree.
 
-At Repeatable Read, A's ordinary second read still shows low. Its snapshot was established by the first data statement. B's committed high value has not disappeared; a new transaction can see it. A is simply continuing to read from its earlier transaction snapshot.
+Second row, Repeatable Read. A's snapshot was established by its first data statement, so the second read still shows low. B's high value did not vanish. Look at the note at the bottom: a fresh transaction would see it. A is simply still reading from its earlier snapshot.
 
-Serializable also supports a stable transaction view, but its stronger purpose is to reject combinations of decisions that cannot fit an equivalent serial execution. Applications must be prepared to retry a transaction that receives a serialization failure. Stronger isolation does not mean every conflicting transaction will quietly succeed.
+Third row, Serializable. You also get a stable view, but the stronger point is that PostgreSQL may reject combinations of decisions that could not have happened in some one-at-a-time order. When it does, the application has to retry the whole transaction. Stronger isolation does not mean nothing ever fails.
 
-For today's lab, use the notebook's ordinary default behavior. You are not required to implement all three isolation levels. What you should be able to explain is why a later read might differ from an earlier read, and why a stable view is not the same thing as a guarantee that an entire application invariant has been encoded correctly. Chapter 5's on-call example explores that last point further.
+For today's lab, use the notebook's ordinary default. You do not have to implement all three levels. What you should be able to explain is why a later read might differ from an earlier one, and why a stable snapshot alone does not guarantee every business rule. Chapter 5's on-call example explores that last point.
 
 [Sources]
 - Course Chapter 5 isolation comparison and on-call example.
@@ -208,15 +214,13 @@ For today's lab, use the notebook's ordinary default behavior. You are not requi
 
 ## Slide 14
 
-Read the two SQL blocks as operations on separate connections. A begins, changes ticket 1004's priority to high, and remains uncommitted for the controlled experiment. B begins and attempts to change that same row's status to in progress. Although the two statements assign different columns, they still target the same row.
+Now the writer. Read the two code blocks as two different connections. On the left, A begins, sets ticket 1004's priority to high, and then just stays there, uncommitted. On the right, B begins and tries to set the same ticket's status to in_progress.
 
-B's update must coordinate with the transaction already changing that row. It waits before it can reach commit. The fact that an ordinary reader could see medium and open did not give another writer permission to finalize a conflicting row change without that coordination.
+Notice that they change different columns. That does not matter. They change the same row, and a row change has to wait for another transaction's uncommitted change to that row. So B waits, before it ever reaches its COMMIT. The fact that a reader could see medium and open a moment ago gives a second writer no permission to skip that coordination.
 
-The timeout in B bounds how long its statement can continue. It is a safety limit for the exercise, not a resolution of A's transaction. If B times out, A can still hold its uncommitted work. The appropriate cleanup must address both sessions' actual states. Do not treat a timeout message as proof that all locks disappeared.
+Now look at B's SET LOCAL statement_timeout line. That is a safety limit for the exercise, so B cannot wait forever. It is not a fix. Read the note at the bottom: a timeout in B would not end A's transaction. If B times out, A is still holding its uncommitted change.
 
-The notebook runs the sequence inside one experiment cell, using a small background worker for B. The main execution path captures the activity result, ends A's transaction, and waits for B to finish before returning. This avoids asking you to leave a transaction open while reading the next page of instructions.
-
-The code shown here explains the SQL mechanism. Use the notebook rather than copying these blocks into arbitrary browser tabs. That way we know the connections are distinct and can ensure the demonstration finishes its own work. Afterward, the saved output remains available for careful interpretation without leaving the ticket blocked.
+The notebook's code differs from the slide in small details. It sets B's fifteen-second timeout for the whole session, it adds RETURNING so you can see the row, and it gives A its own idle-in-transaction timeout as a second safety net. The mechanism is the same. It runs the sequence in one cell: B waits in a small background worker, while the main code captures the activity, ends A's transaction, and waits for B to finish. Use the notebook rather than pasting these blocks into browser tabs.
 
 [Sources]
 - Notebook 02 controlled concurrency code.
@@ -224,15 +228,15 @@ The code shown here explains the SQL mechanism. Use the notebook rather than cop
 
 ## Slide 15
 
-The activity view describes database processes and their current state. This query selects the PID, application name, activity state, wait information, and transaction age. It also asks pg_blocking_pids to identify processes preventing the selected session from continuing.
+So B is stuck. How do we see that? We ask PostgreSQL. pg_stat_activity is a view with one row per server process: what it is doing, and what it is waiting on.
 
-A PID is a process identifier, not a ticket identifier or user identifier. The result belongs to a particular observation of a running server. You should not expect another student's PID values to match yours, and you should never use a number from this slide as a command target.
+Read the SELECT list. pid, application_name, and state. Then wait_event_type and wait_event, which say what kind of thing it is waiting for. Then the important one, pg_blocking_pids of pid, which returns the process IDs preventing this session from continuing. And transaction_age, the clock time now minus the moment the transaction started.
 
-The application names help us label the demonstration. The notebook goes further and filters by the two exact PIDs associated with the connections it just opened. That prevents another similarly named practice session from being mistaken for this run's session. It supplies those values through parameter placeholders rather than assembling SQL by concatenating text.
+Read the note on the right. A PID is a process identifier on the database server. It is not a ticket ID and not a user ID. You should never take a number from a slide and use it as the target of a command.
 
-Transaction age is calculated relative to the capture time. It can help distinguish a brief, expected overlap from unexpectedly old work, but age alone does not decide whether a transaction should be committed or discarded. We still need ownership, purpose, and data consequences.
+The WHERE clause here filters by the application names the notebook gave its connections. The notebook goes one step further, as the bottom note says. It narrows the query to the two exact PIDs it just opened, so another practice session with a similar name cannot get mixed in, and it passes those values as parameters instead of gluing text into the SQL.
 
-Access to activity details depends on permissions and managed-service settings. Missing query details are not a reason to grant broad access indiscriminately. In this personal exercise the connections use the same course identity. In an operational environment, a designated monitoring role and appropriate handling of query text would be part of the design. The next slide shows how to interpret the important relationship without confusing activity with progress.
+Transaction age helps you tell a brief, normal overlap from something old and forgotten. But age alone does not tell you whether to commit or discard. You still need the owner, the purpose, and the data consequences. And what you can see depends on permissions. Hidden details are not a reason to grant broad access.
 
 [Sources]
 - Notebook 02 diagnostic query.
@@ -241,15 +245,15 @@ Access to activity details depends on permissions and managed-service settings. 
 
 ## Slide 16
 
-These PID values are illustrative and match the teaching trace rather than your current server. Start with B. Its state is active, but its wait is a lock wait on a transaction identifier. Active means the backend is executing a command; it does not guarantee that the command is currently making progress or consuming CPU.
+Here is what that query returns. These PIDs are illustrative. They match the supplied teaching trace, not your server. Start with the second row, B, PID 7332. State: active. Wait: Lock, transactionid. Active means the backend is in the middle of a command. It does not mean the command is making progress. B is active and stuck at the same time.
 
-The blocking-PID result for B contains 7310. That points to A. A is idle in transaction: it is waiting for another client command while its transaction remains open. This is why the word idle must not be interpreted as having no effect on other work.
+Now look at B's last column. Blocking PIDs: 7310. That points to A. Look at A's row, PID 7310. State: idle in transaction. A is waiting for its client to send the next command, but its transaction is still open. So "idle" does not mean harmless here. The idle one is the one holding everybody up.
 
-The empty blocker list for A says that this observation does not show A waiting on another process. It does not say that A holds no locks. In this experiment A's uncommitted row change is precisely what B needs to wait for. The direction of the relationship matters: B waits for A, not the other way around.
+A's blocking list is empty. That only says this observation does not show A waiting on anyone. It does not say A holds no locks. In fact A's uncommitted change is exactly what B is waiting for. Direction matters: B waits for A, not the other way around.
 
-ClientRead is a different wait description from B's lock wait. A is waiting for input from its client. B is waiting for a database transaction dependency to end. A session can therefore be waiting in one sense while also acting as a blocker in another.
+Compare the two wait descriptions. A's ClientRead means it is waiting for input from its client. B's lock wait means it is waiting for another transaction to end. So a session can be waiting in one sense and blocking in another.
 
-Your notebook captures both rows while the relationship is real, then releases the transaction before displaying the saved snapshot. When you write your explanation, make that timing clear. You observed a captured wait; you are not claiming the same PID relationship still exists after cleanup. We then use the final row to establish which changes survived the resolution.
+The notebook captures both rows while the wait is real, then releases A before showing you the snapshot. In your write-up, be clear about that timing. You observed a captured wait. You are not claiming the relationship still exists after cleanup.
 
 [Sources]
 - Notebook 02 illustrative trace and captured activity fields.
@@ -257,15 +261,15 @@ Your notebook captures both rows while the relationship is real, then releases t
 
 ## Slide 17
 
-The two rows describe the experiment you will compare. In both cases B is already waiting to change status. The difference is what A does with its proposed high priority.
+Now the payoff. In both rows of this table, B is already waiting to change the status. The only difference is what A does with its proposed high priority.
 
-If A rolls back, its priority change is discarded. That releases the row lock, and B can complete its status update and commit. A fresh query shows medium priority and in-progress status. We kept B's change but not A's proposed change.
+First row: A rolls back. Its priority change is discarded, the row lock is released, and B completes its status update and commits. Run the query at the bottom and you get medium, in_progress. We kept B's change and lost A's.
 
-If A commits, the high priority becomes part of the committed row. B can then proceed with its update on the row version that remains after A completes, subject to the operation's condition. In this small fixture, B targets the same ticket identifier and changes only status, so the final row shows high priority and in-progress status.
+Second row: A commits. Now high is part of the committed row. B proceeds on the version that remains after A finishes. Since B changes only the status, the final row is high, in_progress.
 
-Neither outcome follows merely from saying that B finished. Both restore progress. Only inspecting the columns tells us which data decision we made. That is why an incident update should include verification of the stored result rather than ending with the statement that the spinner stopped.
+Read the line at the bottom. B finishing establishes progress. The row values show which changes survived. If all you report is "the spinner stopped," you have not said which data decision you made. In both cases the application started working again. In one of them, somebody's priority change quietly disappeared. That is why an incident update has to include the stored result.
 
-These outcomes use the stated starting row and this particular SQL. They are not a rule that any waiting statement will always succeed after a blocker commits. A concurrent deletion, a condition that no longer matches, another error, or a different isolation level could change the result. For the assigned lab, hold those other factors constant and change just A's decision. The comparison then has a clear explanation instead of several competing causes.
+One caution. These outcomes hold for this starting row and this SQL. They are not a rule that a waiting statement always succeeds once its blocker commits. A concurrent delete, a condition that no longer matches, another error, or a different isolation level could change what B gets. For the lab, hold everything else constant and change only A's decision. Then the difference between your two runs has exactly one explanation.
 
 [Sources]
 - Notebook 02 controlled fixture and two transaction endings.
@@ -273,15 +277,15 @@ These outcomes use the stated starting row and this particular SQL. They are not
 
 ## Slide 18
 
-People often describe both situations as a slow query. One command might be doing a large amount of necessary or unnecessary work. Another might be unable to proceed because a different transaction has not released what it needs. The same user-visible delay can therefore call for different investigations.
+People call both of these situations "a slow query," and they need completely different checks. Look at the table.
 
-If we observe a lock wait and a blocking PID, we first inspect the relevant transaction and its ownership. Adding an index does not make an already open transaction release its lock. It might reduce the duration of future work in some cases, but it is not the direct resolution of this captured dependency.
+First row: a lock wait with a blocker. The query is not slow because it is doing a lot of work. It cannot proceed, because another transaction has not let go. So the useful next check is about that transaction: its owner, its state, its age, and the operation that is waiting. But look at the last column. None of that establishes that the blocker should be killed.
 
-If we do not observe this lock wait, that does not prove the query is healthy or actively using CPU. It may be waiting on I/O, returning data to a client, or moving between different execution phases. Plans and work measurements help with those questions. We will study query plans and indexes later, so today we are learning to separate categories of observation rather than to tune every possible delay.
+Second row: a long-running query that is not in this lock wait. Now you look at the plan, the work performed, and I/O and other waits. And the last column says that no lock wait does not prove the query is using CPU efficiently. We learn to read plans and choose indexes in Week 7.
 
-Also distinguish canceling a command from ending a connection. A cancellation request targets running work. An idle connection with an open transaction may have no command available to cancel. Terminating a connection is a stronger action and can discard uncommitted work. Our controlled experiment does neither blindly: it uses the known owner connection to make an explicit transaction decision.
+Read the first line at the bottom. An index cannot release another session's open transaction. If B is blocked by A, no amount of tuning B fixes that.
 
-That boundary is part of the skill. A diagnostic function can identify a dependency, but it does not supply authority or decide whether the business operation should be retained.
+And canceling is different from ending a connection. A cancel request stops a running command. An idle-in-transaction session may have no command to cancel. Terminating the connection is a stronger action, and it discards uncommitted work. Our experiment does neither blindly. It uses A's own connection to make an explicit decision. A diagnostic function identifies a dependency. It does not give you the authority to decide what happens to someone else's work.
 
 [Sources]
 - Course Chapter 5, Safe Incident Communication.
@@ -289,15 +293,15 @@ That boundary is part of the skill. A diagnostic function can identify a depende
 
 ## Slide 19
 
-Our notebook creates a one-direction wait: B needs A to finish. A is not waiting for B, so ending A's transaction can release the dependency. A deadlock has a different shape.
+Everything so far has been a one-direction wait. B needs A. A does not need B. So when A ends, the dependency is gone. A deadlock has a different shape.
 
-Here A already holds the row for ticket 1001 and next requests ticket 1002. B already holds ticket 1002 and next requests ticket 1001. A cannot get its next resource until B releases it, and B cannot get its next resource until A releases it. Follow the two arrows and you return to the starting session. That cycle is the key idea.
+Follow the boxes. A already holds ticket 1001 and now requests ticket 1002. B already holds ticket 1002 and now requests ticket 1001. So A waits for B, and B also waits for A. Follow the arrows and you come right back to where you started. That cycle is the whole idea. Read the middle line: neither can finish by waiting alone.
 
-Simply asking both transactions to wait longer cannot solve this arrangement. PostgreSQL detects deadlocks and aborts one transaction so the other can proceed. Application code must handle the error and, when appropriate, retry the complete transaction using fresh state. Retrying only a final statement can lose the relationship to the earlier decisions that belonged to the transaction.
+So PostgreSQL detects the cycle and aborts one of the transactions, which lets the other proceed. The application has to catch that error and, when it makes sense, retry the complete transaction with fresh data. Look at the last line: retries must restart the transaction. Retrying only the final statement loses the earlier decisions that belonged with it.
 
-One prevention technique for this pattern is consistent lock order. If operations that need both tickets acquire them in the same order, they do not create this particular opposite-order cycle. That is not a promise that every possible deadlock in a larger system disappears, but it is a concrete design rule connected to the diagram.
+How do you prevent this particular pattern? Consistent lock order. If every operation that needs both tickets takes them in the same order, this opposite-order cycle cannot form. That is not a promise that no deadlock can ever happen in a large system, but it is a concrete rule you can tie to this picture.
 
-The optional extension asks you to draw and explain this relationship. You do not need to create a deadlock on a hosted project to understand it, and it is not another required submission. The required live lab remains the simpler blocker-and-waiter case so its data outcomes stay easy to account for.
+This is the optional Deadlock Detective activity in the README. Draw the wait-for graph and explain it on paper. It is ungraded and adds no submission, and you should not create a real deadlock in a shared database.
 
 [Sources]
 - Week 5 optional wait-for graph activity.
@@ -305,13 +309,13 @@ The optional extension asks you to draw and explain this relationship. You do no
 
 ## Slide 20
 
-Pause here to connect the assignment to the tools students will use. Lab 2 is the assignment. Notebook 02 is the file containing its code and writing space. Colab runs that file in a hosted Python runtime. Supabase hosts the PostgreSQL database. The notebook sends SQL to that database through three separate connections.
+Before you run anything, let's be clear about how the pieces fit, because three different things are involved. Look at the table. Lab 2 is the assignment: compare rollback and commit. The Colab notebook, Notebook 02, holds the supplied Python and SQL cells and the space for your writing. Colab runs it in a hosted Python runtime. And your Supabase project hosts the PostgreSQL database those cells connect to. The notebook talks to that database over three separate connections.
 
-Open the Lab 2 page from the Week 5 README and click Open in Colab. Choose File, then Save a copy in Drive. Work in that copy so the two results and your comparison remain available. Keep the existing personal course project open in a separate Supabase tab. You do not need a new database project or another copy of the Metro Support dataset for this exercise.
+Now the steps. Open the Lab 2 page from the Week 5 README and click Open in Colab. Then choose File, Save a copy in Drive. Work in your copy, so your two results and your comparison stay saved. Keep your existing course project open in a separate Supabase tab. You do not need a new project or another copy of the Metro Support dataset.
 
-When we used Supabase's SQL editor, it already had access to the project's database. Colab runs elsewhere and needs connection details. Today's code runs in the Colab cells. Do not paste Python into the SQL editor, and do not treat two browser tabs as two controlled PostgreSQL sessions. The notebook creates and labels the actual connections.
+The Supabase SQL editor lives inside your project, so it can already reach the database. Colab runs somewhere else, so it needs connection details. Read the line at the bottom: run today's code in Colab. Do not paste Python into the SQL editor, and do not treat two browser tabs as two controlled database sessions. The notebook opens and labels the real connections.
 
-The connection walkthrough is also near the top of the notebook, before any credentials are requested. Students can follow it while you demonstrate. The notebook creates its own disposable lock_lab row, beginning with medium priority and open status. The earlier transaction_lab event IDs do not control this experiment.
+The notebook's First-Time Setup section near the top walks through all of this before it asks for any credential. It creates its own lock_lab row, medium and open. The Lab 1 event IDs do not matter today.
 
 [Sources]
 - Week 5, Lab 2 and Notebook 02 introduction.
@@ -319,15 +323,15 @@ The connection walkthrough is also near the top of the notebook, before any cred
 
 ## Slide 21
 
-In the existing Supabase course project, click Connect and choose Session pooler. Copy the PostgreSQL URI shown for that method. It begins with postgresql://. The project's HTTPS API URL and its API keys serve a different interface. This notebook uses a PostgreSQL connection string.
+Now the connection string. In your Supabase course project, click Connect, choose Session pooler, and copy the PostgreSQL URI. It begins with postgresql, colon, slash, slash. The project's HTTPS API URL and its API keys belong to a different interface, and they will not work here.
 
-Keep the actual host, port, and username from the copied string. Replace the literal [YOUR-PASSWORD] placeholder with the database password chosen for that project. It is not the password used to sign into the Supabase website. If you do not know the database password, stop and resolve that access before continuing. Do not guess a hostname or paste a credential into a shared slide, chat, or saved notebook cell.
+Keep the host, port, and username exactly as you copied them. Replace the literal text YOUR-PASSWORD, in square brackets, with the database password for that project. That is not the password you use to sign into the Supabase website. If you do not know your database password, stop and sort that out first.
 
-Reserved characters inside a password need percent encoding in a URI. For example, an at sign becomes %40, a hash becomes %23, and a percent sign becomes %25. Encode the password component only, once. The notebook explains this next to the connection steps. A malformed URI can fail before PostgreSQL even checks the password.
+Look at the box on URL encoding. Some characters mean something special inside a URL. If your password has an at sign, write %40. A hash becomes %23, and a percent sign becomes %25. Encode only the password, and only once. A malformed URL can fail before PostgreSQL even checks your password.
 
-The notebook requires an encrypted connection. If the copied URL ends in /postgres and has no query parameters, append ?sslmode=require. If it already has other query parameters, use &sslmode=require. If sslmode is already present, set that existing value to require or keep verify-ca or verify-full. Do not add two conflicting sslmode parameters. The require mode encrypts this classroom connection but does not verify the server hostname. A production configuration uses verify-full and an appropriate CA certificate.
+Next, encryption. Look at the before and after. If the URL ends in slash postgres with nothing after it, add question mark sslmode equals require. If it already has a query, add ampersand sslmode equals require instead. If sslmode is already there, set it to require or keep verify-ca or verify-full, but never add it twice. Require encrypts this classroom connection without verifying the server's hostname. Production uses verify-full with the proper certificate.
 
-Prepare the URL privately, then paste it only into the hidden prompt in Colab. The next slide shows exactly which cells to run and what success looks like. The notebook clears its URL variable after opening the connections and does not intentionally save the prompt input in the file.
+And the bottom line: paste the finished URL only into Colab's hidden connection prompt.
 
 [Sources]
 - Notebook 02 connection validation.
@@ -337,45 +341,47 @@ Prepare the URL privately, then paste it only into the hidden prompt in Colab. T
 
 ## Slide 22
 
-Return to the Colab copy and find the configuration cell near the top. Set USE_CLOUD to True and leave KEEP_A_CHANGE False for the first run. A downloaded notebook defaults to USE_CLOUD False, which skips all database connections and offers an interpretation trace. Seeing that trace does not mean a cloud connection worked.
+Back in your Colab copy, find the configuration cell near the top and look at the two flags on the slide. Set USE_CLOUD to True. Leave KEEP_A_CHANGE as False for the first run. That is the rollback case. The notebook ships with USE_CLOUD set to False, which skips every connection and shows an offline trace. Seeing that trace does not mean you connected.
 
-Run the code cells from the top in order, beginning with the psycopg installation cell, then the configuration cell. In Section 1, run the connection cell. It displays Paste the temporary PostgreSQL connection URL. Paste the prepared URL into that hidden input and press Enter. It is normal for the cell to wait while it needs your input.
+Run the code cells one at a time from the top: the install cell, the configuration cell, then the connection cell in Section 1. It says Paste the temporary PostgreSQL connection URL. Paste your URL into that hidden box and press Enter.
 
-Proceed when the output says Opened Session A, Session B, and the diagnostic session. Then run Section 2. It creates the disposable schema and prints Starting row: (1004, 'medium', 'open'). These are two separate checkpoints from two cells. If a connection fails, stop before setup and inspect the selected connection method, database password, URL syntax, SSL setting, and whether the project is running. A skipped cloud path means USE_CLOUD is still False or its configuration cell was not rerun.
+Look at the success box. Continue only when you see Opened Session A, Session B, and the diagnostic session. Then Section 2 builds the disposable table and prints Starting row: 1004, medium, open. Two separate checkpoints from two cells. If the connection fails, stop there and check the URL, the database password, and the SSL setting.
 
-Section 3 defines and displays A's SQL. Section 4 runs the actual concurrent experiment. It captures B waiting, rolls A back, and waits for B to finish before returning. Section 5 prints that captured activity. Under B, the blocking_pids list should contain A's PID. Section 6 prints A's decision and the final row, which should be (1004, 'medium', 'in_progress') for this rollback case. By the time those results display, the controlled wait has ended.
-
-Run Section 7 cleanup and record the first result in the final Markdown comparison. Change only KEEP_A_CHANGE to True and rerun from configuration through cleanup. Keep USE_CLOUD True. The new setup restores the same starting row, and the second final row should be (1004, 'high', 'in_progress'). Both runs should finish successfully. Students do not need to produce a duplicate-key error in this lab.
+Then the bottom of the slide. Section 4 runs the experiment: it captures B waiting, rolls A back, and waits for B to finish. Section 5 shows the blockers, and under B, blocking_pids should contain A's PID. Section 6 shows the final row, 1004, medium, in_progress. Run Section 7 cleanup. Then change only KEEP_A_CHANGE to True and rerun from configuration through cleanup. You should get 1004, high, in_progress. Both runs succeed. There is no duplicate-key error in this lab.
 
 [Sources]
 - Notebook 02 configuration, connection, setup, experiment, diagnostic output, final state, and cleanup cells.
 
 ## Slide 23
 
-Your individual lab compares two resolutions of the same controlled wait. Start with the rollback case, follow the captured relationship from B's PID to A's PID, and keep the final priority and status in the comparison cell. The order of rows in the output is not the definition of which session blocks another; the blocking-PID result establishes that relationship.
+Here is Lab 2. It is individual work in Notebook 02, and you compare two endings of the same controlled wait.
 
-Before the second run, predict what will remain when A commits. Then change the setting, rerun the experiment from configuration through cleanup, and compare the actual row with your prediction. B's statement stays the same. Explain why the final priority differs even though B completes in both cases.
+Start with the rollback case. Follow the captured relationship from B's PID to A's PID, and keep the final priority and status for your comparison. Do not decide who is blocking whom by which row prints first. The blocking_pids result establishes that.
 
-Your short writing addresses the developer whose status update appeared stuck. Use one run's observed relationship to explain the wait and use the comparison to explain the consequence of the transaction choice. You do not need to fill out a separate incident form or provide a collection of screenshots.
+Before the second run, write down your prediction. What will the row look like if A commits? Then change the setting, rerun from configuration through cleanup, and compare the actual row with your prediction. B's statement never changes. Then explain why B finishes both times but the final priority differs.
 
-If a connection is unavailable, the supplied trace supports a different kind of practice. Label the rollback observation as a supplied trace and the commit result as an unexecuted prediction. Tell me that you used that path so we can arrange a connection demonstration. Interpreting a trace is useful, but it is not proof that you opened or administered a live session.
+Then, in the final Markdown cell, complete the comparison table and write a short update to the developer whose status update looked stuck. Use one run's actual PIDs to explain the wait, and use your comparison to explain what the transaction choice did to the data. No incident form and no screenshots.
 
-Submit the completed notebook with the comparison and explanation in its final Markdown cell. Confirm cleanup ran and remove any accidentally saved credential. The database result and your reasoning belong together in this one artifact.
+If you cannot get a connection, the notebook includes a supplied trace. Label the rollback result as a supplied trace and the commit result as an unexecuted prediction, and tell me, so we can arrange a connection demonstration. A trace is practice, not proof of a live session.
+
+To submit, save your copy in Colab, use Share to give me viewer access, and put that sharing link in Brightspace. Run cleanup after each experiment, and make sure no credential was saved in the notebook.
 
 [Sources]
 - Week 5, Lab 2: The Query Finished, but Which Change Survived?
 
 ## Slide 24
 
-This short update explains the rollback case in ordinary technical language. It identifies the status update as the waiting operation, ties the wait to A's uncommitted change of the same row, and points to the captured PID relationship. Then it states what happened to the actual data after A rolled back and B committed.
+Here is what a useful update looks like, for the rollback case. "The status update waited for A's uncommitted change to the same ticket." That names what was stuck and why. "The captured result showed B's PID blocked by A's PID." That is the evidence. "Rolling back A let B finish: priority stayed medium and status became in_progress." That is what happened to the data.
 
-The placeholders for A's and B's PIDs are not numbers to invent. Use values from your executed run, or identify the supplied teaching trace. We want the explanation to reflect how the conclusion was obtained rather than imitate the appearance of an incident report.
+Three sentences, and each one does a job: what waited, how we know, and what was stored.
 
-Your comparison adds the consequence of committing A. B still completes its status update, but the high priority remains. That is the important addition: choosing an action to restore progress also chooses what happens to somebody else's proposed data change.
+Look at the bottom line of the slide. Use the real PIDs from your run, or say clearly that you used the supplied trace and an unexecuted prediction. Do not invent numbers to make it look like an incident report.
 
-In a real application, we would need to know whether that priority change was valid, who owned the transaction, and whether other work belonged to the same operation. We might contact the owner or follow an established operational procedure rather than decide from a process list alone. You can state that limitation without pretending our classroom experiment caused or measured an actual production outage.
+Now the middle box. Your comparison adds the commit case. B still finishes, but now the high priority remains. That is the point: choosing how to restore progress also chooses what happens to somebody else's proposed change.
 
-This kind of writing is useful in interviews as well. Instead of saying only that you know PostgreSQL locks, you can describe a controlled test, the diagnostic function you used, the different outcomes you verified, and the limit of your conclusion. That gives someone a concrete basis for asking about your understanding.
+So say why you could not choose blindly in a real application. You would want to know whether that priority change was valid, who owned the transaction, and whether other work belonged to it. You might contact the owner or follow an established procedure rather than decide from a process list.
+
+This is also how you talk about it in an interview. Not "I know PostgreSQL locks," but the test you ran, the function you used, the outcomes you verified, and the limits of your conclusion.
 
 [Sources]
 - Course writing guide, Write an Incident Update.
@@ -383,15 +389,15 @@ This kind of writing is useful in interviews as well. Instead of saying only tha
 
 ## Slide 25
 
-We can now describe several claims that initially sound similar but require different checks. A statement succeeded. A transaction committed. A waiting query finished. The application retained the intended state. Those are not interchangeable statements.
+Let's pull the week together. Read the line in the middle of the slide: a successful statement, a finished query, and a correct application outcome are different claims. They sound alike, and each one needs its own check.
 
-Our first lab grouped an assignment and its history into one transaction. We observed both rollback and commit, then saw that a failed statement prevented a new partial change from persisting. We also separated an SQL error from a valid update that matched no rows. That distinction explained why transaction boundaries still need correct application logic.
+On Day 1 we put an assignment and its history in one transaction. We watched rollback and commit, and we saw a failed statement keep a new partial change from persisting. We also separated a real SQL error from a valid update that matched zero rows, which is why transaction boundaries still need correct application logic around them.
 
-The second lab introduced independent sessions. A reader could see the committed row while another connection held an uncommitted version. A competing writer waited, and PostgreSQL's activity information showed the dependency. Releasing A with rollback or commit let B proceed, but the final priority revealed different data decisions.
+On Day 2 we opened independent sessions. A reader saw the committed row while another connection held an uncommitted version. A competing writer waited, and pg_blocking_pids showed exactly which transaction it was waiting for. Rolling back or committing A both let B finish, but the final priority revealed two different data decisions. Look at the top of the slide: the database showed us what committed, what another session could see, and which transaction prevented progress.
 
-The models and terminology help because they organize those observations. MVCC explains visibility through row versions. Isolation determines the snapshot behavior. Locks coordinate conflicting work. A wait-for cycle explains why deadlock differs from the one-direction wait we created. You do not have to memorize every lock mode to reason correctly about this example.
+The vocabulary organizes those observations. MVCC explains what readers see. Isolation decides which snapshot a read uses. Locks coordinate conflicting work. A wait-for cycle is what makes a deadlock different from the one-way wait we created.
 
-Next we will ask who should be allowed to perform each operation. That introduces roles, privileges, and row-level security. The same discipline carries forward: use the intended identity, observe what the system actually permits, and verify the result before making a larger claim. Your SQL file and notebook already contain concrete examples you can return to when those access-control decisions become more complicated.
+Next week, as the bottom of the slide says, roles and permissions determine who may perform each operation. Same discipline: act as the intended identity, observe what the system actually allows, and verify before you claim.
 
 [Sources]
 - Course Chapter 5 and Week 5 individual labs.

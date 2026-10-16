@@ -39,6 +39,10 @@ already exists, inspect your previous attempt instead of adding it a second time
 ## 2. Rehearse the Change
 
 Build the migration between BEGIN and ROLLBACK. Run the whole block together.
+If SQL Editor hides the SELECT before ROLLBACK, use the linked Colab notebook
+to observe each result on its persistent connection. Do not split a transaction
+across separate web-editor requests. Run each precheck SELECT separately when
+you need to see every result in SQL Editor.
 
 ```sql
 BEGIN;

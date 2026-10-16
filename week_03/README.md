@@ -15,7 +15,14 @@ surprising users or losing the ability to verify and recover?
 
 ## Before Class: Assigned Reading
 
+Read the [textbook corrections](../COURSE_CORRECTIONS.md) with the assigned sections.
+
 Use [Chapter 4: Safe Changes Are Planned and Verified](../Operating_Cloud_Databases.pdf).
+For the schema prerequisites, revisit Chapter 3's **Keys Identify and Connect
+Facts** and **Constraints Reject Invalid States** in the same textbook. Before
+the migration lab, distinguish a primary or foreign key from `NOT NULL`,
+`UNIQUE`, and `CHECK`; each protects a different property. We will connect these
+rules to the supplied schema in class. There is no separate reading submission.
 
 - **Before Day 1:** read **Views Create a Query Interface** through **Introspection Reveals the Actual State**. Trace the explicitly committed and rolled-back insertions. Reading examples use separate object names so they can coexist with the lab.
 - **Before Day 2:** read from **What a Migration Must Establish** through **Verification Should Cover Structure and Meaning**. Focus on unknown historical values and compatibility with older clients.

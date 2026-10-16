@@ -58,6 +58,7 @@ Open the notebook, save a copy in Drive, and run the cells through
 - [SQL and relational review notebook](01_relational_sql_review.ipynb)
 - [Week 2 student deck](week_02_relational_algebra_sql_review.pptx)
 - [Week 2 PDF handout](week_02_relational_algebra_sql_review.pdf)
+- [Week 2 structured text transcript](week_02_relational_algebra_sql_review_transcript.md)
 
 The notebook includes the data and runs DuckDB inside Colab. You do not need a
 Supabase account or a database password. Before either lab, run **Use the Complete

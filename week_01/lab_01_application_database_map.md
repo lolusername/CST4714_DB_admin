@@ -27,15 +27,15 @@ For this exercise, **active** means `new` or `open`. A blank assignee, shown as
 
 | agent_id | name |
 |---:|---|
-| 201 | Priya Shah |
-| 202 | Noah Williams |
+| 201 | Agent 201 |
+| 202 | Agent 202 |
 
 The dashboard first keeps active tickets, then keeps **only tickets with a
 matching agent**. It currently displays:
 
 | ticket_id | subject | agent |
 |---:|---|---|
-| 1001 | Streetlight dark near bus stop | Priya Shah |
+| 1001 | Streetlight dark near bus stop | Agent 201 |
 
 ## 1. Trace a Request
 

@@ -2,337 +2,369 @@
 
 ## Slide 1
 
-This week we will work on a request summary that looks believable but can still be wrong. Imagine that a manager opens a dashboard and sees three active requests. The application responds successfully, and the number seems reasonable. Neither fact tells us which requests the dashboard actually counted. A duplicate can cancel out a missing record and leave a reassuring total.
+Welcome to Week 11. Read the line in the middle of the slide: a request summary can look right and still count the wrong things. That is the warning for the whole week.
 
-Our first class follows the data closely enough to discover that mistake. We will begin with four tickets, trace a summary through its stages, and add a useful calculation. Then we will require a real opening date when the application writes a document. The notebook supplies the starting code so that the main work is understanding and modifying it, rather than building a connection library from scratch.
+Picture a manager opening a dashboard that says three active requests. The page loaded, there were no errors, and three sounds reasonable. But neither of those facts tells you which requests were counted. A duplicate and a missing record can cancel each other out and leave a total that looks perfectly fine. You will watch exactly that happen on Day 1.
 
-Our second class examines an ordered queue. A page needs only twenty requests, but the database might examine thousands to find them. We will compare a query before and after a compound index, preserving its result while changing how the database obtains it.
+So on Day 1 we take four tickets, follow a summary through every stage of a MongoDB pipeline, and add a useful calculation. Then we require a real opening date whenever the application writes a ticket. The notebook gives you the starting code, so your job is understanding it and changing it, not building a connection from scratch.
 
-Chapter 11 explains the same ideas in more detail. The reading and the notebook are connected parts of the lesson. By the end, we should be able to explain a result, identify the boundary of a validation rule, and support an index decision with measurements rather than product claims.
+On Day 2 we look at an ordered queue. The page shows twenty requests, but the database might look at thousands to find them. We add a compound index and check that the answer stays the same while the work goes down.
+
+Chapter 11 covers all of this in more detail. By the end of the week you should be able to explain a result, say where a validation rule stops, and back an index decision with measurements instead of product claims.
 
 Sources: Course textbook Chapter 11; Notebook 07; Week 11 assignments and implementation guide. The ticket cases are synthetic course examples.
 
 ## Slide 2
 
-This SQL query gives us a familiar starting point. The source is the tickets table. The WHERE condition keeps records whose status belongs to our definition of active: new, open, or in progress. GROUP BY combines those surviving records by category. COUNT star counts the input rows in each category, and ORDER BY makes the displayed order predictable.
+Let's start from something you already know. This is the SQL version of the summary we are about to build in MongoDB.
 
-The important conceptual change happens at grouping. Before grouping, each row represents a ticket. After grouping, each row represents a category summary. A summary row cannot automatically retain a particular ticket's subject, because several different tickets may contribute to that row. We would need to decide what such a subject should mean before adding it.
+Read it top to bottom. FROM tickets is the source. The WHERE clause keeps tickets whose status is one of our three active values: new, open, or in progress. GROUP BY category combines the survivors by category. COUNT star counts the rows that landed in each group, and ORDER BY category makes the output order predictable.
 
-MongoDB's aggregation pipeline will express this calculation through an ordered list of stages. The syntax changes, but our responsibility for defining the counted unit remains. In particular, counting rows after a one-to-many join can count related events rather than tickets. Expanding a document array can create a similar problem.
+Now look at the first line under the code: WHERE selects tickets, GROUP BY changes the unit of the result. That second half is the big idea. Before grouping, every row is a ticket. After grouping, every row is a category. That is why you cannot just add a ticket's subject to this output. Several tickets went into each row, so whose subject would it be?
 
-This query does not join any events, so the four-ticket case has a simple independent answer: one active sanitation ticket and two active streetlight tickets. We will carry that expected answer into the MongoDB example. Agreement between the two representations is useful here because we know exactly which records and which status definition each calculation uses.
+MongoDB writes the same calculation as a list of stages, which you will see in a minute. The syntax changes, but your responsibility does not. You still have to know what reaches the grouping step. If you join events first, or expand an array, you end up counting events instead of tickets.
+
+On our four tickets, this query gives one active sanitation ticket and two active streetlight tickets. Hold on to that answer, because we are going to check MongoDB against it.
 
 Sources: Original course SQL example and four-ticket fixture. PostgreSQL SELECT documentation: https://www.postgresql.org/docs/current/sql-select.html
 
 ## Slide 3
 
-These are the four documents in today's notebook, displayed as a table so that we can inspect the relevant fields together. The notebook also supplies subjects and small event arrays. These records are a fresh teaching case. Some identifiers resemble earlier course examples, but we should use today's values rather than assume that every earlier fixture is unchanged.
+Here are the four tickets in today's notebook, shown as a table so you can see the fields side by side. In the notebook they are documents, and each one also carries a subject and a small array of events.
 
-Ticket 1001 is an urgent streetlight request with status open. Ticket 1002 is a sanitation request in progress. Ticket 1003 is another urgent streetlight request, but it is resolved. Ticket 1004 is a new streetlight request with low priority. Our active definition includes the first, second, and fourth tickets. It excludes 1003 without deleting that ticket from storage.
+Walk down the ID column with me. 1001 is an urgent streetlight ticket, open. 1002 is sanitation, in progress. 1003 is another urgent streetlight ticket, but it is resolved. 1004 is a new streetlight ticket with low priority. Our active definition keeps 1001, 1002, and 1004. Look at the note under the table: resolved ticket 1003 stays stored. Leaving a ticket out of a report is not the same as deleting it.
 
-There are therefore two active streetlight requests, but only one of them is urgent. The newest of those active streetlight requests opened on February fourth. These observations come directly from the source records. They give us checks that do not depend on getting an aggregation expression right.
+Now count a few things by eye, because these are the checks we will hold the pipeline to. Two active streetlight tickets. Only one of them, 1001, is urgent. The newest of them opened on February 4. None of that depends on writing an aggregation correctly, and that is exactly what makes it a good check.
 
-The dates in this display are abbreviated for readability. The notebook constructs timezone-aware Python datetime values and the driver stores BSON dates. We will later compare those typed values with strings that merely look like dates. The display can look similar even when the stored types have different consequences for validation and application code.
+Two cautions. This is a fresh case. Some IDs look like earlier course examples, but it replaces neither the Week 10 fixture nor the CSVs, so use today's values. And the dates on the slide are shortened for display. In the notebook they are real timezone-aware dates stored as BSON dates, and later we compare them with text that only looks like a date.
 
 Sources: course/notebooks/07_aggregation_validation.ipynb, four-ticket fixture. PyMongo date handling: https://www.mongodb.com/docs/languages/python/pymongo-driver/current/data-formats/dates-and-times/
 
 ## Slide 4
 
-This diagram follows the summary from its source to its final display. The collection supplies four ticket documents. Match keeps the three active tickets. Group then creates two category summaries. Project gives those summaries the field names we want to return, and sort arranges them alphabetically by category.
+This diagram is the whole Day 1 pipeline on one slide. Follow it left to right.
 
-The numbers change from four to three to two. Those changes mean different things. Match removes an ineligible ticket from this query's stream. Group combines eligible tickets into summaries. Project and sort leave the number of summaries unchanged in this particular pipeline.
+The tickets collection supplies 4 documents. $match keeps the 3 active tickets. $group turns them into 2 category summaries. $project renames fields, and $sort puts the categories A to Z.
 
-The label under each stage describes its grain. Grain is simply what one result represents. Before grouping, one result represents one ticket. After grouping, one result represents one category. This distinction explains why a later stage cannot treat the grouped results as though each were still a complete original ticket.
+Watch how the numbers change: 4, then 3, then 2. Those drops mean different things. Match removed an ineligible ticket from this query's stream. Group combined eligible tickets into summaries. Project and sort leave the count alone in this pipeline.
 
-The notebook runs successively longer prefixes of the pipeline. That lets us see the actual documents after match, after group, and after the remaining stages. We do not need to infer every intermediate value from the final report. This pipeline intentionally has no unwind stage because the requested summary counts tickets. Later, we will expand events for a different purpose and see why inserting that operation into this report changes the calculation.
+Now look at the small labels under the stages: one per ticket, one per ticket, then one per category three times. That is the grain, and the line at the bottom defines it. Grain means what one result document represents. Why care? Because once you cross the group stage, a result is no longer a ticket. If a later stage treats a category summary as though it were still a complete ticket, you get nonsense, and MongoDB will not warn you.
+
+In the notebook you run longer and longer pieces of this pipeline, so you can see the actual documents after match, after group, and at the end. You do not have to guess at the intermediate values. Notice also what is missing: there is no $unwind here. This report counts tickets, and in a few slides we will see what goes wrong when someone adds one.
 
 Sources: Original editable course diagram, revised to the Notebook 07 fixture. Aggregation pipeline: https://www.mongodb.com/docs/manual/core/aggregation-pipeline/
 
 ## Slide 5
 
-The first Python variable holds a filter document. The outer key names the status field. The in operator checks whether that field's value belongs to the supplied list. Each of our active status strings appears exactly as the fixture stores it. A different spelling would be a different value.
+Here is the first stage in Python. The variable active_filter is a filter document. Its key is status, and the $in operator checks whether the status is one of the three values in the list. Those strings have to match exactly what the data stores. A different spelling is simply a different value, and it would quietly fall out of the report.
 
-We place that filter inside a match stage and pass a one-stage list to aggregate. Converting the returned cursor to a list gives us the result documents for this small example. The final Python expression extracts their ticket identifiers and sorts those identifiers for an easy comparison. That Python sort is only a display convenience here. It is separate from a MongoDB sort stage.
+Next we put that filter inside a $match stage and pass a one-stage list to aggregate. Wrapping the cursor in list gives us the result documents, and the print line pulls out the ticket IDs and sorts them so they are easy to compare. That sorted call is plain Python for display. It is not a MongoDB sort stage.
 
-The result is 1001, 1002, and 1004. Each surviving document still represents one complete ticket. Match has not changed their subjects, categories, or event arrays. The resolved ticket still exists in the collection and remains available to a different query.
+Look at the result: 1001, 1002, 1004. Exactly the three we predicted. Each one is still a complete ticket, with its subject, category, and events untouched.
 
-This difference between selection and mutation matters when diagnosing an application. A request missing from an active queue might have an excluded status, rather than have been deleted. We can inspect the ticket directly by its unique identifier to distinguish those possibilities. For this lesson, all the stages in our reporting pipeline compute results without writing them back to the collection.
+Now read the line at the bottom. The collection still contains four tickets. $match changes this result stream without deleting stored data. That matters when you are troubleshooting. If a manager says a request vanished from the active queue, the first question is whether its status excluded it or whether it was actually deleted. You can look it up by its ID and find out. Nothing in this reporting pipeline writes back to the collection.
 
 Sources: Notebook 07 fixture and pipeline. Match stage: https://www.mongodb.com/docs/manual/reference/operator/aggregation/match/
 
 ## Slide 6
 
-The group stage introduces a new result structure. Its underscore-id expression defines the grouping key. Here the expression is dollar-category, which means to read the category field from each incoming ticket. Tickets with the same category value contribute to the same group.
+Now the group stage. This is where the shape of the result changes.
 
-Active count uses sum with the constant one. Every ticket reaching a group contributes one. We are not adding a stored field called one, and we are not counting every document in the original collection. The previous match stage already determined which tickets arrive here.
+Look at the _id line. In a group stage, _id is the grouping key, and here it is dollar category. The dollar sign means "read the category field from each incoming ticket." Tickets with the same category land in the same group. Then active_count uses $sum with the constant 1, so every ticket that reaches its group adds one. We are not adding up a field called one, and we are not counting the whole collection. Match already decided which tickets arrive here.
 
-The dollar sign in the field expression is significant. With dollar-category, the output has a sanitation group containing one ticket and a streetlight group containing two. If we accidentally write the constant string category without the dollar sign, every active ticket receives the same grouping key. The pipeline can still run, but now it produces one group labeled category with a count of three.
+Now the table at the bottom, which shows why that dollar sign matters so much. With dollar category, you get sanitation 1 and streetlight 2, the same answer we worked out by hand. Drop the dollar sign and write just the string category, and every ticket gets the same constant key. The pipeline still runs. No error. You get one group called category with a count of 3.
 
-That mistake illustrates why successful execution is only the beginning of a check. The database can evaluate a valid expression that answers the wrong question. We compare the group keys and counts with the four known input records. We also avoid assuming a display order at this stage, because grouping alone does not specify that sanitation must appear before streetlight.
+That is the lesson of this slide. Running without an error only proves the expression was valid. It does not prove it answered the right question. So we compare the group keys and counts against the four tickets we know. And notice that we are not assuming any order yet. Grouping by itself does not promise that sanitation comes before streetlight.
 
 Sources: Original fixture-derived results. Group stage: https://www.mongodb.com/docs/manual/reference/operator/aggregation/group/ Field paths: https://www.mongodb.com/docs/manual/core/field-paths/
 
 ## Slide 7
 
-We now assemble the full baseline pipeline. The first stage selects active tickets. The second is the group stage we just defined. The project stage then shapes the grouped result for someone reading the report.
+Now we assemble the full baseline pipeline. Four stages in a Python list: match, the group stage from the last slide, a project, and a sort. Each stage receives the output of the stage before it.
 
-At this point underscore-id contains the category value chosen by group. It no longer means the original ticket document's identifier. The expression dollar-underscore-id reads that grouped value and assigns it to a clearly named category field. The zero beside underscore-id suppresses that field in the output. The one beside active count includes the count that already exists.
+The project stage is the one people stumble on, so look closely. After grouping, _id holds the category value. Read the note at the bottom: the grouped _id holds a category value, it is not a ticket ID. So we copy it into a field with an honest name. Category gets dollar underscore id. The zero next to _id hides the original field, and the one next to active_count keeps the count we already calculated.
 
-Finally, sort arranges the category values in ascending order. On our fixture, the result has sanitation with one active request, followed by streetlight with two. The table shows the fields returned by the pipeline, not an additional table stored in the database.
+Then $sort with category 1 puts the categories in ascending order. Look at the result table: sanitation 1, then streetlight 2. That table is just what the pipeline returns. Nothing new was stored in the database.
 
-The pipeline is a Python list containing command dictionaries. Each stage receives the previous stage's output. If we later add a new calculated field to group, we also need to consider the projection. An inclusion projection can hide a correctly calculated value when that field is omitted from the requested output. The lab will give us a concrete reason to update both stages together: we will add urgent count and newest opening while retaining the original active count.
+Here is a warning that will matter in the lab. This project names the fields it returns, which makes it an inclusion projection. So if you add a new calculated field to group and forget to name it here, it gets calculated correctly and then quietly hidden. That is a frustrating bug, because nothing errors. In Lab 1 you add urgent count and newest opening, so you have to update the group stage and the project stage together, and keep active count while you do it.
 
 Sources: Notebook 07 pipeline. Project stage: https://www.mongodb.com/docs/manual/reference/operator/aggregation/project/ Sort stage: https://www.mongodb.com/docs/manual/reference/operator/aggregation/sort/
 
 ## Slide 8
 
-The manager now wants more than a total. The report should include the number of urgent active tickets and the latest opening date in each category. We can calculate both while the group stage still receives individual active tickets.
+Now the manager wants more than a total. For each category: how many active tickets are urgent, and when did the newest one open? We can calculate both inside the same group stage, because group still sees the individual active tickets.
 
-Urgent count uses a conditional expression inside sum. The equality expression compares the incoming priority field with the constant string urgent. Cond returns one when that comparison is true and zero otherwise. Sum adds those contributions for the category. On the active streetlight inputs, ticket 1001 contributes one and ticket 1004 contributes zero.
+Look at urgent_count. It is a $sum again, but instead of adding a constant 1, it adds the result of a $cond. Read $cond like an if statement: if priority equals urgent, contribute 1, otherwise contribute 0. Add those up per category and you have the number of urgent tickets. In the streetlight group, ticket 1001 contributes 1 and ticket 1004 contributes 0.
 
-Newest opening uses max on the opening-date field. Because our fixture stores consistent BSON dates, the greatest value represents the latest instant among those inputs. This expression gives us the date itself. It does not automatically return the entire ticket that has that date. A request for the complete newest ticket would require a more specific design.
+Then newest_opening uses $max on opened_at. Because our dates are stored as real BSON dates, the biggest value is the latest moment. Notice what it gives you: the date itself, not the whole ticket that has that date. If someone wants the full newest ticket, that is a different design.
 
-In the notebook, we will add these two expressions to the existing group stage rather than replace active count. We will also include urgent count and newest opening in project. The active filter remains at the beginning, so the resolved urgent ticket never contributes to the calculation. These edits make a useful extension while preserving the report's original meaning: one summary per category of active tickets.
+Read the note at the bottom. In the lab you add these two fields to the existing group stage instead of replacing active count, and you expose both of them in project. And because match still runs first, the resolved urgent ticket, 1003, never gets near these calculations. The report keeps its original meaning: one summary per category of active tickets.
 
 Sources: Course worked extension. Conditional expression: https://www.mongodb.com/docs/manual/reference/operator/aggregation/cond/ Sum: https://www.mongodb.com/docs/manual/reference/operator/aggregation/sum/ Max: https://www.mongodb.com/docs/manual/reference/operator/aggregation/max/
 
 ## Slide 9
 
-This table is the expected extended summary. Sanitation has one active ticket, zero urgent tickets, and a newest opening on February second. Streetlight has two active tickets, one urgent ticket, and a newest opening on February fourth.
+Here is what the extended summary should look like. Sanitation: 1 active, 0 urgent, newest opening February 2. Streetlight: 2 active, 1 urgent, newest opening February 4.
 
-We can explain the streetlight row without referring to the aggregation syntax at all. Its source identifiers are 1001 and 1004. The first is urgent and opened on February first. The second has low priority and opened on February fourth. Counting those records gives two, counting the urgent member gives one, and comparing their dates gives February fourth.
+Here is the habit I want you to build. Explain the streetlight row without looking at any aggregation code. Its tickets are 1001 and 1004. Ticket 1001 is urgent and opened February 1. Ticket 1004 is low priority and opened February 4. Count them: two. Count the urgent one: one. Take the later date: February 4. If you can say that out loud from the source IDs, you actually understand the result, and you are not just trusting the output.
 
-Ticket 1003 is useful because it can expose a mistake in the filter. It is urgent and belongs to streetlight, but its resolved status makes it ineligible for every calculation in this active summary. If we count it in urgent count but exclude it from active count, the columns no longer describe the same population.
+Now look at the caution at the bottom. Ticket 1003 is urgent and it is a streetlight ticket, but it is resolved, so it contributes to none of these totals. That ticket is in the fixture on purpose, as a trap. Suppose a mistake let 1003 into urgent count but kept it out of active count. Every number would still look plausible, but the columns would no longer describe the same set of tickets.
 
-Checking a report means checking those shared definitions as well as its arithmetic. A column name alone cannot establish what was counted. Our explanation should identify the included source records and the condition that selected them. In the lab, the notebook's explanation cell is where we connect those facts to the actual output from our modified pipeline, including any unexpected result we had to correct.
+That is why checking a report means checking its definitions, not only its arithmetic. A column name does not tell you what was counted. In the lab's explanation cell, name the source IDs and the condition that selected them, including anything unexpected you had to fix.
 
 Sources: Original calculations from Notebook 07's four-ticket fixture. No external operational dataset or measured production outcome is represented.
 
 ## Slide 10
 
-The events field is an array inside each ticket. Ticket 1001 contains a created event and an assigned event. Ticket 1002 contains one created event. Ticket 1004 has an empty array. We will now ask for event rows, which is a different unit from the ticket summary.
+Now a different question. Instead of tickets, we want events. Each ticket has an events array. Ticket 1001 has a created event and an assigned event. Ticket 1002 has one created event. And 1004, as the note at the bottom says, has an empty array.
 
-Unwind emits a document for each array element and makes that element available in place of the array within the pipeline. Project keeps the ticket identifier and reads the event's type. The final sort orders by ticket identifier and then by event type. That alphabetical order puts assigned before created for ticket 1001. It does not claim that assignment happened first in time.
+$unwind takes a document with an array and emits one document per element. Then project keeps the ticket ID and reads the event's type, and sort orders by ticket ID and then by event type.
 
-The resulting identifiers are 1001, 1001, and 1002. Ticket 1004 contributes no row because this default unwind does not preserve its empty array. We now have three rows describing three events on active tickets.
+Look at the result table: 1001 assigned, 1001 created, 1002 created. Three rows. Two quick points. Assigned appears before created only because the sort is alphabetical. It does not mean the assignment happened first. And ticket 1004 is gone entirely. A default $unwind produces nothing for an empty array, so a ticket with no events contributes no rows.
 
-The operation is useful when events are what we want to analyze. For example, counting event types requires access to individual events. But placing this stage before our ticket count would allow a ticket with several events to contribute several times. The output still has a ticket identifier field, so merely seeing that field does not mean each ticket appears once. We must interpret the grain from the operation and the actual records.
+This is a perfectly good operation when events are what you want to analyze. If you want to count event types, you need the individual events. The problem comes when you put this stage in front of a ticket count. A ticket with two events now shows up twice. And here is the sneaky part: every row still has a ticket_id field, so the output looks like ticket rows. Seeing that field does not mean each ticket appears once. You work out the grain from what the stage does and from the actual records, not from the column names.
 
 Sources: Notebook 07 event arrays. Unwind behavior: https://www.mongodb.com/docs/manual/reference/operator/aggregation/unwind/
 
 ## Slide 11
 
-Here is the trap in full. The active-ticket list contains 1001, 1002, and 1004. The expanded event rows contain 1001, 1001, and 1002. Both lists have length three. A test that checks only the grand total would pass even though one ticket was duplicated and another disappeared.
+Here is the trap in full, and it is the reason this week exists. Look at the table. Active tickets: 1001, 1002, 1004, total 3. Events on active tickets: 1001, 1001, 1002, total 3. Same total. A test that only checks the grand total passes, even though one ticket was counted twice and another disappeared.
 
-This fixture is more deceptive than a simple inflated total. Both category counts also happen to match. The correct active-ticket report has two streetlight tickets and one sanitation ticket. The event rows also contain two streetlight rows and one sanitation row, but the two streetlight rows both belong to 1001.
+It gets worse. Read the first note. Even the category totals match: streetlight 2, sanitation 1. But both streetlight rows in the event version are ticket 1001. So a check by category passes too.
 
-Urgent count reveals the problem. Ticket 1001 is urgent, so both of its event rows would contribute to a conditional sum. The mistaken report would say two urgent streetlight requests when only one active streetlight ticket is urgent.
+What finally catches it? The urgent count. Ticket 1001 is urgent, and both of its event rows would add 1 to a conditional sum. So the broken report says two urgent streetlight requests, when only one active streetlight ticket is urgent. That is the manager's dashboard from slide 1: believable numbers built from the wrong tickets.
 
-Preserving empty arrays would retain a row for 1004, but it would leave both rows for 1001. That option does not turn an event stream back into a unique-ticket stream. For our report, the simplest correct approach is to count tickets before expanding events, or avoid expansion entirely. More complex reports can deliberately deduplicate by a stable ticket key, but they must also decide how tickets with no events enter the result. The needed operation follows from the intended population.
+Now the second note. You might think preserving empty arrays fixes it. That brings back a row for 1004, but 1001 is still there twice. It does not turn an event stream back into a ticket stream. For this summary, the simple correct answer is to leave $unwind out. When a report really needs both, count tickets before expanding events, or deduplicate on a stable ticket key and decide how tickets with no events get in. Start from the population you mean to count.
 
 Sources: Original counterexample and computed identity lists from Notebook 07. Related mechanism: https://www.mongodb.com/docs/manual/reference/operator/aggregation/unwind/
 
 ## Slide 12
 
-A report is easier to interpret when its input types have clear rules. MongoDB allows us to define a focused document validator rather than assume that every document must have an identical complete structure. The baseline rule in our notebook requires a ticket identifier, a recognized status, and a subject. Other fields can still appear.
+Let's switch from reading data to protecting it on the way in. A report is only as trustworthy as its inputs, and MongoDB lets us attach a validator to a collection that describes which documents are allowed.
 
-Required means that a named field must exist. That declaration alone does not tell us whether its value has an appropriate type. A type rule describes the value. A date type rule, for example, distinguishes a BSON date from text that happens to contain a date-like sequence of characters.
+Look at the table, because each rule checks one thing and leaves something else alone. Required checks that the field exists. It says nothing about its type or value. bsonType date checks that the value is a real BSON date. It does not check whether that date is plausible. Enum checks that a value belongs to a list. It does not check whether a status change is allowed.
 
-An enum restricts a field to a supplied set of values. Our status list includes new, open, in progress, resolved, and closed. It prevents an unsupported value such as almost done. It does not establish which transition is allowed from a previous status. A system that must prevent reopening a closed ticket needs an additional application or database rule designed around that transition.
+Why spend time on that last column? Because people overclaim what a rule does. Our status list is new, open, in progress, resolved, and closed. It stops a value like almost done. But it cannot stop someone from reopening a closed ticket, because that depends on what the status was before. That needs a separate rule in the application or the database. Dates are the same: a date in the distant future still has the right type.
 
-These distinctions keep the scope of a rule understandable. Requiring a BSON date does not prove that the ticket really opened at that instant. A date in the distant future could still have the correct type. We will implement the small, explicit rule that this lab needs, then describe both its protection and its limits.
+The note at the bottom matters too. A focused schema can allow additional fields. Our baseline requires ticket_id, status, and subject, and other fields can still appear. Flexibility is the point of a document database, and validation does not have to take it away. We write the small rule this lab needs, and then we say honestly what it protects and what it does not.
 
 Sources: Schema validation: https://www.mongodb.com/docs/manual/core/schema-validation/ Specify allowed field values: https://www.mongodb.com/docs/manual/core/schema-validation/specify-json-schema/#std-label-schema-validation-json
 
 ## Slide 13
 
-This dictionary describes the baseline validator. The outer jsonSchema key tells MongoDB which kind of rule document we are supplying. The object type applies to the document itself. The required list names the fields that must be present, and properties describes the constraints on particular fields.
+Here is the baseline validator as a Python dictionary. Let's read it from the outside in.
 
-Ticket identifiers may use either of the listed BSON integer types. Status must match one of the strings in the enum. Subject must be a string. Notice that category, priority, events, and opening date do not appear in the required list yet. The rule deliberately leaves those fields optional at this point in the exercise.
+The outer key, $jsonSchema, tells MongoDB what kind of rule this is. bsonType object applies to the document itself. The required list names the three fields that must be present: ticket_id, status, and subject. Then properties sets rules for individual fields. ticket_id can be either of two BSON integer types, int or long. Status has to be one of the five strings in the enum. Subject has to be a string.
 
-We are writing Python, but the dictionary is a description of MongoDB's validation behavior. Python does not start rejecting database inserts simply because we created a variable called validator. A separate command installs the rule on the collection. This is similar to writing a SQL constraint statement in an editor versus executing it against a database.
+Notice what is not required yet: category, priority, events, and the opening date. That is deliberate. Your lab job is to add one of them.
 
-We also should not treat this as interchangeable with every standard JSON Schema implementation. MongoDB's bsonType vocabulary includes database-specific values such as date and the integer types shown here. The driver translates our Python dictionary into the command sent to MongoDB. Understanding that boundary helps us distinguish a Python syntax error, an unsupported command, a permission failure, and an actual rejected document.
+Now read the note at the bottom, because it trips people up. A Python variable by itself does not install a server validator. Creating a dictionary called validator does nothing to the database. It is like typing a SQL constraint into an editor and never running it. A separate command installs it, and you will see that command on the next slide.
+
+One more thing. This looks like standard JSON Schema, but it is MongoDB's version. Words like date and long in bsonType are MongoDB-specific. Knowing where Python ends and MongoDB begins helps you diagnose problems. A Python syntax error, an unsupported command, a permission failure, and a rejected document are four different messages with four different fixes.
 
 Sources: Notebook 07 baseline validator. JSON Schema validation: https://www.mongodb.com/docs/manual/core/schema-validation/specify-json-schema/
 
 ## Slide 14
 
-The new requirement has two parts. We add opened-at to the required list, and we give that property the BSON date type. If we added only the property rule, a document could omit the field. If we added only the required declaration, a document could include a value of the wrong type.
+The new rule says every ticket needs a real opening date. Look at the title: that takes two declarations, and here is why.
 
-The first three Python lines modify the dictionary. They are an equivalent way to make the edits that the notebook asks us to place in the original validator cell. Assigning the complete required list also avoids appending the same field repeatedly when we rerun this demonstration.
+The second line puts opened_at in the required list. The third line says opened_at must be a BSON date. If you only wrote the type rule, a document could leave the field out entirely. If you only wrote the required rule, a document could put text in it. You need both. Also notice that we assign the whole required list instead of appending to it. That way, rerunning the cell does not add opened_at twice.
 
-The command then installs the revised validator on tickets. CollMod changes collection settings. Strict and error specify the enforcement behavior used in this lesson. Our Atlas database user must have permission for this operation, separately from permission to connect or read documents. A successful ping does not establish that permission.
+Then comes the command that actually installs it. collMod changes settings on the tickets collection. Validation level strict and validation action error are the enforcement we use in this lesson: writes get checked against the rule, and a bad document is refused.
 
-This command is for a real MongoDB connection. The notebook's default local mode uses mongomock, which does not enforce the collection validator. Its code explicitly skips installation rather than pretend that a printed message proves server behavior. All four baseline tickets already contain dates, so our small fixture is compatible with the added rule. On an existing application collection, we would inspect old data and plan a migration before tightening a rule that could affect later writes.
+Two practical points. First, collMod needs its own permission, separate from connecting or reading. A database user with only the ordinary read and write role cannot run it, and a successful ping does not prove you have it. Second, read the comment and the note at the bottom. This command is for a real MongoDB connection. Local mongomock mode does not enforce validators, so the notebook skips the install instead of pretending.
+
+Our four tickets already have dates, so they fit the new rule. On a real collection, you would inspect the old data and plan a migration before tightening a rule like this.
 
 Sources: Notebook 07 date extension. collMod: https://www.mongodb.com/docs/manual/reference/command/collMod/ Validation level: https://www.mongodb.com/docs/manual/core/schema-validation/specify-validation-level/
 
 ## Slide 15
 
-The test set includes one allowed document and three documents that differ in specific ways. The allowed document has a new status and a real date. The invalid-status document uses almost done. The text-date document contains date-shaped text instead of a BSON date. The final document omits the opening date entirely.
+Now we test the rule with one document that should pass and three that should fail, each different in one specific way. Look at the table.
 
-The notebook tests these records separately, using distinct identifiers. That separation helps us connect a rejection to the condition we intended to test. It also avoids confusing a duplicate-key error with a validation failure. The test cell clears its own temporary identifiers and removes test records afterward so that our four-ticket summary remains a four-ticket exercise.
+1099 has status new and a real BSON date: accept. 1100 has status almost_done: reject, invalid status. 1101 has an opened_at that is text shaped like a date: reject, incorrect type. 1102 has no opened_at at all: reject, missing field.
 
-The text-date and missing-date cases activate after we have added and reinstalled the date rule. Before that change, the baseline schema did not require a date, so we should not claim that those inputs failed for violating a rule that did not exist.
+Why change only one thing per document? Because when a rejection comes back, you want to know exactly which condition caused it. That is also why each test gets its own ID. If you reused an ID, you could get a duplicate key error and mistake it for a validation failure. And the test cell cleans up its records afterward, so your summary stays a four-ticket exercise.
 
-In Atlas mode, the database actually attempts each insert. A document-validation error is different from a network or authorization error. In local mode, the notebook supplies a clearly labeled trace for us to interpret. We can explain the expected decision from the rule, but we cannot describe that interpretation as a live server test. The learning goal is precise reasoning about the input and rule, with an accurate account of which execution path we used.
+One timing point. The text-date and missing-date cases only appear after you add and reinstall the date rule. Before that, the schema did not require a date, so you cannot say those documents broke a rule that did not exist yet.
+
+Now read the last line on the slide. Atlas executes validation. Local mode supplies a labeled trace to interpret. On Atlas, the database really attempts each insert, and a validation error looks different from a network or authorization error. In local mode, you reason about what the rule would do. That is good work, but say which path you used, and never call a trace a live server test.
 
 Sources: Notebook 07 test cell. Handling invalid documents: https://www.mongodb.com/docs/manual/core/schema-validation/handle-invalid-documents/
 
 ## Slide 16
 
-Lab 1 stays within one notebook. We will extend the active-ticket summary, add the required opening-date rule, and explain the counting error using the source identifiers. The submission is the completed notebook with our changes, outputs, and the short explanation in its existing explanation cell. There is no separate report or repository to create.
+Here is Lab 1, and it all lives in one notebook, Notebook 07. Extend the summary with urgent count and newest opening, add the required opening-date rule, and use ticket IDs to explain the array-counting error. Submit the completed notebook in Brightspace, individually. Your explanation goes in the notebook's existing explanation cell. There is no separate report or repository.
 
-The default local path lets us begin the aggregation work immediately after package installation. If we choose Atlas, the notebook prints the public IPv4 address of the runtime that executes our code. In Colab, that runtime is on Google's infrastructure, so it can differ from the address of the laptop running the browser. The temporary slash-thirty-two rule allows that individual IPv4 address. The database URI belongs in the hidden prompt rather than in a visible code cell.
+You can stay in local mode and start the aggregation work as soon as the packages install. If you choose Atlas, look at the middle box. The notebook prints the public IPv4 address of the runtime running your code. In Colab that runtime is on Google's infrastructure, so it is not your laptop's address. You allow that one address as a temporary slash 32 entry. Your connection string goes into the hidden prompt, never into a visible cell, and you leave TLS verification on.
 
-When the experiment is finished, the cleanup cell drops the tickets collection in this notebook's uniquely named practice database and closes the client. It does not delete an Atlas project or shut down the cluster. We also remove the temporary network rule that we added for this runtime.
+When you finish, run the cleanup cell. Look at the code: drop_collection on tickets, then close the client. Read the note under it. It drops only this practice collection. It does not delete your Atlas project or shut down your cluster. Then go back to Atlas and remove the temporary IP rule, because an access rule you forgot about is an open door.
 
-The explanation should describe the streetlight inputs, the effect of expanding events, and the date rule's boundary. If a result differs from the expected calculation, we can use the fixture and intermediate output to locate the cause before changing several expressions at once.
+In your explanation, cover the streetlight inputs, the effect of expanding events, and where the date rule stops. If a number does not match, use the four tickets and the intermediate output to find the cause before you change several expressions at once.
 
 Sources: Week 11 Lab 1 and Notebook 07. Atlas IP access list: https://www.mongodb.com/docs/atlas/security/ip-access-list/
 
 ## Slide 17
 
-Our second class begins with a different application view. Instead of a category summary, a queue displays the newest twenty open requests. This sounds like a small read because the application receives only twenty documents. However, the database may need to examine many candidates and order them before it can identify those twenty.
+Welcome back. Day 2 starts from a different screen. Instead of a category summary, picture a queue that shows the newest open requests.
 
-We will first make the requested result precise. Open is the filter. Opening date determines recency, and ticket identifier resolves a tie between equal dates. The projection includes the fields that the page needs to show. Keeping those choices fixed makes a before-and-after index comparison meaningful.
+Read the slide. A queue displays 20 requests. The database may examine many more. That sounds like a small read, because the application only gets twenty documents back. But to know which twenty are newest, the database may have to look at every candidate and sort them first. The page size tells you nothing about the work.
 
-The instructor's demonstration uses synthetic course data in a separate practice collection. The MongoDB University activity that follows uses its own guided environment and task. We are using the first example to understand the mechanism, then applying that understanding in a distinct lab.
+Before we touch performance, we pin down exactly what the result is. Status open is the filter. Opening date decides what counts as newest. Ticket ID breaks ties when two dates are equal. And the projection names the fields the page shows. We keep all of that fixed, because a before-and-after comparison only means something if the question stays the same.
 
-We will look at returned documents, examined documents, examined index keys, and the plan operations. A smaller amount of database work can support an index decision, but those counts do not directly tell us how long a cloud page will take to load. Network delay, cache state, and competing work can affect elapsed time. Our claim will remain tied to what the experiment actually measures and to whether the ordered results stay correct.
+As the second box says, we compare the same ordered results before and after an index. I demonstrate on synthetic course data in a separate practice collection. Then you complete a separate MongoDB University sort lab in its own guided environment. My demo is for understanding the mechanism. The lab is where you apply it.
+
+We will measure documents returned, documents examined, index keys examined, and the plan operations. Less work supports an index decision, but those counts do not tell you how fast a cloud page loads. Network delay, cache state, and other traffic all affect time. So our claims stay tied to what we measured.
 
 Sources: Course implementation guide, Day 2 sort demonstration. Explain overview: https://www.mongodb.com/docs/manual/reference/method/cursor.explain/
 
 ## Slide 18
 
-The live example contains ten thousand synthetic tickets. Every fifth record has status open, giving us two thousand open tickets. The other eight thousand are resolved. Each record has a unique ticket identifier, an opening date, and a short synthetic subject. The opening dates advance by one minute from February first, 2026.
+Here is the dataset for my live demonstration. Look at the table. A collection called sort_tickets in a new practice database. Ten thousand synthetic tickets, each with a unique ID. Two thousand are open and eight thousand are resolved, because every fifth ticket is open. And the opening dates go up one minute at a time, starting February 1, 2026, in UTC.
 
-These regular values make it possible to check the result independently. In the supplied setup, ticket identifiers increase as the dates advance. The newest open identifier is 39995, followed by 39990. Twenty open results end at identifier 39900. The query's explicit date and identifier sort still defines its order rather than relying on insertion order.
+Why such regular data? Because it lets us check the answer independently. In my setup, ticket IDs increase as the dates advance. So I can tell you in advance that the newest open ticket is 39995, the next one is 39990, and the twentieth result is 39900. If the query returns anything else, something is wrong. The query still sorts explicitly by date and ID, though. We never rely on the order the documents happened to be inserted.
 
-The fixture is larger than the Day 1 case for a reason. Four records are enough to understand a count, but they give us little room to see the difference between inspecting a collection and using a selective ordered access path. Here there are many irrelevant resolved tickets and many eligible open tickets beyond the twenty displayed.
+Read the note at the bottom. The four-ticket case explains correctness. This larger case makes query-plan work visible. With four documents, scanning everything is instant and nothing looks different. Here, there are thousands of irrelevant resolved tickets, and far more open tickets than the twenty we display, so a poor access path actually shows up in the numbers.
 
-This is still a controlled teaching dataset rather than a production benchmark. Real ticket systems can have different status distributions, date patterns, document sizes, and concurrent traffic. Those differences can change plan choices and measured work. We will learn a repeatable comparison method without treating this particular result as a guarantee for every Atlas deployment.
+Keep in mind that this is a controlled teaching dataset, not a production benchmark. Real systems have different status mixes, document sizes, and traffic, and those can change the plan. What you are learning is a comparison method you can repeat, not a guarantee about every Atlas deployment.
 
 Sources: Original 10,000-record fixture in course/instructor/implementation_guide.md. Counts and expected identifiers derive from its generator.
 
 ## Slide 19
 
-This code runs in mongosh, so its spelling differs from the Python notebook. Const declares JavaScript variables, and toArray reads the cursor into an array for this small result. The concepts are the same ones we used with PyMongo: a filter, a projection, an order, and a limit.
+This is the queue query, and notice that it is mongosh, so it is JavaScript, not Python. The note at the bottom says so: Day 2 live code uses mongosh JavaScript, and Notebook 07 uses Python. Const declares a variable, and toArray reads the cursor into an array. The ideas are the same ones you used in PyMongo: a filter, a projection, an order, and a limit.
 
-The filter requests only documents whose status equals open. The projection returns ticket identifier, opening date, and subject while excluding the internal underscore-id. The order sorts dates descending. If two dates are equal, it sorts ticket identifiers descending within that tied date. Our unique ticket identifiers make that tie-break order unambiguous for this dataset.
+Walk through it. The filter is status open. The projection returns ticket_id, opened_at, and subject, and hides _id. The order is opened_at minus one, newest date first, then ticket_id minus one. Look at the first note on the right: that second key resolves tied dates. Since our IDs are unique, the order is never ambiguous. Without a tie-breaker, two tickets with the same date could come back in either order, and two runs of the same page might not agree.
 
-The limit returns at most twenty documents after applying the requested query and order. It does not promise that MongoDB examined only twenty source documents. Without an appropriate ordered access path, the server may inspect the full collection and evaluate many eligible candidates to determine which twenty belong first.
+Now the second line of that note, which is the important one. A limit caps returned rows, not necessarily examined documents. Limit 20 promises you at most twenty results. It does not promise that MongoDB only looked at twenty. Without a suitable ordered access path, it may scan the whole collection and sort the open candidates to figure out which twenty come first.
 
-We save the normal result as beforeRows so that we can compare it with the result after index creation. Looking only at a plan could miss a changed filter or projection. A fair comparison keeps the query semantics and fixture fixed. The lesson's code uses this fresh collection rather than another student's database, and the setup includes the unique ticket-key index separately from the compound index we are about to add.
+Last, we save the normal result as beforeRows. After we add the index we compare the actual results, not just the plans, so we know the answer did not change.
 
 Sources: Course sort demonstration. Cursor sort: https://www.mongodb.com/docs/manual/reference/method/cursor.sort/ Cursor limit: https://www.mongodb.com/docs/manual/reference/method/cursor.limit/
 
 ## Slide 20
 
-The candidate index follows the structure of our queue query. Its first field is status, which the query fixes to one value. Within that status range, opening dates descend. Ticket identifiers descend within equal dates. That order lets the database seek the open range and read candidates in the order the page requests.
+Here is the candidate index. Look at its field order, because the order is the whole design. Status ascending, then opened_at descending, then ticket_id descending. The table explains each position.
 
-The index has a descriptive name, open by recent, but the name has no filtering effect. The command does not include a partial-filter expression. It creates index entries for all tickets in this collection, including resolved tickets. The query condition selects the open portion of the index when the planner uses it.
+Status comes first because our query fixes it to one value. Equality on status means the database can jump straight to the open section of the index. Inside that section, entries are already sorted by date, newest first, and inside any tied date, by ticket ID descending. That is exactly the order the page asks for. So the database can seek to the open tickets, read them in order, and stop once it has twenty, with no separate sort.
 
-Field order matters because a compound index provides a particular ordering. Merely including all three field names somewhere in an index does not establish that it supports every ordering on those fields. If the workload changes to a queue across all statuses, we must reconsider the leading status field and inspect the new plan.
+That is why field order matters. Having the right three field names somewhere in an index is not enough. A compound index provides one specific ordering. If the queue changed to show all statuses, a leading status field would no longer fit, and you would rethink the index and check the new plan.
 
-For this example, we are reasoning from an equality condition followed by the requested sort. We will still check explain rather than assume that creating a candidate guarantees the planner will choose it. The index also brings a maintenance cost. We are adding another structure that the database must store and update when relevant data changes. Its benefit depends on the queries that use it.
+Read the note at the bottom. The name, open_by_recent, is just a label. It does not make this a partial index. There is no filter expression, so every ticket gets an entry, including all the resolved ones.
+
+Two more things. Creating an index does not guarantee the planner chooses it, so we check with explain. And an index is not free. It takes storage and has to be updated when the data changes, so it earns its place only through the queries that use it.
 
 Sources: Course sort query and observed local plan. Index-supported sorting: https://www.mongodb.com/docs/manual/tutorial/sort-results-with-indexes/ Compound indexes: https://www.mongodb.com/docs/manual/core/indexes/index-types/index-compound/
 
 ## Slide 21
 
-Explain with execution statistics gives us information about the plan and its execution work. The command on this slide uses the same filter, projection, sort, and limit as the normal queue read. We run the corresponding command before index creation and again afterward, so the comparison concerns one workload.
+Now we ask MongoDB to show its work. This is the same query, with the same filter, projection, sort, and limit, but it ends in explain with executionStats. Read the first note under the code: the same command runs before index creation in the live example. I run it before and after, so both measurements describe one workload.
 
-Returned documents tells us how many results the plan produced. Documents examined counts document examinations during execution, and keys examined counts examined index entries. These quantities describe different kinds of work. Twenty keys examined is not interchangeable with twenty complete documents examined, and zero keys examined can mean that a collection scan avoided indexes entirely.
+Look at the printjson block. It pulls out four things. nReturned is how many results the plan produced. totalDocsExamined is how many documents the server looked at. totalKeysExamined is how many index entries it read. And winningPlan describes the operations it chose.
 
-The winning plan describes the chosen operations. Plan output is nested, and its exact structure can vary with server version and execution engine. In this lesson, we look for the relevant scan, sort, and fetch operations instead of memorizing one fixed JSON path for every possible plan.
+Those are different kinds of work, so do not mix them up. Twenty keys examined is not the same as twenty full documents examined. And zero keys examined can mean a collection scan that never used an index at all.
 
-The normal beforeRows and afterRows queries remain important. Explain output is a diagnostic result, rather than the twenty ticket documents that the application displays. We compare those ordinary query results to confirm that the index experiment preserved the same ordered identifiers and requested field values. Then we interpret the execution statistics. This keeps result correctness separate from the amount of work required to obtain it.
+The plan output is nested, and its exact shape changes with the server version and execution engine. So do not memorize one JSON path. Look for the scan, the sort, and the fetch operations.
+
+Now the second note: compare the normal query results as well as both execution plans. Explain gives you a diagnostic, not the twenty tickets the page displays. So we also compare beforeRows and afterRows, to confirm the same ordered IDs and field values came back. Correctness first, then work. If you only look at plans, you can miss a change in what the query answers.
 
 Sources: Explain results and stage meanings: https://www.mongodb.com/docs/manual/reference/explain-results/ Course implementation guide's fixed query comparison.
 
 ## Slide 22
 
-These are the observations from the supplied ten-thousand-ticket example on local MongoDB 8.0.29. Before the compound index, the query returned twenty documents after examining ten thousand documents and zero index keys. Its relevant operations included a collection scan and a sort. After the index, it returned the same twenty documents while examining twenty documents and twenty keys, using an index scan and document fetches.
+Here are the actual measurements, observed on local MongoDB 8.0.29 with the supplied synthetic data. Look at the table row by row.
 
-The difference is consistent with the access path we designed. The collection scan has to consider the source population. The ordered index lets this particular query reach open tickets in the required order and stop after obtaining the requested result count.
+Returned documents: 20 before, 20 after. Documents examined: 10,000 before, 20 after. Index keys examined: 0 before, 20 after. Main plan operations: COLLSCAN plus SORT before, IXSCAN plus FETCH after.
 
-The measurements are bounded by this fixture, query, index set, and server execution. They do not mean that every index-assisted query examines exactly as many keys as it returns. Other filters or data distributions can require additional examination. We also should not turn the ratio of ten thousand to twenty into a claim of a five-hundred-times runtime speedup. These are work counts, not elapsed-time measurements.
+So before the index, MongoDB read all ten thousand documents, kept the open ones, and sorted them to find the newest twenty. After the index, it walked into the open section in the right order and stopped after twenty entries. That is the access path we designed on slide 20.
 
-The normal-query comparison confirmed matching ordered identifiers and field values. That matters because a query returning different tickets could appear faster for the wrong reason. Our conclusion is that this index reduced the measured search and ordering work for this defined queue while preserving the requested output.
+Now read the notes, because they keep us honest. First, both runs return the same ordered IDs and field values. That matters, because a query that returns different tickets can look faster for the wrong reason. Second, these work counts do not establish a 500-times runtime speedup. Ten thousand divided by twenty is five hundred, and it is very tempting to say that. But we measured work, not elapsed time.
+
+These numbers also belong to this fixture, this query, and this set of indexes. Do not expect every indexed query to examine exactly as many keys as it returns. Other filters and data distributions can need more. Our conclusion is narrower and stronger: this index cut the search and ordering work for this defined queue while keeping the answer the same.
 
 Sources: Executed local course sort demonstration on MongoDB 8.0.29. Explain metric definitions: https://www.mongodb.com/docs/manual/reference/explain-results/ This is not an Atlas production benchmark.
 
 ## Slide 23
 
-The after plan still includes fetch operations. That is expected for our projection. The index contains status, opening date, and ticket identifier, but the page also asks for subject. MongoDB must retrieve the matching documents to obtain that field. Using an index does not imply that every returned value comes directly from index entries.
+After the index, the plan still has FETCH in it. Is that a problem? No. Look at the first box. The index contains status, opened_at, and ticket_id. But the page also needs subject, and subject is not in the index. So for each matching entry, MongoDB goes to the document to get it. Using an index does not mean every returned value comes from the index.
 
-A covered query can obtain the needed information from an appropriate index without fetching the documents. Our example deliberately does not make that claim. It shows that an index can be useful even when the plan still fetches the twenty documents the application needs.
+A query that never has to touch the documents, because everything it needs is in the index, is called a covered query. Read the third box: this result uses an index without being a covered query. And that is fine. The big win was finding the right twenty tickets in order, instead of scanning and sorting the whole collection. Fetching those twenty documents afterward fits perfectly well with that benefit.
 
-We could consider adding another field to an index for a specific workload, but adding every projected field automatically would be a poor general rule. Wider indexes occupy more space, and the database must maintain their entries. A subject that changes frequently would also affect an index that stores it. The right decision depends on the read benefit and the cost of maintaining the structure.
+So why not put subject in the index too? Look at the second box. The extra index occupies storage, and inserts and changes to indexed values also have to maintain the index entries. A wider index costs more space and more write work. If subjects get edited often, every edit now touches the index as well. Adding every field to every index would be a bad general rule.
 
-For the current experiment, the improvement comes from finding eligible tickets in the needed order rather than scanning and sorting the full set of candidates. Fetching those selected documents is compatible with that benefit. In a design discussion, we can say exactly which work improved and which work remains, instead of describing the query as simply optimized without qualification.
+The right decision weighs what the read gains against what it costs to keep the structure up to date. In a design discussion, say exactly which work improved and which work remains, instead of calling the query optimized and stopping there.
 
 Sources: Covered-query requirements: https://www.mongodb.com/docs/manual/core/query-optimization/#covered-query Index costs: https://www.mongodb.com/docs/manual/core/write-performance/
 
 ## Slide 24
 
-We return briefly to the four-ticket fixture to see a correctness boundary on optimization. The first pipeline matches status open, sorts by newest opening, and limits the result to one. Only ticket 1001 has status open in this case, so that pipeline returns 1001.
+Back to our four tickets for a correctness check on optimization. Look at the table. Two pipelines built from the same three operations, just in a different order.
 
-The second pipeline sorts all tickets first, takes the newest one, and only then checks whether it is open. The newest ticket is 1004. Its status is new, not open, so the final match removes it and the result is empty. Both pipelines are valid, but they answer different questions.
+The first: match open, sort newest, limit 1. Only ticket 1001 has status open, so it returns 1001.
 
-The first asks for the newest member of the open-ticket population. The second asks whether the newest ticket in the whole population happens to be open. Moving the limit changed the population that remained available for the filter. The fact that the second pipeline handles fewer rows at its final stage does not make it a correct replacement.
+The second: sort newest, limit 1, then match open. Sort all four and the newest is 1004. The limit keeps only 1004. Then match checks for open, but 1004 has status new, not open, so it gets removed. The result is nothing.
 
-A similar issue arises with a filter on a calculated group count. That field does not exist on the original input tickets. We cannot simply move its test before the grouping operation that creates it. MongoDB can perform safe optimizer transformations internally, but our manual revisions still need semantic checks. Small counterexamples are useful because they expose an incorrect rewrite without requiring a large performance test.
+Read the note under the table. Both pipelines run successfully. They answer different questions. The first asks for the newest open ticket. The second checks whether the newest ticket of any status happens to be open. Moving the limit changed which tickets were still around for the filter to see. And yes, the second one handles fewer documents at its last stage. That does not make it a correct replacement.
+
+The last note gives you a second version of the same trap. A filter on a calculated group count also needs that count to exist first. The count is not on the original tickets, so you cannot move that filter in front of the group that creates it.
+
+MongoDB's optimizer does make safe rearrangements internally. But when you rearrange a pipeline by hand, the meaning is your responsibility. A tiny counterexample like this one catches a wrong rewrite without any large performance test.
 
 Sources: Original four-ticket counterexample. Pipeline optimization and dependency boundaries: https://www.mongodb.com/docs/manual/core/aggregation-pipeline-optimization/
 
 ## Slide 25
 
-The week's mechanisms address different responsibilities. Aggregation computes the report. Validation restricts the documents that writes may produce under the installed rule. Index design supplies an access path that can change the work required by a query. Combining them in one application does not make their guarantees interchangeable.
+Let's put the week together. Look at the title: a faster query can still be incorrect. Then look at the table: three mechanisms, and what each experiment establishes.
 
-The duplicated-ticket report could run quickly through an index and still be wrong. A date rule could reject a string while allowing a correctly typed but implausible future date. An index could improve the newest-open queue without changing whether a ticket's status belongs in the allowed list.
+Aggregation: the summary counts the intended ticket identities. Validation: specified new inputs pass or fail a document rule. Index and explain: a chosen access path changes measured query work. Using all three in one application does not make their guarantees interchangeable.
 
-Installing a validator also does not rewrite every old document to satisfy the new rule. An existing application needs an explicit inspection and migration plan when its data requirements change. Our notebook avoids that larger migration problem by starting with a small, compatible practice fixture and separate test identifiers.
+Make it concrete. The duplicated-ticket report from Day 1 could run quickly through a good index and still be wrong. The date rule rejects a string, but it accepts a correctly typed date far in the future. And our index helps the newest-open queue without checking whether a status belongs on the allowed list. Read the first note: an index cannot repair a duplicated count or an invalid date.
 
-This distinction helps us diagnose failures in a sensible order. We define the required output and verify its input records. We check the constraints that protect relevant assumptions. Then we compare access paths for the correct workload. An optimization is useful only in relation to an answer the application actually needs. In a review with another developer, we can discuss each claim separately and show the corresponding query result, rule test, or plan measurement rather than present one successful run as proof of everything.
+The second note is about timing. Installing validation does not rewrite old documents. A real collection with changing requirements needs someone to inspect the existing data and plan a migration. We sidestepped that with a small fixture that already fit the rule, plus separate test IDs.
+
+So when something is wrong, work in order. Define the output you need and check it against the source records. Check the rules that protect your assumptions. Then compare access paths for that correct workload. When you review this with another developer, show the query result, the rule test, and the plan measurement separately. One successful run is not proof of everything.
 
 Sources: Original course synthesis based on the executed fixture, validation tests, and sort experiment. Chapter 11, Validation and Indexing Solve Different Problems.
 
 ## Slide 26
 
-The individual performance activity is MongoDB University's Improving Performance of Sort Stages lab-only course. The Week 11 guide and Lab 2 assignment link to that exact activity. This is separate from the synthetic sort-tickets example in our live demonstration. We are applying the same reasoning to the guided exercise rather than submitting the demonstration as though we completed the external lab.
+Here is Lab 2, part one. Look at the name in the first box: MongoDB University, Improving Performance of $sort stages, Lab Only. Open it from the exact link in the Week 11 guide and the Lab 2 assignment, so you land on the right activity.
 
-During the activity, the useful details are the requested filter and order, the index that supports them, and the plan behavior. The completion image needs the lab title and completion status or score. Personal account information should be removed from the image before it enters the submission.
+Look at the middle box. You complete it individually and keep one redacted completion image. Redacted means you remove your personal account details before the image goes into a submission. It should show the lab title and your completion status or score. And this lab is separate from my sort_tickets demonstration. You are applying the same reasoning to a new exercise, not handing in my demo as if it were your lab.
 
-If the external activity is unavailable, the assignment supplies a plan-comparison fallback. Its numbers form a teaching case to interpret. The response must label that path rather than describe the supplied numbers as a personal measurement or imply that the University activity was completed.
+While you work, pay attention to three things: the filter and sort the lab asks for, the index that supports them, and how the plan behaves.
 
-The performance work and the inventory video response go into one Brightspace text submission. We do not need another repository, a Markdown report, or a separate packet. The objective is to explain a database decision with enough detail that another person can understand the intended workload and a cost of the choice. Completing an online activity is useful practice, while the explanation shows what we understood from it.
+What if the external site will not load, or you cannot get in? Read the last box. Use the assignment's labeled plan-comparison fallback. It gives you two illustrative plans, and you explain why one does less search and sort work, and one cost of keeping its index. Label it as the fallback. Those numbers are a teaching case, not your own measurement, so do not present them as yours or imply that you finished the University lab.
+
+The image or the fallback goes in one Brightspace text submission together with your video response. No repository, no Markdown file, and no separate packet.
 
 Sources: Week 11 Lab 2. Exact external activity: https://learn.mongodb.com/courses/improving-performance-of-sort-stages-lab-only The provider controls its account-gated interface and completion requirements.
 
 ## Slide 27
 
-The inventory case gives us an application context for a short design recommendation. Rather than recap every part of the video, we will identify one decision that the presenter actually demonstrates and connect it to a concept we have studied. A timestamp or a clearly identifiable scene makes the example easy to locate.
+Lab 2, part two, is the inventory case. The video is Building an Event-Driven Inventory Platform: A Case Study, and the link is in Week 11 Lab 2.
 
-The response should explain what the application needs to read or change, how the chosen representation or operation supports that work, and what becomes harder as a result. A reference can create an additional read. A copied value can create maintenance work. An event-oriented design can require care with ordering or repeated processing. Those are possible analytical connections, not claims that the video necessarily demonstrates each one.
+Do not summarize the whole video. Look at the middle box. Write 200 to 300 words identifying one decision the presenter actually demonstrates. Connect a specific moment to a concept from class, such as embedding, referencing, event data, aggregation, validation, or indexes, and explain a tradeoff. A timestamp or a clearly identifiable scene lets your reader find what you mean.
 
-We also need to separate observation from recommendation. If we propose a new index after watching the case, we should call it our proposal. We should not attribute it to the presenter unless the video actually shows it. The same distinction applies to a validation rule or a change in document structure.
+What does a good tradeoff sound like? Say what the application needs to read or change, how the design supports that, and what gets harder. A reference can mean an extra read. A copied value can mean extra maintenance. An event-driven design can raise questions about ordering or repeated processing. Those are connections you might look for, not claims about what the video shows.
 
-The final response is two hundred to three hundred words in Brightspace, with the lab completion image or labeled fallback in that same submission. One sentence should describe how we would communicate the decision to a developer or operations teammate. The task practices technical explanation grounded in a specific example, rather than general praise for a product.
+Now read the bottom box. Separate what the presenter shows from a change you propose. If you watch the case and think an index would help, that is your proposal. Do not credit it to the presenter unless the video shows it.
+
+Include one sentence on how you would communicate the decision to a developer or operator. If the video is unavailable, the lab gives you a written case to use instead, labeled as the written case fallback. It all goes in the same Brightspace text submission as the lab image. No Markdown file.
 
 Sources: Week 11 Lab 2. Assigned video: https://www.youtube.com/watch?v=1XeG3VDtdsA&list=PL4WbxRsNWc_Z2O2zq3syRit8b83M923QP&index=13 This script introduces the response method and does not assert unverified video details.
 
 ## Slide 28
 
-This paragraph models a way to describe the week's work in an interview. It identifies the calculation, the error we found, the input rule we tested, and the comparison behind an index choice. It gives another person something concrete to discuss. A statement such as I know MongoDB would leave all of those details unspecified.
+Last slide. Read the paragraph in the box. It is one way to describe this week's work in an interview. Notice what makes it work. It names the calculation, the error you caught, the input rule you tested, and the comparison behind an index choice. That gives an interviewer four concrete things to ask you about. Compare it with "I know MongoDB," which gives them nothing.
 
-We should adapt the account to the work we actually completed. Someone who used the local validation trace can say that they interpreted how the rule would classify the test inputs. Someone who executed the inserts against MongoDB can describe the observed acceptances and rejections. Watching an instructor compare plans is also different from independently conducting that comparison. Accurate scope makes an example more credible, not less useful.
+Now read the line under it: adapt this account to the work you actually completed. If you used the local validation trace, say you interpreted the rule. If you ran the inserts against MongoDB, you can describe the actual acceptances and rejections. And watching me compare plans is different from running that comparison yourself. Being accurate about scope makes you more believable, not less.
 
-A follow-up discussion can refer to the small fixture. We can explain how matching totals hid different ticket identifiers, why a date-shaped string failed the BSON rule, or why the query still fetched documents after using an index. Those explanations demonstrate understanding of the mechanism behind the code.
+The follow-up questions will come back to the small details. Be ready to explain how matching totals hid different ticket IDs, why a date-shaped string failed the BSON date rule, or why the query still fetched documents after using an index. Those answers show you understand the mechanism, not just the code.
 
-Before leaving the practice environment, we finish the notebook cleanup and remove any temporary Atlas network rule we added. The instructor's separate sort collection has its own cleanup. Next week, we will examine replication, consistency, and recovery. A query can return the right result today while the application still needs a plan for node failure, delayed replicas, or an accidental deletion tomorrow.
+Before you leave, finish the notebook cleanup and remove any temporary Atlas network rule you added. My sort collection gets its own cleanup.
+
+Next week: replication, consistency, and recovery after data loss. A query can return the right answer today, and the application still needs a plan for a failed node, a delayed replica, or an accidental deletion tomorrow.
 
 Sources: Original career-communication example tied to Week 11 work. Notebook 07 and the implementation guide define their respective cleanup boundaries.
 

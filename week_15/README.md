@@ -65,10 +65,13 @@ Use one example from the review or another course concept. A single README with
 code examples is enough. Submit only its public or instructor-accessible URL and
 the lab's one-sentence description. The notebook itself is not another submission.
 
-## Day 2: Final Demonstrations and Career Translation
+## Demonstration Slots and Career Translation
 
 Use **slides 19-26** for demonstrations and translating project work into
-specific professional explanations.
+specific professional explanations. Follow the section's Brightspace schedule
+for your one demonstration slot. Demonstrations may span available Week 15 and
+final-examination meetings; the whole class is not expected to fit into one
+100-minute meeting.
 
 Present the final project according to the
 [canonical final-project requirements](../week_12/materials/assignments/final_project.md). Use prepared,

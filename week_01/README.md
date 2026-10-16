@@ -10,6 +10,7 @@ how that can happen.
 
 - [PowerPoint](week_01_responsibility_relational_thinking.pptx)
 - [PDF handout](week_01_responsibility_relational_thinking.pdf)
+- [Week 1 structured text transcript](week_01_responsibility_relational_thinking_transcript.md)
 - [Individual lab: Where did the requests go?](lab_01_application_database_map.md)
 
 No database installation or cloud account is required this week. Use a browser

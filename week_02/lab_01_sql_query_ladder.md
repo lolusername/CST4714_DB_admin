@@ -57,7 +57,7 @@ JOIN metro_support.users AS u ON u.user_id = t.requester_id
 WHERE t.ticket_id = 1001;
 ```
 
-This example returns ticket 1001 and Maya Chen. Adapt its filter to answer the
+This example returns ticket 1001 and Requester 101. Adapt its filter to answer the
 neighborhood question. Write one sentence in a SQL comment explaining what one
 row in Query 3 represents.
 

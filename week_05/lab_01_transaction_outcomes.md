@@ -13,6 +13,58 @@ Run the dataset setup and practice-copy setup separately from the experiments.
 Keep each transaction together in one run. The expected-error block stops at its
 failing INSERT; run its cleanup block next. Do not run the entire lab as one batch.
 
+**Seeing every result:** a web editor may display only the last result of a
+batch. A final `ROLLBACK` can therefore hide the SELECTs you need to observe.
+Use the Colab helper below for those experiments, or run the SQL through a
+persistent `psql` session. Do not split a transaction across separate SQL Editor
+requests to reveal a result: those requests may use different connections.
+
+### Show Transaction Results in Colab
+
+Open a blank [Colab notebook](https://colab.research.google.com/) and run this
+setup cell once. Enter your personal Supabase **Connect > Session pooler** URI
+at the hidden prompt, with its database password in place of the placeholder.
+Encode special characters in the password as described in the
+[connection guide](https://supabase.com/docs/guides/database/connecting-to-postgres).
+The helper requires encrypted transport and prints each result in order.
+
+```python
+%pip -q install "psycopg[binary]>=3.2,<4"
+from getpass import getpass
+import psycopg
+
+connection = psycopg.connect(
+    getpass("Session-pooler URI (hidden): "),
+    sslmode="require", connect_timeout=10, autocommit=True,
+)
+
+def run_sql(sql_text):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(sql_text, prepare=False)
+            while True:
+                if cursor.description:
+                    print([column.name for column in cursor.description])
+                    print(cursor.fetchall())  # [] means a result with zero rows.
+                else:
+                    print(cursor.statusmessage)
+                if not cursor.nextset():
+                    break
+    except psycopg.Error as error:
+        connection.execute("ROLLBACK")
+        print("SQLSTATE", error.sqlstate, error.diag.message_primary)
+```
+
+For each numbered step, put its complete SQL block between triple quotes in a
+new cell: `run_sql("""paste the complete SQL block here""")`. Keep `BEGIN` and
+its `COMMIT` or `ROLLBACK` together. The expected duplicate-key test prints
+SQLSTATE `23505`; the helper rolls back the failed transaction automatically.
+Run the lab's verification block next. Other errors require investigation.
+
+After all experiments, run `connection.close()`. This display notebook is not
+another submission. Save the SQL and your observations as comments in a plain
+text file named `week_05_transaction_outcomes.sql`, and submit that file.
+
 ## 1. Make an Isolated Practice Copy
 
 Use your personal PostgreSQL/Supabase course database. If Metro Support is missing,

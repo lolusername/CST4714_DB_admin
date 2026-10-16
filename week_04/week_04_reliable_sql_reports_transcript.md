@@ -2,249 +2,283 @@
 
 ## Slide 1
 
-We have learned to store requests, protect values with constraints, and give useful queries names through views. This week asks a different question: does a report actually count the thing its reader thinks it counts? A query can run successfully and still produce a misleading number. The database cannot infer the business question from valid SQL syntax.
+Welcome to Week 4. Look at the line under the title: count requests, summarize histories, select the latest event. Those three verbs are the whole week.
 
-We will keep the same Metro Support data so we can concentrate on that reasoning rather than learn another domain. The first meeting follows a ticket through its event history and shows why joining that history can inflate a request count. We will name intermediate results with WITH and compute several carefully defined measures without losing categories with zero matching requests.
+Here is the question behind all of it. Last week we gave useful queries names with views, and we changed a schema safely. This week asks something different: does a report actually count the thing its reader thinks it counts? That sounds obvious, but a query can run without a single error and still hand someone a misleading number. PostgreSQL checks your syntax. It cannot check your business question. That part is our job.
 
-The second meeting introduces one new window-function pattern. We will number each ticket's events from newest to oldest, keep the first event, and attach it to a request report. You will see each intermediate result before combining the query. There is no requirement to memorize a list of window functions.
+We keep the same Metro Support data on purpose, so all of your attention goes to the reasoning instead of to learning a new domain.
 
-Both labs are individual. Each asks for one SQL file containing a working query and a short explanation. The important skill is being able to state what a result row means, show how the SQL preserves that meaning, and check a result against specific records.
+On Day 1 we follow one ticket through its event history and see how joining that history can quietly inflate a request count. We name intermediate results with WITH, and we compute several carefully defined counts without losing categories that have zero matches. On Day 2 we learn exactly one window-function pattern, ROW_NUMBER, to pick one latest event per request. You do not need to memorize a list of window functions.
+
+Both labs are individual, and each one is a single SQL file. The skill I care about is this: say what one result row means, show how your SQL keeps that meaning, and check the result against specific records.
 
 ## Slide 2
 
-Before any reporting code, let us establish the dataset. We are not switching to a larger or hidden source. There are eight users, twelve tickets, and twenty-one events. Users include residents, agents, a supervisor, and an analyst. A ticket has a required requester and an optional assignee. Events refer back to the ticket whose history they describe.
+Before we write any reporting code, let's agree on the data, because every number this week comes from it. Look at the table. users, one row per person, eight rows. tickets, one row per request, twelve rows. ticket_events, one row per recorded event on a request, twenty-one rows. Nothing hidden, nothing bigger behind the scenes.
 
-Open the Week 4 notebook and run its introduction and setup before the Day 1 examples. The notebook uses PostgreSQL and creates a disposable copy of the data. You may instead use the supplied setup in a personal Supabase project or the PGlite playground. This week's queries do not require the source_channel column from last week, so a fresh copy is fine. If you keep an existing copy, do not reset it simply because a new week has started.
+The users are residents, agents, a supervisor, and an analyst. Every ticket has a required requester and an optional assignee. Every event points back at the ticket whose history it describes.
 
-Check the starting counts and inspect ticket 1003. It has three events. Then inspect ticket 1004. It has one event and no assignee. The overall active set contains seven tickets, including unassigned tickets 1004 and 1009. These examples will help us distinguish a request from a history row and a missing relationship from a missing request.
+Open the Week 4 notebook and run the introduction and setup before the Day 1 examples. It starts PostgreSQL and builds a disposable copy of the data, so you cannot hurt anything. You can run the same setup in your personal Supabase project or in PGlite instead. This week does not need the source_channel column we added last week, so a fresh copy is fine. And if you already have a working copy with your own work in it, do not reset it just because the week changed.
 
-We will state the unit of each result before counting. A row per ticket and a row per ticket-event pair are not interchangeable, even when both outputs contain a ticket_id column.
+Now look at the line at the bottom. Seven tickets are active, and two of them, 1004 and 1009, have nobody assigned. Also peek at ticket 1003, which has three events, and 1004, which has one event and no assignee. Why bother? Because these few tickets teach us the difference between a request and a history row, and between a missing relationship and a missing request.
 
 ## Slide 3
 
-Ticket 1003 reports low water pressure. The ticket row holds its current state, which is resolved. Its history contains a created event, a change to in_progress, and a later change to resolved. The table on this slide shows those three events in chronological order.
+Here is ticket 1003, a report of low water pressure. Look at the three rows. Event 5005, created, status open. Event 5006, status changed to in_progress. Event 5007, status changed to resolved. Three rows, in the order they happened.
 
-There is still only one request. The three history rows describe things that happened to it. A useful event report might count all three. A report of how many residents submitted water requests should not count this ticket three times.
+How many requests is that? One. The resident submitted one ticket. The three history rows describe things that happened to it. So the real question is: what is your report counting? An event report might legitimately count all three. But a report of how many residents asked for help with water must not count this ticket three times.
 
-The event identifier distinguishes each history record. The ticket identifier repeats because it links all three records to the same request. Repetition of that foreign key is expected; it does not mean the event table has duplicate primary keys. Before deciding to delete a row or add DISTINCT, we need to identify which fact each row represents.
+Notice the second column. ticket_id repeats: 1003, 1003, 1003. Is that a duplicate problem? No. That is a foreign key doing its job, linking all three events to the same request. The event_id is what makes each row unique. So before anyone reaches for DELETE or DISTINCT to make the repetition go away, ask the question at the bottom of the slide: which fact does each row represent?
 
-The current status in tickets and the sequence of event statuses answer different questions. For the current backlog, we use tickets.status. For the history of a particular request, we inspect ticket_events. Later we will find the latest recorded event, but we will not assume that every event necessarily changes a status: an assignment event can leave the status unchanged.
+One more distinction that will matter on Day 2. The current status lives in tickets.status, and for 1003 that is resolved. The event history is a different thing. For today's backlog, use tickets.status. For the story of one request, read ticket_events. And not every event changes the status. An assignment event can leave the status exactly where it was.
 
 ## Slide 4
 
-This query follows the relationship explicitly. PostgreSQL reads a ticket and pairs it with every event whose ticket_id matches. The WHERE condition keeps ticket 1003, and ORDER BY makes its history easy to inspect. The output has three rows because that one ticket has three matching events.
+Let's watch the join do its work on that one ticket. Read the query with me. FROM tickets, alias t. JOIN ticket_events, alias e. ON e.ticket_id equals t.ticket_id. That ON line is the relationship, and we state it out loud; PostgreSQL never guesses it from similar column names. WHERE keeps ticket 1003. ORDER BY event_at, event_id lays the history out in time order.
 
-Notice which columns repeat. The ticket identifier, subject, and current status belong to the request, so they are repeated once for each matching history row. The event identifier changes. The query has not created three stored tickets. It has produced three rows in a result.
+Now run it. Three rows. Look at which columns repeat. ticket_id, subject, and status are the same in every row, because they belong to the request, and the request matched three events. The event_id changes: 5005, 5006, 5007. We did not create three tickets. We produced three ticket-event pairs, which is exactly what the line under the code says.
 
-Run this query and compare the event identifiers with the previous slide. If you can explain all three rows, you are ready to reason about the aggregate. If not, stay with this small example rather than hide it behind GROUP BY.
+Why spend a whole slide on three rows? Because if you can explain every row of this small result, you are ready to reason about an aggregate built on top of it. If you can't, stay here. Do not hide a result you don't understand behind GROUP BY.
 
-The alias t stands for tickets in this query, and e stands for ticket_events. The prefixes tell PostgreSQL which ticket_id we mean. ON states the relationship; WHERE selects a particular request. Neither clause is inferred from similar column names. In the next example, we will remove the single-ticket filter and see why counting the joined rows can answer the wrong question.
+The prefixes t and e are not decoration either. Both tables have a ticket_id column, and the prefix tells PostgreSQL which one you mean. On the next slide we remove the WHERE filter and count these pairs across every ticket, and you will see a number that looks right and isn't.
 
 ## Slide 5
 
-Suppose a dashboard groups these joined rows by category and labels COUNT star as requests. That label is misleading. The join has changed the unit being counted to a ticket-event pair. Each ticket contributes as many rows as it has events.
+Here is the trap. Imagine a dashboard query that looks completely reasonable. Join tickets to events, group by category, count star, and call the column requests. It runs. No error. Now look at the table under the code.
 
-In this fixture, the five category results sum to twenty-one. The base ticket table contains twelve rows. Water shows five because ticket 1003 contributes three history rows and ticket 1008 contributes two. Water actually has two requests. The command succeeds because PostgreSQL is counting exactly the rows the query supplied.
+Water says 5. But water has only two requests. Where does 5 come from? Ticket 1003 brings three history rows and ticket 1008 brings two. Three plus two is five. Across all five categories the counts add up to 21, which is the number of events, while the tickets table has 12 rows. The label says requests. The unit is ticket-event pairs.
 
-There are two important repairs, depending on the question. If the report needs only ticket attributes and request counts, do not join the event table at all. Read tickets. If the report needs a summary of event history for each ticket, summarize that history to one row per ticket before joining it.
+And PostgreSQL did nothing wrong. It counted exactly the rows we handed it. The bug is in the meaning, not the syntax, and that is why this bug survives so easily.
 
-COUNT DISTINCT of a ticket identifier can answer some distinct-ticket questions, but it is not a universal repair for a query whose relationships are wrong. It also will not automatically repair sums or preserve unmatched records. The more reliable first move is to state the intended row meaning, inspect the intermediate rows, and choose the join and aggregation that implement that meaning.
+So how do we fix it? It depends on the question. If the report only needs ticket facts, like category and request counts, don't join events at all. Read tickets. If the report really needs something from the history, summarize the history down to one row per ticket first, and then join.
+
+You might think: just use COUNT DISTINCT ticket_id. That does answer some distinct-ticket questions. But it is not a general repair. It won't fix a sum that got multiplied, and it won't bring back rows a join removed. The reliable first move is to say what one row should mean, look at the intermediate rows, and then pick the join and the aggregate that match.
 
 ## Slide 6
 
-We will first report directly from tickets. COUNT star counts result rows. COUNT assignee_id ignores NULL values in that column. COUNT DISTINCT assignee_id counts the different non-null identifiers. On the starting fixture those results are twelve tickets, ten assigned tickets, and two different assignees. Those are three different facts, not three competing answers to the same question.
+So let's report straight from tickets, and be precise about each count. Look at the three expressions in the query, because they mean three different things.
 
-For the lab we need several measures for each category. PostgreSQL's FILTER clause lets an aggregate count only rows that satisfy its own condition, while the other aggregates still see the whole group. The expression on this slide counts resolved tickets. A top-level WHERE resolved condition would instead remove every non-resolved ticket before grouping.
+count star counts rows: every ticket, 12. count of assignee_id counts only rows where assignee_id is not NULL, so it skips the unassigned tickets: 10. count DISTINCT assignee_id counts the different non-null people: 2. Twelve, ten, two. Those are not three competing answers to one question. They answer three different questions, and your column name should say which one.
 
-That difference matters for categories with no resolved work. We want to show the category with a zero, not make it vanish from the result. The starting data contains five categories. Counting all tickets and counting only resolved tickets within the same group preserves each of those categories.
+Now look at the comment line at the bottom: count star FILTER WHERE status equals resolved. FILTER lets one aggregate count only the rows that meet its own condition, while every other aggregate in the same SELECT still sees the whole group.
 
-Read the expression from the inside out: test whether the row's status is resolved; include it in this count if true; otherwise do not include it in this count. A later lab measure will combine two conditions with AND, but the relationship between the group and the conditional count stays the same.
+Why not just write WHERE status equals resolved at the top? Because a top-level WHERE throws away every non-resolved ticket before grouping even starts. Then any category with no resolved work disappears from the report entirely. We want that category to show up with a zero. A zero tells the manager something. A missing row tells them nothing, or worse, makes them think the category doesn't exist.
+
+Read FILTER from the inside out. Is this row resolved? If yes, count it here. If no, leave it out of this one count only. Your lab will combine two conditions with AND, but the idea stays exactly the same.
 
 [Sources] PostgreSQL aggregate-expression documentation: https://www.postgresql.org/docs/current/sql-expressions.html#SYNTAX-AGGREGATES
 
 ## Slide 7
 
-Here is the complete worked pattern. Both aggregates read the same ticket group. total_tickets counts every request in that category. resolved_tickets counts only the rows whose status is resolved. GROUP BY gives us one output row per category, and ORDER BY controls the display order.
+Here is the complete pattern, and it is the one your lab adapts. One SELECT, two aggregates, both reading the same category group. total_tickets counts every request in the category. resolved_tickets counts only the resolved ones. GROUP BY category gives us one row per category.
 
-Parks has two requests and zero resolved requests. Transportation also has two and zero. Sanitation has three and one, streetlight has three and one, and water has two and two. The totals add to twelve tickets and four resolved tickets. We can independently check four by listing the identifiers with status resolved: 1003, 1005, 1008, and 1012.
+Read the table with me. Parks, 2 and 0. Sanitation, 3 and 1. Streetlight, 3 and 1. Transportation, 2 and 0. Water, 2 and 2. Notice that parks and transportation are still here, with a zero. That is FILTER doing its job; a top-level WHERE would have deleted those rows.
 
-We have not joined events because neither requested measure needs event data. Keeping an unnecessary join out of a report is often more important than making a complicated query shorter. Nor have we guessed a denominator: total_tickets clearly refers to all requests in the category.
+Now check it, and not by rerunning the same query. The first column adds to 12, which matches the tickets table. The second column adds to 4. Can we confirm 4 a different way? Yes. List the resolved tickets directly and you get 1003, 1005, 1008, and 1012. Four IDs. Two different routes, same answer. That is a real check.
 
-Your lab will adapt this complete pattern. It asks for active requests and for active requests whose priority is high or urgent. Keep all five categories, even where a particular conditional count is zero. First translate that sentence into predicates, then check the combined condition against actual ticket identifiers rather than trusting a plausible total.
+Also notice what we did not do. We never joined events, because neither measure needs history. Leaving out a join you don't need is often the most important decision in a report.
+
+In your lab you will count active tickets, meaning new, open, or in_progress, and active tickets whose priority is high or urgent. Keep all five categories, zeros included. Write the conditions in plain English first, then check them against real ticket IDs instead of trusting a total that merely looks plausible.
 
 ## Slide 8
 
-Now change the question. Suppose a ticket detail report also needs the number of events recorded for each request. We do need history, but we do not want the final result to repeat tickets. First group the event table by ticket_id.
+Now a different question, one that genuinely does need history. Suppose a ticket detail report should show how many events each request has. We need the events, but we don't want the tickets to multiply. So we summarize first.
 
-WITH gives this intermediate query the name event_counts. Within this statement, we can read that name much like a table. It is not a newly stored table and it is not a separate command that you run and retain for the next query. The WITH clause and the following SELECT form one statement.
+Look at the query. WITH event_counts AS, and inside the parentheses, a plain GROUP BY on ticket_events that counts rows per ticket_id. WITH gives that inner result a name. Below it, we select from event_counts as if it were a table.
 
-Run this example by itself and inspect its result. Ticket 1003 has an event_count of three. Ticket 1004 has one. On the current fixture, every ticket has a recorded event, so there are twelve intermediate rows. If a request had no event yet, it would have no row in this particular summary because the summary starts from events.
+But it isn't a table. Nothing is stored. The WITH clause and the SELECT under it are one statement. If you run only the bottom line by itself later, PostgreSQL won't know what event_counts is.
 
-The useful property is at most one summary row per ticket identifier. That prepares us to join the summary to the tickets table without multiplying ticket rows. CTEs are a way to express and inspect stages of a query. They are not automatically cached tables or an assurance that a query will be faster; the benefit we are using here is clear reasoning about each intermediate result.
+Run it and look at the result. Ticket 1003 has 3 events. Ticket 1004 has 1. In this data every ticket has at least one event, so we get twelve rows. But think about a ticket with no events yet. It would have no row here at all, because this summary starts from events, not from tickets. Hold on to that; it matters on the next slide.
+
+The property we care about is the one on the slide: at most one row per ticket_id. That is what makes the next join safe. And a word on why we use CTEs. They are not a speed trick and they are not cached tables. We use them because each stage gets a name that you can run and inspect on its own.
 
 [Sources] PostgreSQL WITH queries: https://www.postgresql.org/docs/current/queries-with.html
 
 ## Slide 9
 
-This version turns the intermediate result into a reusable report. Read it in two stages. Inside event_counts, GROUP BY produces one count per ticket with recorded history. Outside it, tickets is on the left of a LEFT JOIN. Every ticket is preserved, whether or not the summary has a match.
+Now we put the two stages together and save the result. Read it in two parts.
 
-The selected ticket identifier and subject come from the request. The count comes from the summary. COALESCE uses the first non-null value. When a ticket has no matching history group, the summary columns are NULL, and COALESCE turns that absent count into zero recorded events.
+Inside, event_counts is exactly what we just ran: one count per ticket that has history. Outside, tickets is on the left of a LEFT JOIN. Why LEFT? Because this report is about tickets, so tickets decide which rows exist. Every ticket stays, whether or not the summary has a match for it. That closes the gap I pointed out a minute ago.
 
-Zero is justified here because we counted the rows in the available event table and found none for that ticket. We are not proving that nothing happened in the real world. We are also not filling an unknown source channel or unknown age with an invented number. The meaning of the measurement determines whether a default is defensible.
+The ticket_id and subject come from tickets. The count comes from the summary. And look at COALESCE of e.event_count comma zero. When a ticket has no history group, the joined columns are NULL. COALESCE takes the first non-null value, so that NULL becomes zero.
 
-CREATE OR REPLACE VIEW saves the query definition under ticket_event_counts. A later SELECT reads its current result. We already studied views last week; the new work is arranging the query so each stage has the right unit. Next we will inspect the output count and a known record instead of treating successful view creation as proof that the report is right.
+Is zero honest here? Yes, and the reason matters. We counted the rows in the event table and found none for that ticket. Zero recorded events is a true statement about our data. It is not a claim that nothing happened in the real world. And it would be wrong to do the same thing to an unknown source channel or an unknown age; there, a made-up number would be a lie. What the column measures decides whether a default is defensible.
+
+CREATE OR REPLACE VIEW saves the definition as ticket_event_counts. You know views from last week. What is new is arranging each stage so it has the right unit. And a view that was created successfully proves nothing yet. Next, we test it.
 
 ## Slide 10
 
-We can test three separate properties of the view. COUNT star should be twelve because all starting tickets belong in this report. COUNT DISTINCT ticket_id should also be twelve because no ticket should appear twice. The sum of event_count should be twenty-one because that is how many event records exist in the starting fixture.
+Here is how we test it. Three properties, one small query. Look at the first query.
 
-Those checks are useful together, but they still do not prove that each count belongs to the correct ticket. Swapping counts between requests could preserve every total. Therefore the second query checks known records. Ticket 1003 should have three events; ticket 1004 should have one. We can verify both by listing their rows in ticket_events.
+count star should be 12, because every starting ticket belongs in this report. count DISTINCT ticket_id should also be 12, because no ticket should appear twice. And the sum of event_count should be 21, because that is how many event rows exist. The line at the bottom shows exactly that: 12 rows, 12 ticket IDs, 21 events.
 
-This is how to make query testing concrete without creating a separate testing framework. State a property that follows from the question, write a small independent query, and compare it with records whose meaning you understand. If the fixture changes later, twelve is no longer a universal truth. The underlying properties remain: each intended ticket appears exactly once, and its count equals its recorded history.
+Are we done? No. Those totals could all be right while the counts are attached to the wrong tickets. If two tickets swapped their counts, every total would still match. So the second query checks known records. Ticket 1003 should show 3. Ticket 1004 should show 1. We know those values independently, because we looked at their rows in ticket_events earlier.
 
-For today's lab, the expected measures are different. You will check category totals and list the high-priority active identifiers. Do not simply copy the tests on this slide onto a report that has one row per category. A test must use the same unit as the result it is checking.
+This is what query testing looks like without any testing framework. State a property that follows from the question. Write a small, independent query. Compare against records you understand. If the data changes later, 12 stops being the right number, but the properties stay: each intended ticket appears exactly once, and its count matches its recorded history.
+
+One warning for today's lab. Don't copy these exact checks onto your category report. Your report has one row per category, not one row per ticket, so your checks are the category totals and a list of the high-priority active IDs. A test has to use the same unit as the result it is checking.
 
 ## Slide 11
 
-Three report states can look similar on a dashboard but mean different things. A displayed zero event_count means the query found no recorded history rows for that included request. A NULL assignee_id means the included request has no assigned person. A missing ticket row means the request is outside this result entirely, whether intentionally or because a join or filter removed it.
+These three states can look alike on a dashboard, and they mean different things. Look at the table.
 
-The distinction is operational. A queue of work waiting for assignment should include the unassigned requests. Replacing their missing assignee with a guessed staff member would corrupt the meaning. Removing them with an inner join would hide the work. Likewise, showing a zero for a missing history count is only justified if the report's measurement is recorded events in this source.
+event_count equals zero: the ticket is in the report, and we found no event rows for it. assignee_id IS NULL: the ticket is in the report, and nobody is assigned to it. Ticket absent from the output: the ticket isn't in this result at all, either on purpose or because a join or a filter removed it.
 
-The same care applies to categories with no active high-priority work. We want a visible category row with a zero conditional count. We do not want that category to disappear just because we applied the condition too early.
+Why does this matter in practice? Think of the queue of work waiting for assignment. It has to include tickets 1004 and 1009, the unassigned ones. If you filled in their NULL assignee with a guessed staff member, you would corrupt what the data means. If an inner join to the staff dropped them, the work would vanish from the queue. The same goes for zero: showing zero events is only fair because the measure is recorded events in this source.
 
-This is the bridge from the worked examples to the lab. Decide which rows define the report population first. Then define the measures within that population. Only after that should you choose whether an absent match becomes zero, remains NULL, or legitimately removes a result row. Those decisions should come from the question, not from an urge to make an output look complete.
+In your lab, a category with no active high-priority work should appear with a zero in that column. It should not disappear because a condition was applied too early.
+
+So here is the order of decisions, which is the line at the bottom of the slide. First decide which rows make up the report population. Then define the measures inside that population. Only then decide whether a missing match becomes zero, stays NULL, or removes a row. Let the question decide, not the urge to make output look complete.
 
 ## Slide 12
 
-You will now build a report for the person deciding where staff attention is needed. Work individually with the same twelve-ticket fixture. The question is one row per category, with three measures: all tickets, active tickets, and active tickets whose priority is high or urgent.
+Your turn. Picture the operations manager deciding where staff attention is needed. They want one row per category, with three measures: all tickets, active tickets, and active tickets with high or urgent priority. Work individually, on the same twelve-ticket data.
 
-Use the worked FILTER example as your starting point. The active vocabulary is new, open, and in_progress. For the third measure, both the active condition and the high-or-urgent condition must be true. Keep all five category rows, including categories where a measure is zero. This report does not need an event join because all the facts needed are in tickets.
+Start from the worked FILTER example on slide 7. Active means new, open, or in_progress. For the third measure, both conditions must be true at once: the ticket is active, and its priority is high or urgent. That is an AND inside the FILTER. Keep all five categories, including the zeros. And you don't need events at all; everything you need is in tickets.
 
-Check the totals across the five rows. They should be twelve total tickets, seven active tickets, and two high-or-urgent active tickets on the supplied fixture. Then list those last two ticket identifiers with a simple SELECT. That independent check is more informative than repeatedly rerunning the grouped query.
+Now check it, the way we practiced. Look at the verify box. Your three columns should add up to 12, 7, and 2. Then, separately, write a plain SELECT that lists the two high-or-urgent active ticket IDs. That independent list tells you far more than rerunning the grouped query and staring at it.
 
-Submit one SQL file, week_04_category_report.sql, in Brightspace. Put a short explanation in SQL comments: state what one result row represents and explain why counting a direct join to event history could overstate workload. The lab does not require a second report, screenshots, or a new cloud project. The later notebook sections belong to the second meeting; you do not need to rush through them now.
+Submit one file in Brightspace: week_04_category_report.sql. Put your report and your independent check in it, plus a short explanation in SQL comments, two or three sentences. Say what one result row represents, and why counting a direct join to the event history could overstate the workload. No screenshots, no separate report, no new cloud project. And the later notebook sections belong to Day 2, so you don't need to rush through them now.
 
 ## Slide 13
 
-Last meeting we made a report trustworthy by stating its row meaning and checking its counts. Today the report needs a different piece of history: one latest recorded event for each ticket. We still want one result row per request, not every event that ever happened to it.
+Welcome back. On Day 1 we made a report trustworthy by saying what each row means and checking its counts. Today the report needs a different piece of history: the latest recorded event for each ticket. And we still want one row per request, not every event that ever happened to it.
 
-This is a common pattern in application work. A dashboard might show the last update on an order, the most recent login for an account, or the latest reading from a device. The challenge is to select the complete row that meets an ordering rule, not merely the largest value in one column.
+This shows up everywhere. The last update on an order. The most recent login for an account. The latest reading from a sensor. Here is what makes it tricky: we want the whole row that wins an ordering rule, with its ID, its type, and its time, not just the largest value in one column.
 
-We will learn one window function, ROW_NUMBER, in small stages. First inspect the original events. Then give each ticket's events a position in newest-first order. Next keep position one in an outer query. Finally join that one-row history result to the population of tickets the report should include.
+So we learn one window function, ROW_NUMBER, and we build it in small steps. First, look at the raw events. Second, number each ticket's events newest first. Third, keep position one in an outer query. Fourth, join that one-row-per-ticket result to the tickets the report should include. You will see each intermediate result before we combine anything.
 
-Keep the same data definitions: ticket status is the current state in tickets, while the event table is recorded history. A latest event can be an assignment rather than a status change. We will therefore show the event identifier, type, and time alongside the current ticket status instead of silently substituting one for the other. Our lab will reuse last week's view skill to give the final active-ticket report a stable name.
+Keep the definitions from Day 1. Ticket status is the current state, stored in tickets. The event table is history. The latest event might be an assignment rather than a status change, so we show the event's ID, type, and time next to the current status instead of swapping one for the other.
+
+Open the same Week 4 notebook at the Day 2 heading after setup. Your lab reuses last week's view skill to give the final report a stable name.
 
 ## Slide 14
 
-MAX event_at answers the question, what is the greatest recorded timestamp in this group? It does not automatically carry along the event_type, note, or identifier from the row containing that timestamp. Applying MAX to each of those other columns separately would select their individual greatest values, not reconstruct one original event.
+The first idea most people reach for is MAX. Look at the query: select ticket_id and max of event_at, grouped by ticket. It works, and it answers exactly one question: what is the latest timestamp for each ticket?
 
-It is tempting to group by ticket_id and select a note next to MAX event_at. PostgreSQL correctly rejects an ungrouped note because several notes can belong to that ticket. Grouping by note instead changes the unit and may return several rows per ticket. Neither approach states which single history row we want.
+What it does not do is bring along the rest of that row. Look at the bottom line on the slide. If you also ask for MAX of note, PostgreSQL finds the greatest note, which could come from a completely different event. Each MAX is computed on its own column. You don't get one original event back; you get a mix.
 
-Ticket 1003 makes this visible. Its greatest event time belongs to event 5007. The relevant row includes that event's type and status transition. We need to select that whole row according to an ordering rule.
+You might try putting a plain note column next to MAX event_at. PostgreSQL rejects that, correctly, because a ticket has several notes and you didn't say which one. Adding note to GROUP BY instead changes the unit, and now you can get several rows per ticket. Neither approach says which single row you want.
 
-A query could join back to a maximum timestamp, but tied timestamps could then return more than one event. We will use ROW_NUMBER so the tie rule is explicit. The concept is simple: within each ticket's history, order the records and label the first one. We will inspect those labels before using them to filter anything. A window function adds a calculated value to each input row; it does not initially collapse the history into one row.
+Ticket 1003 makes this concrete. Its latest time belongs to event 5007, and we want that event's type and status change, together, as one row.
+
+You could join back to the maximum timestamp. But if two events share a timestamp, you get both back, and now the ticket appears twice. So we use ROW_NUMBER, which makes the tie rule explicit. Keep one more thing in mind: a window function adds a value to each row. It does not collapse the history the way GROUP BY does.
 
 ## Slide 15
 
-Here is the new expression. Read ROW_NUMBER as give this row a position. OVER describes which other rows it is being compared with and in what order. PARTITION BY ticket_id starts a separate numbering sequence for each ticket. It does not create database partitions or split the table across machines.
+Here is the new expression. Read ROW_NUMBER as: give this row a position. OVER says which rows it is being compared with, and in what order.
 
-Inside OVER, ORDER BY event_at DESC puts the greatest timestamp first within each ticket. The secondary event_id DESC gives a deterministic rule when two timestamps are equal. Each event identifier is unique, so these two ordering terms together distinguish the rows in this fixture. The alias rn is simply the name we give the calculated position.
+Look at the two lines inside OVER. PARTITION BY ticket_id starts a separate count for each ticket, so the numbering restarts at 1 for every ticket. To be clear, this has nothing to do with table partitioning or splitting data across machines. It is just the grouping for the numbering.
 
-The final ORDER BY ticket_id, rn controls the order in which we display the complete result. That is separate from the ordering inside the window. A window ordering determines the calculation; it does not promise how every later reader will receive the output.
+ORDER BY event_at DESC, event_id DESC decides who gets number 1. Newest timestamp first. And if two events have the same timestamp, the larger event_id wins. Event IDs are unique, so together those two terms always pick exactly one row. rn is just the name we give the position.
 
-Run this query and inspect ticket 1003. You should still see all three of its event rows, now numbered one, two, and three. Across the whole fixture the result still has twenty-one rows. Nothing has been filtered yet. If that distinction is clear, the next step is only to name this result and select the rows whose position is one.
+Now look at the last line: ORDER BY ticket_id, rn. That one is different. It only controls how the final result is displayed. The ORDER BY inside OVER decides the calculation. The one at the bottom decides the display. They do different jobs, and here you need both.
+
+Run it and find ticket 1003. All three of its events are still there, now numbered 1, 2, and 3. And the whole result still has 21 rows. Nothing has been filtered yet. That is the point of this step: we look at the labels before we trust them. If that is clear, the next step is just naming this result and keeping the rows where rn is 1.
 
 [Sources] PostgreSQL window-function tutorial: https://www.postgresql.org/docs/current/tutorial-window.html
 
 ## Slide 16
 
-These rows show the calculation for two tickets. Ticket 1003's latest event, 5007, receives position one. Event 5006 receives two, and 5005 receives three. Ticket 1004 has only event 5008, so that row receives one in its own partition.
+Let's zoom in on the labels for two tickets. Look at the table. Ticket 1003: event 5007 gets position 1, 5006 gets 2, and 5005 gets 3. Ticket 1004 has only one event, 5008, so it gets 1 in its own partition. The last column shows which rows we will keep later: the ones in position 1.
 
-Compare the window result with GROUP BY. A grouping operation could reduce the three events for 1003 to one count. ROW_NUMBER instead keeps all three event rows and adds a label. This is why we can later keep the event's type, time, and other values together.
+Compare that with GROUP BY. GROUP BY would squash ticket 1003's three events into one row, a count or a max. ROW_NUMBER keeps all three rows and just adds a number to each. That is the whole reason it works for us: because the original rows survive, the event's type and time stay together with its ID.
 
-The numbering is a property of this query's ordering, not a new identifier stored in the table. If a later event is inserted, the numbering can change the next time we run the query. The event_id remains the stable identifier for the stored event.
+One caution. The rn number is not stored anywhere. It is a property of this query and this ordering, not a new identifier. If a newer event is added to ticket 1003 later, it gets position 1 the next time you run the query, and 5007 slides down to 2. The stable identifier is still event_id.
 
-Do not skip this intermediate result. It makes the next filter intelligible. The rows with rn equal to one are the candidates we want, one within each ticket's history. The other rows still exist in the database; the report will simply not show them. Our current fixture has an event for every ticket, but a robust ticket report should still handle a future request whose history has not arrived. That is why a LEFT JOIN will matter again after we select the ranked rows.
+And look at the line at the bottom: the ranking query still returns all 21 event rows. Don't skip this intermediate look. It is what makes the next filter make sense.
+
+One more thing to keep in mind. In our data every ticket has at least one event. But a robust report should still handle a future ticket whose history hasn't arrived yet. That is why LEFT JOIN comes back once we have picked the ranked rows.
 
 ## Slide 17
 
-We now use WITH exactly as we did for event counts. The inner query is named ranked_events. It selects event values and calculates rn. The outer SELECT can then refer to rn like any other column supplied by that intermediate result.
+Now we keep only position 1. Look at the query. It is the same WITH pattern we used for event counts on Day 1. The ranking query goes inside, under the name ranked_events. The outer SELECT reads from it and says WHERE rn equals 1.
 
-Why not put WHERE rn equals one in the same SELECT that defines rn? PostgreSQL evaluates that query's WHERE filtering before its window calculations. The ranking value is not yet available at that stage. An outer query makes the two operations explicit: calculate the ranking first, then filter its result.
+Why the extra layer? Why not put WHERE rn equals 1 in the same SELECT that calculates rn? Because of the order PostgreSQL does things. Inside one query, the WHERE filter runs before the window function is calculated. At that moment rn doesn't exist yet. So we calculate the ranking in one query, and filter it in the query around it. Two steps, written as two steps.
 
-On the supplied data, keeping rn equal to one gives twelve event rows. Each is the selected history row for a different ticket. Ticket 1003 now appears only with event 5007. The original event table still contains all twenty-one records.
+Run it. Twelve rows, one per ticket, each one that ticket's selected event. Ticket 1003 now shows only event 5007. And the event table itself is untouched; it still has all 21 records. That is the line at the bottom of the slide: first number the rows, then keep position 1, and the stored history doesn't change.
 
-A CTE is not the only way to write this; a subquery can express the same stages. Use the CTE here because we can name, run, and reason about the intermediate query. Remember that WITH and its final SELECT must run as one statement. Running only the second part later will not find a permanently stored ranked_events table. The next example will join this ranked history to the tickets population rather than assume that every possible ticket has history.
+You could write this with a subquery instead of a CTE, and it would do the same thing. I use the CTE because you can name the inner step, run it alone, and look at it. Just remember that WITH and its SELECT run together as one statement. ranked_events is not saved anywhere. Next, we join this to the tickets, instead of assuming every ticket has history.
 
 ## Slide 18
 
-The inner ranking query is unchanged. The outer query now starts from tickets, so the request population controls the report. We LEFT JOIN ranked_events on both the matching ticket identifier and rn equal to one.
+Here is the full pattern, and your lab adapts it. The ranking inside the WITH is unchanged. What is new is the outer query. It now starts FROM tickets, so the tickets decide which rows the report has. Then we LEFT JOIN ranked_events.
 
-Putting rn equal to one in the join condition is important. A ticket with no event has no matching ranked row, but a LEFT JOIN still preserves the ticket with NULL event columns. If we moved e.rn equals one into the outer WHERE clause, those unmatched rows would fail the condition and disappear. The filter's location changes the meaning.
+Look closely at the ON line: e.ticket_id equals t.ticket_id AND e.rn equals 1. The rn condition sits inside the join condition, and that placement is the whole lesson of this slide. Here is why. Picture a ticket with no events. It has no ranked row to match. A LEFT JOIN keeps it anyway, with NULL in the event columns. Now move e.rn equals 1 down into a WHERE clause. For that ticket, rn is NULL, NULL equals 1 is not true, and the ticket is filtered out. It simply disappears. Same words, different location, different meaning.
 
-The selected status comes from tickets. The event identifier, type, and time come from the one matched history row. That keeps the current request state and selected history facts distinct. On this fixture, every ticket has history and the query returns twelve rows. The design also states what will happen if a future request lacks history.
+Notice where each column comes from. t.status is the ticket's current status. event_id, event_type, and event_at come from the one matched history row. Two different facts, kept apart.
 
-Read the query in three parts: rank the events within each ticket, preserve the intended ticket rows, and attach only the selected event. You are not expected to invent this syntax from memory. In the lab you will adapt this worked pattern to active tickets and give the result a view name. Before that, we will examine what our ordering rule means when timestamps tie.
+On our data every ticket has history, so we get twelve rows. But the query also says clearly what will happen to a future ticket with none.
+
+Read it in three parts: rank the events within each ticket, keep the tickets you want, attach only the selected event. You don't need to invent this from memory. In the lab you will adapt it to active tickets and save it as a view. First, though, what happens when timestamps tie?
 
 ## Slide 19
 
-Imagine these two illustrative event rows for one ticket. Both have the same recorded timestamp. Ordering only by event_at does not specify which one receives position one. A repeatable report needs another ordering term if it must select exactly one row.
+Here are two illustrative events for one ticket, 7001 and 7002. Look at the recorded time column. They are identical, to the second. If we ordered only by event_at, which one is newest? PostgreSQL doesn't promise either answer. You might get one today and the other tomorrow, and the report would flicker.
 
-Our query uses the greater event_id when timestamps tie. This is deterministic because event identifiers are unique. It is a declared reporting rule, not proof that the event with the greater identifier happened later in the real world. Identifiers can be allocated before commit, and imported records can arrive in a different order from the events they describe.
+Our ordering rule settles it: ORDER BY event_at DESC, event_id DESC. When the times tie, the larger event_id wins. So 7002 gets position 1 and 7001 gets position 2. That is deterministic, because event IDs are unique.
 
-For some applications, the correct rule would be to show both tied events or to use a trusted source sequence. That is a domain decision. In this class example, we document the event_id tie-break and test it, rather than leave PostgreSQL to choose an unspecified order.
+But be careful about what that proves. Read the second line in the box: deterministic selection is not proof of real-world arrival order. A larger ID does not mean the event happened later. IDs can be handed out before a transaction commits, and imported records can arrive in a different order from the events they describe. Our rule is a reporting decision that we declare and test. It is not a statement about history.
 
-The notebook contains a small, isolated equal-timestamp example. Changing its input order should not change which identifier wins when both ordering terms are present. That test checks determinism. It does not establish a business chronology that our data does not contain. This is another example of distinguishing what a successful computation proves from what someone might mistakenly infer from its label.
+In some applications the right answer is different. Maybe you show both tied events, or you use a trusted sequence number from the source system. That is a business decision, not a SQL one.
+
+The notebook has a small equal-timestamp demonstration: two invented rows in a temporary table, inside a block that rolls back, so the real twenty-one events never change. Run it and watch the higher ID take position 1. That checks determinism. It does not create a chronology our data doesn't have.
 
 ## Slide 20
 
-Here is a boundary case that the starting twelve rows do not cover: a ticket is present but its event history is empty. Perhaps the import was partial or the application writes history through a delayed process. A report intended to show all tickets should reveal that gap, not hide the request.
+Here is a boundary case our twelve starting tickets don't cover: a ticket exists, but it has no events at all. Maybe an import was partial, or the application writes history a little later through a delayed process. A report that claims to show all tickets should reveal that gap, not hide the ticket.
 
-The LEFT JOIN pattern preserves the ticket and leaves the selected event fields NULL. That result accurately says that no matching history row was found. We should not manufacture an event identifier or timestamp to make the output look finished.
+Look at the table. When events exist, the LEFT JOIN gives the ticket plus its one selected event, while the shortcut of joining every event would repeat the ticket. When no event is recorded, the LEFT JOIN gives the ticket with NULL event fields, while the shortcut filters the unmatched ticket away entirely.
 
-Contrast this with yesterday's event count. There, zero recorded events was a meaningful count. Here, we want an actual event record. There is no record to select, so its fields remain NULL. The choice is driven by what the columns claim to represent.
+Those NULLs are honest. They say we found no matching history row. Don't manufacture an event ID or timestamp so the output looks finished.
 
-For a boundary test, use a disposable fixture or a transaction that rolls back. Do not delete an existing request's history in a shared or valuable database merely to see what happens. The notebook demonstrates the missing-match logic without altering your permanent project. After the test, the main fixture should still contain twelve tickets and twenty-one events. Good tests target a small condition and leave the next exercise's starting state understandable.
+Compare this with the event count from Day 1. There, zero was a true count of recorded events. Here we are asking for an actual event record, and there is no record to pick, so its fields stay NULL. What the column claims to be decides the answer.
+
+To be clear, the notebook does not build a zero-event ticket for you. It explains this case in words, because the starting data has none. If you want to try it yourself, use a disposable copy or a transaction that you roll back. Never delete real history in a shared or valuable database just to see what happens. Afterward the data should still have twelve tickets and twenty-one events.
 
 ## Slide 21
 
-Once the SELECT returns the intended result, we can save its definition as a view. This is the same view concept from the previous week, applied to a more careful reporting query. CREATE VIEW does not turn the result into a backup or freeze the selected event forever.
+Once the SELECT returns what we want, we can give it a name with a view. This is the same view idea from last week, applied to a more careful query.
 
-The shortened example on this slide names the ranking itself as a reusable view. Reading that view still computes from the current visible event data. Each request's positions can change when a new event is committed. A separate reading query can then keep rn equal to one.
+Look at the example. CREATE OR REPLACE VIEW metro_support.ranked_ticket_events saves the ranking query: every event, with its rn. Then a separate SELECT reads from the view and keeps rn equal to 1.
 
-In your lab, the named interface will go one step further. active_ticket_latest_event will include the active ticket population and the selected history columns. It should have the five columns named in the assignment: ticket_id, status, event_id, event_type, and event_at. Keep the current ticket status distinct from an event's possible new_status.
+Now the line at the bottom, because people get this wrong. A view stores the query, not the rows. It is not a backup, and it doesn't freeze today's answer. Every time someone reads it, PostgreSQL computes it again from the current data. So if a new event is committed for a ticket, the next read can number that event 1. That is exactly what you want from a live report.
 
-Create the view only after you can run and explain the SELECT. If you are replacing an existing view, PostgreSQL's column-name, order, and type rules still apply. Do not remove a view used by other people to silence an error. In our disposable exercise, inspect the current definition and fix the intended interface. Then query the view and check identifiers, not just whether CREATE returned successfully.
+Your lab view goes one step further. It is called active_ticket_latest_event, and it holds the active ticket population and the selected event together. It needs the five columns named in the assignment: ticket_id, status, event_id, event_type, and event_at. And status there means the ticket's current status, not an event's new_status.
+
+Two practical habits. Create the view only after you can run and explain the SELECT. And if CREATE OR REPLACE complains because you changed a column's name, order, or type, read the error and fix your definition. Don't drop a view other people depend on just to silence the error. Then query the view and check IDs, not just that CREATE succeeded.
 
 ## Slide 22
 
-Suppose a latest-event report has exactly twelve distinct ticket identifiers. That confirms the population and uniqueness on this fixture, but it does not prove that the right event was selected for each ticket. A query that consistently picks the oldest event could pass those two checks.
+How do we know the latest-event report is right? Here is a trap. Suppose it has exactly twelve distinct ticket IDs. That shows the population and the uniqueness are right. It does not show the right event was picked. A query that always picked the oldest event would pass both of those checks.
 
-Use a known multi-event ticket. For 1003, the latest recorded event is 5007. For 1004, the only event is 5008. Inspect their original event rows in chronological order before comparing with the report. This gives you an independent reason for the expected values.
+So check selected rows against tickets you know. For 1003, the latest event is 5007. For 1004, the only event is 5008. Read their original rows in time order first, so you have your own reason for the expected answer.
 
-The lab changes the population to active tickets, so its expected count is seven rather than twelve. Ticket 1003 is resolved and should not appear in that active report. Tickets 1004 and 1009 should remain, despite their missing assignees. These are different checks: inclusion follows ticket status, while event selection follows the history ordering rule.
+Now your lab. It changes the population to active tickets, so the expected count is 7, not 12. Look at the table on the slide. Seven distinct tickets, including 1004 and 1009. Ticket 1003 is resolved, so it should not appear at all. And the selected events for those two: 1004 gets 5008, and 1009 gets 5016. Notice these are two different kinds of check. Which tickets appear follows the current status. Which event is attached follows the ordering rule.
 
-Finally, check that no ticket identifier appears more than once. A count of seven alone can hide both a duplicate and a missing row. The compact query on this slide returns only duplicate identifiers. An empty result is what we expect for that specific property, not universal proof that the entire report is correct. The tests work together because each corresponds to a stated part of the report's contract.
+Last, look at the query on the slide. Group the view by ticket_id and keep only groups with a count greater than 1. That lists any duplicate tickets. Why bother if the count is already 7? Because one duplicate plus one missing ticket also adds up to 7. We expect no rows, and an empty result proves this one property, not the whole report.
 
 ## Slide 23
 
-The second lab gives the queue a useful history summary. Adapt the worked ranking and LEFT JOIN query, and name the view metro_support.active_ticket_latest_event. Include only tickets whose current status is new, open, or in_progress. Include the five requested columns without adding a required assignee join.
+Second lab. The active queue gets a history summary. Look at the first box: create metro_support.active_ticket_latest_event using the worked ROW_NUMBER plus LEFT JOIN pattern. Include only tickets whose current status is new, open, or in_progress. Use the five columns: ticket_id, status, event_id, event_type, event_at. And don't add a required join to an assignee, because that would drop 1004 and 1009.
 
-Run your SELECT before saving the view so you can inspect its intermediate result. The event ranking still considers each ticket's recorded history. The active-ticket condition belongs to the ticket population in the outer query. Keep the rn condition in the LEFT JOIN so a ticket without history could still appear.
+Where do the conditions go? The ranking still looks at every ticket's full history. The active condition belongs to the tickets in the outer query. And e.rn equals 1 stays in the LEFT JOIN's ON clause, so a ticket with no history could still appear. Run your SELECT and look at it before you wrap it in CREATE OR REPLACE VIEW.
 
-On the supplied fixture, the view should return seven unique ticket identifiers. Check 1004 with event 5008 and 1009 with event 5016. Then run the duplicate-identifier check and inspect at least one multi-event active ticket against its source history. If a result differs, identify whether the issue is the population, the ranking, or the join before changing several clauses at once.
+Then check, as the second box says. Seven unique ticket IDs. 1004 with event 5008, and 1009 with event 5016. Run the duplicate check from the last slide. And pick one active ticket with several events and compare its selected event against its source history yourself. If something doesn't match, figure out whether the problem is the population, the ranking, or the join before you change several things at once.
 
-Submit one SQL file, week_04_latest_event.sql. Include the view, your verification queries, and brief comments explaining the tie-break and the effect of moving rn equals one from ON into WHERE. No extra notebook or screenshot submission is needed. You can use the notebook as your workspace and save your own SQL from it. The goal is one report you can explain and rerun, not a large collection of unrelated query puzzles.
+Submit one file in Brightspace: week_04_latest_event.sql. It holds the view, your verification queries, and short comments explaining the tie-break and what would happen to a ticket with no events if e.rn equals 1 moved from ON into WHERE. No screenshots, no notebook. Use the notebook as your workspace, and save your own SQL out of it.
 
 ## Slide 24
 
-We have now distinguished several kinds of correctness. The query must choose the intended population, combine relationships without unintended multiplication, select the intended history row, and expose columns whose meaning is clear. We checked those claims with counts and specific identifiers on a known fixture.
+Let's step back. This week we separated kinds of correctness. Choose the right population. Combine tables without accidentally multiplying rows. Pick the intended history row. Expose columns whose meaning is clear. And we checked every one of those claims with counts and specific IDs on data we know.
 
-Real applications add another complication: other sessions can change data while a person is working. Imagine checking the active count in one statement and reading the active queue in a later statement. If another session resolves a request between those reads, the two results can differ even when both queries are written correctly.
+Now look at the two lines on the slide. Query correctness asks which rows this statement should return. That is what we did this week. Transaction behavior asks which committed changes the statement can actually see. That is next week.
 
-This leads into next week's work on transactions and isolation. We will not solve concurrency by adding DISTINCT, or by assuming the database has lost a record. We will ask which changes each statement can see, where a transaction begins and ends, and which changes are kept after commit or discarded by rollback.
+Why does that matter? Real databases change while people use them. Imagine you check the active count in one statement, and then read the active queue in a second statement. If someone resolves a ticket in between, your two results disagree, even though both queries are written correctly. DISTINCT won't fix that, and no record was lost.
 
-For today, keep the boundaries honest. Your report is tested against the supplied state and ordering rule. You have not proven that two separate reports run at different moments always describe the same snapshot. Save your SQL, finish the notebook cleanup when you no longer need its temporary database, and keep any project connection details private. The transferable skill is not one particular query: it is explaining exactly what a result means and how you checked it.
+Next week we cover transactions, visibility, and blocking: which changes each statement can see, where a transaction starts and ends, and what is kept after COMMIT or thrown away by ROLLBACK.
+
+For today, be honest about what you proved. Your report was tested against this data and this ordering rule. You haven't proven that two reports run at different moments describe the same snapshot. Save your SQL, and clean up only the notebook database made for this exercise. Keep your project connection details private. The skill that transfers is being able to say what a result means and how you checked it.
 
 ## Slide 25
 

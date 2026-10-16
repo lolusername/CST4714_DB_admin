@@ -9,7 +9,8 @@ Releasing that session lets the update finish. Does it matter whether we commit
 or roll back the blocking transaction?
 
 Work individually in class. Use only your personal course database. Submit one
-completed notebook in Brightspace, with its short explanation in the notebook.
+sharing link to your completed Colab notebook in Brightspace, with its short
+explanation in the notebook.
 
 ## Before the Experiment: Connect Colab to Supabase
 
@@ -71,7 +72,8 @@ what blocked it, how the transaction decision changed the stored data, and one
 reason the classroom choice cannot be applied blindly to a real application.
 Use one run's actual PIDs and blocking result, or label your supplied trace.
 
-**Submit:** colab link, including the comparison and
-short update. No screenshots, separate incident form, or additional report.
+**Submit:** the sharing link to your completed Colab notebook, including the
+comparison and short update. Use **Share** to give the instructor viewer access;
+submit your saved copy's link, not the starter notebook's GitHub/Colab link. No screenshots, separate incident form, or additional report.
 Confirm the connections are closed and `lock_lab` was removed. Remove any
 accidentally saved credentials before submission.

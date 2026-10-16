@@ -17,10 +17,12 @@ decisions?
 
 ## Before Class: Assigned Reading
 
+Read the [textbook corrections](../COURSE_CORRECTIONS.md) with the assigned sections.
+
 Use [Chapter 13: Scale Changes the Questions a System Must Answer](../Operating_Cloud_Databases.pdf).
 
-- **Before Day 1:** read the capacity and distribution sections through **Worked Example: Evaluate Metro Support Candidates**, plus **Inspect the Public Source Before Loading It** and the storage projection in **Scaling Also Scales Operations**.
-- **Before Day 2:** read the Python connection, parameterized-query, and repeat-import explanations. The notebook provides complete setup; only one database path is required.
+- **Before Part 1:** read the capacity and distribution sections through **Worked Example: Evaluate Metro Support Candidates**, plus **Inspect the Public Source Before Loading It** and the storage projection in **Scaling Also Scales Operations**.
+- **Before Part 2:** read the Python connection, parameterized-query, and repeat-import explanations. The notebook provides complete setup; only one database path is required.
 
 Bring one point you want clarified. Reading supports the in-class work; it does
 not add a separate reading report. Optional textbook practice is not required
@@ -33,7 +35,7 @@ unless the weekly lab assigns it.
 - [Week 13 student deck](week_13_scale_integration.pptx)
 - [Week 13 PDF handout](week_13_scale_integration.pdf)
 - [Week 13 transcript](week_13_scale_integration_transcript.md)
-- [Individual lab for both meetings](lab_01_public_data_integration.md)
+- [Individual lab](lab_01_public_data_integration.md)
 - [Historical CISA teaching sample: JSON, CSV, and source notes](materials/datasets/cisa_kev_sample/README.md)
 
 <!-- videos:start -->
@@ -56,21 +58,42 @@ The linked JSON and CSV contain the same 75-record historical sample for the
 textbook's standalone examples. The notebook already includes these records;
 you do not need another download or an additional submission for the lab.
 
-## Day 1: Evaluate Distribution Without Pretending to Shard
+## Fall 2026 Holiday-Week Plan
 
-Use **slides 1-16**. We distinguish latency from throughput, calculate a small
+If this lesson falls in Thanksgiving week for your section, use the single
+scheduled meeting: the [City Tech calendar](https://www.citytech.cuny.edu/registrar/docs/fall_2026.pdf)
+has no classes on November 25 and the college is closed November 26-27.
+Brightspace gives the section's meeting and submission dates.
+
+For that 100-minute meeting, use this focused plan:
+
+- **15 minutes:** discuss capacity, replication, and sharding with selected slides.
+- **20 minutes:** inspect the embedded snapshot and compare vulnerability ID with date added in Notebook 06.
+- **45 minutes:** use `TARGET = "sqlite"` to import, repeat the import, verify a known record, and change the grouping to product. Cloud paths are optional extensions.
+- **10 minutes:** write the short handoff and clean up the practice objects.
+- **10 minutes:** review the existing [final-project checkpoint](../week_12/materials/assignments/final_project.md): model, seed data, and the first two queries. Record progress and the next step in the existing project package.
+
+Submit the same one lab notebook. The project checkpoint adds no separate
+submission. Any unfinished guided work continues in the next scheduled class.
+Use the slides as references; this plan does not require presenting all 32 slides.
+If the section has two scheduled meetings for this lesson, spread the same parts
+across those meetings.
+
+## Part 1: Evaluate Distribution Without Pretending to Shard
+
+Use relevant examples from **slides 1-16**. We distinguish latency from throughput, calculate a small
 latency percentile, and compare replication, partitioning, and sharding. We then
 use Notebook 06's Sections 1 and 2 to inspect the source and measure candidate
 keys. The range/hash experiment makes placement visible without deploying a
 sharded cluster. Atlas Free does not provide that deployment.
 
 Begin Part 1 of the individual lab. Compare CVE identifier with date added and
-explain whether either fits the question you want to answer. Save the same
-notebook for Day 2; there is no separate Day 1 submission.
+explain whether either fits the question you want to answer. Continue in the
+same notebook for Part 2; there is no separate Part 1 submission.
 
-## Day 2: Connect, Load, Verify, and Reuse
+## Part 2: Connect, Load, Verify, and Reuse
 
-Use **slides 17-32**. We read the connection and import code, distinguish
+Use relevant examples from **slides 17-32**. We read the connection and import code, distinguish
 transaction atomicity from repeat behavior, and examine a wrong stored value
 that a correct row count would miss.
 

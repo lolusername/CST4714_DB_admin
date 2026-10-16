@@ -2,78 +2,84 @@
 
 ## Slide 1
 
-This week we will follow a public dataset through two related decisions. First, we will decide what the data can tell us about distribution and capacity. Then we will load it into a database and test what happens when the same import runs again.
+Welcome to Week 13. The case is in the two lines on the slide. A public dataset becomes a database, and the next import arrives tomorrow. That second line is the whole week.
 
-Imagine that a colleague asks you to build a small catalog application. The first import succeeds. Tomorrow the source publishes an update, and your colleague runs the same program again. A program that simply appends every row can create duplicates. A program that replaces the whole database can erase information that somebody else added. Before choosing either behavior, we need to identify the records, understand the source, and define the intended effect of a repeat.
+Picture a colleague who asks you to build a small catalog app. The first import works. Tomorrow the source publishes an update, and your colleague runs the same program again. Now what? If the program just appends every row, you get duplicates. If it wipes the database and reloads, it can erase something somebody else added. Neither should happen by accident. So before we write any import, we need to know how to identify a record, where the data came from, and what a second run is supposed to do.
 
-Our example uses a historical subset of CISA's Known Exploited Vulnerabilities catalog. We will analyze records about vulnerabilities, not download vulnerable software or test anybody's system. The same import decisions apply to transit records, museum collections, product catalogs, and many other datasets.
+Our data is a historical subset of CISA's Known Exploited Vulnerabilities catalog. We are reading records about vulnerabilities. We are not downloading vulnerable software or testing anybody's system. And the same decisions apply to transit data, museum collections, or product catalogs.
 
-On Day 1, we will use Python to measure key choices and make a bounded distribution experiment. On Day 2, we will complete a repeatable import. SQLite gives everyone a working local path. Atlas and PostgreSQL are optional alternatives. The two meetings contribute to one individual notebook submission, with no separate report.
+Day 1 is about measuring key choices and running a small distribution experiment in Python. Day 2 is a repeatable import with a checked result. SQLite gives everyone a working path. Atlas and PostgreSQL are optional. On our calendar this is Thanksgiving week, so if we only have one meeting, we do the core of both parts together, with SQLite. Either way, it all goes into one individual notebook, with no separate report.
 
 ## Slide 2
 
-Capacity planning begins with a workload that we can describe and measure. The size of a database is one part of that description. It does not tell us how quickly users need answers, how many operations arrive together, or which records receive most of the attention.
+Before anybody says the word sharding, we need a workload we can actually describe. Look at the four rows on the slide.
 
-Latency measures how long one request takes. If a lookup starts now and finishes eighty milliseconds later, its latency is eighty milliseconds. Throughput measures completed work over an interval, such as requests per second. A system can have substantial throughput while some individual requests remain slow. The two measurements answer different questions.
+Latency is how long one request takes. A lookup that starts now and finishes eighty milliseconds later has a latency of eighty milliseconds. Throughput is how much work finishes in an interval, like requests per second. Why keep them apart? Because a system can push a lot of requests per second while some individual users still wait a long time. Those are different complaints with different fixes.
 
-The working set consists of the data and index pages that the workload uses repeatedly. A large archive can have a relatively small active working set. A smaller database can still cause heavy disk activity if its common operations touch many different pages. We need observations of the actual access pattern to understand that pressure.
+The working set is the data and index pages the workload touches again and again. That is what needs to stay close at hand to be fast. A huge archive can have a tiny working set, and a small database can keep the disk busy if its common queries touch pages all over the place. You only learn that by watching the actual access pattern, not by checking the total size.
 
-The growth horizon tells us how far ahead a projection looks. Planning for tomorrow and planning for a year require different assumptions about retention and incoming data.
+The growth horizon is how far ahead you are projecting. Planning for tomorrow and planning for a year need different assumptions about retention and incoming data.
 
-Our catalog could support a daily summary and an interactive lookup. The summary might scan many records once a day. The lookup might retrieve one identifier thousands of times. Using the same data does not give these operations the same capacity requirements.
+Now read the line at the bottom. Our catalog could feed a daily report and an interactive lookup. The report scans lots of records once a day. The lookup might fetch one ID thousands of times. Same records, completely different capacity needs. The size of the database tells you none of that.
 
 ## Slide 3
 
-Here is a complete, small calculation that shows why the average alone can hide a problem. We have twenty invented request durations. Eighteen requests take twenty milliseconds, one takes five hundred, and one takes one thousand. These numbers are a teaching example. They are not measurements from a cloud service.
+Here is why I never trust an average by itself. This is a complete little Python calculation, and the numbers are invented on purpose. Read the note under the code: it is a synthetic twenty-request trace, not a measurement of Atlas, Supabase, or our dataset.
 
-The multiplication of the list repeats the value twenty eighteen times. We append the two slower observations and then sort the list. Adding all durations gives eighteen hundred sixty milliseconds. Dividing by twenty gives a mean of ninety-three milliseconds.
+The second line builds the list. Twenty times eighteen means eighteen requests at twenty milliseconds, then one at five hundred and one at one thousand. We sort it. Add everything up and you get eighteen hundred sixty milliseconds. Divide by twenty, and the mean is ninety-three milliseconds. Sounds fine.
 
-Now consider the ninety-fifth percentile using the nearest-rank convention shown here. Multiply twenty by zero point ninety-five to obtain nineteen. The ceiling operation selects rank nineteen. Python counts list positions from zero, so the expression subtracts one before indexing the sorted list. Position eighteen contains five hundred milliseconds.
+Now the ninety-fifth percentile, using nearest rank. Twenty times zero point nine five is nineteen, and the ceiling keeps it at rank nineteen. Python counts from zero, so the code subtracts one and reads position eighteen of the sorted list. Five hundred milliseconds.
 
-The average therefore says ninety-three milliseconds while the nearest-rank p95 says five hundred milliseconds. Neither calculation contradicts the other. They describe different features of the same observations. The slowest observation is still one thousand milliseconds.
+Run it, and it prints ninety-three point zero and five hundred. Same data, two very different stories. The average says everything is quick. The p95 says one request in twenty waits half a second. And the slowest request took a full second. That slow tail is what people actually complain about, and the mean smoothed it away.
 
-Percentile implementations can use different conventions, particularly with small samples. State the convention when reproducing a calculation. Twenty synthetic requests cannot establish a service-level objective or a reliable production benchmark, but they make the distinction between an average and a slow tail concrete.
+Two cautions. Percentile conventions differ, especially with small samples, so always say which one you used. And twenty fake requests cannot set a service-level objective. They just make the difference between an average and a tail concrete.
 
 ## Slide 4
 
-Several changes can address capacity pressure, and each changes a different part of the system. Query and index tuning can reduce unnecessary work. If a query examines many irrelevant records, adding machines might postpone the problem while preserving an inefficient access pattern. We still check the answer and the index's effect on writes.
+When a database gets slow, people jump straight to bigger hardware or more machines. This table is here to slow that reflex down. Each option relieves a different pressure, and each leaves a decision behind. Read across each row.
 
-Scaling up gives one node more resources, such as memory or CPU. It can be a reasonable operational choice when the bottleneck fits those resources. It also has a cost and an eventual limit.
+Tuning a query or an index removes work the database never needed to do. If a query examines thousands of irrelevant rows, adding machines just spreads the waste around. You still have to check that the answer is right and what the index costs on writes.
 
-A cache can avoid recomputing or rereading a result. Read replicas can serve suitable reads away from another member. Both require a decision about freshness. An old product description and an old account balance can have very different consequences.
+Scaling up gives one node more CPU or memory. That is often the sensible move, but it costs money and it has a ceiling.
 
-Partitioning divides a table or collection according to a rule. Partitioning within a database can help a query skip irrelevant portions or make retention easier. That arrangement does not automatically distribute execution across independent machines.
+A cache or read replicas take repeated reads off the main server. The decision there is staleness. An old product description is harmless. An old account balance is not.
 
-Sharding places portions across nodes and adds routing, balancing, and recovery responsibilities. We should be able to name the measured pressure that makes those responsibilities worthwhile.
+Partitioning inside one database splits a table by a rule, so queries can skip irrelevant parts, or old data can be retired easily. It does not, by itself, spread work across machines.
 
-For our seventy-five records, tuning or simply retaining a small, understandable design is a stronger starting point than building a distributed deployment. We study distribution so that we can recognize a future need and explain its tradeoffs.
+Sharding does spread data across nodes, and it hands you routing, balancing, and recovery as new jobs. You should be able to name the measured pressure that is worth taking those jobs on.
+
+Read the line at the bottom. For our seventy-five records, the honest answer is tuning, or just keeping the design small. We study distribution so we can recognize the day it is actually needed.
 
 ## Slide 5
 
-Replication and sharding describe different placement decisions. A replica set maintains copies of the same logical data. If our seventy-five-record collection lives on a three-member replica set, each data-bearing member maintains that logical collection. Replication supports availability and recovery from some member failures, subject to the configuration and the operation's durability guarantees.
+Two words that get mixed up constantly: replication and sharding. They are different placement decisions, and the table shows our seventy-five-record collection placed three ways.
 
-Sharding divides ownership of the collection. In the balanced illustration here, three shards each own about twenty-five of the seventy-five records. The collection still has seventy-five logical records. We did not create three unrelated catalogs. A router makes the distributed collection available through a common interface.
+First row. One replica set with three members. Every member keeps the same logical seventy-five records. These are copies. Why have copies? Availability. If one member fails, another can take over, depending on the configuration and the durability the operation asked for.
 
-Each shard can itself use replication. In that arrangement, replicas of the first shard maintain its assigned portion, replicas of the second shard maintain the second portion, and so on. Dividing ownership does not remove the need to protect each portion from a member failure.
+Second row. Three shards with a balanced split. Now each shard owns about twenty-five of the seventy-five. That is division of ownership, not copying. The collection still has seventy-five logical records. We did not make three separate catalogs. A router presents the pieces as one collection.
 
-The equal split in the table is an illustration. Actual placement depends on keys, sizes, ranges, and balancing behavior. Equal record counts also do not establish equal work. One shard might own records that receive almost all requests, or records whose documents are much larger.
+Third row, and people forget this one. Each shard has its own replicas. Splitting the data does not remove the need to protect each piece from a member failure. The first shard's replicas copy the first shard's portion, and so on.
 
-This distinction prevents a common mistake: counting replicas as if they each added an independent share of write capacity for the same data. Copies and distributed ownership have different operational consequences.
+Now read the warning under the table. The even split is an illustration, not a guarantee. Real placement depends on keys, sizes, ranges, and balancing. And equal record counts do not mean equal work. One shard might own the records that get almost every request.
+
+The mistake this slide prevents is counting replicas as extra write capacity for the same data. Three copies of the same records are protection, not three times the room to write them.
 
 Sources:
 https://www.mongodb.com/docs/manual/sharding/
 
 ## Slide 6
 
-This diagram separates the roles inside a sharded MongoDB cluster. The application connects through mongos, the query router. The router uses the cluster's metadata to determine which shards are relevant to an operation. The shards hold portions of the application data. Each shard's replica set protects that shard's portion through replication.
+Here is what is actually inside a sharded MongoDB cluster. Follow the boxes from the top.
 
-The config server replica set maintains cluster metadata, including information about the distribution of data. That metadata allows routing to follow the current placement rather than requiring application code to hard-code a machine for every record. Config servers have a different role from the shards that store the application collection.
+The application does not talk to the shards directly. It connects to mongos, the query router. Why put a router in the middle? So the application never has to know which machine holds which record. The router figures that out, sends the work where it needs to go, and merges the answers.
 
-Consider an exact lookup that includes an appropriate shard-key value. The router can use that value and the distribution metadata to target the relevant location. A query whose filter lacks the information needed for targeting can require work on multiple shards. The application may receive one result even though several servers participated in producing it.
+How does it figure it out? The config servers. They hold the cluster metadata, including how the data is currently distributed. Because placement is described there, it can change without anybody rewriting application code. That is a different job from the shards, which store the application's data.
 
-This diagram explains architecture. We are not deploying these components in our lab. Atlas Free does not provide a sharded cluster for this exercise. Our Python experiment models a small part of placement so that we can reason about it without paying for infrastructure or confusing a simulation with a deployment.
+Then Shard A and Shard B. Each holds a portion of the data, and each one is a replica set protecting its own portion.
 
-Keep the roles distinct as we continue: the router routes, the metadata describes placement, and the shards hold the distributed data.
+Read the line at the bottom, because it ties this to the rest of the day. The shard key decides distribution, and it decides whether a query can be sent to a limited set of shards. An exact lookup that includes the shard key value can be targeted. A query without that information may need work on several shards, and the application still sees one result.
+
+We are not deploying any of this. Atlas Free does not give us a sharded cluster for this exercise. Our Python experiment models a small piece of placement instead, so we can reason about it without paying for anything.
 
 Sources:
 https://www.mongodb.com/docs/manual/sharding/
@@ -81,15 +87,13 @@ https://www.mongodb.com/docs/atlas/reference/free-shared-limitations/
 
 ## Slide 7
 
-Our source is the CISA Known Exploited Vulnerabilities catalog. This classroom fixture selects seventy-five records from a catalog version dated July tenth, twenty twenty-six. The retrieval record is dated July thirteenth. A catalog version and a retrieval time describe different events: when the source version identifies itself and when we obtained our copy.
+Now our actual data. This is the CISA Known Exploited Vulnerabilities catalog. Our classroom fixture has seventy-five records selected from the catalog version dated July 10, 2026, and we retrieved it on July 13, 2026. Notice those are two different dates. One is when the source says its version was published. The other is when we got our copy. Keep both, because they answer different questions.
 
-The slide shows selected fields from the first example record. The CVE identifier gives us a stable identifier to match on repeat imports. Vendor and product are descriptive labels. The dateAdded field describes inclusion in this catalog. It does not tell us the moment somebody first discovered the weakness, first exploited it, or installed vulnerable software.
+Look at the record on the left. The cveID, CVE-2026-56291, is a stable identifier. That is what will let us recognize the same record the next time we import. Vendor and product, Balbooa and Forms, are descriptive labels. And dateAdded is the date this record entered the catalog. It is not when someone discovered the weakness, exploited it, or installed the software. Field names can tempt you into claims the data does not support.
 
-The cwes field is a list. A record can therefore carry more than one weakness identifier without inventing a delimiter inside a single label. We will preserve that list when we choose a database representation.
+The cwes field is a list, in square brackets. One vulnerability can carry more than one weakness identifier, and a list holds that without inventing a comma convention inside a string. We will keep it a list in every database.
 
-Seventy-five records are enough to make our code and calculations inspectable. They are not a random sample, and they do not represent the current complete catalog. A count of vendor labels in this subset does not measure a vendor's overall security quality or the number of affected computers.
-
-We will keep the source metadata with the fixture so that another person can understand which observations produced our classroom results.
+Read the note at the bottom. Seventy-five records are enough to check every calculation by hand. They are not a random sample, and they are not the current catalog. A vendor count in this subset says nothing about a vendor's overall security or how many computers are affected.
 
 Sources:
 https://github.com/cisagov/kev-data
@@ -97,39 +101,45 @@ course/datasets/cisa_kev_sample/kev_sample.json
 
 ## Slide 8
 
-JSON parsing establishes that the text follows JSON syntax. It does not establish that an identifier is present, that a date is possible, or that a field uses the type our model expects. The notebook checks those conditions before opening an import path.
+A JSON file that parses is not the same as data you can trust. Parsing only proves the text follows JSON syntax. It does not prove an ID is present, a date is real, or a field has the type your model expects. So the notebook runs the checks in this table before it opens any import path. Let's go down the left column.
 
-A required text field must contain nonempty text. An identifier must have the CVE form used by this source. Dates must parse as calendar dates and must use the canonical year-month-day representation. February thirtieth fails because the date is impossible. A compact string such as twenty twenty-six zero two zero one fails our representation check even if a library can interpret it.
+A missing vendor, ID, or required text field stops the import before anything loads. IDs also have to look like CVE identifiers.
 
-Duplicate identifiers require a decision about which record is authoritative. Silently keeping whichever appears last could conceal a source conflict. The notebook therefore stops instead of choosing on our behalf.
+February 30, 2026 fails because that day does not exist. The compact form, 20260201, fails too, even though a library could probably guess what it means. Why reject it? Because we want one canonical year-month-day form, and later our date ordering depends on it.
 
-The CWE field must be a list. An empty list stays empty. It does not justify inventing a weakness value or claiming that the vulnerability has no weakness.
+A repeated CVE identifier stops everything. Which record is the real one? If the code silently kept whichever came last, it would hide a conflict in the source. So the notebook makes us decide.
 
-Finally, the fixture includes a vendor label with a trailing space. The notebook reports it and preserves it. Trimming may be a useful later transformation, but it changes exact-value grouping. We would document and test that transformation rather than quietly changing the evidence. Data quality work often means making assumptions explicit before a write succeeds.
+If cwes arrives as text instead of a list, that is rejected. And an empty list stays empty. We do not invent a weakness to fill it.
+
+Last row. One vendor label is SimpleHelp with a trailing space. The notebook shows you the space and keeps the label as the source wrote it. Trimming might be right later, but it changes grouping, so we would document and test it, not do it quietly.
 
 ## Slide 9
 
-Cardinality and frequency describe different properties of a candidate key. Cardinality counts distinct values. Frequency counts how often values repeat. This small ticket example makes both quantities visible without requiring a database.
+Before we measure the real dataset, here is a tiny made-up one, because two ideas get confused all the time. Cardinality counts how many distinct values a field has. Frequency counts how often each value repeats.
 
-Suppose eight tickets use two statuses. Six are open and two are resolved. The status field has cardinality two. Its most frequent value appears six times, which is seventy-five percent of the records. If placement depends only on status, all six open tickets share the same key value. Adding machines cannot make those identical values become distinct.
+Look at the first row. Eight tickets, six open and two resolved. The status field has cardinality two. Its most common value, open, covers six of eight records, seventy-five percent. Now imagine we place records by status. All six open tickets have the same key, so they land together. Adding machines cannot help, because you cannot split identical values.
 
-Now give each ticket a different identifier. The identifier field has cardinality eight, and each value appears once. Its largest record share is one eighth, or twelve point five percent. That gives us a finer-grained way to identify and place records.
+Second row. Give each ticket its own ID. Cardinality eight, and each value appears once, so the largest share is one in eight, twelve point five percent. That is a much finer way to spread records.
 
-However, a unique identifier does not prove that requests will spread evenly. A particular ticket could be the subject of nearly every lookup. The stored records would have perfect identifier uniqueness while the request workload remained concentrated.
+But read the line in the middle of the slide. A unique ID distributes records finely, but one ID can still receive most reads. Suppose everyone keeps opening the same ticket. The stored records are perfectly spread, and the traffic is all on one.
 
-That is why we distinguish record frequency from request frequency. Our notebook measures the records in a fixture. It has no production request log. We can calculate a candidate's properties and identify risks, but we cannot infer real user demand from uniqueness alone. Keep that boundary in mind when writing your recommendation.
+That is the line at the bottom. Record frequency and request frequency are different measurements. Our notebook measures records in a fixture. We have no production request log. So we can describe a candidate key's properties and its risks, but we cannot say anything about real user demand from uniqueness alone. Keep that boundary in mind when you write your recommendation.
 
 ## Slide 10
 
-These measurements come from the actual seventy-five-record teaching snapshot. The CVE identifier has seventy-five distinct values. Its largest value count is one, giving a largest share of one point three three percent after rounding. That makes it useful for identifying one record and matching a repeat import.
+Now the real measurements, from the seventy-five-record snapshot. Four candidate keys. Read across each row.
 
-The dateAdded field has thirty-eight distinct values. The most repeated date appears eight times, or ten point six seven percent. Those dates can support a time-oriented question, but repeated dates and the order of new arrivals matter for placement.
+cveID has seventy-five distinct values, each appearing once, so the largest share is one point three three percent. That makes it the right field for identifying one record and matching it on a repeat import.
 
-Vendor has forty-two distinct labels. Microsoft appears sixteen times, making the largest share twenty-one point three three percent. Combining vendor and product increases the distinct count to fifty-six and reduces the largest repeated pair to four records in this fixture.
+dateAdded has thirty-eight distinct values. The most common date appears eight times, ten point six seven percent. Dates are good for time questions, but repeated dates, and the fact that new dates keep arriving, matter for placement. That is the next slide.
 
-A compound candidate can divide some groups more finely, but more distinct combinations do not automatically make it the correct shard key. We still need to know which predicates the application supplies and which records receive writes or reads together.
+vendorProject has forty-two distinct labels, and the biggest, Microsoft, appears sixteen times, twenty-one point three three percent. Combine vendor and product and you get fifty-six distinct pairs, and the largest pair repeats only four times, five point three three percent.
 
-These percentages are descriptive statistics for this selected source. They are not response times or utilization measurements. There is no evidence here that our classroom database has a production bottleneck. In your lab, compare the identifier and date using two measurements, then connect the measurements to a specific query rather than selecting the largest number automatically.
+So do we just pick whichever has the most distinct values? No. More distinct combinations do not make a correct shard key. What matters is which values your queries supply and which records get read or written together.
+
+One practical note for the lab. Your notebook prints the distinct count, a ratio, and the largest value share. The largest value count column is on this slide to make the percentages concrete, so do not go looking for it in your output.
+
+And read the note at the bottom. These numbers describe this selected dataset. They are not traffic or latency, and nothing here shows a bottleneck.
 
 Sources:
 course/datasets/cisa_kev_sample/kev_sample.json
@@ -137,54 +147,60 @@ course/notebooks/06_public_data_capacity_integration.ipynb
 
 ## Slide 11
 
-A ranged rule places nearby key values together. We can illustrate that behavior by sorting our records by dateAdded. The oldest sixty records establish three boundaries. We then hold those boundaries fixed and treat the newest fifteen as later writes.
+Now a small experiment about time-based keys. A ranged rule keeps nearby key values together. That sounds good, and it is good for date-window queries. Watch what it does to new writes.
 
-The boundaries in this particular fixture are April twenty-second, May twentieth, and June first of twenty twenty-six. Bucket zero contains dates before the first boundary. Bucket one starts at the first boundary and ends before the second. Bucket two starts at the second and ends before the third. Bucket three begins on June first and includes later dates.
+We sort the records by dateAdded. The oldest sixty records set the boundaries, and then we freeze them. The newest fifteen play the role of later writes arriving into those fixed ranges.
 
-The notebook uses bisect_right to count how many boundaries a date has reached or passed. Because the dates use a fixed year-month-day representation, their string order agrees with their calendar order. The earlier validation makes that assumption explicit.
+The boundaries in this fixture are April 22, May 20, and June 1, 2026. Read the table. Bucket zero is before April 22. Bucket one is April 22 through May 19. Bucket two is May 20 through May 31. Bucket three is June 1 onward, with no upper end.
 
-All fifteen later records land in bucket three. This shows how an advancing time key can concentrate new writes in the current upper range while older records remain elsewhere.
+The notebook uses bisect_right, which counts how many boundaries a date has reached or passed. That works on plain strings only because every date is in the canonical year-month-day form, so string order matches calendar order. That is why the checks on slide 8 rejected compact dates.
 
-We deliberately omit balancing and migration from this experiment. Real MongoDB distribution can change as ranges move. Also, our ordering is a teaching construction from catalog dates, not an observation of production arrival times. The experiment isolates a mechanism: fixed date ranges and increasing dates can put later work in one range. It does not measure the performance of an actual cluster.
+Now the last line in the box. All fifteen later records land in bucket three. Of course they do. Dates keep increasing, and the top range is the only open-ended one. In a real cluster, that pattern puts the new writes in one place while the older ranges sit quiet.
+
+What we left out on purpose is balancing and migration. Real MongoDB moves ranges around. And our ordering comes from catalog dates, not real arrival times. This isolates one mechanism. It is not a cluster benchmark.
 
 ## Slide 12
 
-Both series in this chart use the same fifteen later records. The gray bars show their placement under the fixed date ranges. All fifteen fall into bucket three. The green bars show placement after hashing each CVE identifier and taking the remainder after division by four.
+Same fifteen later records, two placement rules, side by side.
 
-The hash rule produces three records in bucket zero, three in bucket one, six in bucket two, and three in bucket three. Adding either series gives fifteen. That sum matters because an apparent improvement in distribution would be meaningless if the comparison silently dropped some records.
+The gray bars are the fixed date ranges from the last slide. All fifteen sit in bucket three. The green bars are the hash rule. We hash each CVE identifier with SHA-256 and take the remainder after dividing by four. Look at the green bars: three in bucket zero, three in bucket one, six in bucket two, three in bucket three.
 
-Hashing changes the placement rule. It does not promise a perfectly equal split. With only fifteen records, a three-three-six-three result is entirely plausible. We also lose the simple relationship between a nearby calendar date and a nearby placement range.
+Do a quick check with me. Three plus three plus six plus three is fifteen. The gray series is fifteen too. Why bother adding them up? Because a comparison that silently dropped records could look like better distribution for a bad reason. Always check that both sides account for every row.
 
-Our code uses SHA-256 and four teaching buckets. MongoDB uses its own hashing and range-management behavior. This chart is therefore a transparent, reproducible illustration rather than a reconstruction of MongoDB's internal routing algorithm.
+Notice that hashing did not produce a perfect split. Six in one bucket and three in the others is completely normal with only fifteen records. And we gave something up. Under the hash rule, two dates next to each other on the calendar no longer land next to each other.
 
-No latency, throughput, document size, or balancing cost appears in the chart. We can conclude that the two rules placed this selected set differently. We cannot conclude that the green rule makes every query faster. The next slides separate the properties that hashing changes from the properties it preserves, and then connect placement to the query we actually need to answer.
+Read the scope note above the chart. This is our own SHA-256 with four teaching buckets. MongoDB has its own hashing and range management, so this is a transparent illustration, not a copy of MongoDB's internals. There is no latency, size, or balancing cost in this chart. We can say the two rules placed these records differently. We cannot say the green rule makes every query faster.
 
 Sources:
 course/notebooks/06_public_data_capacity_integration.ipynb
 
 ## Slide 13
 
-Hashing is deterministic. The same input gives the same output under the same algorithm. This short Python example encodes the word Microsoft, computes its SHA-256 hexadecimal digest, converts that digest into an integer, and takes the remainder after division by four. The result is bucket one.
+Here is a property of hashing that people forget when they say "just hash it." Hashing is deterministic. Same input, same algorithm, same output, every time.
 
-Repeat the calculation sixteen times with the same string, and it still gives bucket one sixteen times. Hashing does not turn repeated values into unique values. If we used vendor alone as the candidate, all sixteen Microsoft records would share the same hashed vendor value in our simulation.
+Read the code. We take the string Microsoft, encode it to bytes, compute its SHA-256 digest in hexadecimal, turn that into an integer, and take the remainder after dividing by four. Run it, and it prints one. Bucket one.
 
-The notebook instead hashes CVE identifiers, which are distinct in the checked fixture. That changes the inputs to the placement function and explains why the later-record comparison can spread those inputs across buckets.
+Now run it again. Still one. Run it sixteen times, once for each Microsoft record in our fixture, and you get bucket one sixteen times. Hashing does not turn repeated values into different values. If vendor were our key, all sixteen Microsoft records would land together, hashed or not.
 
-This distinction helps us evaluate a proposed fix. If the problem is a highly repeated field value, simply adding the word hashed to the design does not divide that value. A different candidate or a justified compound key may change the granularity, but it also changes query-targeting requirements.
+So why did the previous slide spread out? Read the last line on the slide. The notebook hashes CVE identifiers, not vendor labels, and the identifiers are all distinct. Distinct inputs are what give the hash something to spread.
 
-We are using the hash as a placement function here. We are not using it to encrypt the source data, hide a vendor name, or authenticate a record. A hash function can participate in different systems, and the purpose in this example is the deterministic mapping from an identifier to a teaching bucket.
+This is how you evaluate a proposed fix. If the problem is one heavily repeated value, putting the word hashed in front of the design does nothing to it. A different key, or a justified compound key, changes the granularity, but it also changes which queries can be targeted.
+
+One last thing. We are using the hash only as a placement function, a deterministic mapping from an identifier to a bucket. It is not encryption, it does not hide the vendor name, and it does not authenticate anything.
 
 ## Slide 14
 
-Suppose a future version of this collection used a hashed CVE identifier as its shard key. An exact equality filter on that identifier gives the router the key value needed to target its location. That is a useful fit for a lookup whose main question is about one known vulnerability.
+Now we connect placement to queries. Suppose a future version of this collection used a hashed cveID as its shard key. Go down the left column, and for each query ask: can the router tell where to go?
 
-A filter that supplies only a vendor label does not supply that CVE key. The same is true of a filter that supplies only a date window. The system can still answer those questions, but the chosen shard key does not narrow them in the same way. Work may need to reach multiple shards.
+Exact cveID equality. Yes. The filter carries the key value, so the router can target the relevant shard. That is a great fit if the main job is looking up one known vulnerability.
 
-A local index and shard targeting solve related but distinct problems. An index on vendor can reduce the records examined within a shard. That does not automatically tell the router which shards contain every relevant vendor record.
+Only vendorProject equals Microsoft. The filter does not contain the shard key, so the router cannot narrow it down. The same goes for only a dateAdded window. The database can still answer both, but the work may have to go to several shards.
 
-Counting all records by vendor naturally needs information from across the collection. A distributed aggregation can be appropriate for that whole-collection question. We should avoid treating every multi-shard operation as a mistake.
+Count every record by vendor. That question needs the whole collection by definition, so going to several shards is not a mistake. It is just what the question costs. Not every multi-shard operation is a design failure.
 
-The useful design question is how our frequent operations match the key and what work those operations require. A candidate that supports exact-ID lookups well can be a weaker fit for date-range access. Our lab recommendation names that tradeoff rather than treating cardinality as a universal ranking.
+Read the first line under the table, because it trips people up. A local index on vendor can reduce the work inside each shard. It does not tell the router which shards to skip. Indexing and targeting solve related but different problems.
+
+So the design question is not which key has the biggest number. It is how our frequent operations match the key. A key that is excellent for exact-ID lookups can be weak for date ranges. In your lab recommendation, name that tradeoff.
 
 Sources:
 https://www.mongodb.com/docs/manual/core/sharding-choose-a-shard-key/
@@ -192,92 +208,98 @@ https://www.mongodb.com/docs/manual/core/hashed-sharding/
 
 ## Slide 15
 
-A storage projection is useful when its assumptions remain visible. This example begins with one hundred mebibytes of retained data, adds twenty mebibytes per day, and looks thirty days ahead. We first multiply twenty by thirty to obtain six hundred mebibytes of additional retained data. Adding the initial hundred gives seven hundred.
+Capacity planning also means projecting storage, and a projection is only useful if you can see its assumptions. They are all in this table.
 
-We then apply an assumed overhead multiplier of two, producing fourteen hundred mebibytes. That multiplier is part of this teaching scenario. It is not a MongoDB or Supabase billing formula, and it does not establish the size of indexes, replicas, backups, or temporary processing space in a real deployment.
+We start with one hundred mebibytes retained. We add twenty mebibytes a day. We look thirty days ahead. Twenty times thirty is six hundred. Add the starting hundred, and we have seven hundred. Then we apply an assumed overhead multiplier of two, and we get the equation on the slide: fourteen hundred mebibytes.
 
-The order of operations reflects the model. We project retained data first and apply the chosen multiplier to that total. A different retention policy changes the projection. If records expire after seven days, adding thirty days of arrivals without subtracting departures would overstate retained data. If document sizes grow, a constant daily estimate may understate it.
+Read the line under the equation. The multiplier is an assumption for this scenario. It is not a MongoDB or Supabase billing rule, and it does not tell you the real size of indexes, replicas, backups, or temporary space.
 
-Units also matter. A mebibyte contains one million forty-eight thousand five hundred seventy-six bytes. A megabyte contains one million bytes. A provider quota and a local size report may use different units.
+Why write it out this way? Because every piece is something someone can question. If records expire after seven days, adding thirty days of arrivals and never subtracting departures overstates what you keep. If documents get bigger over time, a constant twenty a day understates it. Change the retention policy and the whole projection changes.
 
-For a real plan, we would measure representative record and index sizes, specify retention, and compare estimates with observed growth. The equation makes those assumptions discussable and revisable.
+Units matter too. A mebibyte is 1,048,576 bytes. A megabyte is 1,000,000 bytes. A provider's quota and your local size report may not use the same one.
+
+For a real plan, you would measure actual record and index sizes, set the retention policy, and compare your estimate with observed growth. The equation just makes the assumptions visible enough to argue about and revise.
 
 ## Slide 16
 
-You will now work individually in Notebook 06. Use the embedded snapshot so that your results refer to the same source version as the worked examples. Sections one and two inspect the source, check the selected fields, measure candidate keys, and compare the two placement rules.
+Time for Part 1 of the lab. Work individually in Notebook 06, and start from the embedded snapshot. Why the snapshot and not the live feed? Because then your numbers match the ones on these slides, and we can check each other's results.
 
-Read the source and stored values as you run the cells. The code is part of the lesson. You do not need to create a sharded cluster, purchase a service, or configure a database account for this part.
+Run Sections 1 and 2. They inspect the source, check the fields, measure the candidate keys, and run the range and hash comparison. Read the cells as you go. The code is part of the lesson, not a black box.
 
-Concentrate your comparison on CVE identifier and dateAdded. Use two numbers the notebook displays. For example, you can compare their distinct counts and largest-value shares. Then connect that comparison to the grouped question you want to answer. An exact identifier and a date window supply different information to a placement rule.
+Then focus on two candidates: cveID and dateAdded. Use two numbers the notebook actually displays, for example the distinct counts and the largest value shares. Then tie them to a grouped question you want to answer, like which vendors appear most often in this subset. An exact identifier and a date window give a placement rule very different information.
 
-Also state whether this seventy-five-record classroom database needs sharding. Your answer should distinguish the measured size of this exercise from a hypothetical future workload. A recommendation to keep the design small can be well supported when it explains the current need and what would trigger reconsideration.
+Second question: does this seventy-five-record database need sharding? A well-supported no is a perfectly good answer, as long as you say what measured change would make you reconsider.
 
-Keep the notebook for Day 2. You can note your reasoning in its submission area, but there is no separate Day 1 submission. We will add the import, repeat-run test, changed query, and short handoff to this same notebook during the second meeting.
+You do not need a paid cluster, a sharded deployment, or a database account for any of this. Read the box at the bottom. Save the notebook, because Part 2 continues in the same file, and there is no separate Day 1 submission. If we are doing both parts in one meeting this week, go straight on to Section 3 when you finish.
 
 ## Slide 17
 
-Our second meeting starts with a program that runs more than once. Yesterday's import created records. Today's import encounters records that may already exist. The intended effect of that second run belongs in the design, because retries and scheduled refreshes are ordinary parts of operating a data system.
+Day 2 starts with the two lines on the slide. The import ran yesterday, and today it runs again. That second run is not an edge case. Retries and scheduled refreshes are an ordinary part of running any data system, so what the second run does has to be designed, not discovered.
 
-We will use a stable CVE identifier to recognize a logical record. The load will update the selected values when that identifier already exists and insert when it does not. With the same unchanged source, repeating the load should leave the same logical records and values.
+Our design uses the stable CVE identifier to recognize a record. If that identifier is already in the database, the load updates the selected values. If it is not, the load inserts it. Run the same unchanged source again, and you should end up with the same logical records and the same values.
 
-We will also inspect what the database actually contains. A successful connection establishes a network and authentication result. An import count tells us something about cardinality. A query result and a comparison with a known source record give us additional, different checks.
+Now read the second box. A query and a value comparison tell us what was actually stored. Here is why that wording matters. A successful connection only proves the network and the login worked. An import count only tells you how many rows there are. Neither tells you the values are right. So we will query the database and compare a known record with the source.
 
-SQLite lets everyone run the complete example without a remote database. If you choose Atlas or PostgreSQL, you will additionally cross a network boundary and handle a database credential. Those paths should remain understandable rather than hiding the connection inside a large helper function.
+SQLite runs the whole example with no remote database. If you pick Atlas or PostgreSQL, you also cross a network boundary and handle a credential, and we will look at that code directly instead of hiding it in a helper.
 
-The final written piece is a short handoff inside the notebook. It explains your question, evidence, repeat behavior, and limitation to a hypothetical colleague. It remains individual work, and it does not add a second submission or require you to form a team.
+The written part is a short handoff in the notebook, explaining your work to an imagined colleague. It is still individual work, and still one submission.
 
 ## Slide 18
 
-The TARGET variable chooses the database path. Leave it as sqlite for the simplest route. Python includes the SQLite driver, and this notebook creates an in-memory database inside its own process. Once the notebook is open, that path needs no database account or package download.
+One variable controls the database path: TARGET. Look at the three rows.
 
-The atlas choice uses PyMongo to connect to a MongoDB Atlas project. It needs a database user and a network rule that allows the notebook runtime's address. The postgres choice uses Psycopg to connect to PostgreSQL, including a Supabase project through the suitable connection endpoint.
+sqlite is the default, and the simplest. Python already includes the SQLite driver, and the notebook builds an in-memory database inside its own process. Nothing to sign up for, nothing to download.
 
-Choose one target for the required work. Trying a second is optional. You do not receive a more complete repeat-run test merely by connecting to more providers.
+atlas uses PyMongo to connect to your MongoDB Atlas project. It needs a database user and an IP rule that lets the notebook runtime in. We will see why on slide 20.
 
-The setup cell creates unique practice names and initializes connections. Run it once for a practice run. Then repeat the selected import cell against that existing target. If you recreate an empty database before each import, the second run never encounters the first run's records, so it does not test the behavior we care about.
+postgres uses Psycopg to connect to PostgreSQL, including your Supabase project through the right connection endpoint.
 
-The notebook prevents starting another setup while the current run remains open. To switch targets, run cleanup and then begin the section again. This keeps the lifecycle visible and reduces the chance of abandoning practice objects or connections while experimenting with another database.
+You need exactly one. Connecting to a second provider does not make your repeat-run test any more complete. It is the same test.
+
+Now the line at the bottom, which is the most important instruction of the day. Run setup once. Then repeat the import cell. Why? The setup cell creates the practice names and the connection. If you rerun setup before each import, you get a fresh, empty target every time, and the second import never meets the first import's records. You would be testing a first import twice.
+
+And if you want to try another target, clean up this run first. The notebook actually stops you from starting another setup while one is still open. That keeps you from leaving practice objects and open connections scattered across services.
 
 ## Slide 19
 
-The source uses JSON, but each database path still needs a representation decision. The CVE identifier becomes a text primary key in the two SQL paths. In MongoDB, the collection has a unique index on cveID. That business identifier is separate from MongoDB's automatically supplied document identifier.
+The source is JSON, but every database still needs a decision about how to store each field. Read the table row by row.
 
-The dates describe calendar days without a time of day. SQLite stores their canonical year-month-day text. MongoDB keeps the same strings in this lesson. PostgreSQL uses its date type. A different application might require timestamps and time zones, but adding midnight here would imply information that our selected date field does not provide.
+cveID becomes a text primary key in SQLite and PostgreSQL. In MongoDB, we create a unique index on cveID. Why not just use MongoDB's own document identifier? Because MongoDB generates that one, and ours is the business identifier from the source. A repeat import has to match on the identifier the source gives us.
 
-The CWE list crosses the boundary in three ways. SQLite receives serialized JSON text. MongoDB receives a native array. PostgreSQL receives a jsonb array. We preserve the list structure instead of joining its entries into a comma-separated label that would require another parsing convention later.
+dateAdded is a calendar day with no time. SQLite stores the year-month-day text. MongoDB keeps the same string in this lesson. PostgreSQL uses a real date type. What we do not do is turn it into a timestamp at midnight. That would invent a time of day the source never gave us. That is the first line under the table.
 
-When we verify a known record, the code converts the SQL date objects and the SQLite JSON text back into the source representation. Otherwise, a date object and an equivalent date string could compare as different Python values even when they represent the same calendar day.
+cwes is the list. SQLite gets it as JSON text. MongoDB gets a real array. PostgreSQL gets a jsonb array. In every case it stays a list. We never glue the entries into a comma-separated label that someone has to parse later.
 
-These conversions are small examples of data modeling in integration work. A field's name alone does not establish its type, meaning, or round-trip behavior. We make those decisions visible and check them.
+Then the last lines. When we verify, we convert back. A PostgreSQL date object and the string 2026-07-10 are different Python values, even though they mean the same day. So the check converts dates and JSON text back to the source form first, and only then compares. A field's name alone never tells you its type or how it round-trips.
 
 ## Slide 20
 
-Atlas evaluates the network address of the client that connects to the database. In Colab, the Python process runs on a remote notebook machine. That machine can have a different public address from the laptop running your browser.
+If you choose Atlas, this is the step that trips everyone up. Atlas checks the network address of whatever connects to it. In Colab, your Python code is not running on your laptop. It runs on a remote notebook machine, and that machine has a different public address from the laptop running your browser.
 
-The notebook asks an IPv4 lookup service for the runtime's public address and prints it with a slash thirty-two suffix. In this context, that suffix selects one IPv4 address. Add that address to your Atlas IP access list, preferably with an expiration when the dashboard offers one. Wait for the rule to become active, then return to the notebook's confirmation prompt.
+So the notebook looks up its own runtime's public IPv4 address and prints it with slash thirty-two on the end. Slash thirty-two means exactly one address. Add that to your Atlas IP access list, with an expiration if the dashboard offers one. Wait until the rule is active. Then go back and answer the notebook's confirmation prompt.
 
-The browser's Add Current IP control may identify your laptop instead. Adding only that address can leave Colab unable to connect. If Colab replaces the runtime, check its address again rather than assuming yesterday's rule still applies.
+Read the note at the bottom. The Add Current IP button adds the browser's address, which is your laptop. Use that alone, and Colab still cannot connect. And if Colab gives you a new runtime, check the address again. Yesterday's rule may not match.
 
-The screenshot is a redacted Atlas overview captured in August. It locates Connect and Database and Network Access. It does not show a newly verified connection from your notebook. Connect and Drivers provide the Python connection-string format. Use a database user's credentials, not the password you use to sign into the Atlas website.
+The screenshot is a redacted Atlas interface from August 25, 2026. It shows you where Connect, Database, and Network Access are. It is not proof of a connection from your notebook. Under Connect, then Drivers, you get the Python URI format. Use a database user's password, not your Atlas website password.
 
-Keep the credential inside the hidden prompt. Do not paste it into a code cell, screenshot, or submission. After class, remove the temporary runtime rule. Closing Python does not remove that provider-side permission.
+Keep that credential in the hidden prompt, never in a code cell, screenshot, or submission. And after class, delete the runtime rule. Closing Python does not remove it.
 
 Sources:
 https://www.mongodb.com/docs/atlas/security/ip-access-list/
 
 ## Slide 21
 
-This excerpt shows the actual connection decision instead of hiding it in a function. MongoClient receives the URI from the hidden prompt. TLS is enabled, and tlsInsecure remains false so that the connection does not bypass certificate and hostname checks.
+Here is the actual connection code, shown in the open instead of buried in a helper. Read it line by line.
 
-The server API configuration requests the stable API behavior used by our example. The timeout options bound server selection and individual operations rather than leaving an unsuccessful connection attempt waiting indefinitely. The value ten thousand is in milliseconds.
+MongoClient gets atlas_uri, which came from the hidden prompt. tls equals True turns on encryption. tlsInsecure equals False keeps the certificate and hostname checks on. Why spell that out? Because the classic shortcut when a connection fails is to turn those checks off, and then you have an encrypted connection to a server you never verified.
 
-Creating a client object is not the same as proving a connection. PyMongo can initialize a client before completing the work needed for an operation. The ping command therefore gives us an explicit request whose success demonstrates that the client can communicate with the deployment.
+server_api asks for the stable API, version one, in strict mode. The two timeouts, serverSelectionTimeoutMS and timeoutMS, are both ten thousand milliseconds, which is ten seconds. Without them, a bad connection attempt can just hang, and you never find out why.
 
-A ping still does not create our dataset or prove that its values are correct. Those are later operations with their own checks.
+Then the last line, ping. Creating a client object does not prove anything, because PyMongo can create a client before it ever talks to a server. The ping is a real request. If it succeeds, the client can reach the deployment.
 
-The complete notebook cell validates the URI form, catches a failed connection, closes a failed client, and clears the temporary URI variable. The connected client still holds the authentication state it needs until cleanup closes it. Clearing a variable is not a substitute for protecting a credential.
+Read the box at the bottom. A ping does not load or verify a dataset. That comes later, with its own checks. The full cell also validates the URI, closes a failed client, and clears the URI variable.
 
-If the connection fails, check the database user, percent-encoded password, active runtime IP rule, cluster availability, DNS, and TLS configuration. Disabling TLS checks would weaken the connection without explaining the cause.
+If it fails, go through the layers: the database user, a percent-encoded password, the active runtime IP rule, the cluster being up, DNS, and TLS. Do not fix it by disabling TLS checks. That weakens the connection and explains nothing.
 
 Sources:
 https://www.mongodb.com/docs/languages/python/pymongo-driver/current/security/tls/
@@ -285,15 +307,17 @@ https://www.mongodb.com/docs/languages/python/pymongo-driver/current/connect/con
 
 ## Slide 22
 
-Supabase provides a PostgreSQL database as well as other application services. This notebook uses a PostgreSQL connection, so it needs the database password and the exact connection details from the project's Connect panel. A Supabase website login and an API key have different roles.
+If you pick postgres with Supabase, this is where you get the connection details. Read the box at the top right: Connect, then Session pooler.
 
-For a notebook network that cannot reach the direct IPv6 endpoint, select the shared session pooler connection. That endpoint supports IPv4. Copy the exact pooler username shown for your project rather than guessing it from an example. The screenshot locates the Connect button, but it does not show the pooler dialog itself.
+Why the session pooler? A notebook network like Colab may not be able to reach the direct IPv6 endpoint. The shared session pooler supports IPv4, so it works from the notebook. Copy the exact pooler username shown for your project. Do not guess it from an example.
 
-Transport encryption and server identity verification are related but distinct. The notebook requires an encrypted SSL mode. Require provides encryption. Verify-full additionally checks the certificate and hostname when configured with the provider's certificate authority. We do not solve an unreachable IPv6 address by disabling encryption, because those settings address different layers of the connection.
+The middle box is the one people confuse. You need the database password. Not the password you use to sign into the Supabase website, and not an API key. Those are different credentials for different jobs.
 
-The code creates a uniquely named practice schema so that our table does not collide with an existing project table. It clears the temporary connection URL after the attempt and keeps the connection available for the following cells.
+Now the SSL box. sslmode equals require gives you encryption. verify-full also checks that the server is who it claims to be, when you configure it with the provider's certificate authority. Those are different layers. If the IPv6 address is unreachable, turning off encryption does not help, because encryption was never the problem.
 
-If a connection fails, separate the likely layers: endpoint and network reachability, database credentials, project availability, transport configuration, and permission to create the practice schema. The SQLite route remains a complete way to finish the required learning if a cloud account is unavailable.
+The screenshot is a redacted overview from August 25, 2026. It shows where Connect is, not the dialog itself.
+
+The code makes a uniquely named practice schema, so your table does not collide with a real one, and it clears the connection URL after the attempt. If it fails, check network reachability, credentials, project availability, the SSL settings, and permission to create the schema. And SQLite is always there to finish the required work.
 
 Sources:
 https://supabase.com/docs/guides/database/connecting-to-postgres
@@ -301,17 +325,19 @@ https://www.postgresql.org/docs/current/libpq-ssl.html
 
 ## Slide 23
 
-This code reads one known record after the PostgreSQL import. The outer transaction block gives the operations a clear transaction boundary. The cursor sends commands and reads their results.
+After the PostgreSQL import, this code reads one known record back. Two things get substituted into SQL here, and they use two different tools. That is the point of the slide.
 
-The first command chooses the practice schema for this transaction. A schema is a namespace for database objects. SET LOCAL limits the search-path change to the current transaction, so the setting does not silently persist as the notebook moves between activities.
+The outer with block opens a transaction. Inside it, a cursor sends commands and reads results.
 
-Notice two different substitution mechanisms. The schema name enters the command through sql.Identifier. That mechanism quotes a database identifier. The CVE identifier in the WHERE condition enters through a percent-s placeholder and a separate parameter tuple. It is a data value, not a table or column name.
+The first execute sets the search path to our practice schema. SET LOCAL means the change lasts only until this transaction ends, so it cannot quietly leak into the next thing the notebook does. Look at how the schema name gets in: sql.Identifier. A schema name is an identifier, and Identifier quotes it correctly as a name.
 
-The comma after known_id creates a one-element Python tuple. Without it, parentheses alone do not make a tuple. The driver receives that tuple separately from the SQL text and handles the value representation.
+The second execute is the read. The CVE ID goes in through percent s, and the actual value travels separately, in the tuple. That is a value, not a name, so it is bound as a parameter. The driver sends it apart from the SQL text, so it can never be read as SQL code.
 
-Fetchone returns the selected row or None when no row matches. Our complete verification checks for a missing result before interpreting its fields.
+Look at the comma after known_id. That comma is what makes it a one-element tuple. Parentheses alone do not.
 
-Do not replace this pattern with a string that inserts arbitrary input directly into SQL. Also do not try to use a value placeholder to choose the schema or column. Identifiers and values occupy different positions in SQL syntax, and the driver gives us different tools for each.
+fetchone returns the row, or None if nothing matched. The full verification checks for None before reading any fields.
+
+Two rules to take away. Never paste input straight into a SQL string. And never try to use percent s for a schema or column name. Names and values sit in different places in SQL, and the driver gives you a different tool for each.
 
 Sources:
 https://www.psycopg.org/psycopg3/docs/api/sql.html
@@ -319,42 +345,46 @@ https://www.psycopg.org/psycopg3/docs/basic/params.html
 
 ## Slide 24
 
-The first import starts with an empty practice table or collection and ends with seventy-five records. That confirms the count for a first load. It does not yet tell us what a repeat will do.
+This table is the repeat-run test, and only one row of it is the real test. Read all three.
 
-For the second test, keep the same database, table or collection, and source records. Run only the selected import cell again. This time the count begins at seventy-five and ends at seventy-five. The import encounters existing identifiers and applies its conflict behavior rather than creating another seventy-five logical records.
+Row one, the first import. The practice table or collection starts at zero and ends at seventy-five. Good, but that only tells us the first load worked. It says nothing about the second.
 
-The last row shows a misleading alternative. If we reset setup before every attempt, every attempt starts from zero. The program might look repeatable because it produces seventy-five records each time, but we have not exercised a collision with previous output. We have repeatedly tested a fresh database.
+Row two. Same source, same target, and we run only the import cell again. Seventy-five before, seventy-five after. The import ran into seventy-five existing identifiers and applied its conflict behavior instead of adding seventy-five more. That is the test.
 
-Count equality alone is also incomplete. A program could change a title, replace the wrong record, or store a malformed list while leaving the total unchanged. That is why the notebook compares selected stored values with the source and independently checks the grouped query result.
+Row three is the trap. If you reset setup before every import, every run starts at zero and ends at seventy-five. That looks repeatable. But you never made the program collide with its own earlier output. You just tested a fresh database twice. That is why the box at the bottom says only the second row counts.
 
-For the unchanged source in this exercise, idempotent behavior means that repeating the load leaves the same logical records and values. It does not mean no code runs or no database operations occur. It also does not promise to retain historical versions or remove records absent from a future source.
+Then read the last line. Equal counts can hide changes. A program could overwrite a title with the wrong text, replace the wrong record, or store a broken list, and the total would still be seventy-five. So the notebook also compares stored values with the source and checks the grouped query independently.
+
+For our unchanged source, idempotent means running it again leaves the same logical records and values. It does not mean no work happens. It does not keep history, and it does not delete records a future source leaves out.
 
 ## Slide 25
 
-This is the MongoDB repeat-import loop. Each iteration uses the current record's CVE identifier in the match condition. Replace_one replaces the matched document with the selected source record. Upsert set to true allows an insertion when no document matches that identifier.
+Here is the MongoDB version of the repeat import. Read the loop. For each record, replace_one looks for a document whose cveID matches this record's cveID. If it finds one, it replaces it with the source record. upsert equals True means that if nothing matches, it inserts the record instead. Match or insert, in one call.
 
-The collection's unique index on cveID enforces one document per business identifier. Without a stable match and an appropriate uniqueness rule, a retry can create another logical copy even though MongoDB gives every document its own different internal identifier.
+Why does this survive a rerun? Because the match is on the business identifier, and a unique index on cveID enforces one document per identifier. Without that stable match, a retry would create a second copy, and MongoDB would happily give it its own new internal identifier. Two documents, one vulnerability.
 
-Replacement is a deliberate choice for this disposable import collection. The selected source fields are authoritative for these records, so replacing them can repair a previously changed value. If the collection also held application-owned annotations, replacing the whole document could remove those annotations. That different application would need a different update design or a separate place for annotations.
+The SQL paths do the same thing in SQL. Their import uses INSERT with ON CONFLICT on cve_id DO UPDATE, setting each column from excluded, which is the row that was just proposed. Same idea: match on the identifier, and update instead of duplicating.
 
-This loop only visits identifiers present in the selected source. It does not remove an older database record merely because a later source omits it. It also overwrites selected values rather than creating a history table or event log. Those are separate requirements that we would have to implement intentionally.
+Replacing the whole document is a deliberate choice here. This is a disposable import collection, and the source is authoritative, so a replace even repairs a value someone changed. But if an application stored its own notes on these documents, a full replace would erase them. That application would need a different update design.
 
-Run the unchanged source twice against the same practice collection. Then inspect the result. The stable identifier explains the matching behavior, while the query and value comparisons tell us whether the stored data matches our intended outcome.
+Read the line at the bottom. This loop only touches IDs that are in the source. It does not delete a record a later source drops, and it does not keep earlier versions. Those are separate requirements you would build on purpose.
 
 Sources:
 https://www.mongodb.com/docs/languages/python/pymongo-driver/current/crud/replace/
 
 ## Slide 26
 
-Atomicity and idempotency answer different questions. Atomicity defines which changes succeed together. Idempotency describes the effect of repeating an operation. A useful import can have repeat behavior without making every write part of one all-or-nothing unit.
+Two words that sound similar and answer different questions. Read the box at the bottom. Atomicity defines which changes succeed together. Idempotency defines what happens when you repeat the operation. A good import can have one without the other.
 
-In the SQL paths, the notebook places the batch inside a transaction. Suppose the fourth row violates a required constraint. The transaction rolls back its earlier writes instead of committing the first three and leaving the batch halfway applied. Work committed before this transaction remains outside that rollback boundary.
+The table asks a question: something fails on the fourth write, so what happens to the first three?
 
-The MongoDB loop uses separate replace_one calls. Each document replacement is atomic for that document. If the fourth call fails, the first three completed replacements remain. This example does not wrap all seventy-five documents in a multi-document transaction.
+In the SQL paths, the notebook wraps the batch in a transaction. Say the fourth row breaks a constraint. The transaction rolls back, and the first three writes go with it. You never get a half-applied batch. Anything committed before that transaction is outside the rollback, of course.
 
-A retry with the same checked source can match the stable identifiers and finish the import. The retry still needs verification, and it is not a complete production retry policy. A changing source, concurrent writers, authorization failure, or permanent malformed record can require additional decisions.
+The MongoDB loop is different. Each replace_one is its own write, and each one is atomic for its one document. If the fourth call fails, the first three replacements are already done, and they stay. This code does not wrap the seventy-five documents in one transaction.
 
-MongoDB does support transactions in suitable deployments. We are describing the behavior of the code on the previous slide, not a claim that MongoDB cannot offer a larger transaction boundary. In operational work, identify the actual unit of success in the program you run rather than assuming a database product name determines it.
+Is that a disaster? Look at the third row. Rerun the unchanged source, and the stable IDs let the import match what is already there and finish the rest. That is idempotency doing its job. You still verify afterward, and a real retry policy would need more thought about changing sources, other writers, or a record that is permanently malformed.
+
+And to be fair, MongoDB does support transactions in suitable deployments. This is about the code on the previous slide, not the product. Always find the real unit of success in the program you actually run.
 
 Sources:
 https://www.psycopg.org/psycopg3/docs/basic/transactions.html
@@ -362,81 +392,87 @@ https://www.mongodb.com/docs/manual/core/write-operations-atomicity/
 
 ## Slide 27
 
-Suppose an imported vulnerability title changes to the wrong text. The collection or table still contains seventy-five records. The known CVE identifier still exists. The vendor counts can still match because the modified field is the title rather than the vendor.
+This slide is about checks that pass while the data is wrong. Picture this. Somebody changes the title of our known record, CVE-2026-56291, the first record in the source, to the wrong text. There is no notebook cell that does this for you. It is a scenario to reason through. Now run our checks down the table.
 
-Those checks pass while the record remains wrong. The final row adds a different check: compare every selected field of one known record with the source. That comparison fails and exposes the value difference.
+Record count is seventy-five. Pass. Nothing was added or removed. The known CVE identifier exists. Pass. Vendor counts match. Pass, because we changed the title, not the vendor.
 
-The notebook chooses a known identifier from the checked source, retrieves its stored record, and normalizes representation differences such as PostgreSQL date objects and SQLite JSON text. It then compares the eight selected fields. For MongoDB, it excludes the database-generated internal identifier because that field is not part of the selected source comparison.
+Three passes, and the record is still wrong. That is the danger of checking only totals and existence.
 
-Rerunning the unchanged import repairs the selected record when the source remains authoritative. We can then rerun verification to see that the values agree. A passing result after repair is more informative when we understand which earlier check would have missed the error.
+The last row catches it. The notebook takes the known identifier from the checked source, pulls the stored record, and compares all eight selected fields. Before comparing, it normalizes representation, like PostgreSQL date objects and SQLite JSON text. For MongoDB, it leaves out the generated internal identifier, which is not part of the source. Now the title differs, and the check fails.
 
-This check still has a boundary. One known record does not prove all records and all omitted fields are correct. The grouped comparison adds coverage for the selected grouping, but it does not establish security, backup readiness, or production capacity. Our explanation should name what each check covers without turning a small successful test into a universal claim.
+How do we fix it? Rerun the unchanged import. The source is authoritative, so the upsert puts the correct title back. Then rerun verification and watch it pass.
+
+But read the last line on the slide. This compares that one known record. If a different record's title had changed, this check would miss it. One known record does not prove every untested field is correct, and the grouping check covers only the grouping.
 
 ## Slide 28
 
-These two result tables answer different questions using the same selected catalog entries. The left table groups by vendor label. Microsoft appears sixteen times and Cisco seven times. The right table groups by product label. Catalyst SD-WAN Manager and Windows each appear four times.
+Two grouped results from the same selected records, answering two different questions. Look at the left table first, grouped by vendor label: Microsoft sixteen, Cisco seven, SimpleHelp with a trailing space three, Ubiquiti three, Adobe two. Now the right table, grouped by product label: Catalyst SD-WAN Manager four, Windows four, Defender three, SimpleHelp three, UniFi OS three.
 
-The unit being counted is a selected catalog entry. These numbers do not count installations, customers, exploit attempts, or compromised machines. A product with several catalog entries contributes several records to its group. That distinction belongs in any written interpretation of the result.
+Be careful about what the number counts. It counts selected catalog entries. Not installations, not customers, not exploit attempts, not compromised machines. Windows four means four entries in this subset have the product label Windows. That is all it means, and your write-up should say so.
 
-The code sorts groups by descending count and breaks ties by the label. A defined tie order helps us compare the database result with an independently computed result from the source. Without an explicit tie rule, two correct groupings might display equal-count rows in different orders.
+Now look at the ties. Windows and Catalyst SD-WAN Manager both have four. Which comes first? The code sorts by count, highest first, and breaks ties by the label. Why define that? Because the notebook compares the database result with a result it computes straight from the source. Without a fixed tie order, two correct answers could print equal rows in different orders and look like a mismatch.
 
-The quoted SimpleHelp vendor label includes a trailing space. We use the quotation marks on the slide to make that space visible. The stored label itself remains the source text. The product label SimpleHelp does not have that same trailing space in the displayed product group.
+The quotation marks around the vendor SimpleHelp are there to show you the trailing space. The stored label is exactly what the source wrote. The product label SimpleHelp does not have that space.
 
-For your change, run the vendor grouping first, change GROUP_FIELD to product, and rerun the cell. Explain one displayed row using its new unit of grouping. The question should change along with the code, rather than continuing to call the output a vendor result.
+In the lab, run the vendor grouping first, change GROUP_FIELD to product, rerun, and explain one row in terms of products. The question changes along with the code.
 
 Sources:
 course/datasets/cisa_kev_sample/kev_sample.json
 
 ## Slide 29
 
-Changing a grouping column is different from supplying a search value. The GROUP_FIELD variable selects one of two allowed source fields. The mapping translates that choice into the corresponding SQL column name. VendorProject maps to vendor_project, while product keeps the same spelling.
+So how does changing GROUP_FIELD actually reach the SQL? This slide answers that, and it connects back to slide 23.
 
-The complete cell rejects any choice outside those two entries. The PostgreSQL path then uses sql.Identifier to quote the selected column name. The SQLite path constructs SQL from the same restricted mapping. We would not place unrestricted input into that formatted SQL string.
+Read the code. GROUP_FIELD is set to product. allowed_columns is a small dictionary with exactly two entries. vendorProject maps to the column vendor_project, and product maps to product. The next line looks up the column name. The full cell rejects any choice outside those two entries, so a misspelling or something malicious stops right there. Only those two names can ever reach the SQL.
 
-A percent-s placeholder binds a value. For example, it can supply the CVE identifier in a WHERE comparison. It cannot turn a value into a column name in a GROUP BY clause. Quoting a name and binding a value are separate responsibilities because the SQL parser gives them different meanings.
+Then, in the PostgreSQL path, sql.Identifier quotes the chosen column as a name. The SQLite path builds its SQL from the same restricted mapping. Either way, no free text is pasted into a command.
 
-This is also a useful interface design. The notebook exposes one small, intentional decision that students can change without rewriting the connection and import code. We can inspect exactly which behavior that decision affects.
+Why not just use percent s, like we did for the CVE ID? Read the last line. A percent s placeholder binds a value. It can say "where cve_id equals this." It cannot say "group by this column," because the SQL parser treats names and values as different things.
 
-The Atlas path makes a corresponding field expression, such as dollar-product, for its aggregation pipeline. The syntax differs, but the question remains the same. After the change, the notebook computes the expected grouping directly from the source records and compares it with the database output, including the tie order.
+This is also good interface design. You get one small decision you can change without touching the connection or import code.
+
+On the Atlas path, the same choice becomes a field expression, dollar product, in the aggregation pipeline. Different syntax, same question. After the change, the notebook computes the expected grouping directly from the source and compares it with the database output, tie order included.
 
 Sources:
 https://www.psycopg.org/psycopg3/docs/api/sql.html
 
 ## Slide 30
 
-Complete the second part of the lab in the notebook you started during the first meeting. Choose one database target. Run its setup once, then run its import cell twice without creating a new target between attempts. Keep the before-and-after result so that you can explain what the second import actually encountered.
+Here is Part 2 of the lab, in the same notebook as Part 1.
 
-Run the known-record verification and the vendor grouping. Then change GROUP_FIELD to product and run the grouping again. Read one row as a sentence about the selected records. The notebook's independent source comparison should agree with the database result.
+Choose one target. Run its setup once. Then run its import cell twice, without rerunning setup in between. Keep the before and after counts, because that is your repeat-run evidence. Run the known-record verification and the vendor grouping. Then change GROUP_FIELD from vendorProject to product, rerun, and read one of the new rows as a sentence about the selected records. The notebook's own source comparison should agree with the database.
 
-In the submission area, write a short handoff as if a colleague will maintain this small import tomorrow. Explain your question, two measurements relevant to the key comparison, the repeat-run result, and one limitation. Use the evidence already in your notebook. You do not need to paste every output into the prose or create a separate document.
+Then write the handoff, as if a colleague will maintain this small import tomorrow. The slide names four things: your question, two key measurements, the repeat-run result, and a limitation. The lab asks for two more, so include them: one verification result, and the changed product row as your concrete example. Add a text cell under the Submission Record heading and write it there. Use the evidence already in your notebook. You do not need to paste every output again.
 
-The colleague is the audience for your writing, not a required partner. Work individually and submit one completed notebook in Brightspace. There is no additional report, screenshot, matrix, or repository for this lab.
+The colleague is your audience, not a partner. Work individually and submit one completed notebook, 06_public_data_capacity_integration.ipynb, in Brightspace. Read the bottom box: no separate report, screenshot, matrix, or repository is required.
 
-Run cleanup when finished and remove any accidentally recorded credential before submitting. The final-project discussion uses the project's existing assignment. This lab supplies reusable skills and ideas without adding another set of final-project deliverables.
+Before you submit, run cleanup, remove any temporary Atlas rule, and make sure no credential is saved in any cell or output.
 
 ## Slide 31
 
-Cleanup is part of the program's behavior. It should remove the practice objects we created without treating an entire existing cloud project as disposable.
+Cleanup is part of the program, not an afterthought. The rule is simple: remove what this run created, and nothing else. Read the table one row at a time.
 
-For SQLite, closing the connection discards this in-memory database. For Atlas, the cleanup cell drops only kev_sample in this run's uniquely named database and then closes the client. An unrelated collection in that database remains. The temporary IP rule is a separate provider-side setting, so remove that rule in the dashboard after you finish.
+SQLite. Closing the connection throws away the in-memory database. There is nothing else to do.
 
-For PostgreSQL, the cell drops the practice table and tries to remove the generated schema only when it is empty. It does not use CASCADE to remove other objects. If another table remains there, the schema stays rather than destroying that unrelated work. The connection then closes.
+Atlas. The cleanup cell drops only this run's kev_sample collection, in this run's uniquely named database, and closes the client. Any unrelated collection stays. Then look at the third column. The temporary slash thirty-two runtime rule is a provider-side setting. The notebook cannot remove it. You do that in the Atlas dashboard.
 
-Closing a client does not pause or delete a hosted service. It also does not remove an Atlas network rule. Those operations belong to different layers of the system. If you changed other provider settings while connecting, review and reverse only the temporary changes you actually made.
+PostgreSQL. The cell drops kev_sample, then tries to drop the practice schema only if it is empty. It deliberately does not use CASCADE. If some other table is in there, the schema stays, because destroying work we did not create is far worse than leaving an empty schema behind. Then the connection closes. And if you changed any provider-side access settings, review those yourself.
 
-The selected data is public and the practice names are unique, but that does not justify broad cleanup commands. The habit transfers to professional work: identify what your process owns, remove that scope, and distinguish deleting data from revoking access and stopping infrastructure. Our notebook makes those boundaries visible instead of hiding them behind a generic reset button.
+Now read the note at the bottom. Closing a client does not pause a hosted database, and it does not remove an Atlas network rule. Deleting data, revoking access, and stopping infrastructure are different operations at different layers.
+
+Our data is public and our names are unique, but that is no excuse for broad cleanup commands. The professional habit is to know exactly what your process owns, and remove exactly that.
 
 ## Slide 32
 
-Here is a way to describe this work in an interview without overstating it. I built a small repeatable import from a documented public source. I compared candidate distribution keys, ran the same import twice, and checked a grouped result and selected stored values. I can explain what I measured and why a small fixture does not prove production scalability.
+Let's finish with how you would describe this work, say in an interview, without overstating it. The paragraph on the slide is a model. I built a small, repeatable import from a documented public source. I compared distribution keys, tested the same import twice, and checked both a query result and stored record values. I can explain which behavior I ran and which scaling claims this small dataset cannot support.
 
-Adapt that account to the path you actually ran. If you used SQLite, say that you implemented and checked the local path and studied the cloud connection alternatives. If you connected to Atlas or PostgreSQL, name the network and credential decisions you handled. Do not claim a sharded deployment because you ran a four-bucket Python simulation.
+Make it true for you. If you ran SQLite, say you built and checked the local path and studied the cloud connections. If you connected to Atlas or PostgreSQL, name the network and credential decisions you handled. And do not claim a sharded deployment because you ran a four-bucket Python simulation.
 
-A useful follow-up explanation identifies the stable key, the transaction boundary, and a failure your checks can detect. For example, matching the row count can miss an incorrect title, while the known-record comparison can expose it. That is more specific than saying that the import worked.
+A strong follow-up names the stable key, the transaction boundary, and a failure your checks can catch. For example, the row count missed a wrong title, and the known-record comparison found it. That beats saying the import worked.
 
-For your project, discuss one source, one important query, and a measured condition that would justify a capacity change. Keep the existing final-project requirements as the source for deliverables.
+For your project, look at the second box: one source, one important query, and a measured reason that would justify a capacity change. This week also has a checkpoint in the existing final-project assignment: your model, your seed data, and your first two queries. Record your progress and next step in your project package. It is not a separate submission.
 
-Next week, we will extend these ideas to an application that uses more than one store. Stable identifiers, repeat behavior, and explicit verification will help us diagnose why two copies can disagree and how to repair them without creating another inconsistency.
+Next week, an application with more than one store. Stable identifiers, repeat behavior, and verification will help us figure out why two copies disagree and how to repair them safely.
 
 ## Slide 33
 
@@ -444,4 +480,4 @@ These short animations go with this week's reading. Students can watch them befo
 
 ## License
 
-Original course prose is licensed under CC BY 4.0. Source-specific notices control adapted material and external images. The transcript and the PowerPoint notes contain the same spoken script.
+Original course prose is licensed under CC BY-NC-SA 4.0. Source-specific notices control adapted material and external images. The transcript and the PowerPoint notes contain the same spoken script.

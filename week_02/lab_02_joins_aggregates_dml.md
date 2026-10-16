@@ -38,7 +38,7 @@ In your SQL file, keep the repaired query and one comment explaining the mistake
 
 An active ticket is `new`, `open`, or `in_progress`. For this report, **staff**
 means users whose role is `agent` or `supervisor`. There are three staff users:
-Priya (201), Noah (202), and Elena (203). Elena has no assigned tickets.
+Agent 201 (201), Agent 202 (202), and Agent 203 (203). Agent 203 has no assigned tickets.
 
 A common table expression (CTE) gives a temporary name to a query result:
 
@@ -58,7 +58,7 @@ Keep that CTE. Replace its final SELECT with a query that starts from
 with their name and active-ticket count. Use `count(active.ticket_id)`, not
 `count(*)`, so a staff member with no matching ticket gets zero.
 
-Check Priya's count by listing her active ticket IDs directly. Explain why
+Check Agent 201's count by listing her active ticket IDs directly. Explain why
 the two unassigned active tickets are not counted as anybody's workload.
 
 ## 3. Test a Priority Change Without Keeping It
@@ -84,6 +84,11 @@ FROM metro_support.tickets WHERE ticket_id = 1006;
 Run the transaction block together in one SQL Editor execution. Its final query
 must show `medium` again. In the notebook, use `con.execute(...)` for BEGIN and
 ROLLBACK and `con.sql(...).show()` for queries and UPDATE RETURNING.
+
+If SQL Editor shows only the final result, use the Colab notebook linked at
+the top to observe the UPDATE and SELECT before rollback. Keep each transaction
+in one persistent notebook connection; do not split it into separate web-editor
+requests. The notebook uses a disposable copy for this DML experiment.
 
 **Submit:** `week_02_relational_sql_studio.sql` with the repaired dashboard query,
 workload query and direct check, and rollback experiment. Keep your explanation

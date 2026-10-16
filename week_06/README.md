@@ -116,14 +116,16 @@ For support with the lab's explanation, use [Writing About Database Decisions](m
 
 ## In-Class Writing: When MVCC Goes Wrong
 
-A short reflection on Sentry's 2015 PostgreSQL outage: read the incident
-write-up, then explain what happened and how a team prevents it. No SQL.
+A reflection on Sentry's 2015 PostgreSQL outage, completed in class. Allow
+**45 minutes: 15 minutes for background, 10 for reading, and 20 for writing**.
+Explain what happened and propose ways to reduce the risk. No SQL.
 
 Slides 24-33 of the Week 6 deck give the background you need: how an update
 makes a new row version, why transaction IDs wrap around, what vacuum and
-autovacuum do, why teams tune autovacuum and the trap in doing so, what
-wraparound protection does, the Sentry timeline, and two queries that show how
-close any database is. Slide 33 is the writing prompt.
+autovacuum do, how tuning affects maintenance, what wraparound protection does,
+the Sentry timeline, and queries for examining XID age and cleanup progress.
+The technical defaults refer to PostgreSQL 16; the incident occurred in 2015.
+Slide 33 is the writing prompt.
 
 Complete [In-Class Writing Response: When MVCC Goes Wrong](in_class_writing_mvcc_wraparound.md).
 

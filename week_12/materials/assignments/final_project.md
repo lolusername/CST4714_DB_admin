@@ -100,6 +100,11 @@ query, one operational decision, and one lesson learned. You may present directl
 from your notebook or code and results. A separate slide deck is optional.
 Keep a saved-output fallback, and do not show live credentials.
 
+The instructor will post individual presentation slots in Brightspace across the
+available Week 15 and final-examination meetings. Follow your assigned slot;
+presentations for the whole section need not fit into Week 15's second meeting.
+Only one demonstration is required.
+
 ## Submission
 
 GitHub is encouraged for weekly practice and portfolio work, but a public
@@ -114,16 +119,19 @@ You do not need separate schema, seed, query, explanation, and runbook documents
 when a clearly organized notebook or script already contains them. Include a
 separate presentation only if you chose to make one.
 
-Also provide one approved verification path:
+Use reproducible files as the default verification path; instructor access is an
+alternative only when specifically arranged:
 
 - reproducible local or cloud-safe files that let the instructor rebuild and
   inspect the work; or
 - time-limited, read-only instructor access to the relevant cloud project.
 
 For Atlas, add the instructor to the Atlas project only if the instructor has
-provided an account and requested that review method. For Supabase, do not share
-your password or service-role key. Follow the course-specific review instructions
-in Brightspace.
+provided an account and requested that review method. For Supabase Free, use the
+reproducible-files path: a read-only Dashboard invitation requires a paid plan
+and is not required for this course. Do not share your administrator password or
+service-role key. Any alternative database access must be specifically arranged
+by the instructor. Follow the course-specific review instructions in Brightspace.
 
 ## Checkpoints
 
@@ -131,7 +139,7 @@ in Brightspace.
 |---:|---|
 | 12 | choose a platform and scenario; write a one-paragraph workload statement |
 | 13 | create the model, load seed data, and run the first two queries |
-| 14 | add index, access, recovery, and reliability work; complete an individual review checklist |
+| 14 | add index, access, recovery, and reliability work; review the rubric and address the highest-risk unfinished area |
 | 15 | submit the package and present the project |
 
 Checkpoints are practice toward this assignment, not additional deliverables with
