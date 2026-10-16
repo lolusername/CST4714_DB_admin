@@ -13,7 +13,7 @@ You will practice modeling, querying, access control, performance, and recovery.
 
 - [Course syllabus (PDF)](CST4714_Fall_2026_Syllabus.pdf): schedule, policies, and grading.
 - [Operating Cloud Databases (PDF)](Operating_Cloud_Databases.pdf): the course textbook. Each week's page identifies the assigned chapter and sections.
-- [Midterm project](week_08/materials/assignments/midterm_project.md)
+- **[Midterm project: the whole midterm on one page](week_08/materials/assignments/midterm_project.md)**
 - [Final cloud database project](week_12/materials/assignments/final_project.md)
 
 **Brightspace has announcements, deadlines, grades, and submission links.**

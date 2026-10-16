@@ -2,14 +2,15 @@
 
 **One 100-minute meeting: 45 minutes explaining the midterm, 50 minutes of research and writing in Colab, and 5 minutes to save and submit.**
 
-Today we walk through the Metro Support project and its rubric, then investigate the data and plan the index experiment. The notebook is today's classwork. The completed midterm remains a separate two-file submission.
+Today we walk through the Metro Support project and its rubric, then investigate the data and plan the index experiment.
+
+**The midterm is a separate project, not today's notebook.** Everything about it is on one page: [midterm instructions](../week_08/materials/assignments/midterm_project.md). Today's Colab notebook is classwork with its own Brightspace link.
 
 ## Materials
 
-- [Midterm instructions and rubric](../week_08/materials/assignments/midterm_project.md)
+- **[Midterm instructions: the whole midterm on one page](../week_08/materials/assignments/midterm_project.md)**
 - [Midterm SQL starter](../week_08/materials/assignments/midterm_starter.sql)
 - [Final README template](../week_08/materials/assignments/midterm_README_template.md)
-- [Step-by-step midterm guide with expected results](../week_08/materials/assignments/midterm_guide.md)
 - [Class slides](week_07_query_plans_index_design.pptx)
 - [Slide handout](week_07_query_plans_index_design.pdf)
 - [Transcript](week_07_query_plans_index_design_transcript.md)

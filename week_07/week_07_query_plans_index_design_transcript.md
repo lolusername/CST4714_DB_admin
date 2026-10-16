@@ -4,7 +4,7 @@
 
 Welcome, everyone. This is our only meeting this week, and it has two halves. For the first forty-five minutes, I am going to take you through the midterm project one part at a time. For each part, you will see what the starter file already does for you, the small piece you add, the result you should expect, and where that result goes in your README. Then you will have about fifty minutes to work in a Colab notebook that prepares you for the index part of the midterm. In the last five minutes, you will save that notebook, share it with me, and submit its link in Brightspace.
 
-If you have a laptop open, open the Week 7 README on GitHub. It links the midterm instructions, the SQL starter, the README template, and a step-by-step midterm guide. The guide explains every part with the results you should expect, and it does not add any requirements. If anything I say today sounds different from the written assignment, the written assignment is the rule, and I want you to ask me about it.
+If you have a laptop open, open the Week 7 README on GitHub. It links the midterm instructions, which put the whole midterm on one page: every part, step by step, with the results you should expect. It also links the SQL starter and the README template. If anything I say today sounds different from the written assignment, the written assignment is the rule, and I want you to ask me about it.
 
 ## Slide 2
 
@@ -50,7 +50,7 @@ Third, do not rerun Section 1 partway through the project. If you do, ticket 100
 
 Fourth, keep each transaction together. Highlight everything from its first SELECT through its last SELECT and run it as one block.
 
-Now look at the box on the right. The Supabase SQL Editor may show only the result of the last statement in a run. For a transaction block, that hides the value inside the transaction, and you need that value for your README. The fix is a short Colab helper called run_sql, which is printed in the midterm guide. It prints every result in order. A psql session does the same thing.
+Now look at the box on the right. The Supabase SQL Editor may show only the result of the last statement in a run. For a transaction block, that hides the value inside the transaction, and you need that value for your README. The fix is a short Colab helper called run_sql, which is printed at the end of the midterm instructions. It prints every result in order. A psql session does the same thing.
 
 ## Slide 6
 
@@ -150,7 +150,7 @@ An observed result is something you saw in your own output. Write it as a plain 
 
 A prediction, or a proposal, is something you expect but did not run. Label it clearly, like the example on the right: I predict that a restored copy will contain twelve tickets; I have not run this restore. That sentence is completely acceptable in a recovery plan marked proposed plan.
 
-Three situations come up often. First, if you used the supplied blocking trace, those PIDs came from the notebook, not from your run, so say so. Second, if a step failed, write what failed and what you tried. A clear account of a failure is worth far more than a result you did not actually see. Third, copy values directly from your own output, not from these slides or the guide. Your timings and cost numbers will not match mine, and they should not.
+Three situations come up often. First, if you used the supplied blocking trace, those PIDs came from the notebook, not from your run, so say so. Second, if a step failed, write what failed and what you tried. A clear account of a failure is worth far more than a result you did not actually see. Third, copy values directly from your own output, not from these slides or the instructions. Your timings and cost numbers will not match mine, and they should not.
 
 Today's Colab notebook asks for the same distinction, so you will practice it in the second half of class.
 
@@ -178,7 +178,7 @@ Rerunning Section 1 partway through the project. It resets ticket 1004 and delet
 
 Splitting a transaction across separate runs. Keep BEGIN and its COMMIT or ROLLBACK in the same run, along with the SELECT statements around them.
 
-Recording only the last result the editor showed. If you see only the final value, use the Colab helper from the guide or psql to see the value inside the transaction.
+Recording only the last result the editor showed. If you see only the final value, use the Colab helper from the instructions or psql to see the value inside the transaction.
 
 Copying the expected values instead of your own output. The expected values are there so you can check your work, not replace it.
 

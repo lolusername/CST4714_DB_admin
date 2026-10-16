@@ -2,6 +2,8 @@
 
 Spend about 50 minutes preparing Part 4 of the Metro Support midterm, the index test. Inspect the supplied data in Colab, read two short documentation sections, and write a plan for the test you will run later in PostgreSQL. Work individually.
 
+**This notebook is classwork, not the midterm.** The midterm itself is described on one page: [midterm instructions](../week_08/materials/assignments/midterm_project.md).
+
 ## Open the notebook
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_07/07_midterm_preliminary_research.ipynb)
