@@ -1,0 +1,92 @@
+1
+00:00:02,100 --> 00:00:03,600
+One latest event per ticket. Number each ticket's events, keep number 1, and keep every ticket.
+
+2
+00:00:07,900 --> 00:00:10,200
+All 21 events, in the order they were recorded.
+
+3
+00:00:10,700 --> 00:00:13,800
+PARTITION BY ticket_id: each ticket's events are numbered separately.
+
+4
+00:00:14,300 --> 00:00:18,200
+ORDER BY event_at DESC puts the newest event first inside each ticket.
+
+5
+00:00:18,700 --> 00:00:21,700
+Ticket 1003: 5007 gets 1, 5006 gets 2, 5005 gets 3.
+
+6
+00:00:22,200 --> 00:00:24,200
+Nothing is filtered yet: still 21 rows. rn=1 marks the 12 we will keep.
+
+7
+00:00:24,700 --> 00:00:26,700
+Unlike GROUP BY, the original rows survive, so we can pick a whole event row.
+
+8
+00:00:29,200 --> 00:00:33,200
+The notebook's demo: two invented rows in a temporary table, then ROLLBACK.
+
+9
+00:00:33,700 --> 00:00:39,200
+Same timestamp. Ordered by event_at alone, neither row is guaranteed to come first.
+
+10
+00:00:39,700 --> 00:00:42,700
+The larger event_id wins the tie: 9902 gets rn = 1, 9901 gets 2.
+
+11
+00:00:43,200 --> 00:00:45,700
+It is a reporting rule you declare. A larger ID need not mean a later event.
+
+12
+00:00:46,200 --> 00:00:47,700
+The demo rolls back: the published 21 events never change.
+
+13
+00:00:51,200 --> 00:00:55,700
+WHERE runs before window functions are computed, so rn doesn't exist yet.
+
+14
+00:00:56,200 --> 00:00:59,900
+So rank in one query, then filter in the query around it.
+
+15
+00:01:00,400 --> 00:01:01,900
+12 rows, one per ticket. 1003 now shows only 5007.
+
+16
+00:01:02,400 --> 00:01:03,900
+ticket_events itself is untouched: it still holds all 21 records.
+
+17
+00:01:07,700 --> 00:01:10,700
+tickets decides which rows exist. status is the ticket's current status.
+
+18
+00:01:11,200 --> 00:01:12,700
+Unassigned 1004 and 1009 stay, with events 5008 and 5016.
+
+19
+00:01:13,200 --> 00:01:16,200
+A required join to users here would make both of them vanish.
+
+20
+00:01:16,700 --> 00:01:21,200
+This fixture has none, but a ticket with no events would keep NULL event columns.
+
+21
+00:01:21,700 --> 00:01:25,200
+An inner join, or rn = 1 moved into the final WHERE, would drop that ticket.
+
+22
+00:01:25,700 --> 00:01:28,200
+Check it: 12 rows, 12 distinct IDs, and 1003's pick matches its own history.
+
+23
+00:01:30,800 --> 00:01:40,800
+Rank, filter, then join from tickets: ROW_NUMBER keeps every row and adds a position: still 21 events. PARTITION BY ticket_id restarts the numbering for each ticket. event_id DESC breaks timestamp ties: a rule, not proof of real order. Filter rn = 1 in an outer query; the same SELECT can't see rn yet. Start FROM tickets and LEFT JOIN: all 12 requests stay, 1004 and 1009 too.
+

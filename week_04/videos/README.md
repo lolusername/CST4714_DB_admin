@@ -2,28 +2,28 @@
 
 Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. Diagrams are schematic illustrations, not benchmarks.
 
-## [What does one row mean after a join?](02_join_grain.mp4) (1:16)
+## [Count requests, not ticket-event pairs](04_count_at_grain.mp4) (1:30)
 
-[![What does one row mean after a join?](02_join_grain.png)](02_join_grain.mp4)
+[![Count requests, not ticket-event pairs](04_count_at_grain.png)](04_count_at_grain.mp4)
 
-A join is a filtered product: 96 ticket-user pairs become 10 matches. An inner join drops unassigned tickets, a left join keeps all 12, and joining events changes the grain to 21 ticket-event rows.
+A category report that joins raw events counts water as 5 requests: ticket 1003 three times and 1008 twice. Summarizing events per ticket in a CTE first gives 12 requests and 21 events, and a second query checks the water row.
 
-[Watch](02_join_grain.mp4) · [Subtitles](02_join_grain.srt)
+[Watch](04_count_at_grain.mp4) · [Subtitles](04_count_at_grain.srt)
 
-## [Counting workload, including zero](03_zero_counts.mp4) (1:28)
+## [Conditional counts without losing tickets](05_conditional_counts.mp4) (1:19)
 
-[![Counting workload, including zero](03_zero_counts.png)](03_zero_counts.mp4)
+[![Conditional counts without losing tickets](05_conditional_counts.png)](05_conditional_counts.mp4)
 
-Start from staff, left join active tickets, then group. count(t.ticket_id) gives Agent 203 a zero where count(*) would say one, and moving the status test into WHERE makes 203 vanish.
+count(*) FILTER (WHERE ...) computes 12 total, 7 active, and 2 high-or-urgent active tickets in one pass. Per category, FILTER keeps parks and transportation with a zero, while a top-level WHERE removes them before any count.
 
-[Watch](03_zero_counts.mp4) · [Subtitles](03_zero_counts.srt)
+[Watch](05_conditional_counts.mp4) · [Subtitles](05_conditional_counts.srt)
 
-## [A view stores a query, not rows](01_view_stored_query.mp4) (1:14)
+## [One latest event per ticket](06_latest_event.mp4) (1:41)
 
-[![A view stores a query, not rows](01_view_stored_query.png)](01_view_stored_query.mp4)
+[![One latest event per ticket](06_latest_event.png)](06_latest_event.mp4)
 
-The active-queue view saves a SELECT definition and runs it against current data each time, so a resolved ticket simply stops appearing. A materialized view stores rows instead and stays stale until it is refreshed.
+ROW_NUMBER numbers each ticket's events newest first, with event_id breaking timestamp ties, and an outer query keeps rn = 1. A LEFT JOIN from tickets keeps all 12 requests, including unassigned 1004 and 1009.
 
-[Watch](01_view_stored_query.mp4) · [Subtitles](01_view_stored_query.srt)
+[Watch](06_latest_event.mp4) · [Subtitles](06_latest_event.srt)
 
 Videos © 2026 Atilio Barreda, CC BY-NC-SA 4.0; source code MIT.

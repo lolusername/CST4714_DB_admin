@@ -1,0 +1,64 @@
+1
+00:00:02,100 --> 00:00:03,600
+Conditional counts without losing tickets. Several totals in one pass, and every category kept.
+
+2
+00:00:07,700 --> 00:00:09,200
+The notebook's worked example: three counts over the whole tickets table.
+
+3
+00:00:09,700 --> 00:00:18,400
+FILTER feeds only matching rows into that one aggregate. The others still see every row.
+
+4
+00:00:18,900 --> 00:00:20,900
+12 tickets read once: 12 total, 7 active, 2 high-or-urgent active.
+
+5
+00:00:21,400 --> 00:00:23,900
+1003, 1005, and 1008 are high or urgent but resolved. AND needs both conditions.
+
+6
+00:00:24,400 --> 00:00:30,300
+The two that pass both tests: 1001 and 1011.
+
+7
+00:00:30,800 --> 00:00:34,900
+Lab 1's worked example: one row per category, two counts per row.
+
+8
+00:00:35,400 --> 00:00:37,400
+Parks and transportation have no resolved tickets. They stay, with a 0.
+
+9
+00:00:37,900 --> 00:00:42,500
+Each group still has all its tickets: total counts every one, resolved only some.
+
+10
+00:00:43,000 --> 00:00:47,000
+WHERE runs before grouping: 8 of the 12 tickets are gone before any count.
+
+11
+00:00:47,500 --> 00:00:50,000
+Parks and transportation vanish, and "total" now counts only resolved tickets.
+
+12
+00:00:50,500 --> 00:00:57,400
+A zero tells the manager something. A missing row tells them nothing.
+
+13
+00:00:57,900 --> 00:01:00,400
+The FILTER report again. Its columns sum to 12 and 4.
+
+14
+00:01:00,900 --> 00:01:03,400
+Independent check: list the resolved tickets directly. Four IDs, so 4 is right.
+
+15
+00:01:03,900 --> 00:01:06,400
+Here WHERE is correct: this question really is only about resolved tickets.
+
+16
+00:01:09,000 --> 00:01:19,000
+FILTER limits one count; WHERE limits all: count(*) FILTER (WHERE ...) feeds only matching rows into that one count. One pass over tickets can give 12 total, 7 active, 2 high-or-urgent active. AND inside FILTER means both conditions: a resolved high ticket is not active. A top-level WHERE removes rows before every aggregate, and empty groups vanish. Check a count by another route: list the IDs it should contain.
+

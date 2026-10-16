@@ -282,7 +282,7 @@ For today, be honest about what you proved. Your report was tested against this 
 
 ## Slide 25
 
-These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: What does one row mean after a join? (1:16); Counting workload, including zero (1:28); A view stores a query, not rows (1:14). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 4 README. The diagrams are schematic illustrations, not benchmarks.
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Count requests, not ticket-event pairs (1:30); Conditional counts without losing tickets (1:19); One latest event per ticket (1:41). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 4 README. The diagrams are schematic illustrations, not benchmarks.
 
 ## License
 

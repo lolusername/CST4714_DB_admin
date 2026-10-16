@@ -26,4 +26,4 @@ Start from staff, left join active tickets, then group. count(t.ticket_id) gives
 
 [Watch](03_zero_counts.mp4) · [Subtitles](03_zero_counts.srt)
 
-Editable source: `course/animations/week_02/` in the course authoring folder. Videos © 2026 Atilio Barreda, CC BY-NC-SA 4.0; source code MIT.
+Videos © 2026 Atilio Barreda, CC BY-NC-SA 4.0; source code MIT.

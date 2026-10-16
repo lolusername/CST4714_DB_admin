@@ -37,9 +37,9 @@ notebook submission.
 
 Short silent animations with captions (3 for this week). Each has a subtitle file; see [all Week 4 videos](videos/README.md).
 
-- [What does one row mean after a join?](videos/02_join_grain.mp4) (1:16): A join is a filtered product: 96 ticket-user pairs become 10 matches. An inner join drops unassigned tickets, a left join keeps all 12, and joining events changes the grain to 21 ticket-event rows.
-- [Counting workload, including zero](videos/03_zero_counts.mp4) (1:28): Start from staff, left join active tickets, then group. count(t.ticket_id) gives Agent 203 a zero where count(*) would say one, and moving the status test into WHERE makes 203 vanish.
-- [A view stores a query, not rows](videos/01_view_stored_query.mp4) (1:14): The active-queue view saves a SELECT definition and runs it against current data each time, so a resolved ticket simply stops appearing. A materialized view stores rows instead and stays stale until it is refreshed.
+- [Count requests, not ticket-event pairs](videos/04_count_at_grain.mp4) (1:30): A category report that joins raw events counts water as 5 requests: ticket 1003 three times and 1008 twice. Summarizing events per ticket in a CTE first gives 12 requests and 21 events, and a second query checks the water row.
+- [Conditional counts without losing tickets](videos/05_conditional_counts.mp4) (1:19): count(*) FILTER (WHERE ...) computes 12 total, 7 active, and 2 high-or-urgent active tickets in one pass. Per category, FILTER keeps parks and transportation with a zero, while a top-level WHERE removes them before any count.
+- [One latest event per ticket](videos/06_latest_event.mp4) (1:41): ROW_NUMBER numbers each ticket's events newest first, with event_id breaking timestamp ties, and an outer query keeps rn = 1. A LEFT JOIN from tickets keeps all 12 requests, including unassigned 1004 and 1009.
 
 <!-- videos:end -->
 

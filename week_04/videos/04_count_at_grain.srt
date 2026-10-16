@@ -1,0 +1,80 @@
+1
+00:00:02,100 --> 00:00:03,600
+Count requests, not ticket-event pairs. Build a category report whose rows mean what its labels say.
+
+2
+00:00:06,500 --> 00:00:10,500
+A dashboard query: requests per category. It runs with no error.
+
+3
+00:00:11,000 --> 00:00:15,000
+The column sums to 21: the number of events, not the 12 requests.
+
+4
+00:00:15,500 --> 00:00:19,000
+Water has two requests: tickets 1003 and 1008.
+
+5
+00:00:19,500 --> 00:00:21,500
+The join gives 1003 three rows and 1008 two. count(*) counts all five.
+
+6
+00:00:22,000 --> 00:00:24,000
+PostgreSQL counted exactly the rows it was given. The label is what's wrong.
+
+7
+00:00:27,700 --> 00:00:31,800
+Inside the CTE, count(*) is correct: it counts event rows for each ticket.
+
+8
+00:00:32,300 --> 00:00:35,300
+GROUP BY ticket_id collapses 21 event rows into one count per ticket. 1003 → 3.
+
+9
+00:00:35,800 --> 00:00:37,800
+That property is what makes the next join safe: no ticket can be repeated.
+
+10
+00:00:38,300 --> 00:00:39,800
+A CTE is a named step of one statement, not a saved table.
+
+11
+00:00:43,500 --> 00:00:45,000
+LEFT JOIN keeps every ticket. Each joined row still means one request.
+
+12
+00:00:45,500 --> 00:00:51,400
+COALESCE would turn a missing summary into 0. Every ticket here has an event.
+
+13
+00:00:51,900 --> 00:00:54,400
+Now count(*) counts tickets: water = 2 requests, and sum gives its 5 events.
+
+14
+00:00:54,900 --> 00:00:56,900
+Don't rejoin raw events after summarizing them: that would multiply rows again.
+
+15
+00:01:01,400 --> 00:01:03,400
+Totals first: 12 requests = rows in tickets; 21 events = rows in ticket_events.
+
+16
+00:01:03,900 --> 00:01:09,900
+Totals can match while counts sit on the wrong row. Check one row by another route.
+
+17
+00:01:10,400 --> 00:01:12,400
+Water: 2 tickets and 3 + 2 = 5 events. The report's water row agrees.
+
+18
+00:01:12,900 --> 00:01:14,900
+This join is deliberate: it groups by ticket, so each ticket stays one row.
+
+19
+00:01:15,400 --> 00:01:17,900
+If a report needs only ticket facts, skip events entirely and read tickets.
+
+20
+00:01:20,500 --> 00:01:30,500
+Count at the grain you mean: Joining raw events turns one request into one row per event. Shrink the history to one row per ticket first: a CTE with GROUP BY. LEFT JOIN that summary once; COALESCE turns a missing count into 0. Then group by category: requests sum to 12, events to 21. Verify with a second query against records you know.
+
