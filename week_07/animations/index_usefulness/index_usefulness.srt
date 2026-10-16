@@ -1,0 +1,86 @@
+1
+00:00:01,833 --> 00:00:05,833
+An index gives PostgreSQL another way to find rows.
+Whether it helps depends on the query and the data.
+
+2
+00:00:08,800 --> 00:00:14,167
+The table is not ordered by last name.
+
+3
+00:00:14,533 --> 00:00:17,533
+Two rows match. Finding the first one does not end the scan.
+
+4
+00:00:23,333 --> 00:00:27,333
+The B-tree keeps ordered keys and row locations.
+Creating it does not reorder the table.
+
+5
+00:00:29,933 --> 00:00:33,333
+A B-tree uses guide keys to find the matching key range.
+
+6
+00:00:33,700 --> 00:00:38,300
+The index finds two locations. SELECT * also needs fname and id,
+so this plan fetches the complete rows from the table.
+
+7
+00:00:38,667 --> 00:00:42,667
+Same matching rows; another route.
+For just six rows, PostgreSQL may still choose a sequential scan.
+
+8
+00:00:45,667 --> 00:00:49,867
+This query asks for all columns of all rows.
+The lname index cannot eliminate rows from that request.
+
+9
+00:00:50,233 --> 00:00:54,233
+Reading the table directly is often cheaper than
+walking an index and fetching every table row.
+
+10
+00:00:56,267 --> 00:01:00,067
+PostgreSQL reads table pages. On a tiny table,
+a direct scan can cost less than an index lookup plus row fetches.
+
+11
+00:01:00,433 --> 00:01:07,433
+If a matching index lets a query visit only a few table pages,
+it can avoid much of the scan. These boxes are illustrative pages.
+
+12
+00:01:07,800 --> 00:01:11,800
+When matches spread across most pages, index-driven row fetches
+may add work. A sequential scan or bitmap plan may cost less.
+
+13
+00:01:14,600 --> 00:01:19,400
+A first-name index does not directly locate a last-name match.
+The ON users (lname) definition determines the indexed column.
+
+14
+00:01:19,767 --> 00:01:22,767
+users_lname_idx is a helpful name.
+The index name itself does not control which column it searches.
+
+15
+00:01:26,000 --> 00:01:30,000
+The insert maintains both structures.
+Deletes and changes to indexed values also require index work.
+
+16
+00:01:30,367 --> 00:01:33,367
+Keep an index when its benefit to the workload
+is worth its extra storage and maintenance.
+
+17
+00:01:36,900 --> 00:01:40,900
+Compare actual plan, rows, and buffers before and after.
+Keep the query and data the same; confirm the same results.
+
+18
+00:01:41,267 --> 00:01:45,267
+PostgreSQL chooses a plan using estimated costs.
+An unchanged sequential scan can be a sensible result.

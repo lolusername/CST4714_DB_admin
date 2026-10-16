@@ -13,6 +13,7 @@ Today we walk through the Metro Support project and its rubric, then investigate
 - [Class slides](week_07_query_plans_index_design.pptx)
 - [Slide handout](week_07_query_plans_index_design.pdf)
 - [Transcript](week_07_query_plans_index_design_transcript.md)
+- [Animation: When Does an Index Help? (1:45)](animations/index_usefulness/README.md)
 - [Today's research lab](lab_midterm_research.md)
 - [Colab notebook](07_midterm_preliminary_research.ipynb)
 

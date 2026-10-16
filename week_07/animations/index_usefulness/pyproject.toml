@@ -1,0 +1,9 @@
+[project]
+name = "cst4714-index-animation"
+version = "0.1.0"
+description = "Manim explanation of when a PostgreSQL index helps"
+requires-python = ">=3.11,<3.14"
+dependencies = ["manim==0.22.0"]
+
+[tool.uv]
+package = false
