@@ -28,16 +28,27 @@ does not tell us whether the right order changed. A stronger explanation is:
 The explanation distinguishes a useful check from what it cannot establish. It
 does not claim to have tested the application when only SQL was tested.
 
-## 5. Recommend Whether to Keep an Index
+## Week 7: Plan the Midterm Index Test
 
-**Use in:** [Week 7: Does This Index Earn Its Space?](../../lab_02_index_experiment.md).
-**Read:** Chapter 7, the sections on plans, index order, and controlled comparisons.
+**Use in:** [Midterm Preliminary Research](../../lab_midterm_research.md).
+**Write in:** [the research notebook](../../07_midterm_preliminary_research.ipynb).
 
-Write a short update to the application developer recommending whether to keep,
-remove, or investigate the index further. Use the unchanged
-ticket IDs, a difference in plan work, and one storage or update cost. A small
-timing difference alone is not a dependable conclusion. Identify measured index
-space separately from write overhead that this read experiment did not measure.
+Write **180–250 words total** across the notebook's three response cells. Explain
+what the query must return using two observations from your outputs. Connect
+both assigned PostgreSQL sources to a possible index benefit and cost, then
+propose a before-and-after PostgreSQL test. Describe what stays the same, which
+results and plan evidence you will compare, and one remaining question. Label
+your expected outcome as a prediction: today's Python outputs do not measure
+PostgreSQL performance.
+
+Save the outputs, observation table, and writing in your own Colab copy. Submit
+**one sharing link** to that copy through today's Brightspace classwork assignment,
+with viewer access for the instructor. There is no separate writing document or
+file upload. You can revise and reuse this writing in your final midterm README.
+
+The larger [index experiment](../../lab_single_session.md) is optional practice
+with no separate submission. If you try it, distinguish measured index storage
+from write overhead that its read experiment does not measure.
 
 An **index** is an additional search structure. Its benefit depends on the query;
 its cost includes space and work to keep it consistent when relevant data changes.
