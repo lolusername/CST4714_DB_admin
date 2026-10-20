@@ -15,7 +15,7 @@ You will practice modeling, querying, access control, performance, and recovery.
 - [Operating Cloud Databases (PDF)](Operating_Cloud_Databases.pdf): the course textbook. Each week's page identifies the assigned chapter and sections.
 - [Corrections and current notebook links](COURSE_CORRECTIONS.md): read alongside the textbook PDF.
 - Short animated videos: each week's README has a **Videos** section, and the week's `videos/` folder holds the videos with subtitle files.
-- **[Midterm project: the whole midterm on one page](week_08/materials/assignments/midterm_project.md)**
+- **[Midterm project: the whole midterm on one page](week_08/materials/assignments/midterm_project.md)** — due **Tuesday, November 3, 2026**
 - [Final cloud database project](week_12/materials/assignments/final_project.md)
 
 **Brightspace has announcements, deadlines, grades, and submission links.**

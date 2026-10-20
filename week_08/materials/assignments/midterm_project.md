@@ -9,7 +9,7 @@ CST4714 Database Administration · Individual project · 30% of the course grade
 - **What it is:** a project you complete on your own time. It is not an in-class exam.
 - **What you do:** run a small PostgreSQL database we give you, add two short pieces of SQL, and record and explain what happened.
 - **What you submit:** two files, **midterm.sql** and **README.md**, together in one ZIP in Brightspace.
-- **When it is due:** the date posted in Brightspace. We introduce the project in Week 7 and teach the recovery part in Week 8.
+- **When it is due:** **Tuesday, November 3, 2026**, two weeks after the October 20 clarification. Submit the ZIP in Brightspace. We introduce the project in Week 7 and teach the recovery part in Week 8.
 - **Who does it:** you, individually. You do not need a web application, a new dataset, or a presentation.
 - **Not the midterm:** the Week 7 Colab research notebook. That is classwork with its own Brightspace link.
 
@@ -20,6 +20,14 @@ CST4714 Database Administration · Individual project · 30% of the course grade
 | 3 | Explain one blocking incident from Week 5 | README.md |
 | 4 | Test one improvement, normally an index | midterm.sql and README.md |
 | 5 | Plan a recovery from a backup, after Week 8 | README.md |
+
+## How your Week 7 lab carries forward
+
+This is the same project introduced in Week 7. The five parts, starter database, rubric, and two-file submission stay the same. Keep the work you have already completed.
+
+Reuse your own Week 7 research and writing in the matching README sections. Revise predictions after you run the PostgreSQL experiments: label what you observed, what you inferred, and what came from a supplied trace. The research notebook prepares you for the project; its analysis does not replace the SQL results required below. Its separate classwork submission remains a Colab sharing link.
+
+For the recommended index route, the starter supplies the database, count query, rollback example, and index experiment. You add the requester join and commit example, run the experiments, and fill in the README. The five parts below are sections of that same submission. In Week 8, add the recovery plan. You do not need to redo the research lab or start a different project.
 
 ## Before you start
 
@@ -106,7 +114,7 @@ The recommended route is the index experiment already in the starter. Its query 
 2. **SECTION 4B:** create the index on (status, opened_at DESC, ticket_id DESC) once. The last key breaks timestamp ties. If PostgreSQL says the index already exists, run the starter's DROP INDEX line and repeat 4A to 4C.
 3. **SECTION 4C:** run the identical SELECT and EXPLAIN again, then the size query.
 
-**You should see** (on PostgreSQL 16; your timings and costs will differ)
+**Example results** (a PostgreSQL 16 run; your scan choice, timings, costs, and index size can differ)
 
 | Evidence | Before the index | After the index |
 |---|---|---|
@@ -123,9 +131,9 @@ With only 12 tickets, PostgreSQL may keep a sequential scan and timings may bare
 - Whether your plan changed, and whether the result stayed the same.
 - One cost of keeping the index. The starter also asks for a short recommendation: keep or drop it.
 
-Keep the index for your recovery plan.
+Your recommendation may be **keep** or **drop** if you support it with your results. For this practice submission, leave the index in the database and in midterm.sql so your recovery plan can check that it returns. Keeping it for that check does not change your recommendation about whether this tiny workload needs it.
 
-**Other routes:** instead of the index, you may choose one alternative covered in class: a least-privilege grant, an RLS policy test, or a safe schema change. Show the relevant before and after checks and explain a tradeoff. Complete **one** improvement only. The 100,000-row classroom demonstration is optional practice, not a second midterm database.
+**Other routes:** instead of the index, you may choose one alternative covered in class: a least-privilege grant, an RLS policy test, or a safe schema change. Show the relevant before and after checks and explain a tradeoff. Complete **one** improvement only. If you already chose an alternative in Week 7, keep that choice. Replace the index-specific prompts in the README with checks for your chosen change; you do not also owe an index experiment. The 100,000-row classroom demonstration is optional practice, not a second midterm database.
 
 ## Part 5: Write a recovery plan, after Week 8
 
@@ -162,6 +170,8 @@ Wait for the Week 8 [backup and restore lesson](../../lab_01_backup_restore.md).
    | Ticket 1004 | priority medium |
    | The added index | midterm_tickets_status_opened_idx exists |
 
+   If you chose a different improvement, replace the index check with an appropriate check for that change. The three-check minimum stays the same.
+
 7. **Limits:** what the backup leaves out, such as roles or grants.
 
 Clearly separate a check you planned from a result you actually observed. Never write a real password or connection string.
@@ -173,7 +183,7 @@ Clearly separate a check you planned from a result you actually observed. Never 
 - [ ] README.md explains run order and environment, your actual results, blocking, the improvement, and the recovery plan.
 - [ ] Every prompt in the template is replaced.
 - [ ] No passwords, connection strings, API keys, or service-role keys appear anywhere.
-- [ ] Both files are in **one ZIP**, uploaded to Brightspace by the posted deadline. Add the Week 5 notebook only if you changed its code.
+- [ ] Both files are in **one ZIP**, uploaded to Brightspace by **Tuesday, November 3, 2026**. Add the Week 5 notebook only if you changed its code.
 
 ## Grading: 100 points
 

@@ -1,5 +1,13 @@
 # Week 8: Backup, Recovery, and the Midterm
 
+## First in Class: The Midterm and What You Already Have
+
+**Midterm due Tuesday, November 3, 2026.** Submit `midterm.sql` and `README.md` together in one ZIP in Brightspace.
+
+We begin with the [midterm instructions](materials/assignments/midterm_project.md), SQL starter, and README template side by side. We will walk through the five parts, show where each result belongs, and answer questions before the recovery lesson. The project and rubric stay the same.
+
+Keep your Week 7 lab work. Reuse your own research and explanations in the README, then revise them using your PostgreSQL results. The Week 7 research notebook remains separate classwork submitted through its Colab sharing link. An improvement you already selected remains valid. Complete one improvement only.
+
 ## The Week's Question
 
 Can we recreate a required database state somewhere safe and check that the
@@ -48,13 +56,13 @@ Short silent animations with captions (3 for this week). Each has a subtitle fil
 
 <!-- videos:end -->
 
-## Day 1: Perform and Verify a Logical Restore
+## Day 1: Midterm Walkthrough, Then Backup and Restore
 
-Complete [Lab: Backup, restore, and check the result](lab_01_backup_restore.md).
+After the opening walkthrough and recovery lesson, complete the existing [Lab: Backup, restore, and check the result](lab_01_backup_restore.md).
 
 Submit only the completed `03_postgres_backup_restore.ipynb` notebook.
 
-The midterm starts in Week 7. Use this week to add the recovery plan and finish the same two-file package.
+Use the recovery lab to understand the steps for Part 5 of your midterm. The lab uses 3 users / 3 tickets / 5 events; the midterm uses 8 / 12 / 21. Write the midterm plan for `midterm_metro`, with its own expected results. Executing an additional restore for the midterm is optional.
 
 ## Day 2: Midterm Operations Clinic
 
@@ -62,7 +70,7 @@ Use the [canonical midterm assignment](materials/assignments/midterm_project.md)
 the package run order, then students work individually on the Metro Support case.
 Weekly instructions do not redefine the assignment.
 
-Bring one concrete question and one working part of the project. Use the midterm
+Bring your Week 7 writing, your current `midterm.sql` and `README.md`, and one concrete question. We will check how an observed result becomes an explanation in the README. Use the midterm
 rubric to identify the highest-value next improvement.
 
 ## Optional Industry Extension: Restore Game-Day Go/No-Go
