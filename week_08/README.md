@@ -64,6 +64,17 @@ Submit only the completed `03_postgres_backup_restore.ipynb` notebook.
 
 Use the recovery lab to understand the steps for Part 5 of your midterm. The lab uses 3 users / 3 tickets / 5 events; the midterm uses 8 / 12 / 21. Write the midterm plan for `midterm_metro`, with its own expected results. Executing an additional restore for the midterm is optional.
 
+## In-Class Writing: When the Backups Did Not Work
+
+A short response to GitLab's 2017 database outage, completed in class on Day 1.
+Allow **about 20 minutes: 7 for the video, 3 for background, and 10 for
+writing**. Explain why GitLab's backups did not bring the data back, using
+this week's recovery terms. No SQL.
+
+Complete [In-Class Writing Response: When the Backups Did Not Work](in_class_writing_gitlab_outage.md).
+
+Write your response in the Brightspace assignment.
+
 ## Day 2: Midterm Operations Clinic
 
 Use the [canonical midterm assignment](materials/assignments/midterm_project.md). The class reviews
