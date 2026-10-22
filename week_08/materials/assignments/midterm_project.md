@@ -29,10 +29,18 @@ Reuse your own Week 7 research and writing in the matching README sections. Revi
 
 For the recommended index route, the starter supplies the database, count query, rollback example, and index experiment. You add the requester join and commit example, run the experiments, and fill in the README. The five parts below are sections of that same submission. In Week 8, add the recovery plan. You do not need to redo the research lab or start a different project.
 
+## Where to run it: Supabase first
+
+**Use your free Supabase project.** It is the default for the midterm, and Week 8 Lab 2 connects to it.
+
+- **Supabase (recommended):** run the starter in the Supabase SQL Editor, or from Colab through the **session pooler** (**Connect > Session pooler**, port 5432). Colab and many home and campus networks reach only IPv4 addresses, and the Free plan's direct connection uses IPv6, so connect from Colab through the session pooler.
+- **Other options:** PostgreSQL on your own computer, or another hosted PostgreSQL service you control. Every part of this page works the same way there.
+- Whichever you choose, name the environment and PostgreSQL version in your README, use a dedicated practice database, and never put a password or connection string in your files.
+
 ## Before you start
 
 1. Save [midterm_starter.sql](midterm_starter.sql) as **midterm.sql** and [midterm_README_template.md](midterm_README_template.md) as **README.md**.
-2. Work in your personal Supabase practice project, or a local or instructor-provided PostgreSQL database. Use a dedicated practice database.
+2. Open your Supabase project, or the alternative you chose above. Use a dedicated practice database.
 3. SECTION 1 of the starter resets the **midterm_metro** schema. Running it deletes earlier work in that schema and any objects that depend on it. Save your SQL and notes before you rerun it.
 4. Run SECTION 1 once. After that, select and run only the section you need. Never rerun SECTION 1 between the two halves of an experiment.
 5. The Supabase SQL Editor may show only the last result of a run. To see every result of a transaction block, use psql or the [Colab helper](#see-every-result-colab-helper) at the end of this page.

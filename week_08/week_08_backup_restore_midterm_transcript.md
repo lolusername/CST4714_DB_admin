@@ -382,9 +382,105 @@ Now the line underneath. Use your own results and limitations. If you picked tic
 
 ## Slide 24
 
-Here is where to look for the rest of the clinic. The first box: Chapter 8 has the recovery concepts, the command reference, and the runbook example. The Week 5 notebook has the blocking experiment. The canonical midterm assignment has the requirements and the rubric, including the allowed alternatives and the submission format.
+For the rest of today you work on your own midterm, in your own Supabase project, with one Colab notebook. Look at the table. It is the whole lab, in order, with what you should see at every step.
 
-The middle box is your work for the rest of class. Pick one incomplete part of your own case, repair it, rerun it, and update the explanation beside the result. Start from an actual failure or uncertainty. Maybe the setup does not run from a clean state. Maybe a join duplicates tickets. Maybe a transaction demonstration leaves the wrong final value, or your improvement has no meaningful comparison. Fix it and rerun the test before you rewrite the words, because the explanation should describe the result you actually have.
+Step 0 connects Colab to your project and loads the midterm starter. You should see eight users, twelve tickets, and twenty-one ticket events. Step 1 is Part 1: you fill in the requester join and you test two integrity rules with writes that should fail. Step 2 is Part 2: the rollback, then your commit. Step 3 is Part 4, the index experiment. Step 4 is Part 5, and it is new: you back up your Supabase schema and restore the copy somewhere else. Part 3, blocking, stays with the Week 5 notebook.
+
+Now the box at the bottom. This notebook is classwork, not the midterm. You submit the notebook today. The midterm is still midterm dot sql and README dot md, due November 3. As each step finishes, copy the SQL into midterm dot sql and the results into your README. If you do that, you leave today with most of your midterm written.
+
+The next few slides explain the one new idea in this lab: how Colab reaches your Supabase database.
+
+[Sources]
+- Week 8 lab_02_midterm_work_session.md and the midterm work session notebook.
+- Course assignments/midterm_project.md, canonical requirements.
+
+## Slide 25
+
+Every computer on the internet is reached through an address, and there are two kinds. Look at the two panels.
+
+On the left, IPv4. An IPv4 address is thirty-two bits, written as four numbers like the one on the slide. Thirty-two bits gives about four point three billion addresses, and the world ran out of new ones years ago.
+
+On the right, IPv6. An IPv6 address is one hundred twenty-eight bits, written in groups of hexadecimal, like the second example. That is enough addresses for every device anyone will ever build.
+
+Here is the catch. They are two different protocols. A machine that can only speak IPv4 cannot open a connection to an address that exists only in IPv6. It is not slow. It simply has no route there.
+
+Now read the diagram at the bottom. A Colab runtime reaches only IPv4 addresses, and so do many home and campus networks. On the Free plan, Supabase's direct connection uses IPv6. So the top path fails, and the error usually says network is unreachable. The bottom path works: the session pooler accepts IPv4 and passes your connection on to your database.
+
+When you see network is unreachable today, it almost always means you copied the direct connection instead of the session pooler.
+
+[Sources]
+- https://supabase.com/docs/guides/database/connecting-to-postgres (checked October 22, 2026).
+- Example addresses come from the documentation ranges in RFC 5737 and RFC 3849.
+
+## Slide 26
+
+So what is a pooler? Read the definition at the top. A connection pooler sits between clients and PostgreSQL. It keeps a small number of real database connections open, and it lends them to clients. Opening a fresh database connection costs time and memory, so sharing a few connections lets many clients use one database.
+
+The question is how long you get to keep the connection you borrowed, and that is the difference between the two panels.
+
+On the left, session mode, on port fifty-four thirty-two. You keep one database connection from the moment you connect until you disconnect. Everything you know from a direct connection still works. BEGIN, then several statements, then COMMIT or ROLLBACK. SET commands. Temporary tables. And pg_dump, which needs one consistent session for the whole backup.
+
+On the right, transaction mode, on port sixty-five forty-three. You get a connection for one transaction only, and then it goes back to the pool for someone else. That lets thousands of short-lived clients, like serverless functions, share a few connections. But anything you set up for your session can disappear between transactions, and prepared statements are not supported.
+
+The line at the bottom is today's choice. Your transaction tests and your backup need one connection for the whole session, so you use session mode.
+
+[Sources]
+- https://supabase.com/docs/guides/database/connecting-to-postgres (checked October 22, 2026).
+- https://www.postgresql.org/docs/current/app-pgdump.html
+
+## Slide 27
+
+Your Supabase project gives you three ways in, and they all lead to the same database. The table compares them, one row each.
+
+First row, the direct connection. The host starts with db, then your project reference, then supabase dot co, on port fifty-four thirty-two, and the user is just postgres. On the Free plan it uses IPv6. IPv4 for the direct connection is a paid add-on. When your network can reach it, Supabase recommends the direct connection for tools like pg_dump.
+
+Second row, the session pooler. The host is on pooler dot supabase dot com, the port is still fifty-four thirty-two, and notice the user: postgres, a dot, then your project reference. That is how the shared pooler knows which project you mean. It accepts IPv4. This is the one you use today from Colab.
+
+Third row, the transaction pooler. Same host, port sixty-five forty-three, made for many short connections. Not for today.
+
+Now the box at the bottom. Click Connect in your project and choose Session pooler. Copy the string from there. Do not type the host yourself, because the part that starts with aws and a number cannot be guessed from your region.
+
+[Sources]
+- https://supabase.com/docs/guides/database/connecting-to-postgres (checked October 22, 2026).
+
+## Slide 28
+
+Here is the session pooler string from your project, taken apart. Read it left to right. postgresql, colon, slash, slash says which protocol. Then the user, postgres dot your project reference. After the colon comes the password placeholder. After the at sign, the pooler host. Then the port, fifty-four thirty-two, and finally the database name, postgres.
+
+You replace only the placeholder, square brackets included, with your database password. If your password has special characters, they have to be encoded, because characters like the at sign already mean something in this string. The slide shows the three most common ones.
+
+Now the rules on the right. You paste the whole string at the notebook's hidden prompt. Never type it into a code cell, never put it in your README, and never show it in a screenshot. Anyone who has that string can change your database.
+
+The notebook adds sslmode equals require. That encrypts the connection, so nobody on the network can read your password or your data. Be precise about what it does not do: require does not check that the server is really Supabase. A stronger setting, verify-full with Supabase's root certificate, also checks the server's identity.
+
+And if you forgot your password, you can reset it in your project's database settings. Anything else that used the old password stops working.
+
+[Sources]
+- https://supabase.com/docs/guides/database/connecting-to-postgres (checked October 22, 2026).
+- https://www.postgresql.org/docs/current/libpq-ssl.html
+
+## Slide 29
+
+Step 4 is Part 5 of your midterm, done for real. Follow the three boxes from left to right.
+
+On the left is your Supabase project with the midterm_metro schema. pg_dump connects through the session pooler and writes a custom-format backup file into Colab. That is the first arrow. In the middle is the backup file. Then pg_restore loads it into a new, empty database on a separate PostgreSQL server inside Colab. That is the box on the right. The source and the destination are different machines, so the restore can never overwrite your project.
+
+Read the version line. pg_dump must be the same major version as your server, or newer. The notebook checks your server's version and installs matching tools for you.
+
+Then the notebook runs the same checks on both sides: counts, join rows, ticket 1004, and the index. Every line should say MATCH. Write your own checks and expected results before you run them.
+
+Now the box at the bottom, because honesty matters here. If your midterm database is this Supabase project, this is an executed restore, and you may report it as observed. Also name the limits: roles and grants were left out, and the Colab copy disappears when the runtime ends. A real backup is stored somewhere that outlives the machine that made it.
+
+[Sources]
+- https://www.postgresql.org/docs/current/app-pgdump.html
+- https://www.postgresql.org/docs/current/app-pgrestore.html
+- Course textbook, Chapter 8.
+
+## Slide 30
+
+Here is where to look for the rest of your midterm work. The first box: Chapter 8 has the recovery concepts, the command reference, and the runbook example. The Week 5 notebook has the blocking experiment. The canonical midterm assignment has the requirements and the rubric, including the allowed alternatives and the submission format.
+
+The middle box is for any time left after Lab 2. Pick one incomplete part of your own case, repair it, rerun it, and update the explanation beside the result. Start from an actual failure or uncertainty. Maybe the setup does not run from a clean state. Maybe a join duplicates tickets. Maybe a transaction demonstration leaves the wrong final value, or your improvement has no meaningful comparison. Fix it and rerun the test before you rewrite the words, because the explanation should describe the result you actually have.
 
 When you ask me for help, show me the exact command or query, the actual output, and what you expected. Then I can diagnose the operation instead of guessing from "it doesn't work." Never put a password or a private connection URL on screen.
 
@@ -396,7 +492,7 @@ Next week we start NoSQL models and JSON. We will compare them with the relation
 - Course Week 8 guide and canonical midterm assignment.
 - Course syllabus, Weeks 8 and 9.
 
-## Slide 25
+## Slide 31
 
 These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: RPO and RTO on the clock (1:29); Dump, restore, verify (1:35); Point-in-time recovery with WAL (1:20). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 8 README. The diagrams are schematic illustrations, not benchmarks.
 

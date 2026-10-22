@@ -80,9 +80,9 @@ We begin with the [midterm instructions](materials/assignments/midterm_project.m
 
 Keep your Week 7 lab work. Reuse your own research and explanations in the README, then revise them using your PostgreSQL results. The Week 7 research notebook remains separate classwork submitted through its Colab sharing link. An improvement you already selected remains valid. Complete one improvement only.
 
-### Then: Lab 2, Midterm Work Session
+### Then: Lab 2, Midterm Work Session in Supabase
 
-Complete [Lab 2: Midterm Work Session](lab_02_midterm_work_session.md). The notebook runs the midterm starter in a temporary PostgreSQL database in Colab and shows every result. You work through Parts 1, 2, 4, and 5, then copy your SQL into `midterm.sql` and your results into `README.md`.
+Complete [Lab 2: Midterm Work Session in Supabase](lab_02_midterm_work_session.md). The notebook connects Colab to your own Supabase project through the **session pooler**, runs the midterm starter there, and shows every result. You work through Parts 1, 2, 4, and 5, including a real backup of your Supabase schema restored into a separate database in Colab. Copy your SQL into `midterm.sql` and your results into `README.md` as you go. Bring your Supabase database password. Slides 24–29 explain the session pooler, IPv4 and IPv6, and the lab steps.
 
 Submit only the completed `midterm_work_session.ipynb` notebook. The lab is classwork, not the midterm, and adds no midterm requirement.
 
