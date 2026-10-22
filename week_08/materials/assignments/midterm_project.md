@@ -9,7 +9,7 @@ CST4714 Database Administration · Individual project · 30% of the course grade
 - **What it is:** a project you complete on your own time. It is not an in-class exam.
 - **What you do:** run a small PostgreSQL database we give you, add two short pieces of SQL, and record and explain what happened.
 - **What you submit:** two files, **midterm.sql** and **README.md**, together in one ZIP in Brightspace.
-- **When it is due:** **Tuesday, November 3, 2026**, two weeks after the October 20 clarification. Submit the ZIP in Brightspace. We introduce the project in Week 7 and teach the recovery part in Week 8.
+- **When it is due:** **Tuesday, November 3, 2026**. We walk through it in class on Thursday, October 22. Submit the ZIP in Brightspace. We introduce the project in Week 7 and teach the recovery part in Week 8.
 - **Who does it:** you, individually. You do not need a web application, a new dataset, or a presentation.
 - **Not the midterm:** the Week 7 Colab research notebook. That is classwork with its own Brightspace link.
 

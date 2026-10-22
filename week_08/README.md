@@ -1,12 +1,6 @@
 # Week 8: Backup, Recovery, and the Midterm
 
-## First in Class: The Midterm and What You Already Have
-
-**Midterm due Tuesday, November 3, 2026.** Submit `midterm.sql` and `README.md` together in one ZIP in Brightspace.
-
-We begin with the [midterm instructions](materials/assignments/midterm_project.md), SQL starter, and README template side by side. We will walk through the five parts, show where each result belongs, and answer questions before the recovery lesson. The project and rubric stay the same.
-
-Keep your Week 7 lab work. Reuse your own research and explanations in the README, then revise them using your PostgreSQL results. The Week 7 research notebook remains separate classwork submitted through its Colab sharing link. An improvement you already selected remains valid. Complete one improvement only.
+**Midterm due Tuesday, November 3, 2026.** We walk through it on Day 2, Thursday, October 22. The [midterm page](materials/assignments/midterm_project.md) has every requirement.
 
 ## The Week's Question
 
@@ -40,6 +34,7 @@ unless the weekly lab assigns it.
 - [Canonical midterm operations case](materials/assignments/midterm_project.md)
 - [PostgreSQL backup and restore notebook](materials/notebooks/03_postgres_backup_restore.ipynb)
 - [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_08/materials/notebooks/03_postgres_backup_restore.ipynb) for Lab 1; save a working copy in Drive.
+- [Midterm work session notebook](materials/notebooks/midterm_work_session.ipynb): [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_08/materials/notebooks/midterm_work_session.ipynb) for Lab 2; save a working copy in Drive.
 - [Transactions and locks notebook](materials/notebooks/02_postgres_transactions_locks.ipynb), a midterm reference: [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_08/materials/notebooks/02_postgres_transactions_locks.ipynb)
 - [Week 8 student deck](week_08_backup_restore_midterm.pptx)
 - [Week 8 PDF handout](week_08_backup_restore_midterm.pdf)
@@ -56,9 +51,9 @@ Short silent animations with captions (3 for this week). Each has a subtitle fil
 
 <!-- videos:end -->
 
-## Day 1: Midterm Walkthrough, Then Backup and Restore
+## Day 1: Backup and Restore
 
-After the opening walkthrough and recovery lesson, complete the existing [Lab: Backup, restore, and check the result](lab_01_backup_restore.md).
+After the recovery lesson, complete the existing [Lab: Backup, restore, and check the result](lab_01_backup_restore.md).
 
 Submit only the completed `03_postgres_backup_restore.ipynb` notebook.
 
@@ -75,14 +70,23 @@ Complete [In-Class Writing Response: When the Backups Did Not Work](in_class_wri
 
 Write your response in the Brightspace assignment.
 
-## Day 2: Midterm Operations Clinic
+## Day 2: Midterm Walkthrough, Then Lab 2
 
-Use the [canonical midterm assignment](materials/assignments/midterm_project.md). The class reviews
-the package run order, then students work individually on the Metro Support case.
-Weekly instructions do not redefine the assignment.
+**Midterm due Tuesday, November 3, 2026.** Submit `midterm.sql` and `README.md` together in one ZIP in Brightspace.
 
-Bring your Week 7 writing, your current `midterm.sql` and `README.md`, and one concrete question. We will check how an observed result becomes an explanation in the README. Use the midterm
-rubric to identify the highest-value next improvement.
+### First: The Midterm and What You Already Have
+
+We begin with the [midterm instructions](materials/assignments/midterm_project.md), SQL starter, and README template side by side. We will walk through the five parts, show where each result belongs, and answer questions. The project and rubric stay the same.
+
+Keep your Week 7 lab work. Reuse your own research and explanations in the README, then revise them using your PostgreSQL results. The Week 7 research notebook remains separate classwork submitted through its Colab sharing link. An improvement you already selected remains valid. Complete one improvement only.
+
+### Then: Lab 2, Midterm Work Session
+
+Complete [Lab 2: Midterm Work Session](lab_02_midterm_work_session.md). The notebook runs the midterm starter in a temporary PostgreSQL database in Colab and shows every result. You work through Parts 1, 2, 4, and 5, then copy your SQL into `midterm.sql` and your results into `README.md`.
+
+Submit only the completed `midterm_work_session.ipynb` notebook. The lab is classwork, not the midterm, and adds no midterm requirement.
+
+Bring your Week 7 writing, your current `midterm.sql` and `README.md`, and one concrete question.
 
 ## Optional Industry Extension: Restore Game-Day Go/No-Go
 
