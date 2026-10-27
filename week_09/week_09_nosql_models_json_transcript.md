@@ -410,7 +410,7 @@ And the last line: this design does not make changes across separate documents a
 
 ## Slide 29
 
-Now let me show you where you will write the lab. GitHub can edit text right in your browser, with no Git installed. Read the path at the top. In your own repository, choose Add file, then Create new file. Name it week_09_json_models.md. The dot md says this is a Markdown file.
+Now let me show you one place you can write the lab. You can also use any plain text editor. GitHub can edit text right in your browser, with no Git installed. Read the path at the top. In your own repository, choose Add file, then Create new file. Name it week_09_json_models.md. The dot md says this is a Markdown file.
 
 Look at the example in the middle. A Markdown heading, Referenced design. Then three backticks and the word json. That opens a code block. Then the JSON itself: ticket_id 1004, assignee_id null. Then three backticks again to close it. The backticks belong to Markdown. They are not part of your JSON. And your explanation goes below the JSON block, outside the fences.
 
@@ -430,7 +430,7 @@ The Atlas account and project are how you manage the cloud deployment. The free 
 
 Why separate them so carefully? Because being signed into the Atlas website does not mean your Python program is authenticated to the database. And adding your IP address does not replace a database password. Network permission and authentication are two different checks. You saw the same split in the Week 6 triage table: network unreachable is a different failure from password authentication failed.
 
-Read the instructions in the middle. Choose Free, which some screens call M0, and only the access your practice needs. Do not enter a payment card, and never publish your credentials. If a screen offers a paid option or a step is unclear, stop and ask me instead of paying your way around it.
+Read the instructions in the middle. Choose Free, formerly called M0, and only the access your practice needs. Do not enter a payment card, and never publish your credentials. If a screen offers a paid option or a step is unclear, stop and ask me instead of paying your way around it.
 
 One trap to know about. Add My Current IP Address adds the address Atlas sees from your browser. A Colab runtime can have a different outbound address, so that setting does not automatically let Colab in. We will handle that when we connect. And look at the last line: today's JSON lab needs no cloud connection at all.
 
@@ -438,7 +438,7 @@ One trap to know about. Add My Current IP Address adds the address Atlas sees fr
 - https://www.mongodb.com/docs/atlas/tutorial/deploy-free-tier-cluster/
 - https://www.mongodb.com/docs/atlas/security/add-ip-address-to-list/
 - https://www.mongodb.com/docs/atlas/security-add-mongodb-users/
-- Setup documentation checked September 8, 2026. Interface labels can change.
+- Setup documentation checked October 27, 2026. Interface labels can change.
 
 ## Slide 31
 
@@ -469,7 +469,19 @@ Read the bottom of the slide. The lab practices this reasoning with concrete JSO
 
 ## Slide 33
 
-These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Same facts, two shapes (1:16); Strict JSON, from the punctuation up (1:20); What embedding costs over time (1:21). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 9 README. The diagrams are schematic illustrations, not benchmarks.
+These three short videos give us another way to follow the changes we have been discussing. They are silent, with captions, so we can stop and talk about what moves. The thumbnails open the videos on GitHub; the Week 9 page also has the files and subtitles.
+
+For Same facts, two shapes, watch ticket 1001 and its two event IDs. First we see separate records connected by IDs. Then the related details move inside the ticket. Ask yourself: did any promised fact disappear, or did only its location change? The point is to account for the same information in both designs.
+
+For Strict JSON, from the punctuation up, watch the braces, brackets, quotes, and commas. When the invalid example appears, find both errors before the repair. Then pay attention to missing, null, empty, and zero. They can look like small differences in text but mean different things to an application.
+
+For What embedding costs over time, predict what happens when a person changes their name. An embedded current name needs to be refreshed; an intentionally historical name has a different meaning. Then watch the events grow. A bounded preview can make the ticket page convenient, but the complete history still needs a home and the preview needs a refresh rule.
+
+These are illustrations, not timing tests. For your lab, keep all three events for ticket 1003 in both designs. Use the videos to check your reasoning, then explain the read and the update consequences in your own paragraph.
+
+[Sources]
+- Course-created Week 9 videos and captions in videos/README.md.
+- Week 9 lab, One Ticket, Two JSON Designs.
 
 ## License
 
