@@ -49,6 +49,12 @@ The textbook and linked resources are free. Graded work is individual; follow
 each lab's submission instructions in Brightspace. Download PowerPoints for
 local presentation, or open the PDF handout in your browser.
 
+All 15 weekly PowerPoints include their videos inside the file. Download the
+`.pptx`, open it in desktop PowerPoint, and click a video thumbnail in Slide Show
+to play it full screen without internet. GitHub previews and PDF handouts show
+still thumbnails. The original MP4 and subtitle files remain in each week’s
+`videos/` folder.
+
 Use **Open in GitHub** to view a lab and **Open in Colab** to launch its notebook
 when one is provided.
 
