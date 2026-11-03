@@ -33,6 +33,14 @@ unless the weekly lab assigns it.
 - [Week 10 PDF handout](week_10_mql_document_modeling.pdf)
 - [Week 10 transcript](week_10_mql_document_modeling_transcript.md)
 
+## Teaching and playback
+
+The PowerPoint has word for word speaker notes. Slides 1–17 cover Day 1 and slides 18–28 cover Day 2. Three optional static Manim diagrams are on slides 30–32, with links from the related examples.
+
+Download the `.pptx` and open it in desktop PowerPoint. In Slide Show, click a thumbnail on slide 29 to play its embedded video full screen. The videos work without an internet connection. GitHub previews and the PDF handout show still images. The individual MP4 and subtitle files remain available below.
+
+See the [static illustrations](illustrations/README.md) and [slide sources](week_10_sources.md).
+
 <!-- videos:start -->
 ## Videos
 

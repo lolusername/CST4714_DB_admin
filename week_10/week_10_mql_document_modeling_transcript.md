@@ -1,407 +1,404 @@
-# Week 10: Basic MQL and Document Modeling - Spoken Transcript
+# Week 10 Basic MQL and Document Modeling
+
+Word for word spoken script. Every slide section contains only words to say aloud. Preparation guidance is in the private instructor guide. Slides 1–17 cover Day 1, slides 18–28 cover Day 2, slide 29 contains videos, and slides 30–32 contain static illustrations.
 
 ## Slide 1
 
-Welcome to Week 10. Look at the line in the middle of the slide: a support application must find and change the intended ticket. Not a ticket. The intended one.
+Last week, we represented ticket data as JSON. Today we're going to query those documents and make a few controlled changes.
 
-Last week we took the same ticket facts and wrote them as different JSON shapes. We read them and argued about the design, but no database ever touched them. This week a database does. A resident opens the portal and needs to see their own ticket. An agent changes that ticket and must not change somebody else's request by accident.
+Imagine the lighting crew opening its work queue. It needs tickets that still need attention. If our query includes completed jobs, the crew gets the wrong list even though the code runs without an error. That's the kind of problem we'll learn to catch today.
 
-On Day 1 we work in a small notebook, and every query prints a result we can check against six tickets we can actually see. You will meet a query that looks perfectly reasonable and answers the wrong question about an event array. And you will learn to tell finding a document apart from actually changing it. Why does that matter? Because one of the most confusing bug reports you will ever get is "the app said it worked, but nothing changed."
+We'll work with six tickets, so you can check each answer yourself. First we'll compare a familiar SQL query with its MongoDB equivalent. Then we'll query nested data and arrays, and finish by updating a disposable test ticket.
 
-On Day 2 we turn those operations into a design question. A ticket page needs the current status and the recent events. But a person's contact details change on their own schedule, and event history keeps growing. Where each of those facts lives decides how much work every read and every update costs.
+Keep the notebook open alongside the slides. For each important example, we'll predict the result together and then check what the notebook returns. Local mode is fine for today's work. If you already have Atlas ready, you can use that connection.
 
-You are not building an application this week. And if your cloud connection is not ready, the notebook's local mode teaches the same queries.
+The modeling work comes next class. Today, let's get comfortable saying exactly what a query asks for and checking what a write actually changed.
 
 ## Slide 2
 
-Here is the good news: you already know how to describe a query. Pick a source, pick the records, pick the fields, and maybe order and limit the result. Look at the table. The left column is the purpose, the middle is the SQL you know, and the right is the same idea in Python with PyMongo.
+The structure of a query should feel familiar. We choose a collection, decide which documents qualify, choose the fields to return, and put the results in order.
 
-Choose a source. In SQL, FROM tickets. In our notebook, database, square bracket, tickets. That gives us a handle on the tickets collection, a Python object we send operations through. Choose records. Instead of WHERE status equals open, we write a dictionary: status, colon, open. Read the bottom line of the slide. A filter is a dictionary, not a SQL string. We hand that dictionary to find.
+In SQL, the WHERE clause describes the qualifying rows. Here, we pass a Python dictionary to find. A condition such as status equals open goes in that dictionary. MongoDB calls it a filter.
 
-Choose output fields. The projection is another dictionary. A one beside ticket_id asks for that field. The zero beside underscore id hides MongoDB's own document identifier, which would otherwise come back by default. In our fixture, ticket_id and underscore id are two different identifiers. Order and restrict: sort on ticket_id with a one means ascending, and limit two returns two results.
+The projection controls which fields we see in the result. A one includes a field. We explicitly hide MongoDB's _id field with a zero because this example only needs the ticket number and status. The stored document keeps all its other fields.
 
-Now the caution in the box. The concepts transfer, but some rules do not. Arrays are values inside documents, and a missing field does not behave exactly like a SQL null. So treat what you know from SQL as a starting point for reasoning, not a promise that only the punctuation changed.
+We'll run the SQL and MongoDB versions over the same six tickets in a moment. Before we do, which part of the MongoDB query would you change if the question changed from open tickets to resolved tickets?
 
-Sources:
-- https://www.mongodb.com/docs/languages/python/pymongo-driver/current/crud/query/find/
+The filter. Changing the projection would change what we see about the tickets, but it wouldn't change which tickets qualify. Keep that distinction in mind when you adapt the query for the lab.
 
 ## Slide 3
 
-This is a capture of the Atlas interface from August 2026, with the names redacted. Look at the left side: the deployment shows up in the tree. Now look at the main workspace: it is still asking for a connection. Read the caption at the bottom. This is not a successful query result. I am showing it on purpose, because seeing your cluster in a website proves nothing about whether your Python program can query it.
+This screenshot helps us locate the pieces of Atlas. It's a course capture from August 2026, so your screen may look a little different.
 
-Look at the four layers in the box. A project groups cloud administration settings and resources. A cluster is the database service actually running. Inside it, a database holds collections, and a collection holds BSON documents. Our notebook picks a fresh database name and works in a collection called tickets. We do not create a new cluster every time we run the notebook.
+The project holds administration settings and resources. The cluster runs the database service. Within that service, a database contains collections, and collections contain documents. Our notebook uses a fresh practice database and a collection called tickets.
 
-Two different logins are involved here, and people mix them up constantly. Your website account lets you manage the project. A database user authenticates your program's connection and carries the data permissions. Having one does not give you the other.
+There are also two different kinds of account involved. Your Atlas website account lets you manage the service. A database user lets a program connect to the data. Signing into the website doesn't automatically give the notebook a working database connection.
 
-And there has to be a reachable network path. If the explorer never connected, an empty workspace does not mean your collection is empty. It means you have not asked yet. So the order is always the same: connect, choose the right database and collection, then run a query whose meaning you understand. Use this picture to locate the layers, not as a promise about where every button sits today.
+In this capture, the workspace is still asking for a connection. We can't infer anything about the collection's contents from that empty area yet.
 
-Sources:
-- course/textbook/figures/cloud_interfaces/atlas_data_explorer.png, course interface capture dated August 25, 2026.
-- https://www.mongodb.com/docs/atlas/security/ip-access-list/
+If you're using local mode today, you can follow the same collection and query examples without configuring Atlas. If you're using Atlas, the next slide explains the connection step that most often needs attention in Colab.
 
 ## Slide 4
 
-Here is a trap that catches almost everyone the first time. Colab shows up in your browser, but your Python code does not run on your laptop. It runs on a remote runtime. So when Atlas offers a button to add your current IP address, it may add your laptop's address, while the connection actually arrives from somewhere else. Atlas refuses it.
+Colab runs Python on a remote machine. Your browser is on your laptop, but the database connection comes from that remote runtime.
 
-That is why the notebook has a setup cell before the connection, and the table walks through it. Row one: if you choose Atlas mode, the cell asks a public IP service for the runtime's outgoing IPv4 address and prints it with slash thirty-two, which means exactly one address. It also prints a new practice database name. No database password goes to that IP service. Row two: in Atlas, add that printed address as a temporary entry and wait until it is active. Row three: use a database user, not your website login, and enter the driver URI in the hidden prompt, so it never sits in a source cell or in printed output.
+For Atlas mode, run the notebook's setup cell and use the runtime IP address it prints. Add that address as a temporary Atlas access-list entry. The /32 suffix limits the entry to that one IPv4 address. Adding your laptop's address instead won't necessarily allow the Colab runtime through.
 
-Row four: the connection cell sends ping. A reply proves the server answered. The insert after it still has to pass the user's data permissions.
+The notebook asks for your connection URI in a hidden prompt. Keep it there rather than pasting it into a source cell. Use a database user's credentials, and leave TLS certificate verification enabled.
 
-Read the box. Keep TLS verification on, and never allow access from everywhere. Those shortcuts hide the real problem and weaken protection. And if the cloud path is not working today, local mode teaches the same queries without an Atlas account.
+Once the connection responds to ping, we'll try the fixture setup. Ping confirms that the server answered. The database user still needs permission to write the practice data.
 
-Sources:
-- https://www.mongodb.com/docs/atlas/security/ip-access-list/
-- https://www.mongodb.com/docs/languages/python/pymongo-driver/current/security/tls/
+If the connection is holding you up, switch to local mode and keep going with us. We'll troubleshoot the connection separately. Today's main work is understanding queries and write results, and we can do that without spending the class on account setup.
 
 ## Slide 5
 
-This slide is here to save you an hour of confusion. Three things in this course look alike and run in different places. JSON is a text format. Python has dictionaries and lists with its own spelling. And mongosh is MongoDB's shell, which is JavaScript.
+Before we run the examples, check the language of the cell you're using. Today's notebook is Python with PyMongo. Some textbook examples use mongosh, which uses JavaScript syntax.
 
-Look at the first two rows. In Python, a missing value is None with a capital N, and the Booleans are True and False with capitals. In JSON and in the shell they are lowercase: null, true, false. If you paste null into a Python cell, you do not get Python's missing value. You get an error.
+Python uses None, True, and False. JSON uses null, true, and false. That difference is enough to cause an error if you paste a JSON example straight into a Python code cell.
 
-The next two rows are operation names. PyMongo uses underscores: find_one, modified_count. The shell uses capitals in the middle: findOne, modifiedCount. Same operation, different host language. Our slides and notebook use Python. Chapter 10 labels its runnable shell examples, so run those in a shell, and do not paste them unchanged into Colab.
+The method names differ too. In Python we use find_one and modified_count. In the shell you'll see findOne and modifiedCount. You don't need to memorize both spellings today. You do need to recognize which environment the example belongs in.
 
-The last row matters most. A string that looks like a date is still just a string. Our Python fixture passes datetime objects with a UTC time zone through the driver, and MongoDB stores them as real BSON dates. In the shell, ISODate builds that kind of value. Neither call is legal strict JSON. That is the bottom line on the slide: MongoDB stores BSON, including typed dates that JSON strings do not create.
+Dates deserve an extra check. A date-looking string is still text. Our fixture creates Python datetime values, and the driver stores them as BSON dates. A JSON sketch with a quoted timestamp doesn't do that conversion by itself.
 
-So when something fails, first ask which environment you are in. Plenty of apparent database errors are really language errors.
-
-Sources:
-- https://www.mongodb.com/docs/manual/reference/bson-types/
-- https://www.mongodb.com/docs/languages/python/pymongo-driver/current/crud/query/find/
+If you get an error before a query runs, start by checking the language and the value types. The problem may be in the Python expression before MongoDB receives anything.
 
 ## Slide 6
 
-These are the six tickets the notebook's setup cell loads. Six is small on purpose. It is small enough that you can work out the right answer yourself before the program prints anything, and that gives you a second way to check a query instead of trusting whatever comes out.
+Here are the six tickets we'll query. Take a moment to read the status and priority together.
 
-Look at a few rows. Ticket 1001 is a high-priority streetlight request, and it is open. Ticket 1003 is urgent, the strongest priority on the slide, but look at its status: resolved. Ticket 1004 is new and low. Those combinations matter as soon as a filter mixes status and priority. A high or urgent priority does not, by itself, put a ticket in an active work queue. Keep an eye on 1003 and 1005, because each of them will be the ticket that teaches a lesson.
+Which tickets would qualify if I asked for active work with high or urgent priority? For this exercise, active means new, open, or in_progress.
 
-Read the note in the box. This is a small adaptation of the CSV case you used last week. It keeps selected fields, stores dates as Python datetime values so they become BSON dates, and adds nested requester details, tags, and short event arrays. The event fields are shortened to type and at, where the CSV says event_type and event_at. The notebook explains that mapping instead of pretending it imported every column unchanged.
+Ticket 1001 qualifies. Ticket 1003 is urgent, but it's resolved. Ticket 1005 is high priority and also resolved. Priority tells us how important the request is. Status tells us where it is in the workflow. We need both when the question asks for both.
 
-Some event arrays are empty here. That tells you what this fixture supplies, not that the real ticket had no history.
+These documents are a small adaptation of last week's CSV case. They use selected fields, typed dates, and short nested objects and arrays. The event fields use the shorter names type and at here. An empty event array means this fixture supplies no events for that ticket, rather than making a claim about all of its real history.
 
-Later we add ticket 1099, a clearly marked disposable record, so our write practice can never damage these six.
+We'll leave these six records intact during the write exercises and create a separate test ticket, 1099.
 
 ## Slide 7
 
-Now a complete Python query, run after the notebook's connection and fixture cells.
+Let's run the query we just predicted. The filter requires an active status and a high or urgent priority. A document has to satisfy both conditions.
 
-Look at filter_doc. It is a dictionary with two conditions. Status must be in the list new, open, or in_progress. Priority must be in the list high or urgent. Both conditions have to hold for the same document. Think of it as one set of requirements a ticket must pass, not two separate searches whose results get combined later.
+The result is ticket 1001, with status open. That agrees with our reading of the fixture. The SQL version in the notebook returns the same ticket for the same question.
 
-Watch what comes back. One line: ticket_id 1001, status open. Why only 1001? It is open, and it is high. Now look at 1003. It passes the priority condition, because it is urgent, but it fails the status condition because it is resolved. That is the first line in the box: both conditions must hold.
+Notice that the filter uses priority even though the projection doesn't display it. A field can help decide whether a document qualifies without appearing in the result. Likewise, displaying a field doesn't make it a filter condition.
 
-Next, the projection. Underscore id is zero, ticket_id and status are one, so that is all we see. But the projection does not remove category, priority, or the events from the stored document. It only shapes what this find returns.
+Now suppose the lighting crew says, "We also need our medium-priority jobs." What would happen if we kept this priority restriction?
 
-The for loop walks the cursor that find gives us and prints each document. Here that is one dictionary.
-
-In the notebook, you also run the SQL version of this question over the same six tickets, and both identify ticket 1001. Your lab then changes the question to an active lighting and sanitation queue that includes medium-priority work, so you will change this filter and keep priority visible in the output.
-
-Sources:
-- https://www.mongodb.com/docs/languages/python/pymongo-driver/current/crud/query/find/
+We'd hide work that belongs in its queue. In your lab, the requirement changes to active streetlight or sanitation tickets. You'll keep the category condition from the starter, add an active-status condition, and display priority. Let the new question guide the changes you make to the query.
 
 ## Slide 8
 
-Same active statuses, but now we return the opening time along with the ticket number. Look at the sort. It is a list of two pairs. opened_at with negative one, so the newest opening comes first. Then ticket_id with positive one, as a tie breaker if two tickets opened at the same moment.
+This query asks for the two most recently opened active tickets. The filter chooses the active documents. The sort puts them in order, and the limit keeps the first two.
 
-The limit is two. Watch the result: 1006, then 1004. Now notice what is missing. Ticket 1005 opened recently too, but it is resolved, so it never passed the filter. Sorting does not rescue a document that failed the predicate. The filter decides what qualifies, and only then does the sort put it in order.
+We sort opened_at descending, so newer dates come first. We also sort ticket_id ascending to break a tie if two tickets share an opening time.
 
-find does not hand you a list. It hands you a cursor. We attach the sort and the limit to the cursor, and then the loop reads the results. Once the loop has gone through the cursor, it is used up. Loop over that same cursor again and you get nothing, because it does not rerun the query. That is the note at the bottom: to repeat a consumed query, call find again. For a small bounded result, wrapping it in list is convenient, and we do that on Day 2.
+The result is 1006, followed by 1004. Ticket 1005 doesn't appear even though it opened recently, because its resolved status fails the filter.
 
-Why bother with a tie breaker? Without one, the order of ties depends on incidental storage order, and you cannot explain it or repeat it. And remember, sort and limit shape this result. They do not reorder or trim the collection.
+One practical detail: find returns a cursor. The loop reads through it. If you run another loop over that same consumed cursor, you may get no output. Call find again when you want to repeat the query. For a small result, converting it to a list can also be convenient.
 
-Sources:
-- https://www.mongodb.com/docs/languages/python/pymongo-driver/current/crud/query/find/
+Sorting and limiting affect the returned results. They don't rearrange the stored collection or delete the tickets beyond the limit. We'll use that distinction next class when a page shows recent events while the system retains the full history.
 
 ## Slide 9
 
-Two queries on this slide. The first one reaches into a nested document. Each ticket has a requester object, and inside it a user_id. The dotted name requester.user_id says: look inside requester for user_id. Notice it is in quotes. The dot belongs to MongoDB's path, so it is a string, not Python reaching into a variable called requester.
+Now we'll reach inside a document. The path requester.user_id means the user_id field inside requester. We pass that dotted path as a string in the filter.
 
-On our fixture, user 101 requested tickets 1001 and 1005, and that is what prints. You can confirm it by looking at the requester objects in the fixture yourself.
+For user 101, this fixture returns tickets 1001 and 1005. You can check their requester objects to confirm it.
 
-The second query searches the tags array. We write tags equals safety, as if tags were a single value. When the field is an array, MongoDB treats that as: does the array contain safety? The whole array does not have to equal the word safety. Tickets 1001 and 1005 both carry that tag.
+The second query searches a simpler array. Asking for tags equal to safety matches a document when its tags array contains that value. The result happens to be the same two ticket IDs.
 
-Now read the result box. Both queries return 1001 and 1005, for different reasons. That agreement is a coincidence of this data. Tomorrow user 101 could open a ticket with no safety tag, or someone else could file a safety ticket. A query states a rule. The fixture is just one set of data we watch it run against.
+Would those queries always return the same tickets?
 
-Hold on to that idea, because the next slide makes it sharper. Once an array holds documents instead of plain words, two conditions can be satisfied by two different elements, unless we explicitly require one element to satisfy both.
+No. Another requester could open a ticket tagged safety, or requester 101 could open one without that tag. The two filters express different rules. This dataset happens to give them the same answer.
 
-Sources:
-- https://www.mongodb.com/docs/manual/tutorial/query-embedded-documents/
-- https://www.mongodb.com/docs/manual/tutorial/query-arrays/
+The next example uses an array of event documents. That's where we need to be more careful: two conditions can find their matches in different events, even when we intended them to describe one event.
 
 ## Slide 10
 
-Look at the small table first. Two events on ticket 1001, and they are two separate facts. Event 5001 says a resident created the ticket. Event 5002 says the ticket was assigned, and the actor was an agent. Neither row says an agent created the ticket.
+Let's read the two events on ticket 1001. Event 5001 records a resident creating the ticket. Event 5002 records an agent assigning it.
 
-Now the filter below. We named it wrong_question on purpose. It asks for events.type equal to created, and events.actor_role equal to agent. It reads like "an event where an agent created the ticket." Watch what happens: ticket 1001 matches. Read the result box. Ticket 1001 matches this filter, but no single event says an agent created it.
+Did an agent create this ticket, according to either event?
 
-Why? With two separate dotted conditions, MongoDB is allowed to find created in one element and agent in another. Created comes from 5001. Agent comes from 5002. The document as a whole satisfies both conditions, so it qualifies.
+No. Now consider the filter below. It asks for events.type equal to created and events.actor_role equal to agent. It looks plausible, but ticket 1001 matches it.
 
-Is MongoDB broken? No. The query is valid, and MongoDB did exactly what it defines. The mistake is ours: the query does not say what the application meant.
+The created value comes from event 5001. The agent value comes from event 5002. Separate dotted conditions can find those values in different elements of the array. Both conditions are true somewhere in this ticket, even though no single event contains both values.
 
-This is why the fixture keeps a resident-created event and a separate agent event in the same array. If every ticket had only one event, this filter would pass every test you ran, and the bug would wait for production. A small counterexample makes it visible.
+That explains why a successful query can still answer the wrong application question. We need to say that both conditions belong to the same event.
 
-You will see this pattern everywhere: product variants with sizes and prices, people with skills at different levels. When conditions describe one related object, the filter has to keep them together.
-
-Sources:
-- https://www.mongodb.com/docs/manual/reference/operator/query/elemMatch/
+Before we change the filter, try explaining the mismatch using the two event IDs. Being specific about the data makes this much easier to reason through.
 
 ## Slide 11
 
-Here is the fix. $elemMatch takes both conditions and puts them inside one requirement for a single array element. The question becomes: does the events array contain at least one event whose type is created and whose actor_role is agent, both in that same event?
+We can express the intended question with $elemMatch. It asks whether at least one event satisfies all the conditions inside it.
 
-Watch the result. An empty list. Every created event in this fixture has resident as its actor role, so no ticket has an agent-created event. The empty answer is the correct answer. An empty result is not automatically an error. We judge it against the question and the data.
+Here those conditions are type created and actor_role agent. They have to hold in the same event. This time the result is an empty list. In this fixture, every created event belongs to a resident.
 
-Now look at the third box. The notebook also asks for a status_changed event whose actor is an agent. That version returns tickets 1002 and 1003. So $elemMatch is not a trick for making results disappear. It states that related conditions describe one element, and the data either has such an element or it does not.
+Let's change the question slightly. The notebook also asks for a status_changed event performed by an agent. That query returns tickets 1002 and 1003. So an empty result in the first example makes sense because of the data, rather than indicating that $elemMatch is failing.
 
-One more boundary, in the last line. $elemMatch in the filter decides whether the ticket qualifies. It does not trim the events array in what comes back. If your projection includes the whole events field, a matching ticket still shows its other, nonmatching events. Shaping array output is a separate operation.
+There's one more distinction to keep clear. This use of $elemMatch is in the filter. It decides whether the ticket qualifies. If we return the whole events field, we still receive the ticket's other events too. Selecting documents and shaping the array we display are separate tasks.
 
-When you write your lab explanation, do not just repeat the phrase "same element." Use the event IDs and the field values. Say that created came from event 5001 and agent came from event 5002. A concrete pair of rows shows you understand why the two queries differ.
-
-Sources:
-- https://www.mongodb.com/docs/manual/reference/operator/query/elemMatch/
+For your explanation, use ticket 1001 and events 5001 and 5002 to show why the separate conditions match while the same-event condition doesn't.
 
 ## Slide 12
 
-Before we change anything, we need something safe to change. Never practice writes on data you care about.
+We're ready to practice writes. First we'll create a record we can safely change: ticket 1099.
 
-Look at test_filter. Ticket 1099, plus two markers: test_record is True and course_fixture is cst4714. Why three conditions instead of just the ticket number? Because the filter should be far narrower than anything real tickets could share. A status or a category matches many tickets. These markers match only our test.
+The test filter includes its ticket number and two markers, test_record and course_fixture. We use that same narrow filter throughout the exercise so each operation clearly targets our disposable record.
 
-The next line, delete_many with that filter, clears out any earlier copy of the test record, and only the test record, in our private practice collection. Then insert_one creates it fresh, with status new and an empty events array. Notice the two asterisks before test_filter. That is Python dictionary unpacking, not a MongoDB operator. It copies the ticket number and both markers into the new document, so the document we insert carries exactly the identity our filter looks for.
+The setup removes an earlier copy of that test record, if one exists, and inserts a fresh one with status new. The two asterisks copy the filter's fields into the Python dictionary we're inserting. That's Python dictionary unpacking.
 
-This cell is a reset. Every time you run it, the experiment starts over. So when you test a repeated update in a minute, run the update cell twice without rerunning this one in between. Otherwise you keep recreating the starting state and never see the second case.
+The fixture also has a unique index on ticket_id. MongoDB's own _id identifies each document, but it wouldn't by itself prevent two documents from sharing a ticket number.
 
-Read the boxes. The notebook also creates a unique index on ticket_id. MongoDB's own underscore id would not stop two documents from sharing ticket number 1099. The unique index does, so our target is unambiguous.
+Run this setup once now. In the next example, we'll run the update twice. Leave the setup cell alone between those runs, because rerunning it would reset the record and change the experiment.
 
-No sample database is changed. Never swap in an Atlas sample collection or your project data here.
+If your later results differ from ours, the first thing we'll check is which setup and update cells ran, and in what order.
 
 ## Slide 13
 
-Now we change the test ticket. update_one with our exact test filter and a $set. The $set names two fields, status and assignee_id. It changes those two and leaves every other field in the document alone. That is very different from replacing the whole document with a smaller dictionary, which would quietly throw away everything you did not mention.
+This update uses $set to change the status and assignee. The other fields stay in the document.
 
-Look at the table. First execution: matched one, modified one, and the read-back says in_progress. The filter found test ticket 1099, the values were different, so it changed them.
+Before I run it, the status is new. The first run reports one matched document and one modified document. Reading it back shows in_progress.
 
-Now watch what happens when I run the exact same cell again, with no reset in between. Matched one. Modified zero. Status still in_progress. The filter still finds the same document. But the document already holds the values $set asks for, so there is nothing to change.
+What do you expect if I run exactly the same update again, without resetting the ticket?
 
-Why does this matter? Because those two counts answer different questions. A modified count of zero, by itself, cannot tell you whether the filter found nothing or the values were already there. If you only look at modified_count, you will chase a bug that does not exist. So read matched_count too, and then read back the state the application actually cares about.
+We get one matched and zero modified. The filter still finds the ticket. It already has the requested values, so this run makes no further change.
 
-One more detail. These are document counts, not field counts. We changed two fields, status and assignee_id, in one document, and modified_count is one, not two. That is the habit for the rest of the course: never guess from an ambiguous zero.
+Both numbers matter. A modified count of zero alone doesn't tell us whether the ticket was absent or already up to date. We need the matched count and a read-back to interpret the result.
 
-Sources:
-- https://www.mongodb.com/docs/languages/python/pymongo-driver/current/crud/update/
+These counts refer to documents. We changed two fields in one document, so the modified count is one.
+
+Also keep $set distinct from replacing the whole document. A replacement can remove fields you leave out. Here, changing only the named fields is what we intended.
 
 ## Slide 14
 
-This update adds one more condition to the filter: status must be new. In plain words: change this test ticket to resolved, but only if it is still new. Remember, the previous slide already moved it to in_progress.
+The ticket is now in_progress. This next update asks to resolve it only if its status is still new.
 
-Watch the result. Zero, zero. Status remains in_progress. Compare that with the repeat on the last slide. There, the filter found the document and had nothing to change: one and zero. Here, no document satisfies the whole filter, so it never got that far: zero and zero. Read the box. The current document no longer satisfies status equals new.
+Predict the counts before we run it.
 
-Why would you want a write that can refuse itself? Picture two agents on the same ticket. One moves it to in_progress. The other, looking at an old screen, clicks resolve. Without the expected-state condition, the second click silently overwrites the first. With it, MongoDB rechecks the condition as part of the single-document write, and the stale action finds that its expectation no longer holds.
+Zero matched and zero modified. Ticket 1099 still exists, but it doesn't satisfy the whole filter. Its current status is different from the status the update required.
 
-The application still needs a policy for that outcome. Reload the ticket, tell the user the state changed, or ask them to decide again. Do not treat every zero match as success. And read the last box: do not call it a broken connection either. A zero match is an application outcome to interpret.
+Compare that with our repeated $set. That was one matched and zero modified: the ticket qualified and already held the values. Here the ticket doesn't qualify at all.
 
-This is a small state-transition example, not a full concurrency or retry protocol. The skill is to say what the filter permits and compare that with what is stored when the write runs.
+An expected-state condition can help when someone acts on an old view of a ticket. The write checks the expected value as it runs. If that expectation no longer holds, the application can reload the ticket and let the user decide what to do next.
 
-Sources:
-- https://www.mongodb.com/docs/manual/core/write-operations-atomicity/
+This example demonstrates one guarded state transition. It doesn't solve every concurrency problem. For today, the useful habit is to read the complete filter and compare it with the document's current state before interpreting a zero match.
 
 ## Slide 15
 
-$push appends a value to an array. Here the value is a small event document, event 5999, a status change by an agent. If I send an unconditional push twice, the array gets two copies. Giving the event an ID field does not make embedded array elements unique.
+$push appends a value to an array. In this example, we're adding event 5999 to the test ticket.
 
-So look at the filter. Besides our test markers, it says events.event_id is $ne 5999, not equal. Only match this ticket if it does not already contain event 5999. First run: the event is not there, so the result is one and one. Now watch the second run. The guard no longer matches, so the result is zero and zero, and there is still exactly one event 5999. That is the line in the box: the filter refuses a second append.
+If we sent an unconditional push twice, we could append the event twice. An event_id inside an array doesn't automatically make that value unique.
 
-Keep the scope precise, though. This protects this one operation on this one document. Other code that writes events has to follow compatible rules, and a real distributed event system has more failure and ordering problems than this.
+Our filter adds a guard: the ticket must not already contain event 5999. The first run matches and modifies one document. On the second run, that event is already present, so the filter matches nothing. We get zero and zero, and the array still contains one copy of the event.
 
-Now read the bottom box, because it sets up Day 2. The status update on slide 13 and this append were separate writes. Each one is atomic for its document. But there is a gap between the two calls, and a reader in that gap could see the new status without the event that explains it.
+That protection depends on this write's filter. Other code that appends events needs compatible rules too.
 
-Next meeting, we put a status change and an event append into one update. That is where queries meet document design.
+There's also a timing detail worth keeping for next class. We changed the status in one call and appended the event in another. Each write is atomic for the document, but those two calls are separate. A reader between them could see the changed status before the event is added.
 
-Sources:
-- https://www.mongodb.com/docs/manual/core/write-operations-atomicity/
+Next class we'll combine related changes into one update and connect that to the document's design.
 
 ## Slide 16
 
-Deleting is where predicate discipline matters most, because there is no undo cell.
+We'll finish by deleting the disposable test record. First, find_one shows us the document identified by our test filter. Then delete_one uses that same filter.
 
-Look at the first line. Before deleting, we read the target with find_one and a small projection, so we can see exactly which document the filter identifies. Then delete_one with the same exact test filter. Watch the output. Deleted: 1. Remaining test record: None, because find_one returns None when nothing matches. Other tickets: 6. That last count is our scope check. We confirmed the target is gone and the six teaching tickets are untouched. They stay available for practice until the cleanup cell removes this run's practice collection.
+After the first deletion, deleted_count is one. The next read returns None, and the count of the original teaching tickets is still six. Those checks tell us both that the target is gone and that our practice stayed within its intended scope.
 
-Now run the same delete again. It reports zero. The filter is still valid and still narrow. Its target is simply gone already. That is an expected repeat result, not a syntax failure.
+Running the delete again reports zero because the record is already gone.
 
-Read the caution box. An empty filter, a pair of empty braces, matches every document. delete_one with an empty filter removes some document, with no guarantee it is the one you meant. delete_many with an empty filter removes all of them. If the requirement is one specific ticket, the filter must say so.
+Be careful with an empty filter. It matches every document. With delete_one, that means one unspecified matching document can be deleted. With delete_many, it means all matching documents. Neither expresses our intention to remove only test ticket 1099.
 
-The second half of the caution: a preview is not a lock. Between your find_one and your delete, another writer can change things. In this private exercise, we control the data. In a shared application, you need expected-state conditions or suitable transaction and concurrency rules. Previewing is a good habit, but it does not give you a transactional guarantee.
+Previewing the target is useful, but the preview doesn't lock it. Another writer could change data between a read and a delete. In shared applications, the write's conditions and concurrency rules still matter.
+
+For this exercise, keep the narrow test filter exactly as supplied and verify the result before running the final cleanup.
 
 ## Slide 17
 
-Here is Lab 1. In the weekly guide it is called Find and Change the Right Document, and it all happens in one notebook. You already saw SQL and MongoDB both find ticket 1001 for the same question.
+You now have the pieces for Lab 1. Open Find and Change the Right Document and work in your own copy of the notebook.
 
-Now the question changes. The lighting and sanitation crews want their active tickets, newest first, with priority displayed. Keep the category condition in the starter, add the active-status condition, and add priority to the projection. Do not carry over the demo's high-or-urgent condition. Medium-priority work still needs a crew, and that condition would hide it.
+For the crew queue, keep the streetlight-or-sanitation category condition, add the active statuses, and display priority. The queue should include medium-priority work. Predict the ticket order from the fixture before you run your version.
 
-Predict the order from the opening dates before you run anything. The finished queue is 1006, 1002, and 1001, in that order. Then explain ticket 1005. It is sanitation and high priority, but it is resolved, so including it would mix finished work into the crew's queue.
+When you check the result, pay particular attention to ticket 1005. Explain whether it belongs in a queue of work the crews still need to do.
 
-Next, compare the two array queries using the actual event objects. Then run the $set cell twice without rerunning the test insert: one and one, then one and zero. Compare that with the expected-state update. Read the changed test ticket, then run the targeted delete.
+Then compare the array filters using actual event IDs and values. Run the $set update twice without resetting the test ticket between runs. Compare those results with the expected-state update, read the document back, and complete the targeted deletion.
 
-At the end of the notebook is a section called Results Record with the questions. Add a text cell under it, write your answers there, and say whether you used local mode or Atlas. Run cleanup, remove any saved credential, and if you used Atlas, remove the temporary IP rule. Submit the notebook. No screenshot.
+Use the Results Record section for your short explanation. Say whether you used local mode or Atlas, and include what your results showed. Run cleanup after you've recorded the evidence you need. Atlas users should also remove the temporary IP rule.
+
+Submit the completed notebook with your changes and outputs. Today's submission doesn't need an extra report or screenshot. I'll circulate while you work.
 
 ## Slide 18
 
-Welcome back. Last time we queried documents and watched what our writes actually did. Today we design the ticket page.
+Last class, we practiced querying documents and checking write results. Today we'll use those operations to design a ticket page.
 
-Look at the first box. The page needs the ticket's current status and only its latest events. Now read the second box. Contact details change independently, and the system still has to keep years of event history, including everything the page does not show.
+The page needs a ticket's current status and recent events. The system also needs to retain older history and let a resident correct their contact details in one place.
 
-Think about what that means. A resident fixes their email address once, and they expect every ticket page from then on to show the corrected value. If we had copied the email into every ticket they ever opened, that one correction becomes an update across many documents, and missing one leaves a wrong address on a page.
+Suppose that resident changes their email address. If we copied it into every ticket, we'd have to locate and update each copy to keep every page current. A shared user record gives us a single place for that correction, with an extra retrieval step when we build the page.
 
-Read the last line: those requirements influence the document boundary. Notice it does not say they choose it. There is no single correct document shape. The requirements tell us which costs to compare. Keeping related data together makes a read convenient and lets related changes happen in one atomic document write. Keeping a shared identity, or a growing history, separate makes independent changes and long retention easier.
+We'll compare those kinds of consequences throughout the class. Keeping related facts together can simplify a read and allow one atomic document update. Keeping independently changing facts or growing history separate can make other operations easier.
 
-Here is the plan. My live example uses a one-to-one relationship. Your individual practice uses one-to-many, and then you revise one ticket design for the latest-events requirement. We are not redoing last week's JSON exercise, and nobody is building a web application. The new skill is explaining how a shape serves real reads and updates.
+I'll demonstrate a one-to-one relationship. You'll work through the one-to-many activity and then revise a ticket design for the new page requirements. The aim is to explain how the shape supports the work the application actually does.
 
 ## Slide 19
 
-Here is a word you know from relational design: cardinality. It describes how many things can sit on each side of a relationship under the application's rules. Look at the table. Many tickets point to one requester. One ticket has many events. And in our small publisher example, we assume one publisher has one headquarters.
+Cardinality describes how many things can participate on each side of a relationship. A requester may have many tickets. A ticket may have many events. In our publisher example, we assume one designated headquarters per publisher.
 
-Now look at the third column, because that is where decisions come from. Ticket to requester: the shared user can change independently. Ticket to events: history can outgrow an embedded array. Publisher to headquarters: a small owned address can fit inside its publisher.
+Those descriptions help us understand the relationships, but they don't settle where to store the data.
 
-Notice what cardinality did not do. It did not choose the storage. Read the box. A one-to-one relationship could be fields in one document, a nested subdocument, or two referenced documents. And the word many is vague. Many could mean three fixed items or years of accumulating records, and those need very different designs.
+For example, a headquarters address could be embedded in its publisher or stored separately with a reference. We'd ask whether it belongs only to that publisher, whether the application normally reads them together, and whether the address needs independent updates or access rules.
 
-So what does decide it? The second line of the box: ownership, reads, writes, and growth. For the requester, it is the independent identity and contact changes. For events, it is growth and the need to query history on its own. For the headquarters, it is a small object that is normally read together with the publisher.
+For an event history, we also need to ask what "many" means. A fixed list of three items is different from records that accumulate for years.
 
-And say your assumptions out loud. Real companies can have several offices. If we call this one-to-one, we mean the one designated headquarters, not every office. That is the relational reasoning you already know, carried into document design.
+As we work through the examples, say the assumptions aloud. Our headquarters relationship is one-to-one because we're talking about one designated headquarters. We aren't claiming that a publisher can have only one office. Clear assumptions keep the model tied to the requirement we're actually discussing.
 
 ## Slide 20
 
-The live resource for my demonstration is MongoDB University, Modeling Data Relationships, Lesson 3: Modeling One-to-One. I will work through its one-to-one material and its practice. Your assigned activity is Lesson 4, so you will apply the same reasoning to a different relationship.
+For my demonstration, we'll use MongoDB University's Modeling Data Relationships course, Lesson 3, Modeling One-to-One. Your individual activity uses Lesson 4, Modeling One-to-Many, including its Practice.
 
-Look at the small JSON document. A publisher, p7, named Example Press, with a headquarters object inside it: city New York, country US. The address is embedded in the publisher. When is that a good idea? If the application normally loads the address together with the publisher, and the address belongs only to this publisher under our stated assumption, keeping them in one document puts the related facts together and returns them in one read.
+Before opening the lesson, let's use this small publisher document to frame the decision. Example Press has an embedded headquarters address. If that address belongs to this publisher and is usually read with it, embedding makes the complete information available in one document read.
 
-Another design could store the address as its own document and put an address identifier in the publisher. That could be right too, if the address had its own lifecycle, its own permissions, or its own queries. Being one-to-one does not forbid either shape.
+We could store the address separately instead. That may make sense if it has independent access rules or operations. The one-to-one relationship allows either design; the application's needs help us choose.
 
-To be clear, this document is our own small illustration, not the answer to the vendor's practice question. As we go through the lesson, I will connect its example to ownership and access.
+This publisher document is our own illustration. We'll follow the external lesson's example when we open its activity.
 
-Read the last line of the slide. The unit names matter. MongoDB University sometimes reuses the same video in a newer course package, so two differently named courses do not automatically mean two different activities. Our boundary today is explicit: one-to-one in my demonstration, one-to-many in your individual work.
-
-Sources:
-- https://learn.mongodb.com/learn/course/modeling-data-relationships/lesson-3-modeling-one-to-one/learn
-- https://learn.mongodb.com/learn/course/modeling-data-relationships/lesson-4-modeling-one-to-many/learn
+If the platform is unavailable, we can still work through the chapter's examples and discuss the same choices. For your submission, follow the Lab 2 fallback and say which material you used. You don't need to complete an entire course or earn a badge for this week's task.
 
 ## Slide 21
 
-Remember Day 1's gap, where the status change and the event append were two separate writes? Here is how to close it.
+On Day 1, we changed a status and appended an event in separate calls. Here we put both changes in one update to one document.
 
-This runs on a fresh demonstration collection, where ticket 1001 is open. Look at the update document. It has two operators. $set changes the status to in_progress. $push appends event 5099, a status_changed event, to the embedded events array. Both in one call.
+For this example, I have a separate demonstration collection with ticket 1001 in the open state. The update uses $set for the new status and $push for event 5099. MongoDB applies those changes atomically within that document, so another reader won't see a partially applied version of this write.
 
-Because both changes are one write to one document, they are atomic together. That is the first line of the box. A reader never sees the new status without the event. On Day 1, by contrast, the status changed before the append ran.
+The filter also requires status open. The first run reports one matched and one modified. After that, the status is in_progress. Repeating the same command reports zero and zero, so it doesn't append another event.
 
-Now look at the filter. It includes the expected state: status open. On the first run, the document matches and changes. Now watch me repeat it. The ticket is in_progress now, so the filter finds no open ticket 1001. Zero, zero, and no second event. That comes from the state condition, not from some rule that $push prevents duplicates. It does not.
+That repeat behavior comes from the expected-state filter. $push itself doesn't prevent duplicates.
 
-Read the scope note. If the event lived in a separate document, changing the ticket and inserting the event would cross a document boundary, and we would have to coordinate them. MongoDB does support multi-document transactions, but they have costs and need the right deployment and application design.
+If the event lived in another document, the operation would cross a document boundary. We would need to decide how to coordinate the ticket change and event creation. Multi-document transactions are available with suitable deployment and application design, but they add considerations of their own.
 
-So single-document atomicity is a real reason to embed. It is not a reason to grow one document forever or to copy every shared fact into it.
-
-Sources:
-- https://www.mongodb.com/docs/manual/core/write-operations-atomicity/
+This is one concrete benefit of embedding. We'll weigh it alongside growth and independent access requirements.
 
 ## Slide 22
 
-A resident changes their email address. Look at the table and ask who owns each stored fact.
+Let's separate a current fact from a historical fact.
 
-First row: requester_id 101. The ticket stores the relationship. When the email changes, the ID stays the same, because the person did not change. Second row: the current email for user 101. That belongs in one authoritative user document, so a correction updates one user record, once. The page reads the ticket, takes the requester ID, and reads that user's current contact details. That costs one extra read, and in exchange we avoid maintaining copies of a fact we promised is current. That is the note at the bottom: a copied current email would introduce another value to maintain.
+The ticket's requester_id records which person opened it. That identifier can stay the same when the person changes their email address. If the page promises current contact information, we can retrieve it from one authoritative user document.
 
-The third row is the interesting one: requester_name_at_open. Suppose the business needs to keep the name shown when the request opened. That field is a deliberate historical snapshot. If the person later changes their display name, the snapshot keeping its original value is correct. It is not stale. It means something different.
+A field named requester_name_at_open has a different purpose. It records the name shown when the ticket opened. Keeping that old value after a later name change can be correct because the field intentionally preserves history.
 
-The mistake is mixing those meanings without saying so. A field the application presents as the current email must follow the current-contact rule. A historical snapshot should be named as historical, the way this one says at_open. The database cannot read your intention from a vaguely named string.
+The problem comes when we copy a value without stating which meaning it has. Someone reading a field called email may assume it's current, even if no process keeps the copy up to date.
 
-One last point. Storing requester_id 101 does not create a foreign key. Nothing guarantees that user 101 exists. The application needs its own rules for creating, updating, and deleting related identities.
+For the lab's requirement, keep current contact details in one authoritative user record and explain how the page reaches it. A historical snapshot is optional and needs a clear purpose.
+
+Also remember that requester_id is a reference we interpret. MongoDB doesn't automatically enforce a foreign key for it. The application needs rules for missing or deleted related records.
 
 ## Slide 23
 
-Now the event history. Look at the two JSON snippets. The ticket on top keeps its own fields: ticket_id 1001, requester_id 101, status open. The event below is a separate record, event 5002, with its own ticket_id pointing back to 1001.
+Here the event is its own document, with ticket_id pointing to its parent ticket.
 
-The direction of the reference matters. Read the first line of the box: each event points to its ticket, and the parent does not need an ever-growing ID list. If we put an array of every event ID inside the ticket, we would just move the growth problem from event objects to event IDs. When each child carries ticket_id instead, a new event is a new document in the event collection, and the ticket stays bounded. To get one ticket's history, we query the events by ticket_id.
+That direction matters. When another event arrives, we can insert another history document without adding another item to the ticket. We don't need an ever-growing list of event IDs inside the parent.
 
-Notice the field names here, event_type and event_at. Those are the source-case names from the CSV. Then read the second line of the box. This is a JSON sketch, so the timestamp is text. In the runnable page demo, the driver stores event_at as a BSON date from a Python datetime. That way we sort by a real date, not by strings we hope share a format.
+To retrieve the history, we query the event collection for the ticket ID. That keeps the ticket's size bounded while allowing the number of history records to grow.
 
-And a reference only names a relationship. It does not enforce referential integrity, it does not create an index, and it does not load the other document for you.
+The sketches use event_type and event_at, matching the source case. Their quoted timestamps are readable JSON text. In the runnable demo, Python datetime values become BSON dates so the query can order them as dates.
 
-The next slide does the actual reads, and shows the extra read-side work this simple referenced design costs.
+A reference doesn't fetch anything automatically. It also doesn't create an index or enforce the relationship. Those are separate parts of the design.
+
+The next slide assembles a page from these separate records. As we walk through it, count the reads and notice what the application now has to handle when a related document is missing.
 
 ## Slide 24
 
-Here is the ticket page assembled from referenced data, in three reads. Line one finds ticket 1001. Line two reads the person whose user_id equals the ticket's requester_id. Then the history query finds events whose ticket_id matches, and keeps only the two most recent.
+We're now looking at an alternative version of the ticket page. Its separate fixture still has ticket 1001 in the open state.
 
-Look at the sort: event_at descending, with event_id descending as the tie breaker. Then limit two. That limit caps what the page shows. It does not delete older events. History stays complete in the collection.
+This page uses three reads. We retrieve the ticket, retrieve its requester, and then query the event collection for that ticket's two most recent events.
 
-Watch the output in the box: open, Requester 101, then event IDs 5002 and 5001. Our worked ticket has only two events, so you see both. Your lab ticket has three events, and there the difference between displaying recent history and retaining full history becomes visible.
+The event query sorts event_at descending and uses event_id descending as a tie breaker. The limit returns two events. It leaves the rest of the history stored in the collection.
 
-Two honest caveats. First, this code assumes the ticket and the person exist in the fixture. A real application has to handle a missing ticket or a broken reference instead of indexing into None. Second, read the next line of the box: three reads assemble one page, and they are not one atomic snapshot. A contact change or a ticket update could land between reads. Whether that matters depends on what the page promises.
+For this worked ticket, the output shows status open, Requester 101, and events 5002 then 5001. It only has two events. Your lab ticket has three, so you'll need to distinguish the two events displayed from the complete history retained.
 
-Last line. An event index that starts with ticket_id and then the ordering fields can support this read. That is a design candidate, not a measured performance claim, because our collection is tiny. We will keep connecting queries, indexes, and observed work in later lessons.
+These reads also have limits. The example assumes the ticket and requester exist. An application needs to handle a missing result instead of treating None as a document. And three independent reads don't automatically represent one shared instant if writes happen between them.
+
+An index beginning with ticket_id and followed by the ordering fields is a candidate for supporting the history query. We haven't measured performance at scale here, so describe it as a design candidate rather than a benchmark result.
 
 ## Slide 25
 
-How should event history be stored? The table gives three defensible answers, and in each one something grows.
+Let's compare what grows in each design.
 
-First row: embed every event. The ticket document grows with each event. The page gets everything in one read, and a status change plus an append can be one atomic update. But that same document keeps getting bigger.
+If we embed every event, the ticket document gets larger whenever history grows. A read can retrieve the whole ticket and its events, and related changes can fit in one atomic document update. But a page that needs only two events may be attached to a very large history.
 
-How big can it get? Read the box. A BSON document has a 16 MiB size limit. Do not treat that as a target. Large documents, frequent updates, and pages that only want a small slice of history get awkward long before the hard limit. And the limit does not translate into a maximum number of events, because events vary in size.
+A BSON document has a 16 MiB limit. That's a hard ceiling, not a sensible design target or a fixed number of events. Event sizes vary.
 
-Second row: keep all events separate. What grows is the number of event documents, and the ticket stays bounded. The page does a ticket read plus a bounded history query, and a report can query events across tickets. The cost is extra retrieval, and coordination when one operation changes both a ticket and an event.
+If events live separately, the collection gains documents while the ticket stays bounded. We gain independent history queries and take on extra retrieval and coordination work.
 
-Third row: a hybrid. The authoritative history lives separately, and the ticket carries a small capped copy of recent events. Convenient for the page. But read the last box: that copy needs an explicit refresh and stale-data policy. Copying data always creates work.
+A hybrid can keep authoritative history separately and a small recent-events copy on the ticket. That can help the page, but someone must define how the copy stays current and what happens when it falls behind.
 
-For a beginner project, choose the simplest design that meets the requirement. A hybrid is not a required upgrade. An accurately explained referenced model can be the stronger answer.
-
-Sources:
-- https://www.mongodb.com/docs/manual/reference/limits/
+For this lab, a clear referenced design is a perfectly reasonable choice. Choose the simplest model you can explain that satisfies the page, contact-update, and history-retention requirements.
 
 ## Slide 26
 
-When you recommend a model, say what it actually does. Look at the first box. A separate user record means a contact correction happens once. Separate event records mean complete history is kept without enlarging the ticket. Those are concrete consequences for our workload, and you can check them.
+When you explain a modeling decision, connect it to an operation.
 
-Now the cost, in the same box. The page has to retrieve the related records, and those independent reads can see different moments if writes happen in between. If the page needs one consistent version of everything, the application needs stronger coordination than the three plain reads we just ran. If a slightly behind recent-events preview is acceptable, the application should state that promise rather than deliver it by accident.
+For example: keeping current contact details in one user document means an email correction changes one authoritative record. Keeping history in separate event documents means new events don't enlarge the ticket. Those are specific benefits we can trace through the model.
 
-The second box applies the same rigor to vendors. Workloads matter in PostgreSQL too. PostgreSQL supports arrays and JSON. SQL systems do not force every schema into third normal form. Normalization is a design discipline, not a setting applied automatically to every table. And joins are not inherently unacceptable. Their cost depends on the query, the data, and the indexes.
+Then explain the cost. The page retrieves related records, and independent reads may observe changes made at different times. If the application promises a consistent view across all of them, it needs a suitable coordination strategy.
 
-Likewise, MongoDB's flexible documents do not remove the need to define what fields mean and to enforce rules. Read the last line: neither a SQL table nor a MongoDB collection chooses a good model for us.
+Use the same care when comparing database systems. PostgreSQL supports arrays and JSON too. A relational system doesn't automatically normalize a schema for us, and joins aren't inherently unacceptable. Their cost depends on the data, query, and indexes.
 
-So in your design response, name one benefit and the work required to get it. That says far more than calling a model flexible, modern, or scalable.
+MongoDB's flexible documents likewise need clear field meanings and rules. Choosing the product doesn't make those decisions for us.
 
-Sources:
-- https://www.postgresql.org/docs/current/arrays.html
-- https://www.postgresql.org/docs/current/datatype-json.html
-- https://www.mongodb.com/docs/manual/core/write-operations-atomicity/
+In your response, name a requirement, explain the document boundary you chose, and describe the work that choice creates for the application. That gives the developer something concrete to evaluate.
 
 ## Slide 27
 
-Here is Lab 2. In the weekly guide it is called Design the Ticket Page. Start with the link at the top: MongoDB University, Modeling Data Relationships, Lesson 4, Modeling One-to-Many, including its Practice. The Week 10 guide links directly to both. My demo used Lesson 3, so you are not repeating my activity. No complete course badge is needed.
+For Lab 2, complete Lesson 4, Modeling One-to-Many, and its Practice activity. My demonstration used Lesson 3. The weekly page links to both, so check the lesson number before starting.
 
-Then the design work, in the middle box. Revise one JSON design for ticket 1003. Use the same CSV facts from last week, with a new requirement. The page shows only the latest two events, newest first. The system retains the entire history. And the current contact details are editable in one authoritative user record.
+Then revise one design for ticket 1003 using last week's case facts. The page needs its latest two events, newest first. The system must retain all history, and current contact details must be editable in one authoritative user record.
 
-You are not writing two competing JSON files or building an application. Show one representative ticket document. If related facts live somewhere else, include one small example of that related document, so the relationship is clear.
+Show a representative ticket document. If related data lives elsewhere, include a small related-document example so the relationship is visible.
 
-Then write a short explanation to the developer who will build the page. Name the two event IDs the page should show. Explain how the page retrieves them, and where a contact change happens. And tell them how your design behaves if this ticket eventually has fifty thousand events.
+Write a short explanation for the developer implementing the page. Name the event IDs the page should display, explain how it retrieves them, and say where a contact correction happens. Also explain how the design handles fifty thousand events for this ticket.
 
-Read the bottom box. Submit it all as one Brightspace text response: the JSON, the explanation, and the Lesson 4 Practice progress image. If the platform or your account is unavailable, use the chapter's worked examples and say so in the same response. Do not invent a score.
-
-Sources:
-- https://learn.mongodb.com/learn/course/modeling-data-relationships/lesson-4-modeling-one-to-many/learn
-- https://learn.mongodb.com/learn/course/modeling-data-relationships/lesson-4-modeling-one-to-many/practice?page=1
+Submit the JSON, explanation, and Lesson 4 Practice progress image in one Brightspace text response. Redact account details. If the platform is unavailable, use the chapter's worked examples and state that substitution. No full-course badge or additional application is required.
 
 ## Slide 28
 
-Last slide: how you talk about this work. Read the paragraph in the middle. It is one way to describe this week's skill in an interview or a team meeting.
+You now have a small database experiment you can describe precisely.
 
-It starts with something specific. "I tested a document query against a small fixture." Then it names a real mistake, the array filter whose conditions matched different events, and says how it was caught: a counterexample. That beats "I know MongoDB."
+You compared a query with the expected answer from a fixture. You found a case where conditions matched different array elements. You checked whether a write found a document, whether it changed anything, and what the document contained afterwards.
 
-Next it connects write counts with a read-back. You can now explain three different outcomes. A request that changed a document. A request whose values were already there. And a request whose expected-state filter no longer matched.
+You also used a page's requirements to explain a document boundary. You can describe why current contact details belong in one place and why a growing history may need separate records, along with the retrieval and consistency work that introduces.
 
-Then it explains a modeling choice in application terms. Shared contact details and growing history have different requirements, and the description admits the extra reads and consistency tradeoffs instead of promising that one shape is always faster.
+When you talk about the exercise, stay within what you actually tested. If you used local mode, say you tested the query logic locally. If you used Atlas, you can also explain your connection setup. Neither exercise establishes production performance or experience operating a large service.
 
-Read the first line of the bottom box: describe the experiment you actually performed. If you used local mode, say you tested the query logic locally. Do not imply you operated a production Atlas service or measured performance at scale. If you did connect to Atlas, you can also describe the separate database user, the runtime IP rule, and the secure connection setup.
-
-And the second line. Next week we aggregate results across documents and enforce document rules. Keep the same habit: state the question, identify the unit of data, predict an observable result, and check what the system actually did.
+Next week we'll aggregate results and enforce document rules. Keep bringing the same questions: what exactly are we asking, what result do we expect, and what evidence tells us the operation did what we intended?
 
 ## Slide 29
 
-These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Querying inside documents: arrays and $elemMatch (1:12); Did the write do what you meant? (1:06); Embed or reference? Let the workload decide (1:21). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 10 README. The diagrams are schematic illustrations, not benchmarks.
+These three short videos review the week's examples. The first follows the array query and shows why conditions can match different events. The second compares write results and shows how a status change and an event can happen in one atomic update. The third compares embedding and referencing for a ticket page.
+
+Each video is silent, with captions on screen. The diagrams are illustrations of the operations we've discussed. They aren't measurements of database performance.
+
+You can use the videos to review a point that still feels unclear. Download the PowerPoint and open it in desktop PowerPoint to play the embedded videos from this slide. The weekly folder also has the individual MP4 files and subtitles. The PDF contains still thumbnails.
+
+As you watch, follow one ticket through the example. Ask which document qualifies, what changes, and what evidence shows that the result is the one we intended.
+
+## Slide 30
+
+Both conditions appear somewhere in ticket 1001, but they belong to different events. Event 5001 supplies created, and event 5002 supplies agent.
+
+The separate dotted conditions can therefore match the ticket. The $elemMatch version requires one event to supply both values. Neither event does, so ticket 1001 doesn't match that version.
+
+Trace each condition to the event that supplies it. On the left, the two matches come from different events. On the right, neither event can meet both conditions. That is the difference our filter needs to express.
+
+## Slide 31
+
+Compare the first update with its repeat. Test ticket 1099 starts with status new and no assignee. The first $set finds it and changes its status and assignee. Repeating that same $set still finds it, but the values are already there. Matched stays one, while modified becomes zero.
+
+These are selected fields from the document. Both operations still use the complete test filter, including the course and test-record markers. When we repeat this update, the ticket still meets the filter. In the expected-state example, the status condition changes which documents qualify. We need to distinguish those situations when we interpret a zero modified count.
+
+## Slide 32
+
+The write asks for ticket 1099 with status new. The saved ticket is already in_progress. Since the complete filter doesn't match, the requested change to resolved doesn't run.
+
+The ticket can exist while a conditional update matches nothing. That distinction is the point of the example. The application can reload the current document and decide how to respond. The code expresses that expectation in the filter, and the two zero counts show that no document met it.
+
+The diagram shows the ticket number and status condition. The complete test filter also keeps the test_record and course_fixture markers.
 
 ## License
 
