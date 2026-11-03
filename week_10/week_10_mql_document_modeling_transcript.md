@@ -1,6 +1,6 @@
 # Week 10 Basic MQL and Document Modeling
 
-Word for word spoken script. Every slide section contains only words to say aloud. Preparation guidance is in the private instructor guide. Slides 1–20 cover Day 1, including the complete field reference on slides 7–9. Slides 21–31 cover Day 2, slide 32 contains videos, and slides 33–35 contain static illustrations.
+Word for word spoken script. Every slide section contains only words to say aloud. Preparation guidance is in the private instructor guide. Slides 1–20 cover Day 1, including the complete field reference on slides 7–9. Slides 21–31 cover Day 2, slide 32 contains videos, slides 33–35 contain static illustrations, and slide 36 compares the browser labs with Colab and links optional Data Explorer practice.
 
 ## Slide 1
 
@@ -10,7 +10,7 @@ Imagine the lighting crew opening its work queue. It needs tickets that still ne
 
 We'll work with six tickets, so you can check each answer yourself. First we'll compare a familiar SQL query with its MongoDB equivalent. Then we'll query nested data and arrays, and finish by updating a disposable test ticket.
 
-Keep the notebook open alongside the slides. For each important example, we'll predict the result together and then check what the notebook returns. Local mode is fine for today's work. If you already have Atlas ready, you can use that connection.
+Keep the notebook open alongside the slides. For each important example, we'll predict the result together and then check what the notebook returns. Today we're connecting the notebook to your Atlas cluster. If a connection needs attention, we'll use the notebook's diagnostic category to identify the next check.
 
 The modeling work comes next class. Today, let's get comfortable saying exactly what a query asks for and checking what a write actually changed.
 
@@ -36,19 +36,19 @@ There are also two different kinds of account involved. Your Atlas website accou
 
 In this capture, the workspace is still asking for a connection. We can't infer anything about the collection's contents from that empty area yet.
 
-If you're using local mode today, you can follow the same collection and query examples without configuring Atlas. If you're using Atlas, the next slide explains the connection step that most often needs attention in Colab.
+Today we're using Atlas, so the next slide explains how the connection comes from Colab's remote runtime. We'll verify the connection by sending ping, then try the fixture setup.
 
 ## Slide 4
 
-Colab runs Python on a remote machine. Your browser is on your laptop, but the database connection comes from that remote runtime.
+Today we're connecting Colab to your Atlas cluster. Colab runs Python on a remote machine. Your browser is on your laptop, but the database connection comes from that runtime.
 
-For Atlas mode, run the notebook's setup cell and use the runtime IP address it prints. Add that address as a temporary Atlas access-list entry. The /32 suffix limits the entry to that one IPv4 address. Adding your laptop's address instead won't necessarily allow the Colab runtime through.
+Run the setup cells and use the runtime IP address the notebook prints. Add it as a temporary Atlas access-list entry. The /32 suffix limits the entry to one IPv4 address. Adding your laptop's address instead won't necessarily allow the runtime through. Keep the printed practice database name when retrying setup so it still matches the database user's permission.
 
-The notebook asks for your connection URI in a hidden prompt. Keep it there rather than pasting it into a source cell. Use a database user's credentials, and leave TLS certificate verification enabled.
+Enter the connection URI in the hidden prompt. Use a database user's credentials and keep TLS certificate verification enabled. If the connection fails, Setup C reports a diagnostic category. We'll use it to check the relevant setting, such as credentials, network access, DNS, or certificates, and then try again.
 
-Once the connection responds to ping, we'll try the fixture setup. Ping confirms that the server answered. The database user still needs permission to write the practice data.
+After fixing the setting, run the connection cell again. Once ping responds, we know the deployment answered. The fixture setup then tests permission to write the practice data.
 
-If the connection is holding you up, switch to local mode and keep going with us. We'll troubleshoot the connection separately. Today's main work is understanding queries and write results, and we can do that without spending the class on account setup.
+The link below also leads to a short comparison with MongoDB University's guided browser labs and an optional Data Explorer practice. For today's Lab 1, keep your work in your saved Colab notebook.
 
 ## Slide 5
 
@@ -437,6 +437,18 @@ The write asks for ticket 1099 with status new. The saved ticket is already in_p
 The ticket can exist while a conditional update matches nothing. That distinction is the point of the example. The application can reload the current document and decide how to respond. The code expresses that expectation in the filter, and the two zero counts show that no document met it.
 
 The diagram shows the ticket number and status condition. The complete test filter also keeps the test_record and course_fixture markers.
+
+## Slide 36
+
+We have two browser workspaces available, and it's helpful to know what each one is for.
+
+The introductory MongoDB University lab provides an IDE in your browser, connected to an Atlas cluster. An IDE is a workspace where you write and run code. That introduction teaches you how to use the workspace without installing a local development environment. Think of it as a guided practice sandbox: read the lesson, try the operation, and inspect what happens.
+
+Colab has a similar learning rhythm, but our work lives in a Python notebook that you save and edit. Today that notebook connects to your own Atlas cluster. Its optional mongomock mode is an in-memory simulation for practicing the query logic. It doesn't create an Atlas connection.
+
+The second link is extra practice with databases, collections, and documents in Atlas Data Explorer. Data Explorer gives you a graphical way to work with those objects. Sign in or enroll to open the practice, then follow that lesson's current instructions for its account, tools, and data. Different lessons may use different environments, so the introductory IDE doesn't tell us exactly what this exercise will provide.
+
+We may work through this optional practice together in class to become more familiar with the database and collection interface. You still complete Lab 1 in your Colab notebook. As you move between the interfaces, keep asking the same question: which database and collection am I working in, and what changed when I ran that operation?
 
 ## License
 

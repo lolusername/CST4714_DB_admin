@@ -28,6 +28,7 @@ unless the weekly lab assigns it.
 ## Class Materials
 
 - **MongoDB starting lab:** We will use [this introductory MongoDB lab](https://learn.mongodb.com/learn/course/start-here-intro-to-mongodb-2025-12-31/lesson-1-welcome-to-the-introduction-to-mongodb-course/learn?client=educators&page=3) to start working with MongoDB in class.
+- **Possible additional MongoDB lab:** We may also use [Lesson 3: Managing Databases, Collections, and Documents in Atlas Data Explorer — Practice](https://learn.mongodb.com/learn/course/mongodb-and-the-document-model-smartbridge/lesson-3-managing-databases-collections-and-documents-in-atlas-data-explorer/practice?client=educators) in class. Sign in or enroll when prompted; this is optional unless announced in class.
 - [Complete ticket data reference](ticket_data_reference.md): every field and nested path, value meanings, and all six supplied documents; [download the fixture as MongoDB Extended JSON](ticket_fixture.json).
 - [Atlas MQL and modeling notebook](materials/notebooks/04_atlas_mql_modeling.ipynb)
 - [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_10/materials/notebooks/04_atlas_mql_modeling.ipynb) for Lab 1; save a working copy in Drive.
@@ -35,9 +36,31 @@ unless the weekly lab assigns it.
 - [Week 10 PDF handout](week_10_mql_document_modeling.pdf)
 - [Week 10 transcript](week_10_mql_document_modeling_transcript.md)
 
+
+### MongoDB University Sandbox and Our Colab Notebook
+
+Both let you practice in a browser and inspect the results of your actions.
+MongoDB University supplies guided exercises: its introductory lab opens an
+in-browser development environment connected to Atlas, with no local software
+installation. Think of that lab as a **sandbox for trying the lesson's tasks**.
+Follow the launched exercise's instructions for its tools, data, and connection;
+it is separate from our Colab runtime and ticket dataset.
+
+The optional Data Explorer practice focuses on Atlas's graphical view of
+databases, collections, and documents. Colab instead gives us an editable Python
+notebook with Markdown explanations, query cells, and saved output. Our Colab
+notebook can connect to your own Atlas cluster, or use `mongomock` in memory;
+`mongomock` is a teaching substitute, not an Atlas cluster. Completing a
+University lab does not configure Colab's database user, URI, or IP access rule.
+
+Use the starting lab to learn the browser environment. We may then use the
+Data Explorer practice to connect what we see in the interface with the
+collections and documents we query in Colab. These activities do not add a
+separate submission or course-badge requirement.
+
 ## Teaching and playback
 
-The PowerPoint has word for word speaker notes. Slides 1–20 cover Day 1 and slides 21–31 cover Day 2. Slides 7–9 introduce the complete ticket data model before the query examples. Three optional static Manim diagrams are on slides 33–35, with links from the related examples.
+The PowerPoint has word for word speaker notes. Slides 1–20 cover Day 1 and slides 21–31 cover Day 2. Slides 7–9 introduce the complete ticket data model before the query examples. Three optional static Manim diagrams are on slides 33–35, with links from the related examples. Slide 36 compares the MongoDB University sandbox with Colab and links to both browser activities; slide 4 links to it.
 
 Download the `.pptx` and open it in desktop PowerPoint. In Slide Show, click a thumbnail on slide 32 to play its embedded video full screen. The videos work without an internet connection. GitHub previews and the PDF handout show still images. The individual MP4 and subtitle files remain available below.
 
