@@ -14,31 +14,59 @@ the same fields.
 
 ### All Ticket Fields
 
-| Field | Type in the stored practice data | Meaning and supplied values |
+| Field | Type | Meaning |
 | --- | --- | --- |
-| `_id` | ObjectId | MongoDB document identifier, generated when inserted. Its value changes between fresh runs. It is different from `ticket_id`. |
-| `ticket_id` | Integer | Case ticket number: 1001–1006. The write exercise adds disposable ticket 1099. A unique index is created on this field. |
-| `category` | String | Kind of request. The six tickets use `streetlight`, `sanitation`, `water`, or `parks`. |
-| `priority` | String | Urgency label. All six tickets have this field; values are `low`, `medium`, `high`, or `urgent`. |
-| `status` | String | Workflow state. Values here are `new`, `open`, `in_progress`, or `resolved`. In this exercise, **active** means the first three. There is no field named `active`. |
+| `_id` | ObjectId | Generated MongoDB document ID. |
+| `ticket_id` | Integer | Ticket number in the support case. |
+| `category` | String | Kind of request. |
+| `priority` | String | Urgency label. |
+| `status` | String | Current workflow state. |
 | `subject` | String | Short description of the request. |
-| `requester` | Embedded document | The person who opened the ticket, with the two fields below. |
-| `assignee_id` | Integer or null | Assigned staff ID, 201 or 202. Ticket 1004 has null because it is unassigned. In Python that value is `None`. |
-| `opened_at` | BSON date | When the ticket opened. The fixture constructs a Python `datetime` in UTC. Sort this field for newest tickets. |
-| `tags` | Array of strings | Descriptive labels such as `lighting` or `safety`. A ticket can have several tags. |
-| `events` | Array of embedded documents | The supplied history entries, with the fields below. An empty array is allowed. |
-| `course_fixture` | String | Safety marker: `"cst4714"`. Keep it in the supplied notebook filters so operations stay within the teaching records. |
+| `requester` | Document | The person who opened the ticket. |
+| `assignee_id` | Integer or null | Assigned staff ID; null if unassigned. |
+| `opened_at` | BSON date | When the ticket opened, in UTC. |
+| `tags` | Array of strings | Descriptive labels. |
+| `events` | Array of documents | The supplied history entries. |
+| `course_fixture` | String | Marker identifying teaching records. |
+
+### Values and Rules in This Fixture
+
+- **`priority`:** every supplied ticket has this field. Values are `low`,
+  `medium`, `high`, or `urgent`.
+- **`status`:** values are `new`, `open`, `in_progress`, or `resolved`.
+  In this exercise, **active** means `new`, `open`, or `in_progress`.
+  There is no field named `active`.
+- **`category`:** values are `streetlight`, `sanitation`, `water`, or `parks`.
+- **`ticket_id`:** the original tickets are 1001–1006. The write exercise adds
+  disposable ticket 1099. The loader creates a unique index on `ticket_id`.
+- **`_id`:** a separate identifier generated at insertion. Its value changes
+  between fresh runs; it is different from `ticket_id`.
+- **`assignee_id`:** assigned staff are 201 or 202. Ticket 1004 is unassigned,
+  so its value is null (`None` in Python).
+- **`opened_at`:** constructed from a Python `datetime` and stored as a BSON
+  date. Sort this field to order tickets by opening time.
+- **`tags`:** a ticket can have several labels, such as `lighting` and `safety`.
+- **`events`:** a ticket can have several event objects or an empty array.
+- **`course_fixture`:** always `"cst4714"` on the supplied records. Keep it in
+  the notebook filters so operations stay within the teaching records.
 
 ### Fields Inside Requester and Events
 
-| Path used in a query | Type | Meaning and example |
+| Path used in a query | Type | Meaning |
 | --- | --- | --- |
-| `requester.user_id` | Integer | Requester identifier, 101–104 in this fixture. For example, tickets 1001 and 1005 both belong to requester 101. |
-| `requester.display_name` | String | Display label such as `"Requester 101"`. |
-| `events.event_id` | Integer | Event identifier, 5001–5008 in the supplied history. Event 5999 is added only to the disposable test ticket. |
-| `events.type` | String | Event kind: `created`, `assigned`, or `status_changed` in this fixture. |
-| `events.actor_role` | String | Who performed the event: `resident` or `agent`. |
-| `events.at` | BSON date | When that event occurred, in UTC. This is different from the ticket's `opened_at`. |
+| `requester.user_id` | Integer | Requester identifier. |
+| `requester.display_name` | String | Requester display label. |
+| `events.event_id` | Integer | Event identifier. |
+| `events.type` | String | Kind of event. |
+| `events.actor_role` | String | Role of the person who performed it. |
+| `events.at` | BSON date | When the event occurred, in UTC. |
+
+Requester IDs are 101–104 here; the display labels look like `"Requester 101"`.
+Tickets 1001 and 1005 both belong to requester 101. The supplied event IDs are
+5001–5008; the later write exercise adds event 5999 to the disposable test ticket.
+Event `type` values are `created`, `assigned`, or `status_changed`. The
+`actor_role` values are `resident` or `agent`. An event's `at` date is different
+from its parent ticket's `opened_at` date.
 
 `requester.user_id` is a dotted path into one embedded object. `events.type`
 reaches into objects inside an array. With `$elemMatch` on `events`, the conditions
