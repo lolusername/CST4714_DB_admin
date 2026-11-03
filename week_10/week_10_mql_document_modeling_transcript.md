@@ -1,6 +1,6 @@
 # Week 10 Basic MQL and Document Modeling
 
-Word for word spoken script. Every slide section contains only words to say aloud. Preparation guidance is in the private instructor guide. Slides 1–17 cover Day 1, slides 18–28 cover Day 2, slide 29 contains videos, and slides 30–32 contain static illustrations.
+Word for word spoken script. Every slide section contains only words to say aloud. Preparation guidance is in the private instructor guide. Slides 1–20 cover Day 1, including the complete field reference on slides 7–9. Slides 21–31 cover Day 2, slide 32 contains videos, and slides 33–35 contain static illustrations.
 
 ## Slide 1
 
@@ -74,7 +74,45 @@ These documents are a small adaptation of last week's CSV case. They use selecte
 
 We'll leave these six records intact during the write exercises and create a separate test ticket, 1099.
 
+Before we write the first query, let’s look through the complete field reference on the next three slides. We’ll identify the ticket fields, the nested requester and event fields, and the practice markers so every name in the queries has a clear meaning.
+
 ## Slide 7
+
+Before we query anything, let's look at the fields the notebook actually gives us. One document represents one ticket. This reference describes the supplied data. We haven't installed a validator that requires every future document to have this shape.
+
+There are two identities. MongoDB generates _id when we insert a document without one. ticket_id is the case number that people use, such as 1001. The notebook creates a unique index on ticket_id so we don't accidentally keep two documents for the same case number. Those are separate fields with separate roles.
+
+Category names the service area. Priority describes importance, while status describes the current workflow state. A high-priority ticket can already be resolved. That distinction is going to matter in the crew queue. Active is our grouping of new, open, and in_progress. There isn't an active field in these documents. Subject is the short description a person reads.
+
+Opened_at records the opening time. Our notebook supplies a Python datetime value, which the driver stores as a BSON date. Extended JSON can display that typed date with a dollar-date wrapper. A quoted timestamp by itself is just a string. When we sort opened_at later, we're sorting actual date values.
+
+The next slide shows the fields that contain related information, including the requester and the event history.
+
+## Slide 8
+
+Requester is an object inside the ticket. Its user_id identifies the requester in our case, and display_name gives us a readable label. The dotted path requester.user_id means we want the user_id field inside that object.
+
+For Day 1, there isn't a separate users collection behind this example. The requester details are copied into each ticket. The number identifies a person logically, but MongoDB isn't following a foreign key to another record for us. Assignee_id works as a logical staff identifier too. Values 201 and 202 identify staff in the case. Ticket 1004 has a null assignee because nobody is assigned. In Python you'll see that null as None.
+
+Tags is an array of strings. Ticket 1001 includes lighting and safety. Later, a filter for the value safety will ask whether that value occurs in the tags array.
+
+Events is different. Each array element is a small object with several fields. We'll inspect those fields next. An empty events array on tickets 1005 and 1006 means that this teaching fixture leaves out their history. It doesn't tell us that those tickets never had events.
+
+Our disposable test ticket also has a deliberately smaller shape. It starts without tags or assignee_id. A missing field is different from a field that is present with null. The later update adds assignee_id to that test document.
+
+## Slide 9
+
+Every event in this fixture has an event_id, a type, an actor_role, and an at value. Event_id identifies the event. Type tells us what happened. Actor_role says whether the actor was a resident or an agent. At records when it happened as a date.
+
+For ticket 1001, event 5001 says created by a resident. Event 5002 says assigned by an agent. Keep those two objects separate as you read them. Later we'll see why finding created in one event and agent in another doesn't establish that an agent created the ticket.
+
+The dotted names in the table are the paths we'll use in queries. The fields themselves sit inside each object in the events array. An event_id value there doesn't automatically have a uniqueness constraint. Our append example uses a filter to prevent adding its particular event twice.
+
+The final two fields belong to the ticket, outside the events array. Course_fixture marks the records supplied for this practice. Test_record appears only on disposable ticket 1099 and is True. The original six tickets don't have that field. We combine those markers with the ticket number when practicing writes so the target is very specific.
+
+These event names differ slightly from the original CSV case. Event_type became type, and event_at became at. We also supply an actor role and omit some original columns. With those names and types clear, we can now read each query against the actual documents.
+
+## Slide 10
 
 Let's run the query we just predicted. The filter requires an active status and a high or urgent priority. A document has to satisfy both conditions.
 
@@ -86,7 +124,7 @@ Now suppose the lighting crew says, "We also need our medium-priority jobs." Wha
 
 We'd hide work that belongs in its queue. In your lab, the requirement changes to active streetlight or sanitation tickets. You'll keep the category condition from the starter, add an active-status condition, and display priority. Let the new question guide the changes you make to the query.
 
-## Slide 8
+## Slide 11
 
 This query asks for the two most recently opened active tickets. The filter chooses the active documents. The sort puts them in order, and the limit keeps the first two.
 
@@ -98,7 +136,7 @@ One practical detail: find returns a cursor. The loop reads through it. If you r
 
 Sorting and limiting affect the returned results. They don't rearrange the stored collection or delete the tickets beyond the limit. We'll use that distinction next class when a page shows recent events while the system retains the full history.
 
-## Slide 9
+## Slide 12
 
 Now we'll reach inside a document. The path requester.user_id means the user_id field inside requester. We pass that dotted path as a string in the filter.
 
@@ -112,7 +150,7 @@ No. Another requester could open a ticket tagged safety, or requester 101 could 
 
 The next example uses an array of event documents. That's where we need to be more careful: two conditions can find their matches in different events, even when we intended them to describe one event.
 
-## Slide 10
+## Slide 13
 
 Let's read the two events on ticket 1001. Event 5001 records a resident creating the ticket. Event 5002 records an agent assigning it.
 
@@ -126,7 +164,7 @@ That explains why a successful query can still answer the wrong application ques
 
 Before we change the filter, try explaining the mismatch using the two event IDs. Being specific about the data makes this much easier to reason through.
 
-## Slide 11
+## Slide 14
 
 We can express the intended question with $elemMatch. It asks whether at least one event satisfies all the conditions inside it.
 
@@ -138,7 +176,7 @@ There's one more distinction to keep clear. This use of $elemMatch is in the fil
 
 For your explanation, use ticket 1001 and events 5001 and 5002 to show why the separate conditions match while the same-event condition doesn't.
 
-## Slide 12
+## Slide 15
 
 We're ready to practice writes. First we'll create a record we can safely change: ticket 1099.
 
@@ -152,7 +190,7 @@ Run this setup once now. In the next example, we'll run the update twice. Leave 
 
 If your later results differ from ours, the first thing we'll check is which setup and update cells ran, and in what order.
 
-## Slide 13
+## Slide 16
 
 This update uses $set to change the status and assignee. The other fields stay in the document.
 
@@ -168,7 +206,7 @@ These counts refer to documents. We changed two fields in one document, so the m
 
 Also keep $set distinct from replacing the whole document. A replacement can remove fields you leave out. Here, changing only the named fields is what we intended.
 
-## Slide 14
+## Slide 17
 
 The ticket is now in_progress. This next update asks to resolve it only if its status is still new.
 
@@ -182,7 +220,7 @@ An expected-state condition can help when someone acts on an old view of a ticke
 
 This example demonstrates one guarded state transition. It doesn't solve every concurrency problem. For today, the useful habit is to read the complete filter and compare it with the document's current state before interpreting a zero match.
 
-## Slide 15
+## Slide 18
 
 $push appends a value to an array. In this example, we're adding event 5999 to the test ticket.
 
@@ -196,7 +234,7 @@ There's also a timing detail worth keeping for next class. We changed the status
 
 Next class we'll combine related changes into one update and connect that to the document's design.
 
-## Slide 16
+## Slide 19
 
 We'll finish by deleting the disposable test record. First, find_one shows us the document identified by our test filter. Then delete_one uses that same filter.
 
@@ -210,7 +248,7 @@ Previewing the target is useful, but the preview doesn't lock it. Another writer
 
 For this exercise, keep the narrow test filter exactly as supplied and verify the result before running the final cleanup.
 
-## Slide 17
+## Slide 20
 
 You now have the pieces for Lab 1. Open Find and Change the Right Document and work in your own copy of the notebook.
 
@@ -224,7 +262,7 @@ Use the Results Record section for your short explanation. Say whether you used 
 
 Submit the completed notebook with your changes and outputs. Today's submission doesn't need an extra report or screenshot. I'll circulate while you work.
 
-## Slide 18
+## Slide 21
 
 Last class, we practiced querying documents and checking write results. Today we'll use those operations to design a ticket page.
 
@@ -236,7 +274,7 @@ We'll compare those kinds of consequences throughout the class. Keeping related 
 
 I'll demonstrate a one-to-one relationship. You'll work through the one-to-many activity and then revise a ticket design for the new page requirements. The aim is to explain how the shape supports the work the application actually does.
 
-## Slide 19
+## Slide 22
 
 Cardinality describes how many things can participate on each side of a relationship. A requester may have many tickets. A ticket may have many events. In our publisher example, we assume one designated headquarters per publisher.
 
@@ -248,7 +286,7 @@ For an event history, we also need to ask what "many" means. A fixed list of thr
 
 As we work through the examples, say the assumptions aloud. Our headquarters relationship is one-to-one because we're talking about one designated headquarters. We aren't claiming that a publisher can have only one office. Clear assumptions keep the model tied to the requirement we're actually discussing.
 
-## Slide 20
+## Slide 23
 
 For my demonstration, we'll use MongoDB University's Modeling Data Relationships course, Lesson 3, Modeling One-to-One. Your individual activity uses Lesson 4, Modeling One-to-Many, including its Practice.
 
@@ -260,7 +298,7 @@ This publisher document is our own illustration. We'll follow the external lesso
 
 If the platform is unavailable, we can still work through the chapter's examples and discuss the same choices. For your submission, follow the Lab 2 fallback and say which material you used. You don't need to complete an entire course or earn a badge for this week's task.
 
-## Slide 21
+## Slide 24
 
 On Day 1, we changed a status and appended an event in separate calls. Here we put both changes in one update to one document.
 
@@ -274,7 +312,7 @@ If the event lived in another document, the operation would cross a document bou
 
 This is one concrete benefit of embedding. We'll weigh it alongside growth and independent access requirements.
 
-## Slide 22
+## Slide 25
 
 Let's separate a current fact from a historical fact.
 
@@ -288,7 +326,7 @@ For the lab's requirement, keep current contact details in one authoritative use
 
 Also remember that requester_id is a reference we interpret. MongoDB doesn't automatically enforce a foreign key for it. The application needs rules for missing or deleted related records.
 
-## Slide 23
+## Slide 26
 
 Here the event is its own document, with ticket_id pointing to its parent ticket.
 
@@ -302,7 +340,7 @@ A reference doesn't fetch anything automatically. It also doesn't create an inde
 
 The next slide assembles a page from these separate records. As we walk through it, count the reads and notice what the application now has to handle when a related document is missing.
 
-## Slide 24
+## Slide 27
 
 We're now looking at an alternative version of the ticket page. Its separate fixture still has ticket 1001 in the open state.
 
@@ -316,7 +354,7 @@ These reads also have limits. The example assumes the ticket and requester exist
 
 An index beginning with ticket_id and followed by the ordering fields is a candidate for supporting the history query. We haven't measured performance at scale here, so describe it as a design candidate rather than a benchmark result.
 
-## Slide 25
+## Slide 28
 
 Let's compare what grows in each design.
 
@@ -330,7 +368,7 @@ A hybrid can keep authoritative history separately and a small recent-events cop
 
 For this lab, a clear referenced design is a perfectly reasonable choice. Choose the simplest model you can explain that satisfies the page, contact-update, and history-retention requirements.
 
-## Slide 26
+## Slide 29
 
 When you explain a modeling decision, connect it to an operation.
 
@@ -344,7 +382,7 @@ MongoDB's flexible documents likewise need clear field meanings and rules. Choos
 
 In your response, name a requirement, explain the document boundary you chose, and describe the work that choice creates for the application. That gives the developer something concrete to evaluate.
 
-## Slide 27
+## Slide 30
 
 For Lab 2, complete Lesson 4, Modeling One-to-Many, and its Practice activity. My demonstration used Lesson 3. The weekly page links to both, so check the lesson number before starting.
 
@@ -356,7 +394,7 @@ Write a short explanation for the developer implementing the page. Name the even
 
 Submit the JSON, explanation, and Lesson 4 Practice progress image in one Brightspace text response. Redact account details. If the platform is unavailable, use the chapter's worked examples and state that substitution. No full-course badge or additional application is required.
 
-## Slide 28
+## Slide 31
 
 You now have a small database experiment you can describe precisely.
 
@@ -368,7 +406,7 @@ When you talk about the exercise, stay within what you actually tested. If you u
 
 Next week we'll aggregate results and enforce document rules. Keep bringing the same questions: what exactly are we asking, what result do we expect, and what evidence tells us the operation did what we intended?
 
-## Slide 29
+## Slide 32
 
 These three short videos review the week's examples. The first follows the array query and shows why conditions can match different events. The second compares write results and shows how a status change and an event can happen in one atomic update. The third compares embedding and referencing for a ticket page.
 
@@ -378,7 +416,7 @@ You can use the videos to review a point that still feels unclear. Download the 
 
 As you watch, follow one ticket through the example. Ask which document qualifies, what changes, and what evidence shows that the result is the one we intended.
 
-## Slide 30
+## Slide 33
 
 Both conditions appear somewhere in ticket 1001, but they belong to different events. Event 5001 supplies created, and event 5002 supplies agent.
 
@@ -386,13 +424,13 @@ The separate dotted conditions can therefore match the ticket. The $elemMatch ve
 
 Trace each condition to the event that supplies it. On the left, the two matches come from different events. On the right, neither event can meet both conditions. That is the difference our filter needs to express.
 
-## Slide 31
+## Slide 34
 
 Compare the first update with its repeat. Test ticket 1099 starts with status new and no assignee. The first $set finds it and changes its status and assignee. Repeating that same $set still finds it, but the values are already there. Matched stays one, while modified becomes zero.
 
 These are selected fields from the document. Both operations still use the complete test filter, including the course and test-record markers. When we repeat this update, the ticket still meets the filter. In the expected-state example, the status condition changes which documents qualify. We need to distinguish those situations when we interpret a zero modified count.
 
-## Slide 32
+## Slide 35
 
 The write asks for ticket 1099 with status new. The saved ticket is already in_progress. Since the complete filter doesn't match, the requested change to resolved doesn't run.
 

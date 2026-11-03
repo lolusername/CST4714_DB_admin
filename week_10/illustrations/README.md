@@ -1,6 +1,6 @@
 # Week 10 static illustrations
 
-These three still diagrams appear on PowerPoint slides 30–32. They contain no animation.
+These three still diagrams appear on PowerPoint slides 33–35. They contain no animation.
 
 - [Array conditions and one matching event](01_array_match.png)
 - [The first update and the repeat](02_repeated_set.png)

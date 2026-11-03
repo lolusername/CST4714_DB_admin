@@ -23,61 +23,76 @@ References for the slide explanations. The speaker notes and spoken transcript c
 
 ## Slide 7
 
-- https://www.mongodb.com/docs/languages/python/pymongo-driver/current/crud/query/find/
+- [Complete Week 10 ticket data reference](ticket_data_reference.md)
+- [Supplied Day 1 notebook](materials/notebooks/04_atlas_mql_modeling.ipynb)
 
 ## Slide 8
 
-- https://www.mongodb.com/docs/languages/python/pymongo-driver/current/crud/query/find/
+- [Complete Week 10 ticket data reference](ticket_data_reference.md)
+- [Supplied Day 1 notebook](materials/notebooks/04_atlas_mql_modeling.ipynb)
 
 ## Slide 9
+
+- [Complete Week 10 ticket data reference](ticket_data_reference.md)
+- [Supplied Day 1 notebook](materials/notebooks/04_atlas_mql_modeling.ipynb)
+
+## Slide 10
+
+- https://www.mongodb.com/docs/languages/python/pymongo-driver/current/crud/query/find/
+
+## Slide 11
+
+- https://www.mongodb.com/docs/languages/python/pymongo-driver/current/crud/query/find/
+
+## Slide 12
 
 - https://www.mongodb.com/docs/manual/tutorial/query-embedded-documents/
 - https://www.mongodb.com/docs/manual/tutorial/query-arrays/
 
-## Slide 10
-
-- https://www.mongodb.com/docs/manual/reference/operator/query/elemMatch/
-
-## Slide 11
-
-- https://www.mongodb.com/docs/manual/reference/operator/query/elemMatch/
-
 ## Slide 13
 
-- https://www.mongodb.com/docs/languages/python/pymongo-driver/current/crud/update/
+- https://www.mongodb.com/docs/manual/reference/operator/query/elemMatch/
 
 ## Slide 14
 
+- https://www.mongodb.com/docs/manual/reference/operator/query/elemMatch/
+
+## Slide 16
+
+- https://www.mongodb.com/docs/languages/python/pymongo-driver/current/crud/update/
+
+## Slide 17
+
 - https://www.mongodb.com/docs/manual/core/write-operations-atomicity/
 
-## Slide 15
+## Slide 18
 
 - https://www.mongodb.com/docs/manual/core/write-operations-atomicity/
 
-## Slide 20
+## Slide 23
 
 - https://learn.mongodb.com/learn/course/modeling-data-relationships/lesson-3-modeling-one-to-one/learn
 - https://learn.mongodb.com/learn/course/modeling-data-relationships/lesson-4-modeling-one-to-many/learn
 
-## Slide 21
+## Slide 24
 
 - https://www.mongodb.com/docs/manual/core/write-operations-atomicity/
 
-## Slide 25
+## Slide 28
 
 - https://www.mongodb.com/docs/manual/reference/limits/
 
-## Slide 26
+## Slide 29
 
 - https://www.postgresql.org/docs/current/arrays.html
 - https://www.postgresql.org/docs/current/datatype-json.html
 - https://www.mongodb.com/docs/manual/core/write-operations-atomicity/
 
-## Slide 27
+## Slide 30
 
 - https://learn.mongodb.com/learn/course/modeling-data-relationships/lesson-4-modeling-one-to-many/learn
 - https://learn.mongodb.com/learn/course/modeling-data-relationships/lesson-4-modeling-one-to-many/practice?page=1
 
 ## Static illustrations
 
-The illustrations use the supplied Week 10 notebook fixture. Original Manim source and still PNGs are in [illustrations](illustrations/README.md).
+The illustrations on slides 33–35 use the supplied Week 10 notebook fixture. Original Manim source and still PNGs are in [illustrations](illustrations/README.md).
