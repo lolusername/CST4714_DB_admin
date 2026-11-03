@@ -19,6 +19,12 @@ sign-in. The Atlas path uses your own Free cluster,
 a hidden connection-URI prompt, a temporary runtime-IP rule, and a unique practice
 database. Keep certificate verification enabled.
 
+First read **Section 1: Read the Complete Ticket Data Model** in the notebook,
+or use the [complete ticket data reference](ticket_data_reference.md). It lists
+all field names, nested paths, types, value meanings, and all six supplied
+records. In particular, every ticket has a `priority` field; an omitted field
+in a query's projection is still present in the stored document.
+
 Run the SQL-to-MongoDB comparison in Section 2. Both queries ask for active
 high/urgent tickets and return the same ticket ID and status. The SQL example
 uses a temporary SQLite table made from these six documents, so it needs no
