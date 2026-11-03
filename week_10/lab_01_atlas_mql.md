@@ -17,7 +17,10 @@ Click **Open in Colab** above and save a working copy in Drive. The
 The default practice path needs no database account. Colab requires a Google
 sign-in. The Atlas path uses your own Free cluster,
 a hidden connection-URI prompt, a temporary runtime-IP rule, and a unique practice
-database. Keep certificate verification enabled.
+database. Follow the notebook’s numbered Atlas setup steps: the IP rule must
+allow the Colab runtime, and the URI must use a database user rather than your
+Atlas website login. Setup C reports a safe diagnostic label if it fails;
+share that label and numeric code only. Keep certificate verification enabled.
 
 First read **Section 1: Read the Complete Ticket Data Model** in the notebook,
 or use the [complete ticket data reference](ticket_data_reference.md). It lists
