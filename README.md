@@ -11,6 +11,7 @@ You will practice modeling, querying, access control, performance, and recovery.
 
 ## Start Here
 
+- **MongoDB starting lab:** We will use [this introductory MongoDB lab](https://learn.mongodb.com/learn/course/start-here-intro-to-mongodb-2025-12-31/lesson-1-welcome-to-the-introduction-to-mongodb-course/learn?client=educators&page=3) to start working with MongoDB in class.
 - [Course syllabus (PDF)](CST4714_Fall_2026_Syllabus.pdf): schedule, policies, and grading.
 - [Operating Cloud Databases (PDF)](Operating_Cloud_Databases.pdf): the course textbook. Each week's page identifies the assigned chapter and sections.
 - [Corrections and current notebook links](COURSE_CORRECTIONS.md): read alongside the textbook PDF.

@@ -27,6 +27,7 @@ unless the weekly lab assigns it.
 
 ## Class Materials
 
+- **MongoDB starting lab:** We will use [this introductory MongoDB lab](https://learn.mongodb.com/learn/course/start-here-intro-to-mongodb-2025-12-31/lesson-1-welcome-to-the-introduction-to-mongodb-course/learn?client=educators&page=3) to start working with MongoDB in class.
 - [Atlas MQL and modeling notebook](materials/notebooks/04_atlas_mql_modeling.ipynb)
 - [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_10/materials/notebooks/04_atlas_mql_modeling.ipynb) for Lab 1; save a working copy in Drive.
 - [Week 10 student deck](week_10_mql_document_modeling.pptx)
