@@ -28,6 +28,11 @@ all field names, nested paths, types, value meanings, and all six supplied
 records. In particular, every ticket has a `priority` field; an omitted field
 in a query's projection is still present in the stored document.
 
+Static Manim diagrams illustrate the query and update concepts in the notebook.
+Optional inline video players appear after the related examples. No media upload
+is needed; if a player is missing, run its titled video cell. These media cells
+do not require a database connection and do not add submission requirements.
+
 Run the SQL-to-MongoDB comparison in Section 2. Both queries ask for active
 high/urgent tickets and return the same ticket ID and status. The SQL example
 uses a temporary SQLite table made from these six documents, so it needs no

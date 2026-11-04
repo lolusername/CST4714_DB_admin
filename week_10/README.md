@@ -60,9 +60,11 @@ separate submission or course-badge requirement.
 
 ## Teaching and playback
 
-The PowerPoint has word for word speaker notes. Slides 1–20 cover Day 1 and slides 21–31 cover Day 2. Slides 7–9 introduce the complete ticket data model before the query examples. Three optional static Manim diagrams are on slides 33–35, with links from the related examples. Slide 36 compares the MongoDB University sandbox with Colab and links to both browser activities; slide 4 links to it.
+The PowerPoint has word for word speaker notes. Slides 1–24 cover Day 1 and slides 25–35 cover Day 2. Slides 7–9 introduce the complete ticket data model before the query examples. Four static Manim diagrams now appear in the main teaching sequence: filter/projection/sort on slide 12, array matching on slide 16, repeated updates on slide 19, and expected-state filtering on slide 21. These are still illustrations, with no animation. Slide 37 compares the MongoDB University sandbox with Colab and links to both browser activities; slide 4 links to it.
 
-Download the `.pptx` and open it in desktop PowerPoint. In Slide Show, click a thumbnail on slide 32 to play its embedded video full screen. The videos work without an internet connection. GitHub previews and the PDF handout show still images. The individual MP4 and subtitle files remain available below.
+Download the `.pptx` and open it in desktop PowerPoint. In Slide Show, click a thumbnail on slide 36 to play its embedded video full screen. GitHub previews and the PDF handout show still images. The individual MP4 and subtitle files remain available below.
+
+The Colab notebook also includes all four still diagrams and three inline video players beside the relevant lesson sections. Click a player's play button; if the player is missing, run its titled video cell first. The supporting display code is hidden. Media loads from the public course repository, so no file upload is needed; viewing it requires internet access. The video cells work independently of the Atlas connection. If inline playback is unavailable, use the player's **Open MP4** link.
 
 See the [static illustrations](illustrations/README.md) and [slide sources](week_10_sources.md).
 
@@ -90,7 +92,7 @@ boundary is the specific lesson, not a claim that different titles mean new work
 
 ## Day 1: Basic MQL in a Safe Collection
 
-Use **slides 1-20**. Start with the notebook's SQL-to-MongoDB comparison: the
+Use **slides 1-24**. Start with the notebook's SQL-to-MongoDB comparison: the
 same six tickets, the same question, and the same answer through different
 query notation. The instructor then models nested fields, arrays, update
 operators, and write-result counts.
@@ -105,7 +107,7 @@ Submit only the completed `04_atlas_mql_modeling.ipynb` notebook.
 
 ## Day 2: Model From Access Patterns
 
-Use **slides 21-31**. The instructor demonstrates **Lesson 3: Modeling One-to-One** and a ticket-page
+Use **slides 25-35**. The instructor demonstrates **Lesson 3: Modeling One-to-One** and a ticket-page
 read. Students complete **Lesson 4: Modeling One-to-Many**, including its
 interactive **Practice**, then revise their Week 9 ticket design for a new
 requirement: the page needs only the latest two events, but the system must retain

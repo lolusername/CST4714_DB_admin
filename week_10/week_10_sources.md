@@ -46,54 +46,59 @@ References for the slide explanations. The speaker notes and spoken transcript c
 
 ## Slide 12
 
-- https://www.mongodb.com/docs/manual/tutorial/query-embedded-documents/
-- https://www.mongodb.com/docs/manual/tutorial/query-arrays/
+- [Static Manim illustrations and source](illustrations/README.md)
+- [Supplied Day 1 notebook](materials/notebooks/04_atlas_mql_modeling.ipynb)
 
 ## Slide 13
 
-- https://www.mongodb.com/docs/manual/reference/operator/query/elemMatch/
+- https://www.mongodb.com/docs/manual/tutorial/query-embedded-documents/
+- https://www.mongodb.com/docs/manual/tutorial/query-arrays/
 
 ## Slide 14
 
 - https://www.mongodb.com/docs/manual/reference/operator/query/elemMatch/
 
-## Slide 16
+## Slide 15
 
-- https://www.mongodb.com/docs/languages/python/pymongo-driver/current/crud/update/
-
-## Slide 17
-
-- https://www.mongodb.com/docs/manual/core/write-operations-atomicity/
+- https://www.mongodb.com/docs/manual/reference/operator/query/elemMatch/
 
 ## Slide 18
 
+- https://www.mongodb.com/docs/languages/python/pymongo-driver/current/crud/update/
+
+## Slide 20
+
 - https://www.mongodb.com/docs/manual/core/write-operations-atomicity/
 
-## Slide 23
+## Slide 22
+
+- https://www.mongodb.com/docs/manual/core/write-operations-atomicity/
+
+## Slide 27
 
 - https://learn.mongodb.com/learn/course/modeling-data-relationships/lesson-3-modeling-one-to-one/learn
 - https://learn.mongodb.com/learn/course/modeling-data-relationships/lesson-4-modeling-one-to-many/learn
 
-## Slide 24
+## Slide 28
 
 - https://www.mongodb.com/docs/manual/core/write-operations-atomicity/
 
-## Slide 28
+## Slide 32
 
 - https://www.mongodb.com/docs/manual/reference/limits/
 
-## Slide 29
+## Slide 33
 
 - https://www.postgresql.org/docs/current/arrays.html
 - https://www.postgresql.org/docs/current/datatype-json.html
 - https://www.mongodb.com/docs/manual/core/write-operations-atomicity/
 
-## Slide 30
+## Slide 34
 
 - https://learn.mongodb.com/learn/course/modeling-data-relationships/lesson-4-modeling-one-to-many/learn
 - https://learn.mongodb.com/learn/course/modeling-data-relationships/lesson-4-modeling-one-to-many/practice?page=1
 
-## Slide 36
+## Slide 37
 
 - [Starting lab: Introduction to the IDE](https://learn.mongodb.com/learn/course/start-here-intro-to-mongodb-2025-12-31/lesson-1-welcome-to-the-introduction-to-mongodb-course/learn?client=educators&page=3)
 - [Optional Data Explorer practice (sign-in or enrollment)](https://learn.mongodb.com/learn/course/mongodb-and-the-document-model-smartbridge/lesson-3-managing-databases-collections-and-documents-in-atlas-data-explorer/practice?client=educators)
@@ -102,4 +107,4 @@ References for the slide explanations. The speaker notes and spoken transcript c
 
 ## Static illustrations
 
-The illustrations on slides 33–35 use the supplied Week 10 notebook fixture. Original Manim source and still PNGs are in [illustrations](illustrations/README.md).
+The four static Manim illustrations on slides 12, 16, 19, and 21 use the supplied Week 10 notebook fixture. Original Manim source and still PNGs are in [illustrations](illustrations/README.md).
