@@ -2,7 +2,7 @@
 
 Render with Manim Community 0.22:
   manim -s -r 2240,960 --disable_caching --media_dir <build> week10_stills.py \
-    ArrayMatchStill RepeatedSetStill ExpectedStateStill
+    ArrayMatchStill RepeatedSetStill ExpectedStateStill FilterProjectSortStill
 Only self.add is used. No animation or movie is authored.
 Values come from the Week 10 notebook and its six-ticket fixture.
 """
@@ -131,3 +131,45 @@ class ExpectedStateStill(Scene):
         put(self,'matched 0     modified 0',0,-1.83,36,INK,True,True)
         line(self,(-7.5,-2.42),(7.5,-2.42))
         put(self,'Status stays in_progress. Reload the document before deciding what to do next.',0,-2.96,30)
+
+
+class FilterProjectSortStill(Scene):
+    def construct(self):
+        # Trace exactly three real fixture documents. Priority remains stored;
+        # the projection hides it only in the returned result.
+        put(self,'Filter chooses documents. Projection chooses fields. Sort orders results.',0,3.02,31,bold=True)
+        put(self,'Three selected tickets from the six-ticket fixture; other fields are omitted here.',0,2.53,27,MUTED)
+        columns=[(-5.7,4.0,'Before'),(-1.45,3.95,'1  Filter'),(2.4,3.2,'2  Project'),(5.95,3.2,'3  Sort')]
+        for x,w,label in columns:
+            put(self,label,x,1.92,31,BLUE if label!='Before' else INK,True)
+        arrow(self,(-4.45,1.92),(-2.88,1.92))
+        arrow(self,(-.30,1.92),(1.03,1.92))
+        arrow(self,(3.65,1.92),(4.80,1.92))
+        for x,label in [(-5.7,'ticket_id / status / priority'),(-1.45,'Keep active tickets'),(2.4,'Return two fields'),(5.95,'Descending ticket_id')]:
+            v=t(label,23,MUTED)
+            v.scale_to_fit_width(min(v.width,3.85 if x<0 else 3.1))
+            v.move_to([x,1.38,0]);self.add(v)
+
+        def card(x,y,w,tid,status,priority=None):
+            box=RoundedRectangle(width=w,height=.73,corner_radius=.08,color=RULE,stroke_width=2,
+                                 fill_color=WHITE,fill_opacity=1).move_to([x,y,0]);self.add(box)
+            main=t(f'{tid}  {status}',23,INK,mono=True)
+            main.scale_to_fit_width(min(main.width,w-.28))
+            main.move_to([x,y+(.13 if priority is not None else 0),0]);self.add(main)
+            if priority is not None:put(self,f'priority: {priority}',x,y-.19,20,MUTED,mono=True)
+
+        rows=[(1001,'open','high',.68),(1003,'resolved','urgent',-.22),(1006,'in_progress','medium',-1.12)]
+        for tid,status,priority,y in rows:card(-5.7,y,4.0,tid,status,priority)
+        for tid,status,priority,y in rows:
+            if status!='resolved':card(-1.45,y,3.95,tid,status,priority)
+        put(self,'1003 is excluded',-1.45,-.22,24,AMBER)
+        card(2.4,.68,3.2,1001,'open');card(2.4,-1.12,3.2,1006,'in_progress')
+        card(5.95,.68,3.2,1006,'in_progress');card(5.95,-1.12,3.2,1001,'open')
+        put(self,'Same documents',2.4,-.22,23,MUTED)
+        put(self,'Same fields',5.95,-.22,23,MUTED)
+        line(self,(-7.7,-1.60),(7.55,-1.60))
+        put(self,'Selected IDs:\n1001, 1003, 1006',-5.7,-2.25,22,MUTED,mono=True)
+        put(self,'{"status": {"$in":\n["new", "open",\n"in_progress"]}}',-1.45,-2.25,20,INK,mono=True)
+        put(self,'{"_id": 0,\n"ticket_id": 1,\n"status": 1}',2.4,-2.25,20,INK,mono=True)
+        put(self,'.sort(\n"ticket_id", -1\n)',5.95,-2.25,20,INK,mono=True)
+        put(self,'These are conceptual steps. The stored documents are unchanged.',0,-3.08,26,bold=True)
