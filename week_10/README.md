@@ -76,7 +76,7 @@ Submit only the completed `04_atlas_mql_modeling.ipynb` notebook.
 
 ## Day 2: MongoDB University lab and Chapter 10 response
 
-1. **Minutes 0–15:** PowerPoint lecture.
+1. **Minutes 0–15:** Follow a worked example in the lecture. See how MongoDB adds one account, how to read it back by its ID, and how to add two accounts in one call.
 2. **Minutes 15–20:** follow your instructor from the course overview to **Design Effective Queries**, open its lab, and start **Insert a Document**. If you can’t reach a terminal in five minutes, open the course notebook linked in the handout.
 3. **Minutes 20–75:** run the commands yourself. Read back a document you inserted, change a filter, and save what you observed.
 4. **Minutes 75–95:** write the [Chapter 10 reading response](reading_response.md) on ticket 1003. Use one observation from your lab and one named section from the reading.

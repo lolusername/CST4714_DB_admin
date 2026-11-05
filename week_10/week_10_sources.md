@@ -74,9 +74,14 @@ References for the slide explanations. The speaker notes and spoken transcript c
 
 - https://www.mongodb.com/docs/manual/core/write-operations-atomicity/
 
+## Slide 26
+
+- [Insert one document in mongosh](https://www.mongodb.com/docs/manual/reference/method/db.collection.insertone/)
+
 ## Slide 27
 
-- [Optional one-to-one modeling example](https://learn.mongodb.com/learn/course/modeling-data-relationships/lesson-3-modeling-one-to-one/learn)
+- [Read one document in mongosh](https://www.mongodb.com/docs/manual/reference/method/db.collection.findone/)
+- [Insert multiple documents in mongosh](https://www.mongodb.com/docs/manual/reference/method/db.collection.insertmany/)
 
 ## Slide 28
 
@@ -103,6 +108,10 @@ References for the slide explanations. The speaker notes and spoken transcript c
 - [Optional introductory IDE orientation](https://learn.mongodb.com/learn/course/start-here-intro-to-mongodb-2025-12-31/lesson-1-welcome-to-the-introduction-to-mongodb-course/learn?client=educators&page=3)
 - [Optional Atlas Data Explorer practice](https://learn.mongodb.com/learn/course/mongodb-and-the-document-model-smartbridge/lesson-3-managing-databases-collections-and-documents-in-atlas-data-explorer/practice?client=educators)
 - [Day 1 notebook](materials/notebooks/04_atlas_mql_modeling.ipynb)
+
+## Slide 39
+
+- [Publisher and address modeling example](https://learn.mongodb.com/learn/course/modeling-data-relationships/lesson-3-modeling-one-to-one/learn)
 
 ## Static illustrations
 

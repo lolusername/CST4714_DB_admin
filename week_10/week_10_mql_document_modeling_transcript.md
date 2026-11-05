@@ -298,21 +298,23 @@ Submit the completed notebook with your changes and outputs. Today's submission 
 
 ## Slide 25
 
-A resident opens ticket 1003. What do they want right now? Its current status and the two most recent events. What should still exist when they close the page? Every earlier event, even the ones the page didn't request.
+Imagine Ari has just opened an account. The form says the account is open. What would convince you that the database actually stored it?
 
-Keep that difference between what we read and what we store in mind. We'll look briefly at a document boundary, then you'll spend most of class trying queries and checking what they actually return. Afterward, you'll use one result and the chapter to explain a design choice for this ticket.
+CRUD names four things we can do with data: create, read, update, and delete. Today we’ll start with the first two. We’ll create Ari’s account, then make a separate request to read back the account we just wrote. Everything you need for this example is on the screen.
 
 ## Slide 26
 
-A requester can open many tickets. A ticket can accumulate many events. Both relationships are one-to-many. Do they need the same storage design? Think about who owns the contact details, who needs the ticket history, and how large each set might grow.
+A collection holds documents. Our collection is called accounts, and this pair of braces describes one account. The owner field says who it belongs to. The status field says whether it’s open. Those are the two facts we want to store.
 
-If a resident corrects their contact information, we want one authoritative place to make that change. If an event happens, we want to retain it even after newer events push it off the page. Those operations give us more guidance than the word many does by itself.
+Read the first line with me. In the current database, go to accounts and insert one document. That’s what insertOne means. The shell saves the reply in a variable called saved. Typing saved shows us the reply.
+
+Acknowledged is true: MongoDB acknowledged our write. We supplied the owner and status, and MongoDB generated an ID for this document. Your ID will look different. Which value could we use to retrieve this exact account, even if someone else is also named Ari? The insertedId. Let’s use it.
 
 ## Slide 27
 
-Example Press owns one small headquarters address. Suppose staff usually retrieve that address with the publisher and only edit it as part of that publisher's record. An embedded address fits those operations.
+Now we’re reading. findOne asks for a document. Inside the braces, the filter asks for the stored _id that equals the insertedId from our first command. What came back that we couldn’t see in the acknowledgment? Here’s Ari’s name, the open status, and that same ID. We can check the values the database actually stored.
 
-If a different team maintains the address or many records share it, a reference could make sense. Before choosing, ask who can change the address and which pages read it. This example is available for review while you work through the ticket case.
+Suppose Bo and Cam open accounts too. We can send both in one insertMany call. The square brackets hold a list. Each pair of braces inside it describes one account. How many documents does this call add? Two. How many are there altogether if we started with Ari and ran this call once? Three. In the lab, use the accounts and fields in its instructions. You’ll recognize the same two shapes: one document for insertOne, a list of documents for insertMany.
 
 ## Slide 28
 
@@ -386,7 +388,7 @@ In your response, name a requirement, explain the document boundary you chose, a
 
 ## Slide 34
 
-Open the Week 10 Lab 2 handout. Start at the first activity it links. If the browser workspace has not opened after five minutes, use the Day 2 notebook in the handout. You can also use the notebook if the activity won't let you run or change a command.
+Open the Week 10 Lab 2 handout. Open the course called CRUD Operations in MongoDB. Follow along while I open Design Effective Queries and choose the lab. If the browser workspace has not opened after five minutes, use the Day 2 notebook in the handout. You can also use the notebook if the activity won't let you run or change a command.
 
 Keep a short lab log. Which collection did you query? What did the command return? Change one condition, run the query again, and record what happened. If nothing matches, keep that result and explain what you think the filter ruled out.
 
@@ -415,6 +417,18 @@ As you watch, follow one ticket through the example. Ask which document qualifie
 For Day 2, start with the Week 10 Lab 2 handout. It has the current activity links and the Day 2 notebook. If a browser workspace won't open within five minutes, or it won't let you try your own commands, move to the notebook and keep your results there.
 
 The other two links are optional if you want to revisit the browser orientation or Atlas Data Explorer from Day 1. When you're ready to write, the Lab 2 handout also links to the Chapter 10 prompt.
+
+## Slide 38
+
+A requester can open many tickets. A ticket can accumulate many events. Both relationships are one-to-many. Do they need the same storage design? Think about who owns the contact details, who needs the ticket history, and how large each set might grow.
+
+If a resident corrects their contact information, we want one authoritative place to make that change. If an event happens, we want to retain it even after newer events push it off the page. Those operations give us more guidance than the word many does by itself.
+
+## Slide 39
+
+Example Press owns one small headquarters address. Suppose staff usually retrieve that address with the publisher and only edit it as part of that publisher's record. An embedded address fits those operations.
+
+If a different team maintains the address or many records share it, a reference could make sense. Before choosing, ask who can change the address and which pages read it. This example is available for review while you work through the ticket case.
 
 ## License
 
