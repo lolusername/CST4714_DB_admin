@@ -30,7 +30,7 @@ does not claim to have tested the application when only SQL was tested.
 
 ## 6. Defend a Document Boundary
 
-In [Week 10 Lab 2](../../lab_02_document_model.md), record your insert and changed-filter observations for Part A. Use the [Chapter 10 reading response](../../reading_response.md) for Part B. Write 150–220 words to the developer building the page for ticket 1003. Bring both parts together in one Brightspace text entry.
+For [Week 10 Lab 2](../../lab_02_document_model.md), submit your Part A lab record in Brightspace before leaving class. The [Chapter 10 reading response](../../reading_response.md) is optional. If you choose Part B, add 150–220 words to the same entry for the developer building the page for ticket 1003.
 
 Explain how the page retrieves the latest two events, newest first, while the system keeps its complete history. Describe where a change to the requester's current contact details happens and one cost of your design. Cite one Chapter 10 section by title and connect its idea to a result from your insert or filter practice. Identify a paper-trace result as a prediction.
 

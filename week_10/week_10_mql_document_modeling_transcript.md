@@ -334,7 +334,7 @@ A field named requester_name_at_open has a different purpose. It records the nam
 
 The problem comes when we copy a value without stating which meaning it has. Someone reading a field called email may assume it's current, even if no process keeps the copy up to date.
 
-For the lab's requirement, keep current contact details in one authoritative user record and explain how the page reaches it. A historical snapshot is optional and needs a clear purpose.
+For this ticket page, a single user record gives staff one place to correct current contact details. A historical snapshot is optional and needs a clear purpose.
 
 Also remember that requester_id is a reference we interpret. MongoDB doesn't automatically enforce a foreign key for it. The application needs rules for missing or deleted related records.
 
@@ -356,7 +356,7 @@ The next slide assembles a page from these separate records. As we walk through 
 
 Here the page loads ticket 1001, gets the requester by ID, then finds the two newest events for this ticket. Read the end of the query with me: sort by event time, break a tie by event ID, and limit the result to two. Which of those operations removes old events from storage? None of them. The limit changes the result the page receives.
 
-This example returns 5002 and 5001. You'll use ticket 1003 in your response. Its three recorded events make the difference between displaying two and retaining them all easier to see. Reading the current requester from one shared document also means there's one place to correct contact details. Loading those separate records takes extra reads.
+This example returns 5002 and 5001. Ticket 1003 gives us another example. Its page can display the latest two events while all three remain in the history. Reading the current requester from one shared document also means there's one place to correct contact details. Loading those separate records takes extra reads.
 
 ## Slide 32
 
@@ -370,7 +370,7 @@ If events live separately, the collection gains documents while the ticket stays
 
 A hybrid can keep authoritative history separately and a small recent-events copy on the ticket. That can help the page, but someone must define how the copy stays current and what happens when it falls behind.
 
-For this lab, a clear referenced design is a perfectly reasonable choice. Choose the simplest model you can explain that satisfies the page, contact-update, and history-retention requirements.
+With a referenced design, staff can correct the contact record once, and the page can retrieve the newest events while keeping the complete history.
 
 ## Slide 33
 
@@ -384,7 +384,7 @@ Use the same care when comparing database systems. PostgreSQL supports arrays an
 
 MongoDB's flexible documents likewise need clear field meanings and rules. Choosing the product doesn't make those decisions for us.
 
-In your response, name a requirement, explain the document boundary you chose, and describe the work that choice creates for the application. That gives the developer something concrete to evaluate.
+If you choose the optional reading response, name a requirement, explain the document boundary you chose, and describe the work that choice creates for the application. That gives the developer something concrete to evaluate.
 
 ## Slide 34
 
@@ -392,15 +392,15 @@ Open the Week 10 Lab 2 handout. Open the course called CRUD Operations in MongoD
 
 Keep a short lab log. Which collection did you query? What did the command return? Change one condition, run the query again, and record what happened. If nothing matches, keep that result and explain what you think the filter ruled out.
 
-At minute 75, switch to the Chapter 10 reading response. Use one result from your lab to help explain your design for ticket 1003. The resident wants to see the two newest events. Where will the older events live, and how would a correction to the requester's contact details reach this page?
+At minute 75, check your lab record. You have twenty minutes to finish any commands or fill in what you observed. If your record is ready and you want to explore the ticket design, try the optional Chapter 10 response.
 
-Submit the lab log and your response in one Brightspace entry. I'll come around while you get started.
+Part A is the required submission. Paste it into one Brightspace text entry before you leave. If you write Part B, add it to the same entry. I'll come around while you get started.
 
 ## Slide 35
 
-Read your lab log as if you were your partner. Could they tell what you ran and what happened when you changed the filter? Now read your response. Can they tell where the earlier events still live when the page shows only two?
+Imagine your partner is trying to repeat your query. Can they tell which document you inserted and which field came back when you looked it up? Could they repeat your two filters and see the difference you described?
 
-Make sure your response identifies a Chapter 10 section and an observation from today's work. Use one Brightspace entry for both parts. Next week we'll use aggregation to ask questions across multiple documents.
+Paste your lab record into Brightspace. That completes the assignment. If you chose the Chapter 10 response, add it underneath the record. Next week we'll use aggregation to ask questions across multiple documents.
 
 ## Slide 36
 
@@ -416,7 +416,7 @@ As you watch, follow one ticket through the example. Ask which document qualifie
 
 For Day 2, start with the Week 10 Lab 2 handout. It has the current activity links and the Day 2 notebook. If a browser workspace won't open within five minutes, or it won't let you try your own commands, move to the notebook and keep your results there.
 
-The other two links are optional if you want to revisit the browser orientation or Atlas Data Explorer from Day 1. When you're ready to write, the Lab 2 handout also links to the Chapter 10 prompt.
+The other two links are optional if you want to revisit the browser orientation or Atlas Data Explorer from Day 1. If you'd like to try the optional Chapter 10 response, follow the writing prompt in the Lab 2 handout.
 
 ## Slide 38
 

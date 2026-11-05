@@ -2,7 +2,7 @@
 
 [Open the MongoDB University course **CRUD Operations in MongoDB**](https://learn.mongodb.com/courses/crud-operations-in-mongodb)
 
-After the lecture, you have **55 minutes to work individually** and **20 minutes to read and write**. Keep a text note beside the lab. You will submit one Brightspace entry: **Part A** is evidence from your commands; **Part B** is your [Chapter 10 reading response](reading_response.md).
+Work individually for **55 minutes** in the MongoDB labs. Keep notes on what you run and what comes back. The required submission is **Part A, your lab record**, in one Brightspace text entry before you leave. Use the next 20 minutes to finish your work or, if your record is ready, try the [optional Chapter 10 response](reading_response.md).
 
 ## Start here | 5 minutes
 
@@ -30,10 +30,10 @@ Use the small ticket collection to insert ticket 1090, read it back, and compare
 
 ## Submit
 
-For **Part A**, use these three lines:
+For **Part A (required)**, enter these three lines in the Week 10 Day 2 Brightspace text box:
 
 - **Environment:** Which player challenge or notebook step did you reach? If you used the notebook, include the engine shown.
 - **Write and read:** What did you insert, how did you look it up, and which field and value came back?
 - **Changed filter:** Give the two conditions, your prediction, and the observed difference. Explain what caused it. If a command failed, identify the last result you actually saw.
 
-Then write [Part B: Chapter 10 reading response](reading_response.md). Paste both parts into one Week 10 Day 2 Brightspace text entry before leaving. You do not need to upload a notebook.
+Submit your lab record before leaving. **Part A alone meets the submission requirement.** If you choose to write [Part B, the optional Chapter 10 response](reading_response.md), add it below Part A in the same text entry.

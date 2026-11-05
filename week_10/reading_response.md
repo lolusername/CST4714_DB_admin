@@ -1,6 +1,6 @@
-# Week 10 Day 2 | Chapter 10 reading response
+# Week 10 Day 2 | Optional Chapter 10 reading response
 
-**Part B of Lab 2.** Read the assigned sections on printed pages **116–120** of [Operating Cloud Databases, Chapter 10](../Operating_Cloud_Databases.pdf#page=116). Begin at **Single-Document Atomicity Shapes Modeling** and continue through **More Than One Model Can Be Valid**. In particular, look at the latest-two query in **A Complete Referenced Page** and the discussion in **Growth and the Cost of a Convenient Preview**. The chapter works with ticket 1001. Your decision is about ticket 1003.
+**Part B is optional.** Submitting the [Part A lab record](lab_02_document_model.md#submit) fulfills the Day 2 requirement. If you choose Part B, use printed pages **116–120** of [Operating Cloud Databases, Chapter 10](../Operating_Cloud_Databases.pdf#page=116). Begin at **Single-Document Atomicity Shapes Modeling** and continue through **More Than One Model Can Be Valid**. In particular, look at the latest-two query in **A Complete Referenced Page** and the discussion in **Growth and the Cost of a Convenient Preview**. The chapter works with ticket 1001. Your decision is about ticket 1003.
 
 ## Write to the developer
 
@@ -16,4 +16,4 @@ You can defend a referenced, embedded, or hybrid design. Explain what happens fo
 
 ## Submit
 
-Paste **Part A — Lab record** from the [lab handout](lab_02_document_model.md) and **Part B — Chapter 10 response** into one Brightspace text entry. Use the reading section's title in your paragraph so your reader can find the passage. A complete response uses the event rows as evidence, identifies who owns current contact data, and explains one cost of the design.
+If you write this response, add it below your required lab record in the same Brightspace text entry. Include the chapter section’s title so your reader can find the passage.
