@@ -94,12 +94,12 @@ References for the slide explanations. The speaker notes and spoken transcript c
 
 ## Slide 34
 
-- [Assigned unit: MongoDB CRUD Operations: Insert and Find Documents](https://learn.mongodb.com/courses/mongodb-crud-operations-insert-and-find-documents)
 - [Week 10 Lab 2 handout](https://github.com/lolusername/CST4714_DB_admin/blob/main/week_10/lab_02_document_model.md)
+- [Chapter 10 reading response](https://github.com/lolusername/CST4714_DB_admin/blob/main/week_10/reading_response.md)
 
 ## Slide 37
 
-- [Required Day 2 unit](https://learn.mongodb.com/courses/mongodb-crud-operations-insert-and-find-documents)
+- [Week 10 Lab 2 handout and activity links](https://github.com/lolusername/CST4714_DB_admin/blob/main/week_10/lab_02_document_model.md)
 - [Optional introductory IDE orientation](https://learn.mongodb.com/learn/course/start-here-intro-to-mongodb-2025-12-31/lesson-1-welcome-to-the-introduction-to-mongodb-course/learn?client=educators&page=3)
 - [Optional Atlas Data Explorer practice](https://learn.mongodb.com/learn/course/mongodb-and-the-document-model-smartbridge/lesson-3-managing-databases-collections-and-documents-in-atlas-data-explorer/practice?client=educators)
 - [Day 1 notebook](materials/notebooks/04_atlas_mql_modeling.ipynb)

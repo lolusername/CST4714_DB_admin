@@ -1,76 +1,37 @@
-# Week 10 Lab 2 | Insert and find documents in MongoDB
+# Week 10 Lab 2 | Run queries in MongoDB
 
-[Open in GitHub](https://github.com/lolusername/CST4714_DB_admin/blob/main/week_10/lab_02_document_model.md)
+[Launch the MongoDB University lab: Perform CRUD Operations and Design Effective Queries](https://play.instruqt.com/embed/mongodb/tracks/crud-operations-in-mongodb--perform-crud-operations?token=em_8KmVAuFzDNFfao8W)
 
-Today you will **work individually for 55 minutes** in MongoDB University, then have **20 minutes to write**. By the end, you should be able to retrieve a document you inserted, explain how a filter changes a result, and use Chapter 10 to recommend a design for a ticket page.
+After the lecture, you have **55 minutes to work individually** and **20 minutes to read and write**. Keep a text note beside the lab. You will submit one Brightspace entry: **Part A** is evidence from your commands; **Part B** is your [Chapter 10 reading response](reading_response.md).
 
-**Submit:** one Brightspace text entry with two parts. Part A is your short lab record below. Part B is your [Chapter 10 reading response](reading_response.md). Keep your notes in a text editor as you work.
+## Start here | 5 minutes
 
-## Launch the lab | 5 minutes
+Open the launch link above. It goes straight to MongoDB University’s **Instruqt lab player**. Select **Launch**, then **Start** when the workspace is ready. The first challenge is **Insert a Document**. Allow the **mongosh** and **Instructions** panes time to load. If you see a video or quiz, return to the launch link. If you cannot get a working terminal within five minutes, [open the course notebook](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_10/materials/notebooks/10_day_2_insert_and_find.ipynb) and start there.
 
-1. Open [MongoDB CRUD Operations: Insert and Find Documents](https://learn.mongodb.com/courses/mongodb-crud-operations-insert-and-find-documents). Sign in or enroll in the free unit if prompted.
-2. Start **Lesson 1** and select **Practice**. Follow the activity into its provided workspace. Use the database, collection, and example documents named there. Earlier lessons may need to be visited in order.
-3. Use the University workspace for today's exercises. Keep the course ticket data for the reading response. If the workspace will not launch after one sign-in or relaunch attempt, [use the course practice below](#if-the-university-workspace-is-unavailable).
+## Work in the lab | 55 minutes
 
-## Work through three lessons | 55 minutes
-
-| Time | Open in MongoDB University | Do and observe |
+| Time | What to do | Evidence to keep |
 |---|---|---|
-| First 20 min | [Lesson 1 Practice — Inserting documents](https://learn.mongodb.com/learn/course/mongodb-crud-operations-insert-and-find-documents/lesson-1-inserting-documents-in-a-mongodb-collection/practice) | Follow the insert task. Identify the collection and one field you can use to recognize the inserted document. Read it back with a find operation where the workspace allows it. Record one returned field and value. |
-| Next 20 min | [Lesson 2 Practice — Finding documents](https://learn.mongodb.com/learn/course/mongodb-crud-operations-insert-and-find-documents/lesson-2-finding-documents-in-a-mongodb-collection/practice) | Run a find exercise. Predict which documents match. Change one condition or compare two filters provided by the exercise. Record the filters and a concrete difference in the returned documents or counts. A zero-match result is evidence too. |
-| Last 15 min | [Lesson 3 Practice — Comparison operators](https://learn.mongodb.com/learn/course/mongodb-crud-operations-insert-and-find-documents/lesson-3-finding-documents-by-using-comparison-operators/practice) | Try a comparison using the exercise's field and data type. Predict whether a value at the boundary is included. Where the workspace permits it, compare a strict condition with an inclusive one, for example `$gt` with `$gte` at the same value. Explain the result. |
+| First 15 minutes | Follow **Insert a Document** in the training environment. Use the database, collection, and fields named by the challenge. Run the insert once. Find the new document by its ID or another identifying field. | Record the collection, the filter you used for the read, and one field and value the read actually returned. An insert acknowledgment alone does not show what was stored. |
+| Next 15 minutes | Work through the **Find** challenge. Pick a filter that returns a document. Predict what will happen if you change one value or add a condition. Run both versions in the lab where permitted, or use the notebook for the comparison. | Record both filters and one difference you observed: an ID that entered or left the result, or a change in count. If a prediction missed, explain which value surprised you. |
+| Last 25 minutes | [Launch the second lab: Modify Query Results](https://play.instruqt.com/embed/mongodb/tracks/crud-operations-in-mongodb--modify-query-results?token=em_xAduftZJZ3IDAMmt). Try **Sort and Limit**. Predict which result will appear first. Change the sort direction or limit and run it again. Work on projection or counting if time permits. | Record what changed on screen. Compare the number displayed with the number of stored matches. What did the limit leave out? |
 
-Use each lesson's **Learn** section when you need an example. Follow the platform's directions inside graded tasks. If one task prevents extra queries, use the next permitted exercise or the course practice to try your variation, and label where you ran it. If you finish early, try Lesson 4 on array elements. At the writing cue, stop at your current checkpoint and record what you actually tried.
+The first lab is timed. If you finish the insert and find challenges with time left on its clock, try the update challenge. When that session ends, move to the second lab even if you have unfinished challenges. If either terminal stalls, the notebook below lets you continue.
 
-## Part A | Lab record
+If the lab gives you a result you didn't expect, pause before running the next command. Write down what matched and change just one condition so you can explain the difference.
 
-Use these three lines in Brightspace. Include only the collection name, conditions, and enough of each result to explain your observation. Leave account details out.
+## If you need the course notebook
 
-- **Route and progress:** Which environment did you use? Which lesson or step did you reach?
-- **Insert and read back:** What did you insert, how did you look for it, and what field/value came back? If an operation failed, record the error or last usable observation.
-- **Changed filter:** Give the first condition and result, then the changed condition and result. Explain why the change mattered. Mark a prediction explicitly if you could not execute it.
+[Run the Week 10 Day 2 notebook in Colab](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_10/materials/notebooks/10_day_2_insert_and_find.ipynb) or [download it for local Jupyter](https://github.com/lolusername/CST4714_DB_admin/blob/main/week_10/materials/notebooks/10_day_2_insert_and_find.ipynb). Run the setup cell and note which engine it reports. The notebook uses a disposable MongoDB Community Server when available and labels the in-memory simulator if it has to use one. No Atlas credentials are needed. Use the notebook for the remainder of the same 55-minute block; it is an alternative way to do the work, not another assignment.
 
-**Next:** complete [Part B, the Chapter 10 reading response](reading_response.md). Paste both parts into the same Week 10 Day 2 Brightspace submission. The text entry is the entire hand-in.
+Use the small ticket collection to insert ticket 1090, read it back, and compare two filters. Try changing “at least 30 minutes” to “more than 30 minutes,” then choose a new boundary and check your prediction. Use the later exercises to investigate what a limited display leaves in storage. Record your own outputs for Part A. If both environments fail, tell the instructor where you got stuck; keep any actual output and label any hand-traced results as predictions.
 
-## If the University workspace is unavailable
+## Submit
 
-Use a fresh [Colab notebook](https://colab.research.google.com/) or local Jupyter. These Python cells create a small in-memory practice collection with `mongomock`. This route uses the same insert, read-back, and filter decisions. It runs without an Atlas login or database URI. Label Part A **in-memory practice**.
+For **Part A**, use these three lines:
 
-Run this setup cell once. Rerunning it starts the exercise over.
+- **Environment:** Which player challenge or notebook step did you reach? If you used the notebook, include the engine shown.
+- **Write and read:** What did you insert, how did you look it up, and which field and value came back?
+- **Changed filter:** Give the two conditions, your prediction, and the observed difference. Explain what caused it. If a command failed, identify the last result you actually saw.
 
-```python
-%pip -q install "mongomock>=4.3,<5"
-import mongomock
-
-practice_client = mongomock.MongoClient()
-tickets = practice_client.week10_day2.practice
-tickets.insert_many([
-    {"ticket_id": 1001, "status": "open", "age_minutes": 12},
-    {"ticket_id": 1002, "status": "in_progress", "age_minutes": 30},
-    {"ticket_id": 1003, "status": "resolved", "age_minutes": 45},
-])
-```
-
-1. Insert the new practice ticket and read it back. Which returned value lets you identify it?
-
-```python
-ticket = {"ticket_id": 1090, "status": "open", "age_minutes": 30}
-result = tickets.insert_one(ticket)
-print(tickets.find_one({"_id": result.inserted_id}, {"_id": 0}))
-```
-
-2. Run the same display function with two filters. Predict the ticket IDs for each filter before running it. Then try one different status of your choice.
-
-```python
-def matching_ids(condition):
-    return [row["ticket_id"] for row in tickets.find(
-        condition, {"_id": 0, "ticket_id": 1}
-    ).sort("ticket_id", 1)]
-
-print(matching_ids({"status": "open"}))
-print(matching_ids({"status": "open", "age_minutes": {"$gte": 30}}))
-```
-
-3. Replace `$gte` with `$gt`, leaving the threshold at 30. Explain which ticket moved out of the result. Then try another threshold that changes the result again. Record the results you observed before closing the session with `practice_client.close()`.
-
-**If both workspaces are unavailable:** use the four documents printed above as a paper trace. Trace the insert, predict what the read-back would show, and list the matching ticket IDs for the open, inclusive, and strict conditions. Label your results **paper prediction** and give the point where access stopped. Then complete the same reading response.
+Then write [Part B: Chapter 10 reading response](reading_response.md). Paste both parts into one Week 10 Day 2 Brightspace text entry before leaving. You do not need to upload a notebook.

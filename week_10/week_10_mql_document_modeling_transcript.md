@@ -1,6 +1,6 @@
 # Week 10 Basic MQL and Document Modeling
 
-Word for word spoken script. Every slide section contains only words to say aloud. Preparation guidance is in the private instructor guide. Slides 1–24 cover Day 1, including the complete field reference on slides 7–9 and static Manim illustrations on slides 12, 16, 19, and 21. For the 15-minute Day 2 opening, use slides 25, 26, 28, 31, and 34. The other modeling examples support independent review. Slide 36 contains videos. Slide 37 links to the required University unit and the optional browser orientation and Data Explorer practice.
+This transcript follows the Week 10 presentation in order. Use the numbered headings to find the speaker notes for the part you want to review.
 
 ## Slide 1
 
@@ -48,7 +48,7 @@ Enter the connection URI in the hidden prompt. Use a database user's credentials
 
 After fixing the setting, run the connection cell again. Once ping responds, we know the deployment answered. The fixture setup then tests permission to write the practice data.
 
-The link below leads to slide 37, where you can find the browser orientation and optional Data Explorer practice. Next class we'll use a separate MongoDB University unit. For today's Lab 1, keep your work in your saved Colab notebook.
+The link below leads to slide 37, where you can find the browser orientation and optional Data Explorer practice. Next class we'll use the Week 10 Lab 2 handout. For today's Lab 1, keep your work in your saved Colab notebook.
 
 ## Slide 5
 
@@ -300,7 +300,7 @@ Submit the completed notebook with your changes and outputs. Today's submission 
 
 A resident opens ticket 1003. What do they want right now? Its current status and the two most recent events. What should still exist when they close the page? Every earlier event, even the ones the page didn't request.
 
-Keep that difference between what we read and what we store in mind. We'll look briefly at a document boundary, then you'll spend most of class inserting and finding documents in MongoDB University's practice environment. Afterward, you'll use one result and the chapter to explain a design choice for this ticket.
+Keep that difference between what we read and what we store in mind. We'll look briefly at a document boundary, then you'll spend most of class trying queries and checking what they actually return. Afterward, you'll use one result and the chapter to explain a design choice for this ticket.
 
 ## Slide 26
 
@@ -386,19 +386,19 @@ In your response, name a requirement, explain the document boundary you chose, a
 
 ## Slide 34
 
-Open the Week 10 Lab 2 handout and the link to MongoDB CRUD Operations: Insert and Find Documents. Sign in or enroll and open Practice in the first three lessons. Start with the collection and documents the practice gives you. The handout has a fallback if access takes more than a few minutes.
+Open the Week 10 Lab 2 handout. Start at the first activity it links. If the browser workspace has not opened after five minutes, use the Day 2 notebook in the handout. You can also use the notebook if the activity won't let you run or change a command.
 
-For Part A, record the insert you tried and a read that shows whether the document is there. Try a second filter and compare what the two queries returned. Keep the commands and the field values you observed. If you had to switch environments, say which one you used.
+Keep a short lab log. Which collection did you query? What did the command return? Change one condition, run the query again, and record what happened. If nothing matches, keep that result and explain what you think the filter ruled out.
 
-At minute 75, pause the practice and begin Part B. Use 150 to 220 words and name the Chapter 10 section you're drawing on. Explain which two events the page for ticket 1003 should show, where you'll retain the complete history and current contact details, and a cost of that choice. Bring one observation from your lab into the explanation.
+At minute 75, switch to the Chapter 10 reading response. Use one result from your lab to help explain your design for ticket 1003. The resident wants to see the two newest events. Where will the older events live, and how would a correction to the requester's contact details reach this page?
 
-Turn in both parts together as one Brightspace text entry. Open the handout now and work individually. I'll come around while you try the first insert.
+Submit the lab log and your response in one Brightspace entry. I'll come around while you get started.
 
 ## Slide 35
 
-Before you submit, read your lab log as if you were your partner. Could they tell which document you inserted and which query result changed? Then read your response. Can they tell where the earlier events still live when the page shows only two?
+Read your lab log as if you were your partner. Could they tell what you ran and what happened when you changed the filter? Now read your response. Can they tell where the earlier events still live when the page shows only two?
 
-Make sure your response identifies a Chapter 10 section and a real observation from today's work. Use one Brightspace text entry for both parts. Next week we'll use aggregation to ask questions across multiple documents.
+Make sure your response identifies a Chapter 10 section and an observation from today's work. Use one Brightspace entry for both parts. Next week we'll use aggregation to ask questions across multiple documents.
 
 ## Slide 36
 
@@ -412,9 +412,9 @@ As you watch, follow one ticket through the example. Ask which document qualifie
 
 ## Slide 37
 
-The first link opens our Day 2 MongoDB University unit. Use Practice in lessons one, two and three to insert a document, find it, and change a comparison filter. The unit supplies its own environment and data. Keep your lab log as you work.
+For Day 2, start with the Week 10 Lab 2 handout. It has the current activity links and the Day 2 notebook. If a browser workspace won't open within five minutes, or it won't let you try your own commands, move to the notebook and keep your results there.
 
-The other two links are optional if you want to revisit the browser workspace or the Atlas Data Explorer. On Day 1, our Colab notebook ran Python against a personal Atlas database or the local simulation. For today's University practice, use the shell in the lesson. Follow the Week 10 Lab 2 handout if sign-in or the practice environment is unavailable.
+The other two links are optional if you want to revisit the browser orientation or Atlas Data Explorer from Day 1. When you're ready to write, the Lab 2 handout also links to the Chapter 10 prompt.
 
 ## License
 

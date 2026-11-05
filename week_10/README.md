@@ -25,7 +25,7 @@ Bring one point you want clarified on Day 1. On Day 2, use printed pages **116�
 
 ## Class Materials
 
-- **Day 2 starts here:** [Lab 2 handout and University practice links](lab_02_document_model.md). After the lab, open the [Chapter 10 writing prompt](reading_response.md).
+- **Day 2 starts here:** [Lab 2 handout and interactive MongoDB lab](lab_02_document_model.md). After the lab, open the [Chapter 10 writing prompt](reading_response.md).
 - **Day 1 browser orientation:** We use [this introductory MongoDB lab](https://learn.mongodb.com/learn/course/start-here-intro-to-mongodb-2025-12-31/lesson-1-welcome-to-the-introduction-to-mongodb-course/learn?client=educators&page=3) to start working with MongoDB in class.
 - **Optional Day 1 Data Explorer practice:** You may use [Lesson 3: Managing Databases, Collections, and Documents in Atlas Data Explorer — Practice](https://learn.mongodb.com/learn/course/mongodb-and-the-document-model-smartbridge/lesson-3-managing-databases-collections-and-documents-in-atlas-data-explorer/practice?client=educators) in class. Sign in or enroll when prompted; this is optional unless announced in class.
 - [Complete ticket data reference](ticket_data_reference.md): every field and nested path, value meanings, and all six supplied documents; [download the fixture as MongoDB Extended JSON](ticket_fixture.json).
@@ -38,13 +38,11 @@ Bring one point you want clarified on Day 1. On Day 2, use printed pages **116�
 
 ### MongoDB University Sandbox and Our Colab Notebook
 
-Day 1 uses the editable Colab notebook with the course's six-ticket fixture. Day 2 uses the guided MongoDB University workspace with the unit's own collections and documents. Follow the prompts inside the University lab. If access fails, the [Lab 2 handout](lab_02_document_model.md#if-the-university-workspace-is-unavailable) has an in-memory exercise and a paper route.
+Day 1 uses the Colab notebook with the six-ticket fixture. Day 2 starts in a MongoDB University lab where you type commands in a terminal. The [Lab 2 handout](lab_02_document_model.md) links directly to the player and to an executable notebook if the player won’t start.
 
-## Teaching and playback
+## Playing the course videos
 
-The PowerPoint has word for word speaker notes. Slides 1–24 cover Day 1 and slides 25–35 cover Day 2. Slides 7–9 introduce the complete ticket data model before the query examples. Four static Manim diagrams now appear in the main teaching sequence: filter/projection/sort on slide 12, array matching on slide 16, repeated updates on slide 19, and expected-state filtering on slide 21. These are still illustrations, with no animation. For the 15-minute lecture in desktop PowerPoint, select **Slide Show → Custom Show → Week 10 Day 2**. It plays slides **25, 26, 28, 31, and 34** in order. Slide 34 hands the class over to Lab 2. Slide 37 provides browser resource links.
-
-Download the `.pptx` and open it in desktop PowerPoint. In Slide Show, click a thumbnail on slide 36 to play its embedded video full screen. GitHub previews and the PDF handout show still images. The individual MP4 and subtitle files remain available below.
+You can play the embedded videos in desktop PowerPoint or open the MP4 and subtitle files below. The PDF handout and GitHub preview show still images.
 
 The Colab notebook also includes all four still diagrams and three inline video players beside the relevant lesson sections. Click a player's play button; if the player is missing, run its titled video cell first. The supporting display code is hidden. Media loads from the public course repository, so no file upload is needed; viewing it requires internet access. The video cells work independently of the Atlas connection. If inline playback is unavailable, use the player's **Open MP4** link.
 
@@ -63,7 +61,7 @@ Short silent animations with captions (3 for this week). Each has a subtitle fil
 
 ## Day 1: Basic MQL in a Safe Collection
 
-Use **slides 1-24**. Start with the notebook's SQL-to-MongoDB comparison: the
+Start with the notebook's SQL-to-MongoDB comparison. The
 same six tickets, the same question, and the same answer through different
 query notation. The instructor then models nested fields, arrays, update
 operators, and write-result counts.
@@ -78,9 +76,9 @@ Submit only the completed `04_atlas_mql_modeling.ipynb` notebook.
 
 ## Day 2: MongoDB University lab and Chapter 10 response
 
-1. **Minutes 0–15:** PowerPoint on the ticket page, single-document writes, and the latest-two read. Open [Lab 2](lab_02_document_model.md) at the handoff.
-2. **Minutes 15–20:** sign in to [MongoDB University’s Insert and Find Documents unit](https://learn.mongodb.com/courses/mongodb-crud-operations-insert-and-find-documents) and launch Practice.
-3. **Minutes 20–75:** work individually on inserting, finding, and comparing documents. Keep a short record of your insert/read-back and changed filter.
+1. **Minutes 0–15:** PowerPoint lecture.
+2. **Minutes 15–20:** open the [Lab 2 handout](lab_02_document_model.md), launch the player, and start **Insert a Document**. If you can’t reach a terminal in five minutes, open the course notebook linked in the handout.
+3. **Minutes 20–75:** run the commands yourself. Read back a document you inserted, change a filter, and save what you observed.
 4. **Minutes 75–95:** write the [Chapter 10 reading response](reading_response.md) on ticket 1003. Use one observation from your lab and one named section from the reading.
 5. **Minutes 95–100:** submit the lab record and reading response together in one Brightspace text entry.
 

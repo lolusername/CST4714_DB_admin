@@ -10,7 +10,7 @@ In **150–220 words**, recommend where the ticket, events, and current contact 
 
 1. Which two event IDs should appear, in what order, and how would your design retrieve them while retaining the older event?
 2. Where would a staff member make a contact correction? As history grows, what read, write, or consistency cost does your choice create?
-3. Name one Chapter 10 section and use a specific idea from it to justify your decision. Connect that idea to one result from today's insert or filter practice. If you used the paper route, identify the result as a prediction.
+3. Name one Chapter 10 section and use a specific idea from it to justify your decision. Connect that idea to one result from today's insert or filter practice. Name a field, value, or count you actually observed. If access failed and you traced the result by hand, identify it as a prediction.
 
 You can defend a referenced, embedded, or hybrid design. Explain what happens for this workload. For example, a limit on a query controls the number of documents displayed; decide separately where the complete history lives.
 
