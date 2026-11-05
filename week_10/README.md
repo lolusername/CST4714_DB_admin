@@ -1,5 +1,7 @@
 # Week 10: MQL and Document Modeling
 
+**Day 2: [Launch the first interactive lab — Insert and Find](https://play.instruqt.com/embed/mongodb/tracks/crud-operations-in-mongodb--perform-crud-operations?token=em_8KmVAuFzDNFfao8W).** Select **Launch**, then **Start** to open **Insert a Document**. Next, [launch the second lab — Modify Query Results](https://play.instruqt.com/embed/mongodb/tracks/crud-operations-in-mongodb--modify-query-results?token=em_xAduftZJZ3IDAMmt). Use the [Lab 2 handout](lab_02_document_model.md) for the assignment.
+
 ## The Week's Question
 
 How do we query MongoDB documents safely and decide which related facts belong
@@ -25,7 +27,7 @@ Bring one point you want clarified on Day 1. The [optional Day 2 writing prompt]
 
 ## Class Materials
 
-- **Day 2 starts here:** [Lab 2 handout and interactive MongoDB lab](lab_02_document_model.md). Submit the lab record in Brightspace. The [Chapter 10 writing prompt](reading_response.md) is optional.
+- **Day 2 assignment:** [Lab 2 handout and submission instructions](lab_02_document_model.md). Submit the lab record in Brightspace. The [Chapter 10 writing prompt](reading_response.md) is optional.
 - **Day 1 browser orientation:** We use [this introductory MongoDB lab](https://learn.mongodb.com/learn/course/start-here-intro-to-mongodb-2025-12-31/lesson-1-welcome-to-the-introduction-to-mongodb-course/learn?client=educators&page=3) to start working with MongoDB in class.
 - **Optional Day 1 Data Explorer practice:** You may use [Lesson 3: Managing Databases, Collections, and Documents in Atlas Data Explorer — Practice](https://learn.mongodb.com/learn/course/mongodb-and-the-document-model-smartbridge/lesson-3-managing-databases-collections-and-documents-in-atlas-data-explorer/practice?client=educators) in class. Sign in or enroll when prompted; this is optional unless announced in class.
 - [Complete ticket data reference](ticket_data_reference.md): every field and nested path, value meanings, and all six supplied documents; [download the fixture as MongoDB Extended JSON](ticket_fixture.json).
@@ -38,7 +40,7 @@ Bring one point you want clarified on Day 1. The [optional Day 2 writing prompt]
 
 ### MongoDB University Sandbox and Our Colab Notebook
 
-Day 1 uses the Colab notebook with the six-ticket fixture. For Day 2, open [CRUD Operations in MongoDB](https://learn.mongodb.com/courses/crud-operations-in-mongodb) and follow your instructor to the lab. The [Lab 2 handout](lab_02_document_model.md) gives the tasks and links to the notebook if the player won’t start.
+Day 1 uses the Colab notebook with the six-ticket fixture. Day 2 uses MongoDB University’s interactive lab player. The [Lab 2 handout](lab_02_document_model.md) gives the tasks and links to the notebook if the player won’t start.
 
 ## Playing the course videos
 
@@ -77,7 +79,7 @@ Submit only the completed `04_atlas_mql_modeling.ipynb` notebook.
 ## Day 2: MongoDB University lab
 
 1. **Minutes 0–15:** Follow a worked example in the lecture. See how MongoDB adds one account, how to read it back by its ID, and how to add two accounts in one call.
-2. **Minutes 15–20:** follow your instructor from the course overview to **Design Effective Queries**, open its lab, and start **Insert a Document**. If you can’t reach a terminal in five minutes, open the course notebook linked in the handout.
+2. **Minutes 15–20:** open [the first interactive lab](https://play.instruqt.com/embed/mongodb/tracks/crud-operations-in-mongodb--perform-crud-operations?token=em_8KmVAuFzDNFfao8W), choose **Launch**, then **Start**. The first challenge is **Insert a Document**. If you can’t reach a terminal in five minutes, open the course notebook linked in the handout.
 3. **Minutes 20–75:** run the commands yourself. Read back a document you inserted, change a filter, and save what you observed.
 4. **Minutes 75–95:** finish your experiments and lab record. If your record is ready, you can try the [optional Chapter 10 response](reading_response.md) on ticket 1003.
 5. **Minutes 95–100:** submit your required lab record in one Brightspace text entry. Include the optional response below it if you wrote one.

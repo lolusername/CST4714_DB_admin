@@ -11,7 +11,7 @@ You will practice modeling, querying, access control, performance, and recovery.
 
 ## Start Here
 
-- **Week 10 Day 2:** Complete [the MongoDB University lab](week_10/lab_02_document_model.md) and submit your lab record in one Brightspace text entry. The [Chapter 10 writing response](week_10/reading_response.md) is optional. The [weekly guide](week_10/README.md) also links the Day 1 notebook and browser orientation.
+- **Week 10 Day 2:** [Launch the first interactive MongoDB lab — Insert and Find](https://play.instruqt.com/embed/mongodb/tracks/crud-operations-in-mongodb--perform-crud-operations?token=em_8KmVAuFzDNFfao8W). Choose **Launch**, then **Start**. Next, [launch the second lab — Modify Query Results](https://play.instruqt.com/embed/mongodb/tracks/crud-operations-in-mongodb--modify-query-results?token=em_xAduftZJZ3IDAMmt). The [assignment handout](week_10/lab_02_document_model.md) explains what to submit in Brightspace.
 - [Course syllabus (PDF)](CST4714_Fall_2026_Syllabus.pdf): schedule, policies, and grading.
 - [Operating Cloud Databases (PDF)](Operating_Cloud_Databases.pdf): the course textbook. Each week's page identifies the assigned chapter and sections.
 - [Corrections and current notebook links](COURSE_CORRECTIONS.md): read alongside the textbook PDF.
