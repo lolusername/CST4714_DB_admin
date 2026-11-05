@@ -1,6 +1,6 @@
 # Week 10 Basic MQL and Document Modeling
 
-Word for word spoken script. Every slide section contains only words to say aloud. Preparation guidance is in the private instructor guide. Slides 1–24 cover Day 1, including the complete field reference on slides 7–9 and static Manim illustrations on slides 12, 16, 19, and 21. Slides 25–35 cover Day 2, slide 36 contains videos, and slide 37 compares the browser labs with Colab and links optional Data Explorer practice.
+Word for word spoken script. Every slide section contains only words to say aloud. Preparation guidance is in the private instructor guide. Slides 1–24 cover Day 1, including the complete field reference on slides 7–9 and static Manim illustrations on slides 12, 16, 19, and 21. For the 15-minute Day 2 opening, use slides 25, 26, 28, 31, and 34. The other modeling examples support independent review. Slide 36 contains videos. Slide 37 links to the required University unit and the optional browser orientation and Data Explorer practice.
 
 ## Slide 1
 
@@ -48,7 +48,7 @@ Enter the connection URI in the hidden prompt. Use a database user's credentials
 
 After fixing the setting, run the connection cell again. Once ping responds, we know the deployment answered. The fixture setup then tests permission to write the practice data.
 
-The link below also leads to a short comparison with MongoDB University's guided browser labs and an optional Data Explorer practice. For today's Lab 1, keep your work in your saved Colab notebook.
+The link below leads to slide 37, where you can find the browser orientation and optional Data Explorer practice. Next class we'll use a separate MongoDB University unit. For today's Lab 1, keep your work in your saved Colab notebook.
 
 ## Slide 5
 
@@ -298,53 +298,29 @@ Submit the completed notebook with your changes and outputs. Today's submission 
 
 ## Slide 25
 
-Last class, we practiced querying documents and checking write results. Today we'll use those operations to design a ticket page.
+A resident opens ticket 1003. What do they want right now? Its current status and the two most recent events. What should still exist when they close the page? Every earlier event, even the ones the page didn't request.
 
-The page needs a ticket's current status and recent events. The system also needs to retain older history and let a resident correct their contact details in one place.
-
-Suppose that resident changes their email address. If we copied it into every ticket, we'd have to locate and update each copy to keep every page current. A shared user record gives us a single place for that correction, with an extra retrieval step when we build the page.
-
-We'll compare those kinds of consequences throughout the class. Keeping related facts together can simplify a read and allow one atomic document update. Keeping independently changing facts or growing history separate can make other operations easier.
-
-I'll demonstrate a one-to-one relationship. You'll work through the one-to-many activity and then revise a ticket design for the new page requirements. The aim is to explain how the shape supports the work the application actually does.
+Keep that difference between what we read and what we store in mind. We'll look briefly at a document boundary, then you'll spend most of class inserting and finding documents in MongoDB University's practice environment. Afterward, you'll use one result and the chapter to explain a design choice for this ticket.
 
 ## Slide 26
 
-Cardinality describes how many things can participate on each side of a relationship. A requester may have many tickets. A ticket may have many events. In our publisher example, we assume one designated headquarters per publisher.
+A requester can open many tickets. A ticket can accumulate many events. Both relationships are one-to-many. Do they need the same storage design? Think about who owns the contact details, who needs the ticket history, and how large each set might grow.
 
-Those descriptions help us understand the relationships, but they don't settle where to store the data.
-
-For example, a headquarters address could be embedded in its publisher or stored separately with a reference. We'd ask whether it belongs only to that publisher, whether the application normally reads them together, and whether the address needs independent updates or access rules.
-
-For an event history, we also need to ask what "many" means. A fixed list of three items is different from records that accumulate for years.
-
-As we work through the examples, say the assumptions aloud. Our headquarters relationship is one-to-one because we're talking about one designated headquarters. We aren't claiming that a publisher can have only one office. Clear assumptions keep the model tied to the requirement we're actually discussing.
+If a resident corrects their contact information, we want one authoritative place to make that change. If an event happens, we want to retain it even after newer events push it off the page. Those operations give us more guidance than the word many does by itself.
 
 ## Slide 27
 
-For my demonstration, we'll use MongoDB University's Modeling Data Relationships course, Lesson 3, Modeling One-to-One. Your individual activity uses Lesson 4, Modeling One-to-Many, including its Practice.
+Example Press owns one small headquarters address. Suppose staff usually retrieve that address with the publisher and only edit it as part of that publisher's record. An embedded address fits those operations.
 
-Before opening the lesson, let's use this small publisher document to frame the decision. Example Press has an embedded headquarters address. If that address belongs to this publisher and is usually read with it, embedding makes the complete information available in one document read.
-
-We could store the address separately instead. That may make sense if it has independent access rules or operations. The one-to-one relationship allows either design; the application's needs help us choose.
-
-This publisher document is our own illustration. We'll follow the external lesson's example when we open its activity.
-
-If the platform is unavailable, we can still work through the chapter's examples and discuss the same choices. For your submission, follow the Lab 2 fallback and say which material you used. You don't need to complete an entire course or earn a badge for this week's task.
+If a different team maintains the address or many records share it, a reference could make sense. Before choosing, ask who can change the address and which pages read it. This example is available for review while you work through the ticket case.
 
 ## Slide 28
 
-On Day 1, we changed a status and appended an event in separate calls. Here we put both changes in one update to one document.
+Look at the condition at the top. The command will change ticket 1001 only while its status is open. One update sets the new status and appends an event to that same document. A reader sees the document before or after that write.
 
-For this example, I have a separate demonstration collection with ticket 1001 in the open state. The update uses $set for the new status and $push for event 5099. MongoDB applies those changes atomically within that document, so another reader won't see a partially applied version of this write.
+What would happen if someone sent exactly the same command again? The first write changed the status to in_progress. The second filter now matches zero documents. That prevents another append in this example. The status condition does the work here.
 
-The filter also requires status open. The first run reports one matched and one modified. After that, the status is in_progress. Repeating the same command reports zero and zero, so it doesn't append another event.
-
-That repeat behavior comes from the expected-state filter. $push itself doesn't prevent duplicates.
-
-If the event lived in another document, the operation would cross a document boundary. We would need to decide how to coordinate the ticket change and event creation. Multi-document transactions are available with suitable deployment and application design, but they add considerations of their own.
-
-This is one concrete benefit of embedding. We'll weigh it alongside growth and independent access requirements.
+Moving the event to a second document would give us somewhere to grow its history. It also raises a question: if one write succeeds and the other fails, how will we coordinate them? That's a cost worth considering when we choose the boundary.
 
 ## Slide 29
 
@@ -376,17 +352,9 @@ The next slide assembles a page from these separate records. As we walk through 
 
 ## Slide 31
 
-We're now looking at an alternative version of the ticket page. Its separate fixture still has ticket 1001 in the open state.
+Here the page loads ticket 1001, gets the requester by ID, then finds the two newest events for this ticket. Read the end of the query with me: sort by event time, break a tie by event ID, and limit the result to two. Which of those operations removes old events from storage? None of them. The limit changes the result the page receives.
 
-This page uses three reads. We retrieve the ticket, retrieve its requester, and then query the event collection for that ticket's two most recent events.
-
-The event query sorts event_at descending and uses event_id descending as a tie breaker. The limit returns two events. It leaves the rest of the history stored in the collection.
-
-For this worked ticket, the output shows status open, Requester 101, and events 5002 then 5001. It only has two events. Your lab ticket has three, so you'll need to distinguish the two events displayed from the complete history retained.
-
-These reads also have limits. The example assumes the ticket and requester exist. An application needs to handle a missing result instead of treating None as a document. And three independent reads don't automatically represent one shared instant if writes happen between them.
-
-An index beginning with ticket_id and followed by the ordering fields is a candidate for supporting the history query. We haven't measured performance at scale here, so describe it as a design candidate rather than a benchmark result.
+This example returns 5002 and 5001. You'll use ticket 1003 in your response. Its three recorded events make the difference between displaying two and retaining them all easier to see. Reading the current requester from one shared document also means there's one place to correct contact details. Loading those separate records takes extra reads.
 
 ## Slide 32
 
@@ -418,27 +386,19 @@ In your response, name a requirement, explain the document boundary you chose, a
 
 ## Slide 34
 
-For Lab 2, complete Lesson 4, Modeling One-to-Many, and its Practice activity. My demonstration used Lesson 3. The weekly page links to both, so check the lesson number before starting.
+Open the Week 10 Lab 2 handout and the link to MongoDB CRUD Operations: Insert and Find Documents. Sign in or enroll and open Practice in the first three lessons. Start with the collection and documents the practice gives you. The handout has a fallback if access takes more than a few minutes.
 
-Then revise one design for ticket 1003 using last week's case facts. The page needs its latest two events, newest first. The system must retain all history, and current contact details must be editable in one authoritative user record.
+For Part A, record the insert you tried and a read that shows whether the document is there. Try a second filter and compare what the two queries returned. Keep the commands and the field values you observed. If you had to switch environments, say which one you used.
 
-Show a representative ticket document. If related data lives elsewhere, include a small related-document example so the relationship is visible.
+At minute 75, pause the practice and begin Part B. Use 150 to 220 words and name the Chapter 10 section you're drawing on. Explain which two events the page for ticket 1003 should show, where you'll retain the complete history and current contact details, and a cost of that choice. Bring one observation from your lab into the explanation.
 
-Write a short explanation for the developer implementing the page. Name the event IDs the page should display, explain how it retrieves them, and say where a contact correction happens. Also explain how the design handles fifty thousand events for this ticket.
-
-Submit the JSON, explanation, and Lesson 4 Practice progress image in one Brightspace text response. Redact account details. If the platform is unavailable, use the chapter's worked examples and state that substitution. No full-course badge or additional application is required.
+Turn in both parts together as one Brightspace text entry. Open the handout now and work individually. I'll come around while you try the first insert.
 
 ## Slide 35
 
-You now have a small database experiment you can describe precisely.
+Before you submit, read your lab log as if you were your partner. Could they tell which document you inserted and which query result changed? Then read your response. Can they tell where the earlier events still live when the page shows only two?
 
-You compared a query with the expected answer from a fixture. You found a case where conditions matched different array elements. You checked whether a write found a document, whether it changed anything, and what the document contained afterwards.
-
-You also used a page's requirements to explain a document boundary. You can describe why current contact details belong in one place and why a growing history may need separate records, along with the retrieval and consistency work that introduces.
-
-When you talk about the exercise, stay within what you actually tested. If you used local mode, say you tested the query logic locally. If you used Atlas, you can also explain your connection setup. Neither exercise establishes production performance or experience operating a large service.
-
-Next week we'll aggregate results and enforce document rules. Keep bringing the same questions: what exactly are we asking, what result do we expect, and what evidence tells us the operation did what we intended?
+Make sure your response identifies a Chapter 10 section and a real observation from today's work. Use one Brightspace text entry for both parts. Next week we'll use aggregation to ask questions across multiple documents.
 
 ## Slide 36
 
@@ -452,15 +412,9 @@ As you watch, follow one ticket through the example. Ask which document qualifie
 
 ## Slide 37
 
-We have two browser workspaces available, and it's helpful to know what each one is for.
+The first link opens our Day 2 MongoDB University unit. Use Practice in lessons one, two and three to insert a document, find it, and change a comparison filter. The unit supplies its own environment and data. Keep your lab log as you work.
 
-The introductory MongoDB University lab provides an IDE in your browser, connected to an Atlas cluster. An IDE is a workspace where you write and run code. That introduction teaches you how to use the workspace without installing a local development environment. Think of it as a guided practice sandbox: read the lesson, try the operation, and inspect what happens.
-
-Colab has a similar learning rhythm, but our work lives in a Python notebook that you save and edit. Today that notebook connects to your own Atlas cluster. Its optional mongomock mode is an in-memory simulation for practicing the query logic. It doesn't create an Atlas connection.
-
-The second link is extra practice with databases, collections, and documents in Atlas Data Explorer. Data Explorer gives you a graphical way to work with those objects. Sign in or enroll to open the practice, then follow that lesson's current instructions for its account, tools, and data. Different lessons may use different environments, so the introductory IDE doesn't tell us exactly what this exercise will provide.
-
-We may work through this optional practice together in class to become more familiar with the database and collection interface. You still complete Lab 1 in your Colab notebook. As you move between the interfaces, keep asking the same question: which database and collection am I working in, and what changed when I ran that operation?
+The other two links are optional if you want to revisit the browser workspace or the Atlas Data Explorer. On Day 1, our Colab notebook ran Python against a personal Atlas database or the local simulation. For today's University practice, use the shell in the lesson. Follow the Week 10 Lab 2 handout if sign-in or the practice environment is unavailable.
 
 ## License
 

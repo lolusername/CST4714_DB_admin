@@ -42,7 +42,7 @@ Day 1 uses the editable Colab notebook with the course's six-ticket fixture. Day
 
 ## Teaching and playback
 
-The PowerPoint has word for word speaker notes. Slides 1–24 cover Day 1 and slides 25–35 cover Day 2. Slides 7–9 introduce the complete ticket data model before the query examples. Four static Manim diagrams now appear in the main teaching sequence: filter/projection/sort on slide 12, array matching on slide 16, repeated updates on slide 19, and expected-state filtering on slide 21. These are still illustrations, with no animation. For the short Day 2 lecture, use slides **25, 26, 28, 31, and 34**. Slide 34 hands the class over to Lab 2. Slide 37 provides browser resource links.
+The PowerPoint has word for word speaker notes. Slides 1–24 cover Day 1 and slides 25–35 cover Day 2. Slides 7–9 introduce the complete ticket data model before the query examples. Four static Manim diagrams now appear in the main teaching sequence: filter/projection/sort on slide 12, array matching on slide 16, repeated updates on slide 19, and expected-state filtering on slide 21. These are still illustrations, with no animation. For the 15-minute lecture in desktop PowerPoint, select **Slide Show → Custom Show → Week 10 Day 2**. It plays slides **25, 26, 28, 31, and 34** in order. Slide 34 hands the class over to Lab 2. Slide 37 provides browser resource links.
 
 Download the `.pptx` and open it in desktop PowerPoint. In Slide Show, click a thumbnail on slide 36 to play its embedded video full screen. GitHub previews and the PDF handout show still images. The individual MP4 and subtitle files remain available below.
 

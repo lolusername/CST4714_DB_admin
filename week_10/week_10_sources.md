@@ -76,8 +76,7 @@ References for the slide explanations. The speaker notes and spoken transcript c
 
 ## Slide 27
 
-- https://learn.mongodb.com/learn/course/modeling-data-relationships/lesson-3-modeling-one-to-one/learn
-- https://learn.mongodb.com/learn/course/modeling-data-relationships/lesson-4-modeling-one-to-many/learn
+- [Optional one-to-one modeling example](https://learn.mongodb.com/learn/course/modeling-data-relationships/lesson-3-modeling-one-to-one/learn)
 
 ## Slide 28
 
@@ -95,15 +94,15 @@ References for the slide explanations. The speaker notes and spoken transcript c
 
 ## Slide 34
 
-- https://learn.mongodb.com/learn/course/modeling-data-relationships/lesson-4-modeling-one-to-many/learn
-- https://learn.mongodb.com/learn/course/modeling-data-relationships/lesson-4-modeling-one-to-many/practice?page=1
+- [Assigned unit: MongoDB CRUD Operations: Insert and Find Documents](https://learn.mongodb.com/courses/mongodb-crud-operations-insert-and-find-documents)
+- [Week 10 Lab 2 handout](https://github.com/lolusername/CST4714_DB_admin/blob/main/week_10/lab_02_document_model.md)
 
 ## Slide 37
 
-- [Starting lab: Introduction to the IDE](https://learn.mongodb.com/learn/course/start-here-intro-to-mongodb-2025-12-31/lesson-1-welcome-to-the-introduction-to-mongodb-course/learn?client=educators&page=3)
-- [Optional Data Explorer practice (sign-in or enrollment)](https://learn.mongodb.com/learn/course/mongodb-and-the-document-model-smartbridge/lesson-3-managing-databases-collections-and-documents-in-atlas-data-explorer/practice?client=educators)
-- [Atlas Data Explorer documentation](https://www.mongodb.com/docs/atlas/atlas-ui/)
-- [Week 10 notebook](materials/notebooks/04_atlas_mql_modeling.ipynb)
+- [Required Day 2 unit](https://learn.mongodb.com/courses/mongodb-crud-operations-insert-and-find-documents)
+- [Optional introductory IDE orientation](https://learn.mongodb.com/learn/course/start-here-intro-to-mongodb-2025-12-31/lesson-1-welcome-to-the-introduction-to-mongodb-course/learn?client=educators&page=3)
+- [Optional Atlas Data Explorer practice](https://learn.mongodb.com/learn/course/mongodb-and-the-document-model-smartbridge/lesson-3-managing-databases-collections-and-documents-in-atlas-data-explorer/practice?client=educators)
+- [Day 1 notebook](materials/notebooks/04_atlas_mql_modeling.ipynb)
 
 ## Static illustrations
 
