@@ -30,16 +30,8 @@ does not claim to have tested the application when only SQL was tested.
 
 ## 6. Defend a Document Boundary
 
-**Use in:** [Week 10: Document Model Decision](../../lab_02_document_model.md).
-**Read:** Chapter 10, the embedding and referencing discussion.
+In [Week 10 Lab 2](../../lab_02_document_model.md), record your insert and changed-filter observations for Part A. Use the [Chapter 10 reading response](../../reading_response.md) for Part B. Write 150–220 words to the developer building the page for ticket 1003. Bring both parts together in one Brightspace text entry.
 
-Explain the document shape already submitted in the lab. Describe how the page
-retrieves the latest two events while retaining all history, and where a current
-contact correction happens. Explain a cost of that choice and what would need
-attention if the history grew to 50,000 events. This supports the lab's existing
-response; it does not require another JSON model or another submission.
+Explain how the page retrieves the latest two events, newest first, while the system keeps its complete history. Describe where a change to the requester's current contact details happens and one cost of your design. Cite one Chapter 10 section by title and connect its idea to a result from your insert or filter practice. Identify a paper-trace result as a prediction.
 
-An **access pattern** is a recurring question or change the application makes.
-Embedding means placing related values inside a document; referencing means
-storing an identifier that leads to data elsewhere. Neither choice wins for
-every workload.
+An **access pattern** is a recurring question or change the application makes. **Embedding** keeps related values inside one document. **Referencing** stores an identifier that connects documents. Consider which operation gets easier under your design and which operation takes more work.

@@ -11,9 +11,7 @@ You will practice modeling, querying, access control, performance, and recovery.
 
 ## Start Here
 
-- **MongoDB starting lab:** We will use [this introductory MongoDB lab](https://learn.mongodb.com/learn/course/start-here-intro-to-mongodb-2025-12-31/lesson-1-welcome-to-the-introduction-to-mongodb-course/learn?client=educators&page=3) to start working with MongoDB in class.
-- **Possible additional MongoDB lab:** We may also use [Lesson 3: Managing Databases, Collections, and Documents in Atlas Data Explorer — Practice](https://learn.mongodb.com/learn/course/mongodb-and-the-document-model-smartbridge/lesson-3-managing-databases-collections-and-documents-in-atlas-data-explorer/practice?client=educators) in class. Sign in or enroll when prompted; this is optional unless announced in class.
-  Both activities offer browser-based practice. MongoDB University guides you through its lab environment; our Colab notebook holds our Python queries, explanations, and results. See the [Week 10 comparison](week_10/README.md#mongodb-university-sandbox-and-our-colab-notebook).
+- **Week 10 Day 2:** Start with [the MongoDB University lab](week_10/lab_02_document_model.md), then write the [Chapter 10 response](week_10/reading_response.md). Submit both parts in one Brightspace text entry. The [weekly guide](week_10/README.md) also links the Day 1 notebook and browser orientation.
 - [Course syllabus (PDF)](CST4714_Fall_2026_Syllabus.pdf): schedule, policies, and grading.
 - [Operating Cloud Databases (PDF)](Operating_Cloud_Databases.pdf): the course textbook. Each week's page identifies the assigned chapter and sections.
 - [Corrections and current notebook links](COURSE_CORRECTIONS.md): read alongside the textbook PDF.
