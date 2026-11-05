@@ -1,12 +1,14 @@
 # Week 10 Lab 2 | Run queries in MongoDB
 
-[Launch the MongoDB University lab: Perform CRUD Operations and Design Effective Queries](https://play.instruqt.com/embed/mongodb/tracks/crud-operations-in-mongodb--perform-crud-operations?token=em_8KmVAuFzDNFfao8W)
+[Open the MongoDB University course **CRUD Operations in MongoDB**](https://learn.mongodb.com/courses/crud-operations-in-mongodb)
 
 After the lecture, you have **55 minutes to work individually** and **20 minutes to read and write**. Keep a text note beside the lab. You will submit one Brightspace entry: **Part A** is evidence from your commands; **Part B** is your [Chapter 10 reading response](reading_response.md).
 
 ## Start here | 5 minutes
 
-Open the launch link above. It goes straight to MongoDB University’s **Instruqt lab player**. Select **Launch**, then **Start** when the workspace is ready. The first challenge is **Insert a Document**. Allow the **mongosh** and **Instructions** panes time to load. If you see a video or quiz, return to the launch link. If you cannot get a working terminal within five minutes, [open the course notebook](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_10/materials/notebooks/10_day_2_insert_and_find.ipynb) and start there.
+Open the course overview above and follow your instructor’s walkthrough. In the course menu, open **Design Effective Queries** and select **Lab: Perform CRUD Operations and Design Effective Queries**. Select **Launch**, then **Start** when the workspace is ready. The first challenge is **Insert a Document**.
+
+If you can’t reach the lab from the course menu, [open the first lab player directly](https://play.instruqt.com/embed/mongodb/tracks/crud-operations-in-mongodb--perform-crud-operations?token=em_8KmVAuFzDNFfao8W). If you cannot get a working terminal within five minutes, [open the course notebook](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_10/materials/notebooks/10_day_2_insert_and_find.ipynb) and start there.
 
 ## Work in the lab | 55 minutes
 
@@ -14,9 +16,9 @@ Open the launch link above. It goes straight to MongoDB University’s **Instruq
 |---|---|---|
 | First 15 minutes | Follow **Insert a Document** in the training environment. Use the database, collection, and fields named by the challenge. Run the insert once. Find the new document by its ID or another identifying field. | Record the collection, the filter you used for the read, and one field and value the read actually returned. An insert acknowledgment alone does not show what was stored. |
 | Next 15 minutes | Work through the **Find** challenge. Pick a filter that returns a document. Predict what will happen if you change one value or add a condition. Run both versions in the lab where permitted, or use the notebook for the comparison. | Record both filters and one difference you observed: an ID that entered or left the result, or a change in count. If a prediction missed, explain which value surprised you. |
-| Last 25 minutes | [Launch the second lab: Modify Query Results](https://play.instruqt.com/embed/mongodb/tracks/crud-operations-in-mongodb--modify-query-results?token=em_xAduftZJZ3IDAMmt). Try **Sort and Limit**. Predict which result will appear first. Change the sort direction or limit and run it again. Work on projection or counting if time permits. | Record what changed on screen. Compare the number displayed with the number of stored matches. What did the limit leave out? |
+| Last 25 minutes | In the same course, open [**Modify Query Results**](https://learn.mongodb.com/learn/course/crud-operations-in-mongodb-on-demand/crud-operations-in-mongodb/modify-query-results?page=7) and select its lab. Try **Sort and Limit**. Predict which result will appear first. Change the sort direction or limit and run it again. Work on projection or counting if time permits. | Record what changed on screen. Compare the number displayed with the number of stored matches. What did the limit leave out? |
 
-The first lab is timed. If you finish the insert and find challenges with time left on its clock, try the update challenge. When that session ends, move to the second lab even if you have unfinished challenges. If either terminal stalls, the notebook below lets you continue.
+The first lab is timed. If you finish the insert and find challenges with time left on its clock, try the update challenge. When that session ends, move to the second lab even if you have unfinished challenges. If you can’t reach it from the course menu, [open the second lab player directly](https://play.instruqt.com/embed/mongodb/tracks/crud-operations-in-mongodb--modify-query-results?token=em_xAduftZJZ3IDAMmt). If either terminal stalls, the notebook below lets you continue.
 
 If the lab gives you a result you didn't expect, pause before running the next command. Write down what matched and change just one condition so you can explain the difference.
 

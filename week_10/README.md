@@ -38,7 +38,7 @@ Bring one point you want clarified on Day 1. On Day 2, use printed pages **116�
 
 ### MongoDB University Sandbox and Our Colab Notebook
 
-Day 1 uses the Colab notebook with the six-ticket fixture. Day 2 starts in a MongoDB University lab where you type commands in a terminal. The [Lab 2 handout](lab_02_document_model.md) links directly to the player and to an executable notebook if the player won’t start.
+Day 1 uses the Colab notebook with the six-ticket fixture. For Day 2, open [CRUD Operations in MongoDB](https://learn.mongodb.com/courses/crud-operations-in-mongodb) and follow your instructor to the lab. The [Lab 2 handout](lab_02_document_model.md) gives the tasks and links to the notebook if the player won’t start.
 
 ## Playing the course videos
 
@@ -77,7 +77,7 @@ Submit only the completed `04_atlas_mql_modeling.ipynb` notebook.
 ## Day 2: MongoDB University lab and Chapter 10 response
 
 1. **Minutes 0–15:** PowerPoint lecture.
-2. **Minutes 15–20:** open the [Lab 2 handout](lab_02_document_model.md), launch the player, and start **Insert a Document**. If you can’t reach a terminal in five minutes, open the course notebook linked in the handout.
+2. **Minutes 15–20:** follow your instructor from the course overview to **Design Effective Queries**, open its lab, and start **Insert a Document**. If you can’t reach a terminal in five minutes, open the course notebook linked in the handout.
 3. **Minutes 20–75:** run the commands yourself. Read back a document you inserted, change a filter, and save what you observed.
 4. **Minutes 75–95:** write the [Chapter 10 reading response](reading_response.md) on ticket 1003. Use one observation from your lab and one named section from the reading.
 5. **Minutes 95–100:** submit the lab record and reading response together in one Brightspace text entry.
