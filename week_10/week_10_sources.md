@@ -99,6 +99,7 @@ References for the slide explanations. The speaker notes and spoken transcript c
 
 ## Slide 34
 
+- [Launch the first interactive MongoDB lab](https://play.instruqt.com/embed/mongodb/tracks/crud-operations-in-mongodb--perform-crud-operations?token=em_8KmVAuFzDNFfao8W)
 - [Week 10 Lab 2 handout](https://github.com/lolusername/CST4714_DB_admin/blob/main/week_10/lab_02_document_model.md)
 - [Optional Part B: Chapter 10 reading response](https://github.com/lolusername/CST4714_DB_admin/blob/main/week_10/reading_response.md)
 

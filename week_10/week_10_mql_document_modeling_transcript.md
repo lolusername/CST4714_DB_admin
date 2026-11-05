@@ -388,7 +388,7 @@ If you choose the optional reading response, name a requirement, explain the doc
 
 ## Slide 34
 
-Open the Week 10 Lab 2 handout. Open the course called CRUD Operations in MongoDB. Follow along while I open Design Effective Queries and choose the lab. If the browser workspace has not opened after five minutes, use the Day 2 notebook in the handout. You can also use the notebook if the activity won't let you run or change a command.
+Open the first lab link on this screen. It goes straight to the MongoDB exercise in Instruqt. Select Launch, wait for the workspace, then select Start. The first challenge is Insert a Document. The student handout below the launch link has your instructions and the second lab. If the browser workspace has not opened after five minutes, use the Day 2 notebook in the handout. You can also use the notebook if the activity won't let you run or change a command.
 
 Keep a short lab log. Which collection did you query? What did the command return? Change one condition, run the query again, and record what happened. If nothing matches, keep that result and explain what you think the filter ruled out.
 
