@@ -40,7 +40,7 @@ Bring one point you want clarified on Day 1. The [optional Day 2 writing prompt]
 
 ### MongoDB University Sandbox and Our Colab Notebook
 
-Day 1 uses the Colab notebook with the six-ticket fixture. Day 2 uses MongoDB University’s interactive lab player. The [Lab 2 handout](lab_02_document_model.md) gives the tasks and links to the notebook if the player won’t start.
+Lab 1 uses the Colab notebook with the six-ticket fixture. Lab 2 uses MongoDB University’s interactive lab player. The [Lab 2 handout](lab_02_document_model.md) gives the tasks and links to the notebook if the player won’t start.
 
 ## Playing the course videos
 
@@ -63,14 +63,15 @@ Short silent animations with captions (3 for this week). Each has a subtitle fil
 
 ## Day 1: Basic MQL in a Safe Collection
 
-Start with the notebook's SQL-to-MongoDB comparison. The
-same six tickets, the same question, and the same answer through different
-query notation. The instructor then models nested fields, arrays, update
-operators, and write-result counts.
+The lecture introduces MongoDB queries through small examples shown in the
+slides. Each example supplies the documents, the operation, and its result.
+We explain filters, projection, sorting, nested fields, arrays, updates, and
+write-result counts before students begin working in a database.
 
-Students adapt the worked filter into an active lighting-and-sanitation queue,
-rather than choosing an arbitrary code change. A resolved high-priority ticket
-makes the difference between category, priority, and current workload visible.
+After the lecture, open the Lab 1 notebook. Compare SQL and MongoDB queries
+over the supplied six-ticket dataset, then build an active lighting-and-sanitation
+queue. Use the lab's data reference to check which records qualify and explain
+the changes you make.
 
 Complete [Lab 1: Query and change documents safely](lab_01_atlas_mql.md).
 

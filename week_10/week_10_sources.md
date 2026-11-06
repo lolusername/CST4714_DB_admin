@@ -1,6 +1,6 @@
 # Week 10 sources
 
-References for the slide explanations. The speaker notes and spoken transcript contain only the words to say aloud.
+References for the slide explanations. The notes separate spoken explanations from source references marked as not spoken.
 
 ## Slide 2
 
@@ -23,18 +23,16 @@ References for the slide explanations. The speaker notes and spoken transcript c
 
 ## Slide 7
 
-- [Complete Week 10 ticket data reference](ticket_data_reference.md)
-- [Supplied Day 1 notebook](materials/notebooks/04_atlas_mql_modeling.ipynb)
+- https://www.mongodb.com/docs/manual/core/document/
 
 ## Slide 8
 
-- [Complete Week 10 ticket data reference](ticket_data_reference.md)
-- [Supplied Day 1 notebook](materials/notebooks/04_atlas_mql_modeling.ipynb)
+- https://www.mongodb.com/docs/manual/core/document/
+- https://www.mongodb.com/docs/manual/tutorial/query-arrays/
 
 ## Slide 9
 
-- [Complete Week 10 ticket data reference](ticket_data_reference.md)
-- [Supplied Day 1 notebook](materials/notebooks/04_atlas_mql_modeling.ipynb)
+- https://www.mongodb.com/docs/manual/tutorial/query-for-null-fields/
 
 ## Slide 10
 
