@@ -194,6 +194,42 @@ Sources: Notebook 07 test cell. Handling invalid documents: https://www.mongodb.
 
 ## Slide 16
 
+This is a real engineering account from Buffer, the social media software company. Sunil Sadasivan published it in July 2014, so treat it as a historical case, not a description of Buffer's current architecture. The team wanted product and operational metrics. They used MongoDB aggregation for reports such as API requests by hour, response times by endpoint, and visitors by referrer. Those examples have the same structure as our ticket summary: choose the relevant records, decide what one output represents, and calculate a measure.
+
+The article also describes a data-modeling problem. At first, Buffer stored event arrays inside user documents. Those arrays could keep growing. Some documents reached MongoDB's 16 MB limit, and subsequent writes failed. The team moved to collections organized by event type. That is a concrete design response to a real failure: changing the stored shape of the data, not merely changing the chart that displays it.
+
+The article does not say the team used our particular $unwind pipeline or our validator. We will use their experience to connect today's concepts to engineering decisions. One historical detail needs updating: the 2014 article says MongoDB did not perform schema validation. Current MongoDB does support collection validation; that is the feature we have just studied.
+
+Sources: Buffer, Sunil Sadasivan, July 9, 2014, https://buffer.com/resources/how-buffer-uses-mongodb-to-power-its-growth-platform/ . Current MongoDB schema validation: https://www.mongodb.com/docs/manual/core/schema-validation/ .
+
+## Slide 17
+
+Separate the evidence in the case from our classroom application. Buffer reports building event analytics and encountering growing arrays. The event-versus-ticket comparison on this slide is our application of that experience to the four records in Notebook 07. We are not claiming Buffer ran this exact pipeline.
+
+In our collection, one source document represents one ticket. Ticket 1001 owns two events. After unwind, each output document represents one event, so 1001 appears twice. Ticket 1004 has an empty array and contributes no output row under the default unwind behavior. The three resulting rows are a valid event list, but interpreting them as three distinct active tickets would be a reporting error. A developer needs to name the unit being counted before writing the calculation.
+
+Now connect that query question to storage. Expanding an array in a query does not remove it from the stored document and does not prevent it growing. Buffer addressed its document-size problem by restructuring storage. Current MongoDB guidance still identifies unbounded arrays as a design problem and discusses subsetting or referencing as options. The appropriate choice depends on the workload.
+
+Finally, validation and correct metrics are separate. Requiring a date prevents an absent date, and the BSON date type rejects date-shaped text. Neither rule proves that an aggregation counts the intended entities. The engineer needs both valid inputs and a verified meaning for the output.
+
+Sources: Buffer historical case, https://buffer.com/resources/how-buffer-uses-mongodb-to-power-its-growth-platform/ . MongoDB unbounded arrays guidance, https://www.mongodb.com/docs/manual/data-modeling/design-antipatterns/unbounded-arrays/ . MongoDB validation, https://www.mongodb.com/docs/manual/core/schema-validation/ . The four-ticket mapping is a classroom interpretation, not a claim about Buffer's implementation.
+
+## Slide 18
+
+These are concrete kinds of engineering work that today's lesson prepares you to discuss. They are teaching applications of the case, not a claim about Buffer's staffing or a list of current job openings.
+
+For data engineering, the deliverable is more than a query that runs. State whether a row represents a ticket, an event, or a category. Keep a small known-answer fixture and compare identifiers as well as totals. Our fixture is useful precisely because a duplicate and a missing ticket can cancel each other out numerically.
+
+For backend engineering, describe the write contract and exercise it. The allowed status list and required date should have examples that pass and examples that fail for one clear reason. Test enforcement on a real MongoDB server. A Python rule rehearsal or a supplied trace can teach the expected behavior, but it cannot prove that a server rejected a write.
+
+For database administration, verify that the intended rule was actually installed with the necessary permissions. Reading a collection successfully does not establish that a user can modify its validator. For the next class, the same evidence habit applies to indexes: check the query's result and then measure the work it performs.
+
+In a portfolio or interview, you can describe the actual artifact: a pipeline, the four source records, the expected output, the edge case, and the test environment. That makes the claim inspectable. We now return to the individual notebook assignment, where the same distinctions belong in the existing explanation cell.
+
+Sources: Classroom interpretation of Buffer's historical account, https://buffer.com/resources/how-buffer-uses-mongodb-to-power-its-growth-platform/ . MongoDB validation documentation, https://www.mongodb.com/docs/manual/core/schema-validation/ . Role labels describe related engineering tasks, not advertised positions.
+
+## Slide 19
+
 Here is Lab 1, and it all lives in one notebook, Notebook 07. Extend the summary with urgent count and newest opening, add the required opening-date rule, and use ticket IDs to explain the array-counting error. Submit the completed notebook in Brightspace, individually. Your explanation goes in the notebook's existing explanation cell. There is no separate report or repository.
 
 You can stay in local mode and start the aggregation work as soon as the packages install. If you choose Atlas, look at the middle box. The notebook prints the public IPv4 address of the runtime running your code. In Colab that runtime is on Google's infrastructure, so it is not your laptop's address. You allow that one address as a temporary slash 32 entry. Your connection string goes into the hidden prompt, never into a visible cell, and you leave TLS verification on.
@@ -204,7 +240,7 @@ In your explanation, cover the streetlight inputs, the effect of expanding event
 
 Sources: Week 11 Lab 1 and Notebook 07. Atlas IP access list: https://www.mongodb.com/docs/atlas/security/ip-access-list/
 
-## Slide 17
+## Slide 20
 
 Welcome back. Day 2 starts from a different screen. Instead of a category summary, picture a queue that shows the newest open requests.
 
@@ -218,7 +254,7 @@ We will measure documents returned, documents examined, index keys examined, and
 
 Sources: Course implementation guide, Day 2 sort demonstration. Explain overview: https://www.mongodb.com/docs/manual/reference/method/cursor.explain/
 
-## Slide 18
+## Slide 21
 
 Here is the dataset for my live demonstration. Look at the table. A collection called sort_tickets in a new practice database. Ten thousand synthetic tickets, each with a unique ID. Two thousand are open and eight thousand are resolved, because every fifth ticket is open. And the opening dates go up one minute at a time, starting February 1, 2026, in UTC.
 
@@ -230,7 +266,7 @@ Keep in mind that this is a controlled teaching dataset, not a production benchm
 
 Sources: Original 10,000-record fixture in course/instructor/implementation_guide.md. Counts and expected identifiers derive from its generator.
 
-## Slide 19
+## Slide 22
 
 This is the queue query, and notice that it is mongosh, so it is JavaScript, not Python. The note at the bottom says so: Day 2 live code uses mongosh JavaScript, and Notebook 07 uses Python. Const declares a variable, and toArray reads the cursor into an array. The ideas are the same ones you used in PyMongo: a filter, a projection, an order, and a limit.
 
@@ -242,7 +278,7 @@ Last, we save the normal result as beforeRows. After we add the index we compare
 
 Sources: Course sort demonstration. Cursor sort: https://www.mongodb.com/docs/manual/reference/method/cursor.sort/ Cursor limit: https://www.mongodb.com/docs/manual/reference/method/cursor.limit/
 
-## Slide 20
+## Slide 23
 
 Here is the candidate index. Look at its field order, because the order is the whole design. Status ascending, then opened_at descending, then ticket_id descending. The table explains each position.
 
@@ -256,7 +292,7 @@ Two more things. Creating an index does not guarantee the planner chooses it, so
 
 Sources: Course sort query and observed local plan. Index-supported sorting: https://www.mongodb.com/docs/manual/tutorial/sort-results-with-indexes/ Compound indexes: https://www.mongodb.com/docs/manual/core/indexes/index-types/index-compound/
 
-## Slide 21
+## Slide 24
 
 Now we ask MongoDB to show its work. This is the same query, with the same filter, projection, sort, and limit, but it ends in explain with executionStats. Read the first note under the code: the same command runs before index creation in the live example. I run it before and after, so both measurements describe one workload.
 
@@ -270,13 +306,13 @@ Now the second note: compare the normal query results as well as both execution 
 
 Sources: Explain results and stage meanings: https://www.mongodb.com/docs/manual/reference/explain-results/ Course implementation guide's fixed query comparison.
 
-## Slide 22
+## Slide 25
 
 Here are the actual measurements, observed on local MongoDB 8.0.29 with the supplied synthetic data. Look at the table row by row.
 
 Returned documents: 20 before, 20 after. Documents examined: 10,000 before, 20 after. Index keys examined: 0 before, 20 after. Main plan operations: COLLSCAN plus SORT before, IXSCAN plus FETCH after.
 
-So before the index, MongoDB read all ten thousand documents, kept the open ones, and sorted them to find the newest twenty. After the index, it walked into the open section in the right order and stopped after twenty entries. That is the access path we designed on slide 20.
+So before the index, MongoDB read all ten thousand documents, kept the open ones, and sorted them to find the newest twenty. After the index, it walked into the open section in the right order and stopped after twenty entries. That is the access path we designed on slide 23.
 
 Now read the notes, because they keep us honest. First, both runs return the same ordered IDs and field values. That matters, because a query that returns different tickets can look faster for the wrong reason. Second, these work counts do not establish a 500-times runtime speedup. Ten thousand divided by twenty is five hundred, and it is very tempting to say that. But we measured work, not elapsed time.
 
@@ -284,7 +320,7 @@ These numbers also belong to this fixture, this query, and this set of indexes. 
 
 Sources: Executed local course sort demonstration on MongoDB 8.0.29. Explain metric definitions: https://www.mongodb.com/docs/manual/reference/explain-results/ This is not an Atlas production benchmark.
 
-## Slide 23
+## Slide 26
 
 After the index, the plan still has FETCH in it. Is that a problem? No. Look at the first box. The index contains status, opened_at, and ticket_id. But the page also needs subject, and subject is not in the index. So for each matching entry, MongoDB goes to the document to get it. Using an index does not mean every returned value comes from the index.
 
@@ -296,7 +332,7 @@ The right decision weighs what the read gains against what it costs to keep the 
 
 Sources: Covered-query requirements: https://www.mongodb.com/docs/manual/core/query-optimization/#covered-query Index costs: https://www.mongodb.com/docs/manual/core/write-performance/
 
-## Slide 24
+## Slide 27
 
 Back to our four tickets for a correctness check on optimization. Look at the table. Two pipelines built from the same three operations, just in a different order.
 
@@ -312,7 +348,7 @@ MongoDB's optimizer does make safe rearrangements internally. But when you rearr
 
 Sources: Original four-ticket counterexample. Pipeline optimization and dependency boundaries: https://www.mongodb.com/docs/manual/core/aggregation-pipeline-optimization/
 
-## Slide 25
+## Slide 28
 
 Let's put the week together. Look at the title: a faster query can still be incorrect. Then look at the table: three mechanisms, and what each experiment establishes.
 
@@ -326,7 +362,7 @@ So when something is wrong, work in order. Define the output you need and check 
 
 Sources: Original course synthesis based on the executed fixture, validation tests, and sort experiment. Chapter 11, Validation and Indexing Solve Different Problems.
 
-## Slide 26
+## Slide 29
 
 Here is Lab 2, part one. Look at the name in the first box: MongoDB University, Improving Performance of $sort stages, Lab Only. Open it from the exact link in the Week 11 guide and the Lab 2 assignment, so you land on the right activity.
 
@@ -340,7 +376,7 @@ The image or the fallback goes in one Brightspace text submission together with 
 
 Sources: Week 11 Lab 2. Exact external activity: https://learn.mongodb.com/courses/improving-performance-of-sort-stages-lab-only The provider controls its account-gated interface and completion requirements.
 
-## Slide 27
+## Slide 30
 
 Lab 2, part two, is the inventory case. The video is Building an Event-Driven Inventory Platform: A Case Study, and the link is in Week 11 Lab 2.
 
@@ -354,7 +390,7 @@ Include one sentence on how you would communicate the decision to a developer or
 
 Sources: Week 11 Lab 2. Assigned video: https://www.youtube.com/watch?v=1XeG3VDtdsA&list=PL4WbxRsNWc_Z2O2zq3syRit8b83M923QP&index=13 This script introduces the response method and does not assert unverified video details.
 
-## Slide 28
+## Slide 31
 
 Last slide. Read the paragraph in the box. It is one way to describe this week's work in an interview. Notice what makes it work. It names the calculation, the error you caught, the input rule you tested, and the comparison behind an index choice. That gives an interviewer four concrete things to ask you about. Compare it with "I know MongoDB," which gives them nothing.
 
@@ -368,7 +404,7 @@ Next week: replication, consistency, and recovery after data loss. A query can r
 
 Sources: Original career-communication example tied to Week 11 work. Notebook 07 and the implementation guide define their respective cleanup boundaries.
 
-## Slide 29
+## Slide 32
 
 These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Follow the documents through a pipeline (1:11); Schema validation: which documents may exist? (1:05); Did the index change the work? (1:18). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 11 README. The diagrams are schematic illustrations, not benchmarks.
 

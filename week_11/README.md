@@ -48,14 +48,25 @@ Short silent animations with captions (3 for this week). Each has a subtitle fil
 - [Improving Performance of $sort stages (Lab Only)](https://learn.mongodb.com/courses/improving-performance-of-sort-stages-lab-only)
 - [Building an Event-Driven Inventory Platform: A Case Study](https://www.youtube.com/watch?v=1XeG3VDtdsA&list=PL4WbxRsNWc_Z2O2zq3syRit8b83M923QP&index=13)
 
-The case-study response appears only in Week 11.
+The required case-study response uses the Day 2 inventory video. The Buffer
+reading below supports the Day 1 lecture and adds no submission.
 
 ## Day 1: Pipeline and Validation Studio
 
-Use **slides 1-16**. The worked example begins with four tickets and shows the
+Use **slides 1-19**. The worked example begins with four tickets and shows the
 actual output after filtering, grouping, and projection. The second example
 expands events and exposes why equal totals can still count different tickets.
 The validation section distinguishes presence, BSON type, and allowed values.
+
+**Industry/Career Connection (slides 16-18):** Read [Buffer’s engineering account
+of its MongoDB analytics platform](https://buffer.com/resources/how-buffer-uses-mongodb-to-power-its-growth-platform/)
+by Sunil Sadasivan (July 9, 2014). The team describes aggregation reports and a
+redesign after embedded event arrays reached the document-size limit. The
+lecture connects that historical case to result grain, bounded document growth,
+and the evidence engineers should deliver. The four-ticket comparison is our
+classroom application, not a claim about Buffer’s implementation. The article’s
+2014 statement about missing schema validation is outdated: [current MongoDB
+supports collection validation](https://www.mongodb.com/docs/manual/core/schema-validation/).
 
 Complete [Lab 1: Count Requests Without Counting Them Twice](lab_01_pipeline_validation.md).
 
@@ -65,11 +76,11 @@ tested with an allowed date, text date, and missing date.
 
 ## Day 2: Sort Performance and Career-Connected Case Writing
 
-Use **slides 17-28**. The instructor first demonstrates an index decision on a
+Use **slides 20-31**. The instructor first demonstrates an index decision on a
 separate 10,000-ticket synthetic dataset. Compare the same ordered result before
 and after the index, including documents examined and the remaining fetch work.
 Students then complete a different guided performance lab and watch the inventory
-case. Slides 26 and 27 also link directly to those resources.
+case. Slides 29 and 30 also link directly to those resources.
 
 Complete [Lab 2: Sort performance and inventory case response](lab_02_sort_and_case_response.md).
 
