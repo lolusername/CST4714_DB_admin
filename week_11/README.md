@@ -17,7 +17,7 @@ whether an index supports a filter and sort?
 
 Use [Chapter 11: MongoDB Operations Connect Pipelines, Rules, and Indexes](../Operating_Cloud_Databases.pdf).
 
-- **Before Day 1:** read the pipeline and validation sections. Trace the four-ticket case and the misleading equal totals after unwind.
+- **Before Day 1:** read the pipeline sections. Trace the four-ticket case and the misleading equal totals after unwind. We will cover validation next week; it is not needed for Lab 1.
 - **Before Day 2:** read from **An Index Is an Ordered Access Path for a Workload** through **Validation and Indexing Solve Different Problems**. Use these ideas in the performance lab and case-study response.
 
 Bring one point you want clarified. Reading supports the in-class work; it does
@@ -51,12 +51,15 @@ Short silent animations with captions (3 for this week). Each has a subtitle fil
 The required case-study response uses the Day 2 inventory video. The Buffer
 reading below supports the Day 1 lecture and adds no submission.
 
-## Day 1: Pipeline and Validation Studio
+## Day 1: Aggregation Studio
 
-Use **slides 1-19**. The worked example begins with four tickets and shows the
+Use **slides 1-11, then 16-19**. The worked example begins with four tickets and shows the
 actual output after filtering, grouping, and projection. The second example
 expands events and exposes why equal totals can still count different tickets.
-The validation section distinguishes presence, BSON type, and allowed values.
+
+**Validation is not needed for this lab; we will cover it next week.** Slides
+12-15 are hidden reference slides. All notebook validator material is together
+in one collapsed section; leave it collapsed and keep `RUN_VALIDATION = False`.
 
 **Industry/Career Connection (slides 16-18):** Read [Buffer’s engineering account
 of its MongoDB analytics platform](https://buffer.com/resources/how-buffer-uses-mongodb-to-power-its-growth-platform/)
@@ -70,9 +73,10 @@ supports collection validation](https://www.mongodb.com/docs/manual/core/schema-
 
 Complete [Lab 1: Count Requests Without Counting Them Twice](lab_01_pipeline_validation.md).
 
-Submit only the completed `07_aggregation_validation.ipynb` notebook. It includes
-a fresh fixture, worked pipeline, array-counting trap, and one validation change
-tested with an allowed date, text date, and missing date.
+Submit the **sharing link to your completed Colab copy** in Brightspace. Save
+your modified aggregation pipeline, outputs, and explanation in that copy. Use
+**Share** to give the instructor viewer access, then copy its link. Submit your
+own saved copy’s link, not the starter notebook link. **No `.ipynb` file upload.**
 
 ## Day 2: Sort Performance and Career-Connected Case Writing
 
