@@ -1,58 +1,74 @@
-# Lab 2: Recover the Documents and Their Rules
+# Lab 2: Recover One Ticket in 15 Minutes
 
-[Open in GitHub](https://github.com/lolusername/CST4714_DB_admin/blob/main/week_12/lab_02_mongodb_recovery.md)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_12/materials/notebooks/05_mongodb_logical_recovery_short.ipynb)
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_12/materials/notebooks/05_mongodb_logical_recovery.ipynb)
+A restored collection has five tickets, the right IDs, and real dates. One subject
+is still wrong. Recover that one ticket from its saved document, then explain
+why the first checks missed the problem.
 
-A recovery check reports the correct ticket count, IDs, and date types. One
-subject is still wrong. Find what those checks missed, recover that document
-from the saved artifact, and distinguish its values from the collection's rules.
+**Time:** 15 minutes during the one-hour class. Work individually. The setup and
+verification code are supplied. You change **one line** and write **2–3 sentences**.
 
-Work individually in class. Submit one completed notebook.
+## Open the Short Notebook
 
-## 1. Restore and Repair One Ticket
+Open the Colab link above and save a copy in Drive. The
+[short notebook](materials/notebooks/05_mongodb_logical_recovery_short.ipynb)
+also runs in local Jupyter. Use its numbered code cells **01–07**.
 
-Click **Open in Colab** above and save a working copy in Drive. The
-[downloadable notebook](materials/notebooks/05_mongodb_logical_recovery.ipynb) also supports local Jupyter.
-Run in order.
+This lab uses `mongomock`, an in-memory Python practice database with part of
+MongoDB's API. Colab requires a Google sign-in. **No Atlas account, connection URI,
+server setup, failover, or validator exercise is required today.**
 
-The default practice path needs no database account. Colab requires a Google
-sign-in. For Atlas, follow the notebook's pause
-to add the Colab runtime's temporary `/32` IP rule before entering a hidden URI.
-Both paths use fresh source and restore names. The notebook never asks you to
-change an existing project collection or trigger a failover.
+## Follow the Seven Cells
 
-Inspect the canonical Extended JSON file, then restore it to the new target.
-Compare the date representation, expected IDs, and complete document values.
-Choose ticket 1001 or 1004 for the supplied incorrect-migration case. In **Your
-Repair**, select its saved document, run the replacement, and confirm that all
-five documents match the artifact again. Rerun the repair to check that it does
-not create an extra ticket. The code around your change is provided and explained.
+| Time | Cells | What to do |
+|---|---|---|
+| 0–3 minutes | 01–02 | Run the supplied packages and fresh five-ticket fixture. |
+| 3–7 minutes | 03–05 | Save Extended JSON, restore to a separate target, and inspect the wrong subject on ticket **1004**. |
+| 7–11 minutes | 06–07 | Replace the `None` placeholder with the saved-document lookup, then repeat the repair and verify the result. |
+| 11–15 minutes | Explanation and submission | Write 2–3 sentences, save, and submit your shared Colab link. |
 
-Continue through the rule-reconstruction cells. Both paths test the unique ticket
-key. Atlas also tests the server validator; local mode supplies a clearly labeled
-trace for that unsupported feature. Observe what the notebook must rebuild
-**separately** from the document file.
+In Cell 05, count, IDs, and date-type checks still pass, but the complete-values
+check fails. The saved subject is **Broken bench slat**. The target has a different
+subject. Repair it from the saved document instead of typing a replacement
+subject by hand.
 
-## 2. Make a Recovery Recommendation
+After Cell 06, all four checks should pass. In Cell 07 the repeated repair should
+report **matched: 1**, **modified: 0**, and **5** tickets. Repeating the repair must
+not append a sixth ticket. If the notebook reports **INCOMPLETE**, finish Cell 06
+and rerun Cells 06–07.
 
-In the notebook's final explanation, answer this practical question:
+## Explain the Recovery in 2–3 Sentences
 
-> If a colleague handed you only this JSON file, what could you recover, and what
-> else would you ask for before reopening the application?
+In the notebook's **Your explanation** text cell, explain:
 
-Use the incorrect-subject result to explain why count and type checks alone were
-insufficient. Identify an index or validator that would be missing without the
-separate reconstruction step. Explain one difference from
-the PostgreSQL archive you used in Week 8. Read the supplied tool-comparison
-table, but do not write a second table or five-check report.
+- why count, IDs, and date types could pass while a subject was wrong;
+- how you recovered the correct document from the saved artifact; and
+- one thing this document file does not restore before an application reopens,
+  such as a unique index, validator, or application configuration.
 
-A JSON file is useful logical data recovery, not a complete Atlas project backup.
-The notebook links the official `mongodump`/`mongorestore` guidance for database-level
-recovery.
+The JSON file contains documents. It does **not** contain collection index or
+validator definitions. You only need to recognize that limitation today; rebuilding
+or testing a validator is **not required**. The artifact is saved in this temporary
+practice runtime; a real recovery copy must be retained outside the system you
+might lose.
 
-Run cleanup and remove any temporary Atlas network rule. Remove the printed
-runtime-IP output before submission. Keep the synthetic data and query outputs.
+## Submit
 
-**Submit:** the notebook with outputs and your recovery recommendation. No separate
-report or exported-data attachment is required.
+**Submit one shared, viewable Colab notebook link in Brightspace.**
+
+Save the outputs and explanation in your Drive copy. In Colab, use **Share** to
+allow your instructor to view it. Choose **Anyone with the link → Viewer** if your
+account permits it, or explicitly share with your instructor as a viewer. Paste
+the **shared Colab notebook URL** into the Brightspace lab submission and verify
+that the instructor can open it.
+
+**Do not submit an `.ipynb` attachment.** No separate report, exported JSON file,
+Atlas screenshot, or additional writing assignment is required.
+
+## Optional Longer Reference
+
+The [original full notebook](materials/notebooks/05_mongodb_logical_recovery.ipynb)
+and [extended lab instructions](reference_mongodb_recovery_extended.md) preserve the
+longer index, validator, Atlas, and tool-comparison activities. They are optional
+reference and are **not required for today's short lab**.

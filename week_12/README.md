@@ -29,8 +29,9 @@ unless the weekly lab assigns it.
 
 ## Class Materials
 
-- [MongoDB logical recovery notebook](materials/notebooks/05_mongodb_logical_recovery.ipynb)
-- [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_12/materials/notebooks/05_mongodb_logical_recovery.ipynb) for Lab 2; save a working copy in Drive.
+- [15-minute logical recovery notebook — today's Day 2 lab](materials/notebooks/05_mongodb_logical_recovery_short.ipynb)
+- [Original full recovery notebook — optional reference](materials/notebooks/05_mongodb_logical_recovery.ipynb)
+- [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_12/materials/notebooks/05_mongodb_logical_recovery_short.ipynb) for the short Lab 2; save a working copy in Drive.
 - [Week 12 student deck](week_12_mongodb_reliability.pptx)
 - [Week 12 PDF handout](week_12_mongodb_reliability.pdf)
 - [Week 12 transcript](week_12_mongodb_reliability_transcript.md)
@@ -71,18 +72,33 @@ notes, rather than making another Week 12 submission.
 
 ## Day 2: Export, Restore Elsewhere, and Verify
 
-Use **slides 17-30** alongside the notebook. The code and displayed document
-values come from the same five-ticket example used in the lab.
+For the **one-hour class**, use **slides 17–24** for the core recovery explanation
+and the short notebook's numbered cells **01–07** for the demonstration. Briefly
+use slides **25/28** to distinguish data from rules; the remaining full-lab
+activities are optional today.
+The five-ticket fixture matches the longer course example.
 
-Complete [Lab 2: MongoDB logical recovery](lab_02_mongodb_recovery.md).
+Complete [Lab 2: Recover one ticket in 15 minutes](lab_02_mongodb_recovery.md).
 
-The notebook begins with five fresh tickets. Inspect how Extended JSON stores
-their BSON types, restore the data into a separate target, and diagnose a wrong
-subject that leaves the count and IDs unchanged. Repair one ticket from its
-saved version. Then compare document recovery with the separate reconstruction
-and testing of indexes and validation rules. The no-account path remains available.
+**Today's short-lab directions supersede the longer assignment wording on
+slide 29 and in the older deck transcript.** Use ticket **1004**, the short
+notebook, and a **viewable Colab link** for submission. The deck's Atlas setup,
+rule-reconstruction, and PostgreSQL archive-comparison activities are optional
+reference, not extra tasks for today's lab.
 
-Submit only the completed `05_mongodb_logical_recovery.ipynb` notebook.
+Run the supplied `mongomock` setup, inspect Extended JSON, restore the five
+saved documents into a separate target, and diagnose the wrong subject on
+ticket **1004**. Change one line to select its saved document, repair it, and
+repeat the repair to check that five tickets remain. Finish with a **2–3 sentence**
+explanation. No Atlas account or validator exercise is required today.
+
+A document file does not restore index definitions, validators, or application
+configuration. Recognize that limitation; the longer reconstruction and testing
+activities remain [optional reference](reference_mongodb_recovery_extended.md).
+
+**Submit a shared, viewable Colab notebook link in Brightspace. Do not submit an
+`.ipynb` attachment.** Keep the failed check, repaired outputs, and explanation in
+your saved Drive copy.
 
 For support with the lab's explanation, use [Writing About Database Decisions](materials/assessments/critical_writing.md). It develops the response already included in your lab, not an additional assignment.
 
