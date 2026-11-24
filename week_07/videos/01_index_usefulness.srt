@@ -4,7 +4,7 @@ When does an index help? It depends on the query, the column, and the data.
 
 2
 00:00:07,700 --> 00:00:10,200
-Rows are stored in the order they arrived, not sorted by last name.
+The table stores rows in arrival order.
 
 3
 00:00:10,700 --> 00:00:14,266
@@ -12,7 +12,7 @@ With no index on lname, the only way is to check every row.
 
 4
 00:00:14,766 --> 00:00:23,866
-Two rows match. Finding the first one did not end the scan: there could be more.
+Two rows match. The scan checks the remaining rows for other matches.
 
 5
 00:00:24,366 --> 00:00:26,366
@@ -20,7 +20,7 @@ The index keeps the last names SORTED, each with the location of its row.
 
 6
 00:00:26,866 --> 00:00:33,466
-Creating it does not reorder the table. The table stays exactly as it was.
+Creating the index leaves the table in its existing physical order.
 
 7
 00:00:33,966 --> 00:00:35,466

@@ -44,5 +44,5 @@ There is no magic cutoff. The planner ESTIMATES the cost of each path and picks 
 
 12
 00:00:56,600 --> 00:01:06,600
-Seq Scan ≠ "the index is missing": Selectivity = matching rows ÷ total rows. Few rows needed (low %): an index can skip most pages. Most rows needed (high %): just read every page once. Small tables: a scan is cheap anyway. The index may not match the query's column.
+Why a sequential scan can be cheaper: Selectivity = matching rows ÷ total rows. Few rows needed (low %): an index can skip most pages. Most rows needed (high %): just read every page once. Small tables: a scan is cheap anyway. The index may not match the query's column.
 

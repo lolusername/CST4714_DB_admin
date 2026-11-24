@@ -52,5 +52,5 @@ For this query, an index that starts with opened_at would fit better.
 
 14
 00:00:59,400 --> 00:01:08,200
-Remember: A composite index sorts by the 1st column, then the 2nd within it. WHERE on the 1st column + ORDER BY the 2nd: jump in, read in order, stop. Filter only on the 2nd column: matches are scattered. Choose column order from the real query, not a rule of thumb.
+Remember: A composite index sorts by the 1st column, then the 2nd within it. WHERE on the 1st column + ORDER BY the 2nd: jump in, read in order, stop. Filter only on the 2nd column: matches are scattered. Choose column order from the query's filters and ordering.
 

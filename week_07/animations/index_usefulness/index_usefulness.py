@@ -113,7 +113,7 @@ class IndexUsefulness(Scene):
         eyebrow.to_corner(UL, buff=0.55)
         heading = fit_text(title, size=39).next_to(eyebrow, DOWN, buff=0.28).align_to(eyebrow, LEFT)
         rule = Line(LEFT * 7.4 + UP * 2.95, RIGHT * 7.4 + UP * 2.95, color=LINE)
-        foot = label("Schematic illustration · not a benchmark", size=16, color=MUTED)
+        foot = label('Schematic illustration', size=16, color=MUTED)
         foot.to_corner(DR, buff=0.30)
         self.play(FadeIn(eyebrow), FadeIn(heading), Create(rule), FadeIn(foot), run_time=0.45)
         self.caption_mob = None
@@ -157,7 +157,7 @@ class IndexUsefulness(Scene):
         description = fit_text("Sequential scan\n\nCheck each row's lname.\nReturn every match.", size=30, width=6)
         description.move_to(RIGHT * 3.7 + UP * 0.4)
         self.play(FadeIn(description), run_time=0.4)
-        self.caption("The table is not ordered by last name.")
+        self.caption('The rows shown here follow their original table order.')
         cursor = SurroundingRectangle(rows[0], buff=0.02, color=BLUE, stroke_width=3)
         self.play(Create(cursor), run_time=0.3)
         for i, row in enumerate(rows):
@@ -166,7 +166,7 @@ class IndexUsefulness(Scene):
             if i in [1, 4]:
                 self.play(row.animate.set_fill("#EFE0F7", opacity=1), run_time=0.35)
             self.wait(0.35)
-        self.caption("Two rows match. Finding the first one does not end the scan.")
+        self.caption('Two rows match. The scan continues to the last row.')
         self.wait(3)
 
     def build_index(self):
@@ -178,7 +178,7 @@ class IndexUsefulness(Scene):
         self.play(FadeIn(idx[0]), FadeIn(idx[2]), *[Create(r) for r in idx_rows], run_time=0.7)
         for j, (_, slot) in enumerate(entries):
             self.play(TransformFromCopy(contents[slot][2], idx_text[j]), run_time=0.42)
-        self.caption("The B-tree keeps ordered keys and row locations.\nCreating it does not reorder the table.")
+        self.caption('The B-tree keeps ordered keys and row locations.\nThe heap keeps its existing row order.')
         self.wait(4)
 
     def lookup(self):
@@ -214,7 +214,7 @@ class IndexUsefulness(Scene):
         idx, _, _, _ = lastname_index()
         self.play(FadeIn(table), FadeIn(idx), run_time=0.5)
         self.play(idx.animate.set_opacity(0.25), run_time=0.5)
-        self.caption("This query asks for all columns of all rows.\nThe lname index cannot eliminate rows from that request.")
+        self.caption('This query asks for all columns of all rows.\nThe query reads the entire table.')
         for row in rows:
             self.play(row.animate.set_fill("#DCE7FE", opacity=1), run_time=0.35)
         self.wait(2)
@@ -255,10 +255,10 @@ class IndexUsefulness(Scene):
         bad_text = label("ON users (fname)\nFirst names", size=29).move_to(bad)
         good_text = label("ON users (lname)\nLast names", size=29, color=PURPLE).move_to(good)
         self.play(FadeIn(bad), FadeIn(good), Write(bad_text), Write(good_text), run_time=0.8)
-        self.caption("A first-name index does not directly locate a last-name match.\nThe ON users (lname) definition determines the indexed column.")
+        self.caption('For this last-name filter, use an index on lname.\nThe ON users (lname) definition determines the indexed column.')
         self.wait(4)
         self.play(Indicate(good, color=PURPLE), run_time=0.8)
-        self.caption("users_lname_idx is a helpful name.\nThe index name itself does not control which column it searches.")
+        self.caption('users_lname_idx is a helpful name.\nThe ON clause identifies the indexed column.')
         self.wait(3)
 
     def upkeep(self):

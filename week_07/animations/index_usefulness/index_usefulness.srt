@@ -5,16 +5,16 @@ Whether it helps depends on the query and the data.
 
 2
 00:00:08,800 --> 00:00:14,167
-The table is not ordered by last name.
+The rows shown here follow their original table order.
 
 3
 00:00:14,533 --> 00:00:17,533
-Two rows match. Finding the first one does not end the scan.
+Two rows match. The scan continues to the last row.
 
 4
 00:00:23,333 --> 00:00:27,333
 The B-tree keeps ordered keys and row locations.
-Creating it does not reorder the table.
+The heap keeps its existing row order.
 
 5
 00:00:29,933 --> 00:00:33,333
@@ -33,7 +33,7 @@ For just six rows, PostgreSQL may still choose a sequential scan.
 8
 00:00:45,667 --> 00:00:49,867
 This query asks for all columns of all rows.
-The lname index cannot eliminate rows from that request.
+The query reads the entire table.
 
 9
 00:00:50,233 --> 00:00:54,233
@@ -57,13 +57,13 @@ may add work. A sequential scan or bitmap plan may cost less.
 
 13
 00:01:14,600 --> 00:01:19,400
-A first-name index does not directly locate a last-name match.
+For this last-name filter, use an index on lname.
 The ON users (lname) definition determines the indexed column.
 
 14
 00:01:19,767 --> 00:01:22,767
 users_lname_idx is a helpful name.
-The index name itself does not control which column it searches.
+The ON clause identifies the indexed column.
 
 15
 00:01:26,000 --> 00:01:30,000

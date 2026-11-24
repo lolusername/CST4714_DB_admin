@@ -1,6 +1,6 @@
 """Static CST4714 worked-example diagrams. No animation is authored.
 Render: manim -s -r 2240,960 --disable_caching --media_dir <build> course_stills.py OwnershipStill IndexEvidenceStill RecoveryStill DocumentGrowthStill
-Each value is a teaching fixture value; these are conceptual diagrams, not storage internals.
+The diagram uses the values in the teaching fixture.
 """
 from manim import *
 config.frame_width=16
@@ -35,18 +35,18 @@ class IndexEvidenceStill(Scene):
   box(self,0,.25,4.6,3.5,'Same ordered IDs',['1011','1007','1001'])
   box(self,5.2,.25,4.6,3.5,'Then inspect the plan',['scan + sort work','rows and buffers','index size + write cost'])
   arrow(self,-2.9,.25,-2.3,.25);arrow(self,2.3,.25,2.9,.25)
-  self.add(label('CSV inspection predicts the answer, not the PostgreSQL plan.',0,-2.4,32,GREEN,True));self.add(label('Twelve rows can make a sequential scan a reasonable choice.',0,-3.0,29,MUTED))
+  self.add(label('Check the expected rows in the CSV. Use EXPLAIN to see the plan.',0,-2.4,32,GREEN,True));self.add(label('Twelve rows can make a sequential scan a reasonable choice.',0,-3.0,29,MUTED))
 class RecoveryStill(Scene):
  def construct(self):
   self.add(label('An artifact becomes evidence through a separate restore.',0,2.96,36,bold=True))
   box(self,-5.2,.3,4.6,3.5,'Source database',['3 users','3 tickets','5 events'])
-  box(self,0,.3,4.6,3.5,'Custom-format dump',['pg_dump','retained bytes','not a running database'])
+  box(self,0,.3,4.6,3.5,'Custom-format dump',['pg_dump','retained bytes','restore with pg_restore'])
   box(self,5.2,.3,4.6,3.5,'Separate restore',['pg_restore','known values match','invalid status rejected'])
   arrow(self,-2.9,.3,-2.3,.3);arrow(self,2.3,.3,2.9,.3)
   self.add(label('Counts + relationships + known values + behavior',0,-2.35,34,GREEN,True));self.add(label('Do not restore a practice artifact over the source database.',0,-3.0,29,MUTED))
 class DocumentGrowthStill(Scene):
  def construct(self):
-  self.add(label('A useful preview does not replace the complete history.',0,2.96,37,bold=True))
+  self.add(label('Keep the complete history when you build a preview.',0,2.96,37,bold=True))
   box(self,-5.2,.25,4.6,3.6,'Authoritative user',['user_id: 103','display_name:','Requester 103'])
   box(self,0,.25,4.6,3.6,'Ticket page',['ticket_id: 1003','requester_id: 103','preview: 5007, 5006'])
   box(self,5.2,.25,4.6,3.6,'Event → new state',['5005 → open','5006 → in_progress','5007 → resolved'])

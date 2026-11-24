@@ -16,7 +16,7 @@ Next page: 437 is between 400 and 500  →  that leaf.
 
 5
 00:00:21,000 --> 00:00:26,000
-The leaf entry for 437 points straight to its row. 3 index pages instead of checking 900 rows.
+The leaf entry points to row 437. This lookup visits three index pages.
 
 6
 00:00:26,500 --> 00:00:28,700
@@ -32,7 +32,7 @@ Leaves are already in order, so ranges and ORDER BY ticket_id need no sorting.
 
 9
 00:00:43,200 --> 00:00:46,700
-Levels grow like a logarithm, not like the row count. (A growth model, not a millisecond prediction.)
+Index levels grow logarithmically. (Model of index growth.)
 
 10
 00:00:48,300 --> 00:00:58,300
