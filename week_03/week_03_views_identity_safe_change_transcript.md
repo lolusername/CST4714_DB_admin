@@ -291,7 +291,7 @@ In your submitted file, keep the fax statement commented out, and write the expe
 
 ## Slide 23
 
-Undoing a change and repairing it later are not the same thing. Read the table one row at a time.
+Look at what you can do before and after commit. Read the table one row at a time.
 
 First row, before COMMIT. We can roll back the rehearsal, and the original rows and the original interface come back. That is exactly what we just watched.
 

@@ -238,7 +238,7 @@ Step three is writing, and it takes about twenty-five minutes. You write between
 
 Cell A, about fifty to seventy words, says what the query at the top of the notebook must return. Use two specific observations from your notebook, and explain why LIMIT 20 can return fewer than twenty rows in this dataset.
 
-Cell B, about eighty to one hundred ten words, explains how an index could help the filter or the ordering, and names one cost. Use one idea from each source and keep both links. Then explain why finding an index definition online does not prove that this small database will run faster.
+Cell B, about eighty to one hundred ten words, explains how an index could help the filter or the ordering, and names one cost. Use one idea from each source and keep both links. Then explain what you would measure to find out whether the index helps this small database.
 
 Cell C, about fifty to seventy words, describes one before-and-after test you will run in PostgreSQL for the midterm: what stays the same, which results and plan evidence you will compare, and what would make you keep or reconsider the index. Label your expected outcome as a prediction, and finish with one question you still need answered.
 
@@ -274,7 +274,7 @@ Teaching placement (not spoken): At minutes 40–45, before opening the research
 
 ## Slide 26
 
-Before asking whether the index made the query faster, check that the question and answer stayed the same. If a rewrite drops a needed row, a short run time is not a successful improvement. After correctness, inspect the work: the scan, any sort, rows, and buffers when we measure them. Also record the space and maintenance cost of the index. A twelve-row table is small enough that reading it directly may be cheaper. Explain why PostgreSQL chose that plan.
+Before asking whether the index made the query faster, check that the question and answer stayed the same. Compare the returned IDs before you compare run times. After correctness, inspect the work: the scan, any sort, rows, and buffers when we measure them. Also record the space and maintenance cost of the index. A twelve-row table is small enough that reading it directly may be cheaper. Explain why PostgreSQL chose that plan.
 
 Teaching placement (not spoken): Immediately after appendix slide 25; remain within the 45-minute explanation.
 

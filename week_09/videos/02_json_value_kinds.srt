@@ -36,7 +36,7 @@ Double quotes, no final comma: valid JSON.
 
 10
 00:00:37,666 --> 00:00:40,066
-Some parsers accept extensions, so "my parser accepted it" doesn't prove it is portable.
+Test the file with a parser that follows standard JSON.
 
 11
 00:00:45,966 --> 00:00:47,466
@@ -44,11 +44,11 @@ Four objects about ticket 1004 that say four different things.
 
 12
 00:00:47,966 --> 00:00:50,166
-Is missing the same as null? JSON doesn't decide. The application's contract does.
+What does a missing field mean here? Check the application's data contract.
 
 13
 00:00:50,666 --> 00:00:52,866
-An empty events list doesn't say whether history is absent or just not included.
+Check the API contract to learn what an empty events list represents.
 
 14
 00:00:55,366 --> 00:00:59,166
@@ -68,5 +68,5 @@ Valid JSON, a good document model, and a stored BSON document are three differen
 
 18
 00:01:09,666 --> 00:01:19,666
-Remember: Six kinds: object, array, string, number, true/false, null. Double quotes only. No trailing commas, comments, NaN, or dates. Missing, null, [ ] and 0 can mean different things: define the contract. JSON has no date type. MongoDB stores BSON, which does. Valid syntax is not a good data model.
+Remember: Six kinds: object, array, string, number, true/false, null. Double quotes only. No trailing commas, comments, NaN, or dates. Missing, null, [ ] and 0 can mean different things: define the contract. JSON has no date type. MongoDB stores BSON, which does. Choose a document shape that supports the reads your application makes.
 

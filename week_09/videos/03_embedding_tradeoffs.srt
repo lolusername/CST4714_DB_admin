@@ -12,7 +12,7 @@ User 101 changes their display name. One authoritative record is updated.
 
 4
 00:00:15,100 --> 00:00:22,200
-The copies don't change by themselves. Are they now wrong?
+The copies keep the old label. Which label should the ticket show?
 
 5
 00:00:22,700 --> 00:00:25,300
@@ -20,7 +20,7 @@ Same text, different meaning: a stale current name is a bug; a labeled snapshot 
 
 6
 00:00:25,800 --> 00:00:28,000
-Decide the meaning before the change. You can't relabel a stale value as history later.
+Decide whether the copy should track the current value or preserve its original value.
 
 7
 00:00:30,500 --> 00:00:32,700
@@ -56,11 +56,11 @@ Write 2: the preview gains event 6 and drops event 1, its oldest.
 
 15
 00:01:01,733 --> 00:01:03,933
-Event 1 is still in the history. The bound limits the preview, not retention.
+The preview shows the latest events. The history still includes event 1.
 
 16
 00:01:04,433 --> 00:01:06,233
-Two documents, two writes: not automatically one atomic change.
+Use a transaction if both document writes must succeed together.
 
 17
 00:01:06,733 --> 00:01:09,133
@@ -68,5 +68,5 @@ Name the refresh rule and the acceptable lag. Later weeks cover the database's g
 
 18
 00:01:10,733 --> 00:01:20,733
-Remember: An embedded copy needs a stated meaning: current name or snapshot? A stale "current" copy is a bug; a labeled snapshot is history. Unbounded arrays make documents grow and reports dig through them. Hybrid: bounded preview in the ticket, full history kept separately. Two writes are not automatically atomic. Write down the refresh rule.
+Remember: An embedded copy needs a stated meaning: current name or snapshot? A stale "current" copy is a bug; a labeled snapshot is history. Unbounded arrays make documents grow and reports dig through them. Hybrid: bounded preview in the ticket, full history kept separately. Define how the application will keep the two documents in sync.
 

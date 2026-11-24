@@ -71,7 +71,7 @@ First row: inside the transaction. Our own connection sees ticket 1004 with 202 
 
 Second row: after ROLLBACK. Run a fresh query and the ticket is back to NULL and new. Query event 5998 and you get no row. Rollback did not leave a blank event behind. It discarded the insertion, so the record simply does not exist.
 
-Third row is the other possible ending. If we started from the same state, ran the same successful pair, and committed, both changes would remain: 202, in_progress, and event 5998 present. That is a comparison between two endings. It is not a suggestion to type COMMIT after the ROLLBACK we just ran.
+Third row is the other possible ending. If we started from the same state, ran the same successful pair, and committed, both changes would remain: 202, in_progress, and event 5998 present. To compare the two endings, start a fresh transaction for each run.
 
 Now look at the two queries at the bottom. They ask about exactly the objects we changed, ticket 1004 and event 5998. Why not count all the tickets? Because an update does not change how many tickets there are. The count would look identical whether the assignment survived or not. Choose the check whose answer directly proves your claim.
 
@@ -220,7 +220,7 @@ Now the writer. Read the two code blocks as two different connections. On the le
 
 Notice that they change different columns. That does not matter. They change the same row, and a row change has to wait for another transaction's uncommitted change to that row. So B waits, before it ever reaches its COMMIT. The fact that a reader could see medium and open a moment ago gives a second writer no permission to skip that coordination.
 
-Now look at B's SET LOCAL statement_timeout line. That is a safety limit for the exercise, so B cannot wait forever. It is not a fix. Read the note at the bottom: a timeout in B would not end A's transaction. If B times out, A is still holding its uncommitted change.
+Now look at B's SET LOCAL statement_timeout line. The timeout limits how long B waits. Read the note at the bottom: a timeout in B would not end A's transaction. If B times out, A is still holding its uncommitted change.
 
 The notebook's code differs from the slide in small details. It sets B's fifteen-second timeout for the whole session, it adds RETURNING so you can see the row, and it gives A its own idle-in-transaction timeout as a second safety net. The mechanism is the same. It runs the sequence in one cell: B waits in a small background worker, while the main code captures the activity, ends A's transaction, and waits for B to finish. Use the notebook's persistent connections for these blocks.
 
@@ -271,7 +271,7 @@ Second row: A commits. Now high is part of the committed row. B proceeds on the 
 
 Read the line at the bottom. B finishing establishes progress. The row values show which changes survived. If all you report is "the spinner stopped," you have not said which data decision you made. In both cases the application started working again. In one of them, somebody's priority change quietly disappeared. That is why an incident update has to include the stored result.
 
-One caution. These outcomes hold for this starting row and this SQL. They are not a rule that a waiting statement always succeeds once its blocker commits. A concurrent delete, a condition that no longer matches, another error, or a different isolation level could change what B gets. For the lab, hold everything else constant and change only A's decision. Then the difference between your two runs has exactly one explanation.
+One caution. These outcomes depend on the starting row, the SQL, and the transaction settings. A concurrent delete, a condition that no longer matches, another error, or a different isolation level could change what B gets. For the lab, hold everything else constant and change only A's decision. Then the difference between your two runs has exactly one explanation.
 
 [Sources]
 - Notebook 02 controlled fixture and two transaction endings.
@@ -283,7 +283,7 @@ People call both of these situations "a slow query," and they need completely di
 
 First row: a lock wait with a blocker. The query is waiting for the row lock. It cannot proceed, because another transaction has not let go. So the useful next check is about that transaction: its owner, its state, its age, and the operation that is waiting. But look at the last column. None of that establishes that the blocker should be killed.
 
-Second row: a long-running query that is not in this lock wait. Now you look at the plan, the work performed, and I/O and other waits. And the last column says that no lock wait does not prove the query is using CPU efficiently. We learn to read plans and choose indexes in Week 7.
+Second row: a long-running query that is not in this lock wait. Now you look at the plan, the work performed, and I/O and other waits. Use the plan and the I/O measurements to investigate a slow query once you have ruled out blocking. We learn to read plans and choose indexes in Week 7.
 
 Read the first line at the bottom. An index cannot release another session's open transaction. If B is blocked by A, no amount of tuning B fixes that.
 

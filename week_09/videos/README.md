@@ -1,6 +1,6 @@
 # Week 9 videos
 
-Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams illustrate the design.
+Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams trace the steps in each example.
 
 ## [Same facts, two shapes](01_rows_to_documents.mp4) (1:16)
 
@@ -26,4 +26,4 @@ An embedded copy of a user's name goes stale after a name change unless its mean
 
 [Watch](03_embedding_tradeoffs.mp4) · [Subtitles](03_embedding_tradeoffs.srt)
 
-Editable source: `course/animations/week_09/` in the course authoring folder. Videos © 2026 Atilio Barreda, CC BY-NC-SA 4.0; source code MIT.
+Videos © 2026 Atilio Barreda, CC BY-NC-SA 4.0; source code MIT.

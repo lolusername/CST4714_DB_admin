@@ -54,7 +54,7 @@ And PostgreSQL did nothing wrong. It counted exactly the rows we handed it. The 
 
 So how do we fix it? It depends on the question. If the report only needs ticket facts, like category and request counts, don't join events at all. Read tickets. If the report really needs something from the history, summarize the history down to one row per ticket first, and then join.
 
-You might think: just use COUNT DISTINCT ticket_id. That does answer some distinct-ticket questions. But it is not a general repair. It won't fix a sum that got multiplied, and it won't bring back rows a join removed. The reliable first move is to say what one row should mean, look at the intermediate rows, and then pick the join and the aggregate that match.
+You might think: just use COUNT DISTINCT ticket_id. That does answer some distinct-ticket questions. Fix the join before calculating sums or counting tickets that have no matching event. The reliable first move is to say what one row should mean, look at the intermediate rows, and then pick the join and the aggregate that match.
 
 ## Slide 6
 
@@ -92,7 +92,7 @@ But it isn't a table. Nothing is stored. The WITH clause and the SELECT under it
 
 Run it and look at the result. Ticket 1003 has 3 events. Ticket 1004 has 1. In this data every ticket has at least one event, so we get twelve rows. But think about a ticket with no events yet. This summary starts with the events that have been recorded. Hold on to that; it matters on the next slide.
 
-The property we care about is the one on the slide: at most one row per ticket_id. That is what makes the next join safe. And a word on why we use CTEs. They are not a speed trick and they are not cached tables. We use them because each stage gets a name that you can run and inspect on its own.
+The property we care about is the one on the slide: at most one row per ticket_id. That is what makes the next join safe. And a word on why we use CTEs. A CTE gives each stage a name, so you can inspect its result while building the query.
 
 [Sources] PostgreSQL WITH queries: https://www.postgresql.org/docs/current/queries-with.html
 
@@ -220,7 +220,7 @@ Here are two illustrative events for one ticket, 7001 and 7002. Look at the reco
 
 Our ordering rule settles it: ORDER BY event_at DESC, event_id DESC. When the times tie, the larger event_id wins. So 7002 gets position 1 and 7001 gets position 2. That is deterministic, because event IDs are unique.
 
-But be careful about what that proves. Read the second line: the rule selects the same row when the timestamps tie. A larger ID does not mean the event happened later. IDs can be handed out before a transaction commits, and imported records can arrive in a different order from the events they describe. Our rule is a reporting decision that we declare and test. It is not a statement about history.
+But be careful about what that proves. Read the second line: the rule selects the same row when the timestamps tie. A larger ID does not mean the event happened later. IDs can be handed out before a transaction commits, and imported records can arrive in a different order from the events they describe. When two events have the same timestamp, our report chooses the one with the larger ID.
 
 In some applications the right answer is different. Maybe you show both tied events, or you use a trusted sequence number from the source system. The repair desk defines which status qualifies.
 
