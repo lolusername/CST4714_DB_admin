@@ -11,7 +11,7 @@ You will practice modeling, querying, access control, performance, and recovery.
 
 ## Start Here
 
-- **This week — Week 12:** [Open the single Thanksgiving-week lesson](week_12/README.md). There is **one class meeting**. Use the real Atlas recovery notebook linked there and submit one viewable Colab link. The earlier two-day plan is optional reference, not additional work.
+- **This week — Week 13, November 24:** [Open the single Thanksgiving-week lesson](week_13/README.md). Use real Atlas to import the historical CISA dataset twice, verify it, and change the grouped question. There is one 20-minute lab after guided setup and one viewable Colab-link submission. Thursday, November 26 is closed.
 - [Course syllabus (PDF)](CST4714_Fall_2026_Syllabus.pdf): schedule, policies, and grading.
 - [Operating Cloud Databases (PDF)](Operating_Cloud_Databases.pdf): the course textbook. Each week's page identifies the assigned chapter and sections.
 - [Corrections and current notebook links](COURSE_CORRECTIONS.md): read alongside the textbook PDF.
@@ -24,7 +24,7 @@ You will practice modeling, querying, access control, performance, and recovery.
 ## Weekly Materials
 
 Choose a week for its class plan, assigned reading, slides, labs, and any
-notebook or sample data. Week 12 combines the required work into one meeting.
+notebook or sample data. Week 13 combines its required work into one Thanksgiving-week meeting.
 
 - [Week 1: How Applications Use Databases](week_01/README.md)
 - [Week 2: Major SQL Review Studio](week_02/README.md)

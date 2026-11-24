@@ -1,8 +1,8 @@
 # Week 12: Connect to Atlas and Recover a Ticket
 
-## One class for Thanksgiving week
+## Week 12 recovery lesson — November 17 and 19
 
-This week has **one 100-minute class**. The course's holiday schedule replaces the old Day 1/Day 2 sequence. There is **one required lab and one viewable Colab-link submission**. Use this page and the Atlas notebook rather than the older two-day instructions. Brightspace remains the source of actual due dates.
+**Calendar correction:** Week 12 was November 17 and 19, 2026. The one-meeting Thanksgiving week is **Week 13, November 24**; use the [Week 13 lesson](../week_13/README.md) for that class. The recovery lesson below is retained as a condensed 100-minute Week 12 route, with one notebook exercise and one viewable Colab-link submission when assigned. It does not add a Thanksgiving-week assignment. Brightspace remains the source of actual due dates.
 
 ## What you will learn
 
@@ -15,7 +15,7 @@ Explain what an acknowledged write does and does not promise; distinguish a repl
 - [Week 12 PowerPoint](week_12_mongodb_reliability.pptx), [PDF handout](week_12_mongodb_reliability.pdf), and [spoken transcript](week_12_mongodb_reliability_transcript.md).
 - [Complete field and record reference](DATA_REFERENCE.md), also in the notebook before the first write.
 - [Course corrections](../COURSE_CORRECTIONS.md) clarify dated screenshots and backup availability.
-- [Chapter 12](../Operating_Cloud_Databases.pdf): read the replica/acknowledgment and logical-recovery sections. There is no separate reading report.
+- **Before the recovery lesson:** read [Chapter 12](../Operating_Cloud_Databases.pdf), focusing on the replica/acknowledgment and logical-recovery sections. There is no separate reading report.
 
 ## Prepare the actual Atlas connection
 

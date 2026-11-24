@@ -4,13 +4,15 @@ This transcript follows the current presentation order. Source references marked
 
 ## Slide 1
 
-Welcome to Week 13. The case is in the two lines on the slide. A public dataset becomes a database, and the next import arrives tomorrow. That second line is the whole week.
+Welcome to Week 13, Tuesday November 24, 2026. Thanksgiving closes the Thursday meeting. We have one hundred minutes and one notebook submission. Week 12 was November 17 and 19; the separate recovery lesson remains a Week 12 resource.
 
-Picture a colleague who asks you to build a small catalog app. The first import works. Tomorrow the source publishes an update, and your colleague runs the same program again. Now what? If the program just appends every row, you get duplicates. If it wipes the database and reloads, it can erase something somebody else added. Neither should happen by accident. So before we write any import, we need to know how to identify a record, where the data came from, and what a second run is supposed to do.
+A public dataset becomes a database. The next import arrives tomorrow. Suppose a colleague runs the same import again: will the records double, or will the program recognize the records already there? Today we will answer that with evidence from real MongoDB Atlas.
 
-Our data is a historical subset of CISA's Known Exploited Vulnerabilities catalog. We are reading records about vulnerabilities. We are not downloading vulnerable software or testing anybody's system. And the same decisions apply to transit data, museum collections, or product catalogs.
+Start before the terminology. A document is one record with named fields. Our records describe vulnerabilities in CISA's historical Known Exploited Vulnerabilities catalog. We are not downloading vulnerable software or testing any system. Colab runs Python on a remote computer, PyMongo carries requests, and Atlas stores documents. A collection holds the documents in a database.
 
-Day 1 is about measuring key choices and running a small distribution experiment in Python. Day 2 is a repeatable import with a checked result. SQLite gives everyone a working path. Atlas and PostgreSQL are optional. On our calendar this is Thanksgiving week, so if we only have one meeting, we do the core of both parts together, with SQLite. Either way, it all goes into one individual notebook, with no separate report.
+Open Notebook 06 and save your own Drive copy. Use Cells 01, 02a with USE_LIVE_FEED False, 02b, and 03–08; then 10, 11 twice, 14, and 15. Skip the optional SQLite and PostgreSQL cells. Setup comes before the twenty-minute individual lab. In that lab you change the grouped question and write a five-to-seven-sentence handoff. Submit one viewable Colab link in Brightspace. No paid tier, sharded deployment, or second assignment is required.
+
+Teaching route: 0–10 minutes slides 1 and 7; 10–25 slides 8, 5, 9, 10, and 12; 25–50 slides 19, 21, and 22; 50–65 slides 27, 25, 26, 29, and 30; 65–85 slide 32; 85–100 slides 16, 33, and 34. Other slides are optional reference, not another day's required material.
 
 ## Slide 2
 
@@ -232,43 +234,29 @@ Source: https://discord.com/blog/how-discord-stores-trillions-of-messages
 
 ## Slide 17
 
-Time for Part 1 of the lab. Work individually in Notebook 06, and start from the embedded snapshot. Why the snapshot and not the live feed? Because then your numbers match the ones on these slides, and we can check each other's results.
+This is a recap of the guided inspection, not a second lab or a Day 1 submission. In this single Thanksgiving-week meeting, Cells 03–07 prepare the import we will run today.
 
-Run Sections 1 and 2. They inspect the source, check the fields, measure the candidate keys, and run the range and hash comparison. Read the cells as you go. The code is part of the lesson, not a black box.
+Keep the retained historical snapshot so the counts match the slides. Cell 06 measures distinct values and repeated values. Compare cveID and dateAdded using the displayed measurements. Cell 07 then places the same records into four teaching buckets under two simplified rules. This is ordinary Python, not a deployed sharded cluster. The exact slide 12 result is fifteen later records in the last date bucket and three, three, six, three under the displayed hash rule.
 
-Then focus on two candidates: cveID and dateAdded. Use two numbers the notebook actually displays, for example the distinct counts and the largest value shares. Then tie them to a grouped question you want to answer, like which vendors appear most often in this subset. An exact identifier and a date window give a placement rule very different information.
-
-Second question: does this seventy-five-record database need sharding? A well-supported no is a perfectly good answer, as long as you say what measured change would make you reconsider.
-
-You do not need a paid cluster, a sharded deployment, or a database account for any of this. Read the box at the bottom. Save the notebook, because Part 2 continues in the same file, and there is no separate Day 1 submission. Continue Part 2 at the next scheduled meeting; Week 12 was the one-meeting holiday week.
+Seventy-five small records do not establish a need for sharding. The point is to explain how a candidate key and the workload affect a distribution decision. Keep this evidence in the same saved notebook. Continue directly to the Atlas connection; the twenty-minute individual lab comes after guided setup, import, and verification.
 
 ## Slide 18
 
-Day 2 starts with the two lines on the slide. The import ran in Part 1, and now it runs again. That second run is not an edge case. Retries and scheduled refreshes are an ordinary part of running any data system, so what the second run does has to be designed, not discovered.
+We now move from measuring the source to importing it. This is the next part of the same class, not a second meeting. A scheduled refresh or retry must have an intentional result.
 
-Our design uses the stable CVE identifier to recognize a record. If that identifier is already in the database, the load updates the selected values. If it is not, the load inserts it. Run the same unchanged source again, and you should end up with the same logical records and the same values.
+We match each record by its stable cveID. If that value already exists, replace its source fields; if it does not, insert it. Repeating the unchanged source should leave the same logical records and values. That property is idempotency: repeating an operation has the same final effect as doing it once, for the stated input and conditions.
 
-Now read the second box. A query and a value comparison tell us what was actually stored. Here is why that wording matters. A successful connection only proves the network and the login worked. An import count only tells you how many rows there are. Neither tells you the values are right. So we will query the database and compare a known record with the source.
-
-SQLite runs the whole example with no remote database. If you pick Atlas or PostgreSQL, you also cross a network boundary and handle a credential, and we will look at that code directly instead of hiding it in a helper.
-
-The written part is a short handoff in the notebook, explaining your work to an imagined colleague. It is still individual work, and still one submission.
+Our required path uses real Atlas. A successful connection is not proof that the data was imported. A matching count is not proof of correct values. We will import twice into the same collection, compare all seventy-five documents and their field types with the source, and check the grouped result independently. The SQLite and PostgreSQL paths are optional later practice, not alternatives that prove an Atlas connection.
 
 ## Slide 19
 
-One variable controls the database path: TARGET. Look at the three rows.
+Cell 08 sets TARGET to atlas for today's required lesson. Python runs in Colab; MongoDB runs in Atlas; PyMongo is the driver that sends the requests between them. SQLite and PostgreSQL remain optional reference paths in this notebook. We do not run them during this class.
 
-sqlite is the default, and the simplest. Python already includes the SQLite driver, and the notebook builds an in-memory database inside its own process. Nothing to sign up for, nothing to download.
+Run Cell 08 once. It chooses the database cst4714_week13 and a collection name beginning kev_ followed by twelve random hexadecimal characters. The database is fixed so your database user only needs readWrite on that teaching database. The collection name isolates your run. Choosing names does not connect or import anything.
 
-atlas uses PyMongo to connect to your MongoDB Atlas project. It needs a database user and an IP rule that lets the notebook runtime in. We will see why on slide 21.
+Then run Cell 10 to connect. Run Cell 11 twice without rerunning Cell 08 or changing collection names. If every import starts with a fresh collection, the second import never meets the first import's records. That tests two first imports, not repeat behavior.
 
-postgres uses Psycopg to connect to PostgreSQL, including your Supabase project through the right connection endpoint.
-
-You need exactly one. Connecting to a second provider does not make your repeat-run test any more complete. It is the same test.
-
-Now the line at the bottom, which is the most important instruction of the day. Run setup once. Then repeat the import cell. Why? The setup cell creates the practice names and the connection. If you rerun setup before each import, you get a fresh, empty target every time, and the second import never meets the first import's records. You would be testing a first import twice.
-
-And if you want to try another target, clean up this run first. The notebook actually stops you from starting another setup while one is still open. That keeps you from leaving practice objects and open connections scattered across services.
+Use an existing Free cluster and a database user prepared before class. An Atlas website account is not the database credential. No paid tier, API key, or sharded deployment is needed. If access is blocked, label the instructor's demonstrated evidence as observed and complete the same notebook when access works; do not claim a local or mock connection was Atlas.
 
 ## Slide 20
 
@@ -284,38 +272,33 @@ Then the last lines. When we verify, we convert back. A PostgreSQL date object a
 
 ## Slide 21
 
-If you choose Atlas, this is the step that trips everyone up. Atlas checks the network address of whatever connects to it. In Colab, your Python code is not running on your laptop. It runs on a remote notebook machine, and that machine has a different public address from the laptop running your browser.
+Run Cell 10 after Cell 08. Atlas checks the address of the computer making the request. Colab's Python runs on a remote machine, not on the laptop showing this browser. Its network address can therefore be different.
 
-So the notebook looks up its own runtime's public IPv4 address and prints it with slash thirty-two on the end. Slash thirty-two means exactly one address. Add that to your Atlas IP access list, with an expiration if the dashboard offers one. Wait until the rule is active. Then go back and answer the notebook's confirmation prompt.
+Cell 10 prints that runtime's public IPv4 address with slash thirty-two. That means one address. Add this temporary entry to Atlas Network Access, choose a short expiration when available, wait for it to become active, and return to the notebook's confirmation prompt. Add Current IP can use the browser's address; it is not proof that the Colab runtime is allowed. A new runtime may need a new entry.
 
-Read the note at the bottom. The Add Current IP button adds the browser's address, which is your laptop. Use that alone, and Colab still cannot connect. And if Colab gives you a new runtime, check the address again. Yesterday's rule may not match.
+Get the Python Drivers URI from your own Free cluster. Use a database user with readWrite on cst4714_week13, not your Atlas website password. Put the completed URI in a Colab Secret named MONGODB_URI or the hidden prompt. Never paste it into a saved code cell, screenshot, or notebook output.
 
-The screenshot is a redacted Atlas interface from August 25, 2026. It shows you where Connect, Database, and Network Access are. It is not proof of a connection from your notebook. Under Connect, then Drivers, you get the Python URI format. Use a database user's password, not your Atlas website password.
+The screenshot is a redacted August 25 interface, not evidence of a live connection. The code's ping and later write/read are our evidence. Remove the temporary runtime rule when no longer needed; closing Python does not remove that provider setting.
 
-Keep that credential in the hidden prompt, never in a code cell, screenshot, or submission. And after class, delete the runtime rule. Closing Python does not remove it.
-
-Sources:
-https://www.mongodb.com/docs/atlas/security/ip-access-list/
+Source: https://www.mongodb.com/docs/atlas/security/ip-access-list/
 
 ## Slide 22
 
-Here is the actual connection code, shown in the open instead of buried in a helper. Read it line by line.
+This is an excerpt of Cell 10, after the hidden URI input. MongoClient creates the driver client. TLS encrypts the connection; keeping tlsInsecure False preserves the certificate and hostname checks that help identify the server. Do not disable those checks to work around a connection error.
 
-MongoClient gets atlas_uri, which came from the hidden prompt. tls equals True turns on encryption. tlsInsecure equals False keeps the certificate and hostname checks on. Why spell that out? Because the classic shortcut when a connection fails is to turn those checks off, and then you have an encrypted connection to a server you never verified.
+The stable API setting requests version one. The two ten-thousand-millisecond settings bound server selection and client operations to about ten seconds each; they do not guarantee the whole interactive cell finishes in ten seconds. Network lookup, package setup, and the pause for your input are separate steps.
 
-server_api asks for the stable API, version one, in strict mode. The two timeouts, serverSelectionTimeoutMS and timeoutMS, are both ten thousand milliseconds, which is ten seconds. Without them, a bad connection attempt can just hang, and you never find out why.
+Creating a client is not evidence of a successful connection. Ping sends a real request. After ping, the full cell selects the fixed teaching database and this run's collection, checks that it is empty, and creates a unique cveID index. Ping alone does not prove write permission, and neither step imports the records. Cell 11 does that.
 
-Then the last line, ping. Creating a client object does not prove anything, because PyMongo can create a client before it ever talks to a server. The ping is a real request. If it succeeds, the client can reach the deployment.
+The collection requests majority writes and majority reads from the primary. Those settings do not mean every replica has acknowledged a write or that a timed-out write certainly failed. If a write times out, inspect and verify the collection before deciding what happened; the stable-key import can be retried.
 
-Read the box at the bottom. A ping does not load or verify a dataset. That comes later, with its own checks. The full cell also validates the URI, closes a failed client, and clears the URI variable.
+If setup fails, check the database user and role, completed Drivers URI, active runtime rule, deployment readiness, DNS name lookup, and TLS secure connection. Do not display the secret while diagnosing. The cell closes a failed client and raises a redacted error; it does not substitute a mock database.
 
-If it fails, go through the layers: the database user, a percent-encoded password, the active runtime IP rule, the cluster being up, DNS, and TLS. Do not fix it by disabling TLS checks. That weakens the connection and explains nothing.
-
-Sources:
-https://www.mongodb.com/docs/languages/python/pymongo-driver/current/security/tls/
-https://www.mongodb.com/docs/languages/python/pymongo-driver/current/connect/connection-options/server-selection/
+Sources: https://www.mongodb.com/docs/languages/python/pymongo-driver/current/security/tls/ ; https://www.mongodb.com/docs/languages/python/pymongo-driver/current/connect/connection-options/server-selection/
 
 ## Slide 23
+
+Optional reference: skip this slide in the required Thanksgiving-week route.
 
 If you pick postgres with Supabase, this is where you get the connection details. Read the box at the top right: Connect, then Session pooler.
 
@@ -327,13 +310,15 @@ Now the SSL box. sslmode equals require gives you encryption. verify-full also c
 
 The screenshot is a redacted overview from August 25, 2026. It shows where Connect is, not the dialog itself.
 
-The code makes a uniquely named practice schema, so your table does not collide with a real one, and it clears the connection URL after the attempt. If it fails, check network reachability, credentials, project availability, the SSL settings, and permission to create the schema. And SQLite is always there to finish the required work.
+The code makes a uniquely named practice schema, so your table does not collide with a real one, and it clears the connection URL after the attempt. If it fails, check network reachability, credentials, project availability, the SSL settings, and permission to create the schema. SQLite remains optional later practice; it does not demonstrate an Atlas connection.
 
 Sources:
 https://supabase.com/docs/guides/database/connecting-to-postgres
 https://www.postgresql.org/docs/current/libpq-ssl.html
 
 ## Slide 24
+
+Optional reference: skip this slide in the required Thanksgiving-week route.
 
 After the PostgreSQL import, this code reads one known record back. Two things get substituted into SQL here, and they use two different tools. That is the point of the slide.
 
@@ -369,7 +354,11 @@ For our unchanged source, idempotent means running it again leaves the same logi
 
 ## Slide 26
 
-Run Cell 08 once to choose SQLite and create the isolated target. Then run Cell 09 twice without rerunning setup. The first import starts with zero rows and leaves seventy-five. The second meets the same CVE identifiers and leaves seventy-five again. That is what the arrows mean. It is not two first imports into two empty databases. The full field comparison in Cell 14 adds evidence that matching counts alone cannot give. Cell 15 changes the grouped question from vendor to product. Keep the original historical source metadata so the reader knows which seventy-five records produced the result.
+This retained diagram shows the evidence we want: zero records, then seventy-five after the first import, then seventy-five after the second import. For today's Atlas path, run Cell 08 once, connect in Cell 10, and run Cell 11 twice in the same collection. The stable source field is cveID. The small SQL cve_id label in the diagram is only the optional SQL paths' name for that same identifier; Atlas keeps cveID.
+
+The first import inserts seventy-five documents. The repeated import inserts zero and matches seventy-five existing identifiers. Read the modified counter actually returned; do not promise it will be zero. In our real local MongoDB test it reported seventy-five on the repeat even though the complete selected values and types matched. Idempotency here concerns the resulting logical records and values, not a required modified-counter value. Preserve both count pairs in the printed history.
+
+Then Cell 14 compares every selected value and type of all seventy-five stored documents with the checked source. Cell 15 checks the grouping against a separate Python count. Equal row counts alone would not establish those things.
 
 ## Slide 27
 
@@ -406,17 +395,13 @@ https://www.mongodb.com/docs/manual/core/write-operations-atomicity/
 
 ## Slide 29
 
-This slide is about checks that pass while the data is wrong. Picture this. Somebody changes the title of our known record, CVE-2026-56291, the first record in the source, to the wrong text. There is no notebook cell that does this for you. It is a scenario to reason through. Now run our checks down the table.
+This is a reasoning example, not an instruction to damage your collection. Suppose somebody changes only the vulnerability title of the first source record. The collection still has seventy-five documents. That CVE ID still exists. Vendor totals still match. All three checks can pass while a title is wrong.
 
-Record count is seventy-five. Pass. Nothing was added or removed. The known CVE identifier exists. Pass. Vendor counts match. Pass, because we changed the title, not the vendor.
+Cell 14 independently reads back every document, leaving out only MongoDB's generated _id, sorts by cveID, and compares the result with the checked source. It also checks the seven string fields and the cwes array of strings. The known first record is printed separately so you can inspect a concrete example. Our required Atlas path now checks all seventy-five records, not just the one illustrated by the table.
 
-Three passes, and the record is still wrong. That is the danger of checking only totals and existence.
+A date represented as a timestamp instead of the agreed YYYY-MM-DD string is also wrong for this lesson's model, even if it names the same calendar day. The source did not specify a time of day. The cwes value must remain a list, not comma-separated text.
 
-The last row catches it. The notebook takes the known identifier from the checked source, pulls the stored record, and compares all eight selected fields. Before comparing, it normalizes representation, like PostgreSQL date objects and SQLite JSON text. For MongoDB, it leaves out the generated internal identifier, which is not part of the source. Now the title differs, and the check fails.
-
-How do we fix it? Rerun the unchanged import. The source is authoritative, so the upsert puts the correct title back. Then rerun verification and watch it pass.
-
-But read the last line on the slide. This compares that one known record. If a different record's title had changed, this check would miss it. One known record does not prove every untested field is correct, and the grouping check covers only the grouping.
+Rerunning the unchanged import would repair source-controlled values, because the source is authoritative for this disposable collection. This does not preserve edit history. A passing check demonstrates this import result; it does not prove the historical subset is today's complete catalog, that backups work, or that performance is adequate.
 
 ## Slide 30
 
@@ -435,6 +420,8 @@ course/datasets/cisa_kev_sample/kev_sample.json
 
 ## Slide 31
 
+Optional reference: skip this slide in the required Thanksgiving-week route.
+
 So how does changing GROUP_FIELD actually reach the SQL? This slide answers that, and it connects back to slide 24.
 
 Read the code. GROUP_FIELD is set to product. allowed_columns is a small dictionary with exactly two entries. vendorProject maps to the column vendor_project, and product maps to product. The next line looks up the column name. The full cell rejects any choice outside those two entries, so a misspelling or something malicious stops right there. Only those two names can ever reach the SQL.
@@ -452,41 +439,35 @@ https://www.psycopg.org/psycopg3/docs/api/sql.html
 
 ## Slide 32
 
-Here is Part 2 of the lab, in the same notebook as Part 1.
+This is the twenty-minute individual lab, after the guided Atlas connection, both imports, full verification, and vendor query. Stay in the same notebook and collection. In Cell 15, change GROUP_FIELD from vendorProject to product, run that cell, and confirm that the five groups match the independently counted source. Do not rerun Cell 08 and do not switch providers.
 
-Choose one target. Run its setup once. Then run its import cell twice, without rerunning setup in between. Keep the before and after counts, because that is your repeat-run evidence. Run the known-record verification and the vendor grouping. Then change GROUP_FIELD from vendorProject to product, rerun, and read one of the new rows as a sentence about the selected records. The notebook's own source comparison should agree with the database.
+Read one row as a sentence. Windows four means four selected catalog entries have product exactly Windows; it does not mean four infected machines or four installations. The same seventy-five records now answer a different question.
 
-Then write the handoff, as if a colleague will maintain this small import tomorrow. The slide names four things: your question, two key measurements, the repeat-run result, and a limitation. The lab asks for two more, so include them: one verification result, and the changed product row as your concrete example. Add a text cell under the Submission Record heading and write it there. Use the evidence already in your notebook. You do not need to paste every output again.
+Write five to seven sentences in Submission Record. Include the historical source and your question, the CVE-ID and date measurements, the same-collection repeat result, one changed product row, independent verification, and a limitation. Use the evidence already saved; this is a brief handoff, not a separate report.
 
-The colleague is your audience, not a partner. Work individually and submit the viewable sharing link to your own saved Colab copy in Brightspace. Read the bottom box: no separate report, screenshot, matrix, or repository is required.
+Save your own Drive copy with code, outputs, and the handoff. Give the instructor viewer access and submit that viewable Colab sharing link in Brightspace. The starter link, a screenshot, and an ipynb attachment are not substitutes. There is no second report, matrix, repository, or new assignment. If you only observed the instructor's real Atlas demonstration, label that honestly and finish the same notebook under the existing deadline.
 
-Before you submit, run cleanup, remove any temporary Atlas rule, and make sure no credential is saved in any cell or output.
+Retain evidence before any optional cleanup. The final cleanup cell defaults to off so it cannot erase the collection while you are still querying it.
 
 ## Slide 33
 
-Cleanup is part of the program, not an afterthought. The rule is simple: remove what this run created, and nothing else. Read the table one row at a time.
+Cleanup is optional after both grouped queries, verification, and the saved handoff. Cell 16 starts with RUN_CLEANUP False. Leaving it there keeps your practice collection for now. Do not run cleanup before completing the evidence.
 
-SQLite. Closing the connection throws away the in-memory database. There is nothing else to do.
+If you deliberately set it True, the Atlas branch removes only the named kev_ collection created by this run from cst4714_week13, then closes the client. It does not drop the whole database or any unrelated collection. The temporary runtime slash-thirty-two rule is separate; remove it in Atlas when no longer needed or let its intended expiration end it.
 
-Atlas. The cleanup cell drops only this run's kev_sample collection, in this run's uniquely named database, and closes the client. Any unrelated collection stays. Then look at the third column. The temporary slash thirty-two runtime rule is a provider-side setting. The notebook cannot remove it. You do that in the Atlas dashboard.
+The other table rows describe optional SQLite and PostgreSQL paths. SQLite closes its in-memory database. PostgreSQL removes its practice table and only removes the schema if it is empty; no CASCADE is used. Those paths are not required today.
 
-PostgreSQL. The cell drops kev_sample, then tries to drop the practice schema only if it is empty. It deliberately does not use CASCADE. If some other table is in there, the schema stays, because destroying work we did not create is far worse than leaving an empty schema behind. Then the connection closes. And if you changed any provider-side access settings, review those yourself.
-
-Now read the note at the bottom. Closing a client does not pause a hosted database, and it does not remove an Atlas network rule. Deleting data, revoking access, and stopping infrastructure are different operations at different layers.
-
-Our data is public and our names are unique, but that is no excuse for broad cleanup commands. The professional habit is to know exactly what your process owns, and remove exactly that.
+Deleting practice data, closing a driver, revoking network access, and stopping hosted infrastructure are different actions. Closing a client does not pause the service or remove a network rule. Save your notebook outputs first and remove only objects you can identify as belonging to your own run.
 
 ## Slide 34
 
-Let's finish with how you would describe this work, say in an interview, without overstating it. The paragraph on the slide is a model. I built a small, repeatable import from a documented public source. I compared distribution keys, tested the same import twice, and checked both a query result and stored record values. I can explain which behavior I ran and which scaling claims this small dataset cannot support.
+Here is a precise way to describe the work: I imported a documented historical source into real Atlas, used a stable identifier to repeat the import without duplicating records, and checked stored values, types, and a grouped result against the source.
 
-Make it true for you. If you ran SQLite, say you built and checked the local path and studied the cloud connections. If you connected to Atlas or PostgreSQL, name the network and credential decisions you handled. And do not claim a sharded deployment because you ran a four-bucket Python simulation.
+Make the claim match what you actually did. If you only observed the instructor's Atlas run, say so. The four-bucket Python simulation illustrates placement; it is not a real sharded deployment or a production performance measurement. Seventy-five records do not establish that this workload needs sharding.
 
-A strong follow-up names the stable key, the transaction boundary, and a failure your checks can catch. For example, the row count missed a wrong title, and the known-record comparison found it. That beats saying the import worked.
+For the existing final project, discuss one source, one important query, and evidence that would justify a capacity change. Keep the requirements and deadlines on the existing project page. This class adds no separate project submission.
 
-For your project, look at the second box: one source, one important query, and a measured reason that would justify a capacity change. This week also has a checkpoint in the existing final-project assignment: your model, your seed data, and your first two queries. Record your progress and next step in your project package. It is not a separate submission.
-
-Next week, an application with more than one store. Stable identifiers, repeat behavior, and verification will help us figure out why two copies disagree and how to repair them safely.
+The next week examines applications with more than one data store. Stable identifiers, repeat behavior, and verification will help us explain why stored copies disagree. Today ends with one saved, viewable Colab link.
 
 ## Slide 35
 

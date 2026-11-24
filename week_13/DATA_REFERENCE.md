@@ -4,7 +4,7 @@
 
 The required path uses the retained 75-record CISA Known Exploited Vulnerabilities teaching subset. It is historical, nonrandom, and not today's complete catalog. Its metadata is below. One record means one catalog entry, not an affected machine, victim, or patch completion. The source CVE ID is retained as the import key; no course-generated ID replaces it.
 
-## Field dictionary and SQL naming
+## Field dictionary: required Atlas storage and optional SQL naming
 
 | JSON field | SQL field | Type and meaning |
 |---|---|---|
@@ -12,12 +12,14 @@ The required path uses the retained 75-record CISA Known Exploited Vulnerabiliti
 | vendorProject | vendor_project | Text vendor/project label, not a security ranking |
 | product | product | Text affected-product label |
 | vulnerabilityName | vulnerability_name | Text catalog description/name |
-| dateAdded | date_added | YYYY-MM-DD text; date added to this catalog |
-| dueDate | due_date | YYYY-MM-DD text from CISA; not a new class deadline |
+| dateAdded | date_added | Canonical YYYY-MM-DD text in Atlas/SQLite; calendar day added to this catalog; optional PostgreSQL date |
+| dueDate | due_date | Canonical YYYY-MM-DD text in Atlas/SQLite; optional PostgreSQL date; not a new class deadline |
 | knownRansomwareCampaignUse | ransomware_use | Catalog text such as Known/Unknown; Unknown does not prove no use |
-| cwes | cwes_json | Array of CWE identifier strings; serialized as JSON text in SQL |
+| cwes | cwes_json (SQLite), cwes (PostgreSQL) | Real array of CWE strings in Atlas; JSON text in SQLite; jsonb array in PostgreSQL |
 
 The normalization uses `.get`: an absent field becomes Python None, so inspect source completeness before importing. Nulls are not the same as empty strings or empty arrays. The notebook checks required values before writing; no claim is made that the historical subset exhausts every possible catalog value. Other original source fields are deliberately excluded. No relationship table is joined in this lab.
+
+The required class writes these checked records to `cst4714_week13`, in a unique `kev_<run suffix>` collection. It compares all selected values and types after importing twice. SQLite and PostgreSQL are optional reference paths, not proof of an Atlas connection.
 
 ## Retained metadata
 

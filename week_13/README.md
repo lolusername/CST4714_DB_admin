@@ -1,42 +1,51 @@
-# Week 13: Capacity, Sharding, and Python Integration
+# Week 13: A Repeatable Public-Data Import into Atlas
 
-## The Week's Question
+## The week's question
 
-When growth changes a workload, what should we measure before scaling, and how can
-Python load a small public dataset without hiding connection or data-quality
-decisions?
+If we import the same dataset again, do we recognize the same records or create duplicates? Use a small historical CISA catalog sample to connect from Python, load records by a stable identifier, and verify both values and grouped results.
 
-## What You Will Be Able to Do
+**Week 13 is the Thanksgiving week: one 100-minute class.** Use the required Atlas route below. The individual lab takes **20 minutes after guided setup and examples**. Students work quietly in their own saved Colab copy and submit **one viewable Colab link** in Brightspace. No additional report or worksheet.
 
-- state a measurable capacity and growth assumption;
-- compare tune, scale up, replica, partition, and shard options;
-- evaluate shard-key cardinality, frequency, monotonicity, and targeting;
-- connect from Python while keeping credentials out of code and submitted output;
-- inspect and load a small, licensed public-data subset; and
-- turn the notebook into final-project inspiration or a skill checkpoint.
+## Before the single class
 
-## Before Class: Assigned Reading
+**Before the single meeting:** read [Chapter 13: Scale Changes the Questions a System Must Answer](../Operating_Cloud_Databases.pdf), focusing on capacity and distribution, **Inspect the Public Source Before Loading It**, the Python connection, and repeat-import explanations. Read the [textbook corrections](../COURSE_CORRECTIONS.md) with it. Reading supports the lesson; there is no separate reading report.
 
-Read the [textbook corrections](../COURSE_CORRECTIONS.md) with the assigned sections.
+Prepare access to your own MongoDB Atlas **Free** cluster and a database user with `readWrite` on **cst4714_week13**. This user is separate from your Atlas website login. Keep the Drivers URI private. The notebook discovers the current Colab runtime's IPv4 address and pauses so you can add its temporary `/32` rule. No paid upgrade, backup subscription, or access-from-everywhere rule is needed. Setup time is outside the 20-minute lab.
 
-Use [Chapter 13: Scale Changes the Questions a System Must Answer](../Operating_Cloud_Databases.pdf).
+## Class materials
 
-- **Before Part 1:** read the capacity and distribution sections through **Worked Example: Evaluate Metro Support Candidates**, plus **Inspect the Public Source Before Loading It** and the storage projection in **Scaling Also Scales Operations**.
-- **Before Part 2:** read the Python connection, parameterized-query, and repeat-import explanations. The notebook provides complete setup; only one database path is required.
+- [Required Atlas notebook](materials/notebooks/06_public_data_capacity_integration.ipynb)
+- [Open the required notebook in Colab](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_13/materials/notebooks/06_public_data_capacity_integration.ipynb); save your own copy in Drive.
+- [PowerPoint](week_13_scale_integration.pptx), [PDF](week_13_scale_integration.pdf), and [spoken transcript](week_13_scale_integration_transcript.md).
+- [Short individual lab](lab_01_public_data_integration.md).
+- [Complete data reference](DATA_REFERENCE.md) and [retained JSON/CSV source files](materials/datasets/cisa_kev_sample/README.md).
 
-Bring one point you want clarified. Reading supports the in-class work; it does
-not add a separate reading report. Optional textbook practice is not required
-unless the weekly lab assigns it.
+## One 100-minute meeting
 
-## Class Materials
+| Minutes | What happens | Exact notebook route |
+|---|---|---|
+| 0–10 | Understand one catalog entry and the Colab/Python/PyMongo/Atlas roles | 01, 02a, 02b; open the data reference |
+| 10–25 | Inspect the source; read key measurements and the guided placement simulation | 03–07 |
+| 25–50 | Choose one target, allow the runtime IP, connect and ping | 08 with TARGET=atlas; 10 |
+| 50–65 | Import twice into the same collection, read back all fields and inspect vendor groups | 11 twice; 14; 15 with vendorProject; Atlas Data Explorer |
+| 65–85 | Individual product grouping and 5–7 sentence handoff | Change Cell 15; Submission Record |
+| 85–100 | Career connection, limits, saving and sharing | Submit one viewable saved Colab link |
 
-- [Public data, shard-key, and cloud import notebook](materials/notebooks/06_public_data_capacity_integration.ipynb)
-- [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_13/materials/notebooks/06_public_data_capacity_integration.ipynb) for Lab 1; save a working copy in Drive.
-- [Week 13 student deck](week_13_scale_integration.pptx)
-- [Week 13 PDF handout](week_13_scale_integration.pdf)
-- [Week 13 transcript](week_13_scale_integration_transcript.md)
-- [Individual lab](lab_01_public_data_integration.md)
-- [Historical CISA teaching sample: JSON, CSV, and source notes](materials/datasets/cisa_kev_sample/README.md)
+Keep `USE_LIVE_FEED = False`. Use Cells **01, 02a–02b, 03–08, 10, 11 twice, 14 and 15**. Skip **09, 12 and 13**, which are optional SQL paths. Cell 16 is optional cleanup after retaining evidence. Supplied setup code can stay collapsed; it still needs to run. Run one numbered cell at a time rather than Run all on a new connection.
+
+The expected record counts are **0 → 75 → 75**, with the same collection on both imports. Do not rerun the name-generating Cell 08 between them. Cell 14 independently reads all 75 records and compares all eight selected fields and their types with the source; it also displays one known record. Cell 15 compares the database grouping with a separate calculation from the source. A modified counter is not a substitute for these checks.
+
+## What to submit
+
+In the 20-minute individual lab, change `GROUP_FIELD` from `"vendorProject"` to `"product"`, rerun its source comparison, and interpret one result. Write 5–7 sentences in **Submission Record** using the source limitation, one measured key comparison, the repeated import, the changed product result and its checks.
+
+Save the changed code, outputs and handoff in your own Drive copy. Give the instructor viewer access and submit **that copy's Colab sharing URL in Brightspace**, using the existing due date. Do not submit the GitHub starter link, an `.ipynb` attachment, a screenshot or a separate report. If access fails, label observed instructor evidence honestly and finish the same notebook under the course's existing technical-problem policy.
+
+## Scope and optional practice
+
+The retained data are the first 75 selected records from catalog version **2026.07.10**, retrieved **July 13, 2026**, with eight documented fields. One record is a catalog entry, not an affected computer. The source is historical and nonrandom. It cannot rank vendor security or determine a current patch deadline. Labels and calendar-day strings are preserved; `cwes` remains an array in Atlas.
+
+Cell 07's four buckets illustrate range/hash placement in Python. They are not actual Atlas shards or a benchmark, and this small sample supplies no evidence that it needs sharding. SQLite, PostgreSQL, the live feed and extra date-window questions remain optional later practice. They add no submission and are not proof of an Atlas connection. Existing final-project requirements remain unchanged.
 
 <!-- videos:start -->
 ## Videos
@@ -48,60 +57,6 @@ Short silent animations with captions (3 for this week). Each has a subtitle fil
 - [A repeatable Python import](videos/03_repeatable_import.mp4) (1:28): A Python client connects with a hidden URI, TLS checks on, and timeouts, then imports by a stable key so a second run leaves 75 records instead of 150. A failed write shows the difference between a transaction's rollback and a rerunnable, per-document loop.
 
 <!-- videos:end -->
-
-## Free External Data
-
-The notebook uses the U.S. Cybersecurity and Infrastructure Security Agency's
-Known Exploited Vulnerabilities catalog through its public JSON feed. The notebook
-includes a small offline fixture and records the source and retrieval date.
-The linked JSON and CSV contain the same 75-record historical sample for the
-textbook's standalone examples. The notebook already includes these records;
-you do not need another download or an additional submission for the lab.
-
-## Meeting plan
-
-Week 12 is the Thanksgiving week with one scheduled class. This week returns to the section's published schedule; Brightspace gives actual dates. Use Part 1 for distribution and source checks, then Part 2 for the repeatable import. Continue in the same notebook across the meetings. The final-project checkpoint stays inside the existing project package and adds no separate submission.
-
-## Part 1: Evaluate Distribution Without Pretending to Shard
-
-Use relevant examples from **slides 1-17**. We distinguish latency from throughput, calculate a small
-latency percentile, and compare replication, partitioning, and sharding. We then
-use Notebook 06's Sections 1 and 2 to inspect the source and measure candidate
-keys. The range/hash experiment makes placement visible without deploying a
-sharded cluster. Atlas Free does not provide that deployment.
-
-Begin Part 1 of the individual lab. Compare CVE identifier with date added and
-explain whether either fits the question you want to answer. Continue in the
-same notebook for Part 2; there is no separate Part 1 submission.
-
-## Part 2: Connect, Load, Verify, and Reuse
-
-Use relevant examples from **slides 18-34**. We read the connection and import code, distinguish
-transaction atomicity from repeat behavior, and examine a wrong stored value
-that a correct row count would miss.
-
-Complete Part 2 of the [individual lab](lab_01_public_data_integration.md). Set
-`TARGET` to `"sqlite"`, `"atlas"`, or `"postgres"`; **one path is required**.
-SQLite uses Python's built-in database and the embedded data. The cloud paths
-install their driver only when selected. To try another path, clean up the first
-run before starting a new one.
-
-Repeat the chosen import against its existing output, change the grouping from
-vendor to product, and compare the result with the source. Write the short
-maintenance handoff in the notebook, then clean up the practice objects.
-
-Submit the **viewable sharing link to your completed Colab copy** in Brightspace. Save the changed query, outputs, and handoff in Drive; grant the instructor viewer access. Do not submit the starter link or an `.ipynb` attachment. The handoff practices explaining a data pipeline to a future
-colleague; it does not require a partner or another document.
-
-## Optional Industry Extension: A Catalog Question
-
-This activity is optional, ungraded, and does not add a submission.
-
-Try a date-window question in the historical sample and check a matching record
-directly. Discuss which index or placement rule could help that query under a
-larger measured workload. Do not use the subset to declare a real system safe,
-rank vendor security, or decide a current patch deadline. No additional writing
-or final-project deliverable is required.
 
 ## Industry/Career Connection — Discord: access patterns and hot partitions
 

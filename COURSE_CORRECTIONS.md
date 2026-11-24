@@ -1,20 +1,24 @@
 # Corrections to the Course Materials
 
-Updated November 23, 2026. The [textbook PDF](Operating_Cloud_Databases.pdf)
+Updated November 24, 2026. The [textbook PDF](Operating_Cloud_Databases.pdf)
 includes the earlier October corrections and the updated Chapter 12 Atlas backup
 availability explanation. The class-plan and submission changes belong here
 and in the weekly materials; the textbook remains an independent study resource.
 The current weekly lab pages give the required work; the textbook also supports
 independent study, where companion notebooks may be optional.
 
-## Week 12 has one class meeting
+## Calendar correction: Thanksgiving is Week 13
 
-The Thanksgiving-week class combines the reliability explanation and a short
-real-Atlas recovery exercise. Use the [current Week 12 page](week_12/README.md)
-and [Atlas notebook](week_12/materials/notebooks/05_mongodb_atlas_recovery.ipynb).
-There is one required notebook submission as a viewable Colab link. The older
-Day 1 written assignment and Day 2 mock-database lab are optional references,
-not extra assignments for this week.
+Week 12 was November 17 and 19, 2026. Week 13 meets only Tuesday, November 24;
+Thursday, November 26 is closed. The [Week 13 page](week_13/README.md) has the
+required real-Atlas CISA import, verification, and short grouping lab. Submit
+one viewable Colab link; there is no separate report or recovery assignment.
+
+The [Week 12 recovery lesson](week_12/README.md) and its
+[Atlas notebook](week_12/materials/notebooks/05_mongodb_atlas_recovery.ipynb)
+remain available as a condensed reference route. Earlier labels that called
+Week 12 Thanksgiving week were incorrect. Its older written and mock-database
+exercises remain optional references, not extra work for Week 13.
 
 The notebook's connection check and synthetic write/read take place on Atlas.
 Its replica-set and election explanations are illustrations, not live failover

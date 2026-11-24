@@ -8,7 +8,7 @@ A recovery check reports the correct ticket count, IDs, and date types. One
 subject is still wrong. Find what those checks missed, recover that document
 from the saved artifact, and distinguish its values from the collection's rules.
 
-**Optional reference:** this longer exercise is not required in the single 100-minute Thanksgiving-week class. Use the [current Atlas lab](lab_02_mongodb_recovery.md), which includes about 20 minutes of individual repair after guided setup. This extension adds no submission.
+**Optional reference:** this longer exercise is not required in the condensed 100-minute Week 12 recovery route. Use the [current Atlas lab](lab_02_mongodb_recovery.md), which includes about 20 minutes of individual repair after guided setup. This extension adds no submission.
 
 ## 1. Restore and Repair One Ticket
 
