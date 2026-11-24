@@ -1,5 +1,7 @@
 # Week 8: Backup, Restore, and Recovery - Spoken Transcript
 
+This transcript follows the current presentation order. Source references marked as not spoken are included for review.
+
 ## Slide 1
 
 Welcome to Week 8. Look at the two lines in the middle of the slide. The database is running. Yesterday's records are gone. Both can be true at the same time, and that is the whole problem for this week.
@@ -253,7 +255,7 @@ In the section called Your Check: Compare One Known Ticket, first run the suppli
 
 Then write your short recovery account right in the notebook, using the results already there. Say where you restored, what the checks showed, one thing still untested, and which connection would change if the source were Supabase. No second report.
 
-Keep the output, then run the final cleanup cell. It removes the practice databases and artifact folder and stops the Colab service. Submit the completed notebook individually through Brightspace. The dump is not a submission.
+Keep the output, then run the final cleanup cell. It removes the practice databases and artifact folder and stops the Colab service. Submit your saved Colab sharing link individually through Brightspace. The dump is not a submission.
 
 [Sources]
 - Week 8 lab_01_backup_restore.md.
@@ -386,7 +388,7 @@ For the rest of today you work on your own midterm, in your own Supabase project
 
 Step 0 connects Colab to your project and loads the midterm starter. You should see eight users, twelve tickets, and twenty-one ticket events. Step 1 is Part 1: you fill in the requester join and you test two integrity rules with writes that should fail. Step 2 is Part 2: the rollback, then your commit. Step 3 is Part 4, the index experiment. Step 4 is Part 5, and it is new: you back up your Supabase schema and restore the copy somewhere else. Part 3, blocking, stays with the Week 5 notebook.
 
-Now the box at the bottom. This notebook is classwork, not the midterm. You submit the notebook today. The midterm is still midterm dot sql and README dot md, due November 3. As each step finishes, copy the SQL into midterm dot sql and the results into your README. If you do that, you leave today with most of your midterm written.
+Now the box at the bottom. This notebook is classwork, not the midterm. You submit the sharing link to your saved Colab copy today, with instructor viewer access. The midterm is still midterm dot sql and README dot md, due November 3. As each step finishes, copy the SQL into midterm dot sql and the results into your README. If you do that, you leave today with most of your midterm written.
 
 The next few slides explain the one new idea in this lab: how Colab reaches your Supabase database.
 
@@ -495,6 +497,26 @@ Next week we start NoSQL models and JSON. We will compare them with the relation
 ## Slide 31
 
 These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: RPO and RTO on the clock (1:29); Dump, restore, verify (1:35); Point-in-time recovery with WAL (1:20). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 8 README. The diagrams are schematic illustrations, not benchmarks.
+
+## Slide 32
+
+Imagine that the restore reports three tickets, just like the source. Is that enough? Look at this known ticket. It belongs to requester 102, has status in_progress, and describes a missed recycling pickup. If its requester were accidentally changed to 101, the row count would remain three. That is why we run the same value query on the source and the separate restore. We compare the fields, not just the fact that a row appeared. The supplied notebook demonstrates this with ticket 1001; your check uses another ticket. The midterm uses a larger fixture, so carry over the method rather than copying these counts.
+
+Teaching placement (not spoken): Day 1: after slide 15, before slide 16 and the recovery lab.
+
+## Slide 33
+
+The source is a running database. The dump is an artifact containing a recoverable description. The restored target is a different running database. Keeping those three objects separate protects the source and makes the rehearsal meaningful. We check structure, relationships, known values, and behavior. In this small fixture, an invalid status should be rejected with the CHECK-violation code. A missing-table error is a failure, but it does not prove the status rule survived. Record the particular result that supports each claim.
+
+Teaching placement (not spoken): Day 1: after appendix slide 32, before the notebook.
+
+## Slide 34
+
+GitLab’s incident makes the gap between scheduling a backup and recovering from it concrete. For our practice, successful pg_dump output is one checkpoint, not the finish. We still inspect the archive, restore it into a separate database, and test the recovered state. A production recovery also includes access, application dependencies, and people who know the procedure. Our notebook rehearses the database portion and asks you to state what remains untested. That limitation belongs in a useful runbook.
+
+Primary source: https://about.gitlab.com/blog/postmortem-of-database-outage-of-january-31/
+
+Teaching placement (not spoken): During the existing GitLab writing introduction; adds no assignment.
 
 ## License
 

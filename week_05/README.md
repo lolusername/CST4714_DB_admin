@@ -19,7 +19,7 @@ Read the [textbook corrections](../COURSE_CORRECTIONS.md) with the assigned sect
 
 Use [Chapter 5: Transactions Coordinate Competing Work](../Operating_Cloud_Databases.pdf).
 
-supasbase password encoding: https://supabase.com/docs/guides/database/connecting-to-postgres
+Connection help: [Supabase PostgreSQL connection guide](https://supabase.com/docs/guides/database/connecting-to-postgres).
 
 - **Before Day 1:** read from **A Transaction Is a Unit of Decision** through **ACID Describes Guarantees, Not a Product Label**, including the state/history pair and zero-row UPDATE discussion.
 - **Before Day 2:** read from **Concurrency Creates Useful Work and New Questions** through **Safe Incident Communication**. Follow the visible row versions, blocker, waiter, and final state. The on-call/write-skew example is enrichment; the lab does not require implementing isolation protocols.
@@ -107,3 +107,17 @@ final row state.
 ## Reuse
 
 See the [licenses](materials/LICENSE.md) and [source attributions](materials/ATTRIBUTIONS.md). External resources retain their own terms.
+
+## Data, illustration, and career connection
+
+[Complete data reference](DATA_REFERENCE.md) explains every field, relationship, NULL, and fixture difference. Read it before the first lab query.
+
+- [Worked still diagram and editable Manim source](illustrations/README.md): slide **27**.
+- [Industry / Career Connection](INDUSTRY_CONNECTION.md): slide **28**.
+
+Teach the diagram beside its matching example and the three-minute company case before the lab. Existing slide numbers and embedded videos remain intact; the deck now has **28 slides**. PDF/GitHub previews show stills; desktop PowerPoint or the external MP4/VTT is the playback route.
+
+**Required hand-ins remain:** Day 1: `week_05_transaction_outcomes.sql`; Day 2: a viewable link to the saved Colab locks notebook. The runnable notebook is a workspace when a SQL file is assigned. Keep required comments and observed error details in the SQL file. No additional notebook hand-in is required.
+
+
+**Optional Day 1 workspace:** [Transaction outcomes notebook](01_transaction_outcomes.ipynb), or [open it in Colab](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_05/01_transaction_outcomes.ipynb). It runs real PostgreSQL inside the Colab runtime without a cloud account and mirrors the five lab experiments. Its setup already loads the fixture into a unique disposable database. Keep each entire transaction in one cell. Use this route or the existing cloud helper above; you do not need both. The required Day 1 hand-in remains `week_05_transaction_outcomes.sql`, with the lab’s comments and observations. The notebook itself is not a second submission.

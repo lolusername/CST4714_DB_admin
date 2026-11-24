@@ -135,3 +135,14 @@ You are ready for schema administration when you can:
 identifiers, and rehearse a schema change. Its notebook begins with a dataset
 refresher and PostgreSQL setup. Revisit this week's worked examples if joins or
 transactions still need practice.
+
+## Data, illustration, and career connection
+
+[Complete data reference](DATA_REFERENCE.md) explains every field, relationship, NULL, and fixture difference. Read it before the first lab query.
+
+- [Worked still diagram and editable Manim source](illustrations/README.md): slide **23**.
+- [Industry / Career Connection](INDUSTRY_CONNECTION.md): slide **24**.
+
+Teach the diagram beside its matching example and the three-minute company case before the lab. Existing slide numbers and embedded videos remain intact; the deck now has **24 slides**. PDF/GitHub previews show stills; desktop PowerPoint or the external MP4/VTT is the playback route.
+
+**Required hand-ins remain:** Day 1: `week_02_sql_review.sql`; Day 2: `week_02_relational_sql_studio.sql`. The runnable notebook is a workspace when a SQL file is assigned. Keep required comments and observed error details in the SQL file. No additional notebook hand-in is required.

@@ -78,3 +78,5 @@ file**, enter the filename, write the Markdown and JSON blocks, use **Preview**,
 then **Commit changes**. Download the file for the Brightspace submission.
 [GitHub's file-creation guide](https://docs.github.com/en/repositories/working-with-files/managing-files/creating-new-files)
 shows the interface.
+
+**Before working:** use the [complete data reference](DATA_REFERENCE.md) for this week’s fixture and exact field names.

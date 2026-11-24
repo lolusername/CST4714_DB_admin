@@ -1,5 +1,7 @@
 # Week 5: Transactions, MVCC, and Locks - Spoken Transcript
 
+This transcript follows the current presentation order. Source references marked as not spoken are included for review.
+
 ## Slide 1
 
 Welcome to Week 5. Up to now we have mostly looked at one statement at a time. Does this query return the right rows? Does this row satisfy the rule? This week we ask what happens when one action needs more than one statement, and what happens when more than one person acts at the same moment.
@@ -406,6 +408,23 @@ Next week, as the bottom of the slide says, roles and permissions determine who 
 ## Slide 26
 
 These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: One assignment, one transaction (1:28); Row versions and snapshots (1:22); Who is waiting on whom? (1:28). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 5 README. The diagrams are schematic illustrations, not benchmarks.
+
+## Slide 27
+
+This is lock_lab ticket 1004, whose starting values are medium and open. It is deliberately simpler than the full Metro Support ticket. Session A changes priority to high and leaves the transaction open. An ordinary reader sees the committed version, medium and open. Session B wants to update the same row’s status, so it waits. If A rolls back, B continues with the old priority and we finish at medium and in progress. If A commits, B continues with the new priority and we finish at high and in progress. The second session’s wait is evidence to inspect; the database is protecting concurrent changes to one row.
+
+Image description: Session A changes ticket 1004 to high/open without committing and holds its row lock. An ordinary reader sees committed medium/open. Session B waits to set in_progress. A rollback leaves medium/in_progress; A commit leaves high/in_progress.
+
+Editable static Manim source is provided in illustrations/teaching_stills.py. This diagram supplements the worked examples; it is not a new assignment.
+
+## Slide 28
+
+GitLab investigated timeouts that were not explained by a simple slow-query story. Their article connects long-running transactions, subtransactions created by savepoints, and internal lightweight-lock waits. They changed their savepoint use after understanding that mechanism. That is not the same lock as our two writers waiting for one row. The connection is how they reasoned: collect wait evidence and transaction context, then change the cause. In our lab, application names, backend PIDs, blocking PIDs, and the final row let us make a smaller but similarly evidence-based explanation.
+
+Source: GitLab engineering · September 29, 2021
+https://about.gitlab.com/blog/why-we-spent-the-last-month-eliminating-postgresql-subtransactions/
+
+The career connection is a teaching interpretation. The case is not evidence that the company used our synthetic data or exact classroom SQL.
 
 ## License
 

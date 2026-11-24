@@ -1,6 +1,6 @@
 # Optional Extended Lab: Recover the Documents and Their Rules
 
-[Open in GitHub](https://github.com/lolusername/CST4714_DB_admin/blob/main/week_12/lab_02_mongodb_recovery.md)
+[Open in GitHub](https://github.com/lolusername/CST4714_DB_admin/blob/main/week_12/reference_mongodb_recovery_extended.md)
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_12/materials/notebooks/05_mongodb_logical_recovery.ipynb)
 
@@ -8,7 +8,7 @@ A recovery check reports the correct ticket count, IDs, and date types. One
 subject is still wrong. Find what those checks missed, recover that document
 from the saved artifact, and distinguish its values from the collection's rules.
 
-**Optional reference:** this is the original longer lab. It is not required for the one-hour Week 12 Day 2 class. Use the [15-minute lab](lab_02_mongodb_recovery.md) for today's assignment. If this extension is assigned separately, submit a shared, viewable Colab notebook link in Brightspace.
+**Optional reference:** this longer exercise is not required in the single 100-minute Thanksgiving-week class. Use the [current Atlas lab](lab_02_mongodb_recovery.md), which includes about 20 minutes of individual repair after guided setup. This extension adds no submission.
 
 ## 1. Restore and Repair One Ticket
 

@@ -76,6 +76,16 @@ explain why ignoring 17 loses an effect even with a monotonic version guard.
 Propose an ordered replay or reconciliation strategy and a missing-version alert.
 Do not claim the dictionary model implements a concurrent production consumer.
 
+## Industry/Career Connection — Netflix: changes and snapshots must agree
+
+Netflix's 2019 DBLog account explains propagating committed database changes and combining log processing with chunks of a table dump. Keeping downstream stores current requires controlling the interaction between past snapshot rows and newer changes. Our transaction/outbox and version-guard example is a smaller teaching model, not Netflix's implementation. A platform engineer should identify the authoritative source, replay behavior, and reconciliation evidence before calling a derived view repaired.
+
+Read the [company's own account](https://netflixtechblog.com/dblog-a-generic-change-data-capture-framework-69351fb9099b). This supports the lesson; it adds no submission. Keep the case distinct from the measured classroom outputs.
+
+## Notebook route and data
+
+Read the [complete data reference](DATA_REFERENCE.md) before the first query. Notebook code cells now have stable numbered titles. Expand setup code when you want its mechanics; keep student changes and query results visible. The [static illustration and editable Manim source](illustrations/README.md) show the lesson's actual record relationships. Embedded PowerPoint videos and separate subtitle files remain available; the PDF and GitHub previews show still images.
+
 ## End-of-Week Self-Check
 
 For every fact duplicated across systems, name its owner, propagation direction,

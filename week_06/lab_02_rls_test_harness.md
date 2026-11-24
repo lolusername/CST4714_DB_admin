@@ -124,3 +124,5 @@ DROP ROLE resident_102_lab;
 
 **Submit:** `week_06_rls_test.sql` with setup, policy, your new row and tests,
 the short developer update, and cleanup. No separate report is required.
+
+**Before working:** use the [complete data reference](DATA_REFERENCE.md) for this week’s fixture and exact field names.

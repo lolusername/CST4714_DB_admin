@@ -7,7 +7,7 @@
 A support tool must update one request without changing everybody else's data.
 Practice the filters and write operators that make that possible.
 
-Work individually in class. Submit one completed notebook.
+Work individually in class. Submit your saved Colab copy’s sharing link, with output and writing; give the instructor viewer access.
 
 ## 1. Query the Supplied Tickets
 
@@ -64,6 +64,8 @@ Complete the notebook's one explanation cell, using your results. Then run
 cleanup. Later weeks supply fresh fixtures, so you do not need to retain this
 database or pay for a service.
 
-**Submit:** the notebook with your query changes, output, and short explanation.
+**Submit:** your saved Colab copy’s sharing link in Brightspace, with instructor viewer access, query changes, output, and short explanation.
 No additional model report or Atlas screenshot is required. Day 2 develops the
 embedding/referencing design.
+
+**Before working:** use the [complete data reference](DATA_REFERENCE.md) for this week’s fixture and exact field names.

@@ -1,5 +1,7 @@
 # Week 7: Midterm Explanation and Preliminary Research - Spoken Transcript
 
+This transcript follows the current presentation order. Source references marked as not spoken are included for review.
+
 ## Slide 1
 
 Welcome, everyone. This is our only meeting this week, and it has two halves. For the first forty-five minutes, I am going to take you through the midterm project one part at a time. For each part, you will see what the starter file already does for you, the small piece you add, the result you should expect, and where that result goes in your README. Then you will have about fifty minutes to work in a Colab notebook that prepares you for the index part of the midterm. In the last five minutes, you will save that notebook, share it with me, and submit its link in Brightspace.
@@ -263,6 +265,26 @@ Before you go, keep the two submissions separate in your mind. Today's notebook 
 ## Slide 24
 
 These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: When does an index help? (1:44); Reading a query plan (0:55); Selectivity: why a Seq Scan can beat an index (1:07); How a B-tree index finds rows (0:58); Composite indexes: column order matters (1:08); Testing an index hypothesis (1:03). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 7 README. The diagrams are schematic illustrations, not benchmarks.
+
+## Slide 25
+
+First solve the question without an index. Open is the exact status label, not a synonym for every unfinished ticket. These are all three open tickets in our supplied fixture. Sorting their opening dates from newest to oldest gives 1011, 1007, and 1001. Ticket 1009 is not included because its status is new. LIMIT 20 is a maximum; it cannot create twenty matching rows when only three exist. Today the notebook calculates this from CSV records. That tells us the answer to preserve when we later run the SQL. It does not tell us which PostgreSQL plan will be chosen.
+
+Teaching placement (not spoken): At minutes 40–45, before opening the research notebook.
+
+## Slide 26
+
+Before asking whether the index made the query faster, check that the question and answer stayed the same. If a rewrite drops a needed row, a short run time is not a successful improvement. After correctness, inspect the work: the scan, any sort, rows, and buffers when we measure them. Also record the space and maintenance cost of the index. A twelve-row table is small enough that reading it directly may be cheaper. That is a result to explain, not a reason to force a preferred plan.
+
+Teaching placement (not spoken): Immediately after appendix slide 25; remain within the 45-minute explanation.
+
+## Slide 27
+
+Mattermost gives us a real engineering example of looking inside a slow query instead of guessing from its SQL length. We are borrowing the method, not promising the same speedup. Our research notebook asks for an observation and a proposed PostgreSQL test. Keep those separate in your writing: these are the rows I observed, this is the work I expect an index to change, and this is the evidence I will collect. The company’s full account is linked for optional reading; your two assigned PostgreSQL readings remain the required sources.
+
+Primary source: https://mattermost.com/blog/making-a-postgres-query-1000-times-faster/
+
+Teaching placement (not spoken): Immediately after appendix slide 26; optional source, no additional writing.
 
 ## License
 

@@ -221,3 +221,6 @@ To restart the lab, run the disposable setup separately, then run the blocks in
 order again. If rerunning only the committed block, the duplicate event 5999
 will be rejected and the transaction must be rolled back. A production retry
 policy needs more care; we return to idempotency later in the course.
+
+
+**Optional Day 1 workspace:** [Transaction outcomes notebook](01_transaction_outcomes.ipynb), or [open it in Colab](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_05/01_transaction_outcomes.ipynb). It runs real PostgreSQL inside the Colab runtime without a cloud account and mirrors the five lab experiments. Its setup already loads the fixture into a unique disposable database. Keep each entire transaction in one cell. Use this route or the existing cloud helper above; you do not need both. The required Day 1 hand-in remains `week_05_transaction_outcomes.sql`, with the lab’s comments and observations. The notebook itself is not a second submission.

@@ -8,7 +8,7 @@ Connect Colab to your own Supabase project through the session pooler, run the
 midterm starter step by step, see every result, and back up and restore your
 midterm schema for real.
 
-Work individually in class. Submit one completed notebook.
+Work individually in class. Submit your saved Colab copy’s sharing link, with output and writing; give the instructor viewer access.
 
 **This lab is classwork. It is not the midterm.** The midterm is still
 `midterm.sql` and `README.md` in one ZIP in Brightspace, due **Tuesday,
@@ -56,7 +56,7 @@ Run the cells in order. Each step says what you should see.
 | 0 | Setup | Connect through the session pooler, install matching tools, load SECTION 1 of the starter | 8 users, 12 tickets, 21 ticket events | 10 |
 | 1 | Part 1 | Fill in the requester join. Then test a NOT NULL rule and a CHECK rule with a write that should fail (a UNIQUE example is supplied) | 12 join rows; SQLSTATE 23502 and 23514 | 20 |
 | 2 | Part 2 | Run the supplied rollback, then write the commit version | low, high, low; then low, medium, medium | 15 |
-| 3 | Part 4 | Run the index experiment before and after | IDs 1011, 1007, 1001 both times; index about 16 kB | 15 |
+| 3 | Part 4 | Run the index experiment before and after | IDs 1011, 1007, 1001 both times; record actual index size | 15 |
 | 4 | Part 5 | Write three checks first, then back up Supabase, restore the copy into a separate database in Colab, and compare | every check says MATCH | 15 |
 | 5 | | Write where you are and your next step, then run cleanup | | 5 |
 
@@ -86,7 +86,10 @@ database stays a **proposed plan**.
 
 ## Submit
 
-Keep the output, run the final cleanup cell, then download the notebook
-(**File > Download > Download .ipynb**). Submit the completed notebook in
-Brightspace. The backup file is not a submission. The cleanup leaves your
+Keep the output, run the final cleanup cell, and save your copy in Drive.
+Use **Share** to give the instructor viewer access, then submit **your saved
+copy’s Colab sharing link** in Brightspace. Do not upload an `.ipynb` file or
+submit the starter link. The backup file is not a submission. The cleanup leaves your
 Supabase project as it is.
+
+**Before working:** use the [complete data reference](DATA_REFERENCE.md) for this week’s fixture and exact field names.

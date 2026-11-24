@@ -1,9 +1,45 @@
 # Corrections to the Course Materials
 
-Updated October 9, 2026. These corrections are included in the refreshed
-[textbook PDF](Operating_Cloud_Databases.pdf) and current weekly materials.
+Updated November 23, 2026. The [textbook PDF](Operating_Cloud_Databases.pdf)
+includes the earlier October corrections and the updated Chapter 12 Atlas backup
+availability explanation. The class-plan and submission changes belong here
+and in the weekly materials; the textbook remains an independent study resource.
 The current weekly lab pages give the required work; the textbook also supports
 independent study, where companion notebooks may be optional.
+
+## Week 12 has one class meeting
+
+The Thanksgiving-week class combines the reliability explanation and a short
+real-Atlas recovery exercise. Use the [current Week 12 page](week_12/README.md)
+and [Atlas notebook](week_12/materials/notebooks/05_mongodb_atlas_recovery.ipynb).
+There is one required notebook submission as a viewable Colab link. The older
+Day 1 written assignment and Day 2 mock-database lab are optional references,
+not extra assignments for this week.
+
+The notebook's connection check and synthetic write/read take place on Atlas.
+Its replica-set and election explanations are illustrations, not live failover
+tests. Save the recovery artifact outside the Colab runtime before ending it.
+
+## Chapter 12 Atlas backup availability
+
+The older statement that native Atlas backups are unavailable on every Free
+cluster is no longer current. MongoDB now documents an optional, billed Free
+Cluster Backup subscription in private preview; it may not appear for every
+account. This course does not require enabling it or upgrading a cluster.
+The class uses a retained logical export and verifies a restore into a separate
+practice collection. See [MongoDB's current backup options](https://www.mongodb.com/docs/atlas/backup-restore-cluster/).
+
+The dated Atlas screenshot in Chapter 12 illustrates the earlier account state.
+It is not a current account check or proof that a backup exists. The Free tier
+still does not support user-triggered primary failover tests or a sharded cluster;
+see the [current Free cluster limits](https://www.mongodb.com/docs/atlas/reference/free-shared-limitations/).
+
+## Notebook submissions
+
+When the weekly assignment requires a completed notebook, hand in its
+**viewable Colab link**, not an `.ipynb` attachment. Retain the required results
+and explanation in your own saved Drive copy. A notebook supplied only as
+support for a written response or project does not create an extra assignment.
 
 ## Appendix C setup in Supabase SQL Editor
 

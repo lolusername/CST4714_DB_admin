@@ -57,3 +57,10 @@ Submit the **sharing link** to your saved Colab copy, **Lastname_Week07_Research
 The final midterm is individual, worth 30% of the course grade, and submitted as **midterm.sql** plus **README.md** in one ZIP. The notebook does not replace either final file. Recovery is taught in Week 8; use the final deadline posted in Brightspace.
 
 The larger [index experiment](lab_single_session.md), advanced plan operators, and partial indexes are optional reference. They are outside today's required work. Today's Python results describe the CSV dataset; they do not prove how PostgreSQL will execute the query.
+
+## Worked examples and complete reference
+
+- [Complete data reference](DATA_REFERENCE.md): read the relevant fixture before the first query or design.
+- [Industry / career connection](INDUSTRY_CONNECTION.md): a primary-source company case with a short application; no extra submission.
+- The deck’s **worked-example appendix, slides 25–27**, brings the relevant records, result, and industry connection together. Use it before the lab, then return to the existing lab instructions.
+- [Static concept diagram](illustrations/README.md): a still image with an editable Manim source and text description. The PowerPoint keeps the original embedded videos; PDF and GitHub previews show still images.

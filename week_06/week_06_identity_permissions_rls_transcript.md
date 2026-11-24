@@ -1,5 +1,7 @@
 # Week 6: Identity, Permissions, and Row-Level Security - Spoken Transcript
 
+This transcript follows the current presentation order. Source references marked as not spoken are included for review.
+
 ## Slide 1
 
 Welcome to Week 6. Two days, two problems, one theme: who is allowed to do what to our data.
@@ -405,6 +407,26 @@ Run your cleanup before you leave. Keep the SQL and your observations in your fi
 ## Slide 35
 
 These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Least privilege: roles and grants (1:24); Row-level security: USING and WITH CHECK (1:30); Who is asking? Gates, roles, and tokens (1:33). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 6 README. The diagrams are schematic illustrations, not benchmarks.
+
+## Slide 36
+
+Here are all four rows needed for this example. Resident 101 owns tickets 1 and 2. Resident 102 owns 3 and 4. Now follow the query on the right. SET LOCAL ROLE chooses the actor for this transaction. The query asks for ticket 3, but the row policy compares its owner with the current role. They do not match, so the result has zero rows. That does not delete ticket 3, and it does not mean the table is empty. The role can read the table; this particular row is outside its visibility. ROLLBACK ends the transaction and resets the local role. Keep those statements together when you run the lab.
+
+Teaching placement (not spoken): Day 2: before slide 23 and the RLS lab.
+
+## Slide 37
+
+The diagram separates three things that are easy to mix up: what is stored, what the policy checks, and what a particular actor receives. Both residents can run identical SELECT text and receive different rows. An administrator is a poor substitute for either test because the table owner normally bypasses row security. First establish the actor, then inspect the returned IDs. Our lab tests reading. A real application also needs the correct identity mapping and separate tests for writes. Those are different claims.
+
+Teaching placement (not spoken): Day 2: immediately after appendix slide 36.
+
+## Slide 38
+
+GitHub’s incident is useful because it reminds us to follow the request all the way to the content returned. The published cause was a routing defect, not our classroom row-security policy. The lesson I take from it is about test evidence: a successful authorization check does not by itself establish that the eventual response contains the intended resource. In our small case, we can name exactly which rows each resident should and should not receive. That makes an isolation claim testable. The linked incident report gives the company’s explanation; our lab is a separate example.
+
+Primary source: https://github.blog/news-insights/the-library/incident-report-inadvertent-private-repository-disclosure/
+
+Teaching placement (not spoken): Day 1: after permission tests, before slide 11 and Lab 1.
 
 ## License
 

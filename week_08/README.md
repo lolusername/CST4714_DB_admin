@@ -36,7 +36,7 @@ unless the weekly lab assigns it.
 - [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_08/materials/notebooks/03_postgres_backup_restore.ipynb) for Lab 1; save a working copy in Drive.
 - [Midterm work session notebook](materials/notebooks/midterm_work_session.ipynb): [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_08/materials/notebooks/midterm_work_session.ipynb) for Lab 2; save a working copy in Drive.
 - [Transactions and locks notebook](materials/notebooks/02_postgres_transactions_locks.ipynb), a midterm reference: [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_08/materials/notebooks/02_postgres_transactions_locks.ipynb)
-- [Week 8 student deck](week_08_backup_restore_midterm.pptx)
+- [Week 8 student deck](week_08_backup_restore_midterm.pptx) with embedded videos. Download and open it in PowerPoint; play the videos on slides **29–31**. The PDF contains still images.
 - [Week 8 PDF handout](week_08_backup_restore_midterm.pdf)
 - [Week 8 transcript](week_08_backup_restore_midterm_transcript.md)
 
@@ -55,7 +55,7 @@ Short silent animations with captions (3 for this week). Each has a subtitle fil
 
 After the recovery lesson, complete the existing [Lab: Backup, restore, and check the result](lab_01_backup_restore.md).
 
-Submit only the completed `03_postgres_backup_restore.ipynb` notebook.
+Submit the sharing link to your saved Colab copy of `03_postgres_backup_restore.ipynb`, with output and your recovery account. Give the instructor viewer access.
 
 Use the recovery lab to understand the steps for Part 5 of your midterm. The lab uses 3 users / 3 tickets / 5 events; the midterm uses 8 / 12 / 21. Write the midterm plan for `midterm_metro`, with its own expected results. Executing an additional restore for the midterm is optional.
 
@@ -84,7 +84,7 @@ Keep your Week 7 lab work. Reuse your own research and explanations in the READM
 
 Complete [Lab 2: Midterm Work Session in Supabase](lab_02_midterm_work_session.md). The notebook connects Colab to your own Supabase project through the **session pooler**, runs the midterm starter there, and shows every result. You work through Parts 1, 2, 4, and 5, including a real backup of your Supabase schema restored into a separate database in Colab. Copy your SQL into `midterm.sql` and your results into `README.md` as you go. Bring your Supabase database password. Slides 24–29 explain the session pooler, IPv4 and IPv6, and the lab steps.
 
-Submit only the completed `midterm_work_session.ipynb` notebook. The lab is classwork, not the midterm, and adds no midterm requirement.
+Submit the sharing link to your saved Colab copy of `midterm_work_session.ipynb`, with output and your progress account. Give the instructor viewer access. The lab is classwork, not the midterm, and adds no midterm requirement.
 
 Bring your Week 7 writing, your current `midterm.sql` and `README.md`, and one concrete question.
 
@@ -107,3 +107,10 @@ independent checks are required after restoration.
 ## Reuse
 
 See the [licenses](materials/LICENSE.md) and [source attributions](materials/ATTRIBUTIONS.md). External resources retain their own terms.
+
+## Worked examples and complete reference
+
+- [Complete data reference](DATA_REFERENCE.md): read the relevant fixture before the first query or design.
+- [Industry / career connection](INDUSTRY_CONNECTION.md): a primary-source company case with a short application; no extra submission.
+- The deck’s **worked-example appendix, slides 32–34**, brings the relevant records, result, and industry connection together. Use it before the lab, then return to the existing lab instructions.
+- [Static concept diagram](illustrations/README.md): a still image with an editable Manim source and text description. The PowerPoint keeps the original embedded videos; PDF and GitHub previews show still images.

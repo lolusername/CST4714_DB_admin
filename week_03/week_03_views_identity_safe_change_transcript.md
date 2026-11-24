@@ -1,5 +1,7 @@
 # Week 3: Views, Identity, and Safe Change - Spoken Transcript
 
+This transcript follows the current presentation order. Source references marked as not spoken are included for review.
+
 ## Slide 1
 
 Welcome to Week 3. Last week was the SQL review. You wrote selects, joins, and aggregates against the Metro Support tickets. This week we stop only reading the database and start changing it, carefully. The idea that runs through both days is simple: a command can succeed and the application can still get the wrong answer. A green "success" message is not the finish line.
@@ -332,6 +334,23 @@ Next week, Week 4, is Reliable SQL Reports. We count the right records, pick the
 ## Slide 26
 
 These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: A view stores a query, not rows (1:14); Why identity values have gaps (1:24); Adding a required field without inventing history (1:27). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 3 README. The diagrams are schematic illustrations, not benchmarks.
+
+## Slide 27
+
+We want new tickets to record where they came from. That does not mean we suddenly know the channel of an old ticket. First add a field that existing rows can tolerate. Then label the twelve old rows unknown. That is an honest value, not a guessed web submission. Only after the data fits do we require an allowed value and add the default for future inserts. The order matters. Rehearse the complete change inside one transaction and roll it back, inspect the result, then run the approved committed change. The normal view is still a query interface; changing a table does not automatically decide which columns the view exposes.
+
+Image description: A source_channel field is first nullable, twelve historical rows receive unknown, and allowed values, NOT NULL, and a future default establish the new contract. Rehearsal happens inside BEGIN and ROLLBACK.
+
+Editable static Manim source is provided in illustrations/teaching_stills.py. This diagram supplements the worked examples; it is not a new assignment.
+
+## Slide 28
+
+A database in use keeps receiving writes while its structure needs to change. GitHub built gh-ost for that production problem in MySQL. Their article explains copying into a changed table, following ongoing changes, and giving operators controls over progress and cutover. Our class is not running gh-ost, and PostgreSQL is not MySQL. What transfers is the engineering question: how do I know the change is safe, and where can I stop if the evidence is wrong? Our rehearsal and verification queries are a small, explicit answer to that question.
+
+Source: GitHub engineering · August 1, 2016
+https://github.blog/news-insights/company-news/gh-ost-github-s-online-migration-tool-for-mysql/
+
+The career connection is a teaching interpretation. The case is not evidence that the company used our synthetic data or exact classroom SQL.
 
 ## License
 

@@ -75,3 +75,5 @@ Save your practice file locally. This optional exercise has no submission. If yo
 ## Optional practice
 
 If time remains, predict whether LIMIT 5 reduces the baseline scan's work. Reset only after saving the required comparison, then test the prediction. Partial indexes, join operators, and machine-readable plan analysis are optional follow-up reading for this shortened week.
+
+**Before working:** use the [complete data reference](DATA_REFERENCE.md) for this week’s fixture and exact field names.

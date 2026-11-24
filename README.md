@@ -11,7 +11,7 @@ You will practice modeling, querying, access control, performance, and recovery.
 
 ## Start Here
 
-- **Week 10 Day 2:** [Launch the first interactive MongoDB lab — Insert and Find](https://play.instruqt.com/embed/mongodb/tracks/crud-operations-in-mongodb--perform-crud-operations?token=em_8KmVAuFzDNFfao8W). Choose **Launch**, then **Start**. Next, [launch the second lab — Modify Query Results](https://play.instruqt.com/embed/mongodb/tracks/crud-operations-in-mongodb--modify-query-results?token=em_xAduftZJZ3IDAMmt). The [assignment handout](week_10/lab_02_document_model.md) explains what to submit in Brightspace.
+- **This week — Week 12:** [Open the single Thanksgiving-week lesson](week_12/README.md). There is **one class meeting**. Use the real Atlas recovery notebook linked there and submit one viewable Colab link. The earlier two-day plan is optional reference, not additional work.
 - [Course syllabus (PDF)](CST4714_Fall_2026_Syllabus.pdf): schedule, policies, and grading.
 - [Operating Cloud Databases (PDF)](Operating_Cloud_Databases.pdf): the course textbook. Each week's page identifies the assigned chapter and sections.
 - [Corrections and current notebook links](COURSE_CORRECTIONS.md): read alongside the textbook PDF.
@@ -23,8 +23,8 @@ You will practice modeling, querying, access control, performance, and recovery.
 
 ## Weekly Materials
 
-Choose a week for both class meetings, assigned reading, slides, labs, and any
-notebook or sample data.
+Choose a week for its class plan, assigned reading, slides, labs, and any
+notebook or sample data. Week 12 combines the required work into one meeting.
 
 - [Week 1: How Applications Use Databases](week_01/README.md)
 - [Week 2: Major SQL Review Studio](week_02/README.md)
@@ -58,6 +58,12 @@ still thumbnails. The original MP4 and subtitle files remain in each week’s
 
 Use **Open in GitHub** to view a lab and **Open in Colab** to launch its notebook
 when one is provided.
+
+When a lab requires a completed notebook, save your own Drive copy, retain the
+requested outputs and explanation, and submit its **viewable Colab sharing link**
+in Brightspace. Do not attach an `.ipynb` file. Written responses, SQL scripts,
+vendor exercises, and project URLs keep the deliverable stated on their own lab
+page; a practice notebook does not automatically add another submission.
 
 Do not post passwords, connection strings, or private information in this repository.
 For help accessing the materials, email

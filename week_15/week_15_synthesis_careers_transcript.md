@@ -1,5 +1,7 @@
 # Week 15: Course Review, Demonstrations, and Career Communication - Spoken Transcript
 
+This transcript follows the current presentation order. Source references marked as not spoken are included for review.
+
 ## Slide 1
 
 Welcome to Week 15, our last week together. I want to start with a report that looks wrong. Look at the three lines on the slide. Three active tickets. Two assigned tickets. One report to explain. The support dashboard says three tickets are active, but when you add up every staff member's active count, you get two. So is the database losing a ticket? Before anyone touches the code, we have to decide whether those two numbers should even be equal. A staff workload report and a full backlog report can both be correct and still be counting different things.
@@ -108,6 +110,10 @@ Here is the habit I want you to keep. When two totals disagree, define each popu
 
 ## Slide 9
 
+Run Cells 02 and 03 and compare the identities, not just the totals. Active ticket IDs are one, three, and four. The assigned ones are one and four. Ticket three is unassigned, so it is outside the matched staff workload. The left join keeps Agent 203 even though there is no matching active request, and counting ticket_id gives that agent zero. Nothing is contradictory about three active tickets and only two assigned active tickets. Cell 05 temporarily assigns ticket three to an existing agent, then rolls the change back. Use that controlled comparison when explaining the join in the concept guide.
+
+## Slide 10
+
 Now let's break the report on purpose, two different ways, because that is how you prove you understand the correct version.
 
 Look at the table. The first row is our correct report: count ticket IDs, with the status test in ON. Agent 203 gets zero.
@@ -122,7 +128,7 @@ The notebook runs both broken versions next to the original. This is the counter
 - Notebook 09, COUNT(*) and WHERE counterexamples.
 - https://www.postgresql.org/docs/current/queries-table-expressions.html
 
-## Slide 10
+## Slide 11
 
 Now we change exactly one fact and watch what moves. Here is the SQL outline: BEGIN, assign ticket 3 to Agent 203, run the staff report and the active-ticket query again, then ROLLBACK.
 
@@ -138,7 +144,7 @@ When you adapt this, try a different staff ID and predict which count moves and 
 - Notebook 09, TARGET_ASSIGNEE experiment.
 - https://docs.python.org/3/library/sqlite3.html
 
-## Slide 11
+## Slide 12
 
 This transaction makes two moves, and they end up in different places. Read the table from the top.
 
@@ -154,7 +160,7 @@ And name what you tested accurately. This was a constraint test with a rollback.
 - Notebook 09, expected constraint failure and rollback.
 - https://docs.python.org/3/library/sqlite3.html
 
-## Slide 12
+## Slide 13
 
 Here is the same ticket 3, now as JSON. Look at the three fields. _id is 3. assignee_id is null. status is new. The notebook does this for all four tickets.
 
@@ -168,7 +174,7 @@ We talked about embedding versus referencing when we did document modeling, and 
 - Notebook 09, document conversion.
 - Course textbook, Chapters 9, 10, and 15.
 
-## Slide 13
+## Slide 14
 
 Here is the comparable grouping in MongoDB. Read the pipeline. The match stage keeps documents whose status is in the same active set we used in SQL. Then the group stage uses assignee_id as the group key and adds one for each ticket.
 
@@ -184,7 +190,7 @@ And read the bottom box honestly. This pipeline is a reference for a collection 
 - Notebook 09, Python grouping and MQL reference.
 - https://www.mongodb.com/docs/manual/reference/operator/aggregation/group/
 
-## Slide 14
+## Slide 15
 
 This slide is about why a row count is not a restore check. The notebook exports the SQLite database as SQL statements, builds a separate in-memory database, and runs those statements there. The first comparison says everything matches. Then the notebook does something deliberate: it changes ticket 1 only in the restored copy, from open to resolved.
 
@@ -200,7 +206,7 @@ Now read the last line. The SQL dump lives in memory, in a Python variable. It d
 - Notebook 09, isolated SQLite restore and deliberate wrong-value comparison.
 - Course textbook, Chapters 8, 12, and 15.
 
-## Slide 15
+## Slide 16
 
 Our notebook covers a lot, but some claims need the real platform. This table points each concern back to the kind of test you already ran in your completed course work.
 
@@ -218,7 +224,15 @@ Now read the box. SQLite here does not reproduce Supabase row-level security, Po
 - Course textbook, Chapters 6, 7, 8, 12, 14, and 15.
 - Canonical final-project assignment.
 
-## Slide 16
+## Slide 17
+
+Cloudflare's published account of its July 2019 outage separates observed impact, the deployed rule, its expensive behavior, mitigation, and corrective work. It is a web-security incident, not a database benchmark. Use its evidence structure when explaining your own query or restore investigation: show the input, observation, action, and limit. In a portfolio or interview, describe only work you actually performed; a four-ticket classroom result is useful evidence without being called production-scale experience.
+
+For this class, connect the case to the experiment already on the screen. It is context for your technical reasoning, not another assignment. Keep classroom results separate from the company’s production system.
+
+Source: https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019/
+
+## Slide 18
 
 Now we shift to your Day 1 lab, the concept guide. This is what one looks like, and it all fits in a single README.
 
@@ -232,7 +246,7 @@ The second line of the box lists what else a reader needs: the tool, the run ord
 - Week 15 individual GitHub concept lab.
 - Course textbook, Chapter 15.
 
-## Slide 17
+## Slide 19
 
 Here is how to build the guide entirely in the browser. No terminal, and no Git installed on your machine.
 
@@ -248,7 +262,7 @@ If the repository is public, open the link while signed out to make sure it work
 - https://docs.github.com/en/repositories/working-with-files/managing-files/editing-files
 - Week 15 individual GitHub concept lab.
 
-## Slide 18
+## Slide 20
 
 Here is the lab itself. It is individual work, and we do it in class.
 
@@ -261,7 +275,7 @@ Now the submission box. Submit one public or instructor-accessible URL in Bright
 [Sources]
 - Week 15 individual GitHub concept lab.
 
-## Slide 19
+## Slide 21
 
 This starts the Day 2 material: final demonstrations. Your requirements come from the canonical final-project assignment, not from this slide. Your demonstration slot follows the schedule in Brightspace, and demonstrations may run across our Week 15 meetings and the final exam meeting, so we are not trying to fit everyone into one class.
 
@@ -275,7 +289,7 @@ Look at the second box. Present from your notebook, code, or prepared results. A
 - Canonical final-project assignment, Presentation and Submission sections.
 - Course textbook, Chapter 15.
 
-## Slide 20
+## Slide 22
 
 Here is what a complete query explanation sounds like, using our review example. Read it with me.
 
@@ -289,7 +303,7 @@ Now read the box at the bottom. This describes the four-row review example. In y
 - Notebook 09, report and counterfactual results.
 - Course textbook, Chapter 15.
 
-## Slide 21
+## Slide 23
 
 Let's turn the same work into a resume bullet. Look at the first one: "Used SQL in a database class." That names a topic. A reader learns nothing about what you can actually do.
 
@@ -303,7 +317,7 @@ Here is the test for any bullet. An interviewer can point at any phrase and say 
 - Course textbook, Chapter 15, portfolio and resume writing.
 - Notebook 09, executed review example.
 
-## Slide 22
+## Slide 24
 
 Interviewers often ask, "Tell me about a problem you investigated." STAR-R gives your answer a shape: situation, task, action, result, and reflection. Let's walk the table.
 
@@ -319,7 +333,7 @@ Read the line at the bottom. Practice your own version individually, in your not
 - Course textbook, Chapter 15, STAR-R framework.
 - Notebook 09, assignment and rollback experiment.
 
-## Slide 23
+## Slide 25
 
 Here is a typical follow-up: "What changes if ticket 3 is assigned to Agent 203?" Let's answer it the way I want you to answer every follow-up. Start with the one fact that changes, and follow it through.
 
@@ -333,7 +347,7 @@ Why does this matter in an interview? Because you do not have to produce some un
 - Notebook 09, controlled assignment experiment.
 - Course textbook, Chapter 15, follow-up questions.
 
-## Slide 24
+## Slide 26
 
 Another classic interview question: "Would you choose PostgreSQL or MongoDB?" The honest answer starts with the workload, and then you actually say what the workload is. Look at the table.
 
@@ -349,7 +363,7 @@ Now read the bottom box. PostgreSQL can store JSON. MongoDB can reference docume
 - Course textbook, Chapters 9, 10, 14, and 15.
 - Canonical final-project platform options.
 
-## Slide 25
+## Slide 27
 
 This table connects work you did in this course to responsibilities you will see in job postings. Read across each row.
 
@@ -365,13 +379,13 @@ Your GitHub guide helps here. It is one small example you can discuss in depth, 
 - https://www.onetonline.org/link/summary/15-1242.00
 - Course textbook, Chapter 15, skill matrix.
 
-## Slide 26
+## Slide 28
 
 Last slide. What do you learn next? My advice is to choose one gap in a role that interests you, not a list of product names.
 
 Read the three lines. Choose one gap. Build one small experiment that addresses it. Describe the result and the next question it raises.
 
-Look at the example. If a role asks for operational scripting, you could automate a logical restore into a disposable target, check known records and constraints, and report a failure clearly. Why is that a good project? Because it builds on a workflow you already understand, the restore check from slide 14, and adds exactly one new responsibility, automation. Start with the manual procedure. Know what can change, what must stay untouched, and what success and failure look like. Then automate one piece. A script that reliably reports a mismatch is useful even on a small dataset. Scheduling and monitoring can come later, as separate steps.
+Look at the example. If a role asks for operational scripting, you could automate a logical restore into a disposable target, check known records and constraints, and report a failure clearly. Why is that a good project? Because it builds on a workflow you already understand, the restore check from slide 15, and adds exactly one new responsibility, automation. Start with the manual procedure. Know what can change, what must stay untouched, and what success and failure look like. Then automate one piece. A script that reliably reports a mismatch is useful even on a small dataset. Scheduling and monitoring can come later, as separate steps.
 
 Keep the explanation next to the code: the environment, the input, the observed result, and the limit. If it fails, write down what failed and your next question. That record is an interview story.
 
@@ -381,7 +395,7 @@ Read the last line. Keep expanding a workflow you can explain rather than adding
 - Course textbook, Chapter 15, next-skill planning.
 - Course recovery and integration notebooks.
 
-## Slide 27
+## Slide 29
 
 These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Four tickets, two totals: the course in one report (1:32); From lab evidence to a portfolio bullet (1:11); Presenting a technical decision (1:19). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 15 README. The diagrams are schematic illustrations, not benchmarks.
 

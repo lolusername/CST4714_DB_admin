@@ -39,3 +39,5 @@ For **Part A (required)**, enter these three lines in the Week 10 Day 2 Brightsp
 Submit your lab record before leaving. **Part A alone meets the submission requirement.** If you choose to write [Part B, the optional Chapter 10 response](reading_response.md), add it below Part A in the same text entry.
 
 Both labs are part of [MongoDB University’s CRUD Operations in MongoDB course](https://learn.mongodb.com/courses/crud-operations-in-mongodb).
+
+**Before working:** use the [complete data reference](DATA_REFERENCE.md) for this week’s fixture and exact field names.

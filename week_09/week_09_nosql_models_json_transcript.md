@@ -1,5 +1,7 @@
 # Week 9: NoSQL Models and JSON - Spoken Transcript
 
+This transcript follows the current presentation order. Source references marked as not spoken are included for review.
+
 ## Slide 1
 
 Welcome to Week 9. This is a turning point in the course. For eight weeks we have worked with tables, keys, queries, transactions, permissions, and backups in PostgreSQL. This week we ask a new question: what happens when the way an application uses its data suggests a different arrangement?
@@ -482,6 +484,26 @@ These are illustrations, not timing tests. For your lab, keep all three events f
 [Sources]
 - Course-created Week 9 videos and captions in videos/README.md.
 - Week 9 lab, One Ticket, Two JSON Designs.
+
+## Slide 34
+
+Picture the ticket page the resident opens. It needs a name, but there are two ways to find that name. On the left, the ticket stores user ID 101 and the application follows that reference to the user record. On the right, the ticket contains an embedded requester object. It already has the display name. Both can show Requester 101 today. Now change that person’s name. A reference can fetch the authoritative current name; a copied current name needs a refresh rule. If the copy is deliberately a historical snapshot, label that meaning. The data shape alone does not tell us which meaning was intended.
+
+Teaching placement (not spoken): Day 2: after slides 24–27, before the JSON lab.
+
+## Slide 35
+
+This picture is a possible later design, not an extra requirement for today’s JSON lab. The complete history has three events for ticket 1003. The page preview shows only the newest two, while the event store retains all three. The requester’s current name has one authoritative home. A preview copy needs a rule for refreshing it and for indicating when it is stale. In the assigned lab, keep all three events in each of your two designs first. Then explain what would become difficult if the history kept growing for years.
+
+Teaching placement (not spoken): Day 2: after appendix slide 34; later-design discussion, not a replacement for the assigned JSON.
+
+## Slide 36
+
+Discord’s engineering account starts from the way messages are read and how that workload grows. That is the habit to carry into our design, rather than copying a product choice. A ticket page, an event-count report, and a current-name lookup ask different questions. Tell me where the facts live, how the application gets them, and what has to change when a name or history changes. The source is optional context for that reasoning. Our two small JSON examples are enough to practice it without opening Atlas.
+
+Primary source: https://discord.com/blog/how-discord-stores-trillions-of-messages
+
+Teaching placement (not spoken): Day 2: before slide 31 and the lab.
 
 ## License
 

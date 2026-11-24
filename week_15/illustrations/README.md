@@ -1,0 +1,5 @@
+# Week 15 static illustration
+
+![Populations: relationship between records and the result](lesson_relationships.png)
+
+This still uses the supplied lesson records, not a product screenshot. [Editable Manim source](course_stills.py). Render with Manim Community 0.22: `manim -s -r 2240,960 course_stills.py Populations`. The source authors no animation. ExistingMP4 lesson videos and their subtitle files remain separate and are embedded in the PowerPoint.

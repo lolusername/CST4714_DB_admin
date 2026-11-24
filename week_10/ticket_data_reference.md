@@ -5,7 +5,7 @@ collection, `tickets`. Each ticket embeds one `requester` object, an array of
 text `tags`, and an array of `events` objects. A requester can appear on several
 tickets. A ticket can have several events. There is no separate users, agents,
 or events collection in this Day 1 fixture; the IDs identify those people or
-records in the case. Day 2 explores storing related records separately.
+records in the case. The lecture also explores storing related records separately; the Day 2 insert-and-find lab uses a different small queue listed at the end of this reference.
 
 MongoDB calls each named value a **field**. The field names below are the exact
 names to use in this notebook. These tables describe our supplied data; they do

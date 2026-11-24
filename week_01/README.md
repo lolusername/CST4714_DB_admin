@@ -114,3 +114,10 @@ provides the complete interface instructions.
 Explain why a ticket can be stored successfully yet absent from a dashboard.
 Then distinguish selection from projection, and explain what a join's matching
 condition does. These ideas become executable SQL in Week 2.
+
+## Illustration and career connection
+
+- [Worked still diagram and editable Manim source](illustrations/README.md): slide **19**.
+- [Industry / Career Connection](INDUSTRY_CONNECTION.md): slide **20**.
+
+These supplemental slides retain the original slide numbers and embedded videos. Teach the diagram alongside the matching worked example, then the three-minute company case before releasing the lab. The deck has **20 slides**. PDF and GitHub previews show still images; play videos in desktop PowerPoint or open the external MP4 and captions.

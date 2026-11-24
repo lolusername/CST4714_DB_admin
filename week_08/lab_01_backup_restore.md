@@ -7,7 +7,7 @@
 A backup file exists. Can it actually recreate the database's records and rules?
 Restore it somewhere separate and test the result.
 
-Work individually in class. Submit one completed notebook.
+Work individually in class. Submit your saved Colab copy’s sharing link, with output and writing; give the instructor viewer access.
 
 ## 1. Perform the Restore
 
@@ -39,5 +39,7 @@ It removes the practice databases and artifact folder and stops the Colab servic
 Do not write a
 second report or reproduce the output as screenshots.
 
-**Submit:** the completed notebook. The archive is a runtime practice artifact;
+**Submit:** your saved Colab copy’s sharing link in Brightspace, with instructor viewer access. The archive is a runtime practice artifact;
 you do not need to upload it with the assignment.
+
+**Before working:** use the [complete data reference](DATA_REFERENCE.md) for this week’s fixture and exact field names.

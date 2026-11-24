@@ -51,7 +51,7 @@ Short silent animations with captions (3 for this week). Each has a subtitle fil
 
 ## Day 1: Integrated Review and Portfolio Project
 
-Use **slides 1-18** alongside the review notebook and individual concept lab.
+Use **slides 1-20** alongside the review notebook and individual concept lab.
 
 We start with four tickets and a dashboard whose staff counts do not equal its
 backlog. In the review notebook, we trace the SQL result, test an assignment
@@ -67,7 +67,7 @@ the lab's one-sentence description. The notebook itself is not another submissio
 
 ## Demonstration Slots and Career Translation
 
-Use **slides 19-26** for demonstrations and translating project work into
+Use **slides 21-28** for demonstrations and translating project work into
 specific professional explanations. Follow the section's Brightspace schedule
 for your one demonstration slot. Demonstrations may span available Week 15 and
 final-examination meetings; the whole class is not expected to fit into one
@@ -93,6 +93,16 @@ and reflection. Name one query, plan, policy test, restore check, or incident
 result. Listen or reread once and remove unsupported claims such as
 "production scale," "zero downtime," or "fully secure" unless your work
 actually establishes them.
+
+## Industry/Career Connection — Cloudflare: explain an incident with evidence
+
+Cloudflare's published account of its July 2019 outage separates observed impact, the deployed rule, its expensive behavior, mitigation, and corrective work. It is a web-security incident, not a database benchmark. Use its evidence structure when explaining your own query or restore investigation: show the input, observation, action, and limit. In a portfolio or interview, describe only work you actually performed; a four-ticket classroom result is useful evidence without being called production-scale experience.
+
+Read the [company's own account](https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019/). This supports the lesson; it adds no submission. Keep the case distinct from the measured classroom outputs.
+
+## Notebook route and data
+
+Read the [complete data reference](DATA_REFERENCE.md) before the first query. Notebook code cells now have stable numbered titles. Expand setup code when you want its mechanics; keep student changes and query results visible. The [static illustration and editable Manim source](illustrations/README.md) show the lesson's actual record relationships. Embedded PowerPoint videos and separate subtitle files remain available; the PDF and GitHub previews show still images.
 
 ## Final Self-Check
 

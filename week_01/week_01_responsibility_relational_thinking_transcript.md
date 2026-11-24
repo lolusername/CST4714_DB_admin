@@ -1,5 +1,7 @@
 # Week 1: How Applications Use Databases - Spoken Transcript
 
+This transcript follows the current presentation order. Source references marked as not spoken are included for review.
+
 ## Slide 1
 
 Welcome to Week 1. Let me start with a small mystery, because it carries the whole week. A student reports a broken bench through a website. The website gives them a confirmation number. Then the repair desk opens its dashboard, and the request is not there.
@@ -281,6 +283,23 @@ Next week is a substantial SQL review. We write filters, handle NULL carefully, 
 ## Slide 18
 
 These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Following one request (1:24); Selection and projection (1:34); Where did the requests go? (1:18). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 1 README. The diagrams are schematic illustrations, not benchmarks.
+
+## Slide 19
+
+The left box is our stored table. Read all four ticket IDs. Now the middle box is the result of choosing new or open requests. Ticket 1003 is resolved, so this particular result leaves it out. We have not deleted it. The last box also requires a matching assigned agent. Our two unassigned requests disappear from that result, leaving 1001. This is the first diagnostic habit: ask which stage removed a record before deciding the database lost it.
+
+Image description: Four stored tickets become three active tickets, then one ticket with a matching agent. Ticket 1001 survives both choices. The original stored table remains unchanged.
+
+Editable static Manim source is provided in illustrations/teaching_stills.py. This diagram supplements the worked examples; it is not a new assignment.
+
+## Slide 20
+
+GitLab published an unusually detailed account of its January 2017 outage. Data was accidentally removed from the primary database, and several expected backup paths did not provide the recovery they needed. The company’s Git repositories and its application database were different stores. That distinction matters: saying the website is broken does not yet tell us which data is affected. Our little ticket example is a query problem, not the GitLab incident. The connection is the habit of checking the actual system boundary and evidence. A DBA or reliability engineer needs to explain that difference clearly.
+
+Source: GitLab engineering postmortem · February 10, 2017
+https://about.gitlab.com/blog/postmortem-of-database-outage-of-january-31/
+
+The career connection is a teaching interpretation. The case is not evidence that the company used our synthetic data or exact classroom SQL.
 
 ## License
 

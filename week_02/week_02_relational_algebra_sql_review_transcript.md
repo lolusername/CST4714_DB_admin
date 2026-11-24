@@ -1,5 +1,7 @@
 # Week 2: Relational Algebra and Major SQL Review - Spoken Transcript
 
+This transcript follows the current presentation order. Source references marked as not spoken are included for review.
+
 ## Slide 1
 
 Welcome to Week 2. This week is a SQL review. I am not assuming you remember SQL from an earlier course, so we will rebuild the syntax as we go.
@@ -343,6 +345,23 @@ These are foundation skills for the rest of the course. Next week we use these s
 ## Slide 22
 
 These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: NULL: why = NULL finds nothing (1:20); What does one row mean after a join? (1:16); Counting workload, including zero (1:28). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 2 README. The diagrams are schematic illustrations, not benchmarks.
+
+## Slide 23
+
+Ticket 1003 is one request for low water pressure. Its history has three separate events. The event IDs distinguish those events; the second column here is each event’s resulting status. When we join the ticket to its history, the ticket’s fields appear once for each matching event. Count star now counts three pairs. It does not tell us there are three separate requests. Before writing an aggregate, finish the sentence: one input row means what? In this join it means one ticket paired with one event.
+
+Image description: Ticket 1003 joins to events 5005, 5006, and 5007, with new statuses open, in_progress, and resolved. Three joined rows represent three ticket-event pairs but only one distinct ticket.
+
+Editable static Manim source is provided in illustrations/teaching_stills.py. This diagram supplements the worked examples; it is not a new assignment.
+
+## Slide 24
+
+Cloudflare’s engineering article includes a real reporting query. It filters to an account, a device, and a time range, then groups device-state records by hour and status. You can recognize the same SQL ideas we are learning: choose rows, group them, and count the resulting groups. Their storage and traffic are much larger than our fixture. We are not reproducing their performance test. The useful connection is that a report’s filters and grouping have a meaning before they have a speed. A data engineer needs both a correct count and an explanation of what it counts.
+
+Source: Cloudflare engineering · July 8, 2025
+https://blog.cloudflare.com/timescaledb-art/
+
+The career connection is a teaching interpretation. The case is not evidence that the company used our synthetic data or exact classroom SQL.
 
 ## License
 

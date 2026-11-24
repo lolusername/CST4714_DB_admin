@@ -1,5 +1,7 @@
 # Week 4: Reliable SQL Reports - Spoken Transcript
 
+This transcript follows the current presentation order. Source references marked as not spoken are included for review.
+
 ## Slide 1
 
 Welcome to Week 4. Look at the line under the title: count requests, summarize histories, select the latest event. Those three verbs are the whole week.
@@ -283,6 +285,23 @@ For today, be honest about what you proved. Your report was tested against this 
 ## Slide 25
 
 These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Count requests, not ticket-event pairs (1:30); Conditional counts without losing tickets (1:19); One latest event per ticket (1:41). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 4 README. The diagrams are schematic illustrations, not benchmarks.
+
+## Slide 26
+
+This is an extra example, not another row secretly added to the fixture. Imagine two events for the same ticket with exactly the same timestamp. Ordering only by time does not state which tied event should win. We choose a policy: newest timestamp first, and within a time tie the larger event ID first. Event 7002 receives row number one under that policy. The ID rule makes the choice repeatable; it does not prove which real-world action happened first. Say the rule out loud before reading the latest-event report.
+
+Image description: Two explicitly illustrative events 7001 and 7002 share ticket 1001 and the timestamp February 15, 2026 at noon UTC. Ordering by time descending then event ID descending gives event 7002 row number one.
+
+Editable static Manim source is provided in illustrations/teaching_stills.py. This diagram supplements the worked examples; it is not a new assignment.
+
+## Slide 27
+
+Cloudflare’s HTTP analytics article explains a pipeline from request logs into analytical tables and reports. Those tables are useful because they summarize the data at a chosen level, but the level still matters: a summary row is not automatically one request, and different measures do not all combine in the same way. Our direct join produced ticket-event pairs. We had to name that meaning before correcting the count. That is an analytics-engineering skill, even though we use PostgreSQL and the case uses ClickHouse. The company’s scale is context, not a benchmark for our exercise.
+
+Source: Cloudflare engineering · March 6, 2018
+https://blog.cloudflare.com/http-analytics-for-6m-requests-per-second-using-clickhouse/
+
+The career connection is a teaching interpretation. The case is not evidence that the company used our synthetic data or exact classroom SQL.
 
 ## License
 

@@ -58,30 +58,13 @@ The linked JSON and CSV contain the same 75-record historical sample for the
 textbook's standalone examples. The notebook already includes these records;
 you do not need another download or an additional submission for the lab.
 
-## Fall 2026 Holiday-Week Plan
+## Meeting plan
 
-If this lesson falls in Thanksgiving week for your section, use the single
-scheduled meeting: the [City Tech calendar](https://www.citytech.cuny.edu/registrar/docs/fall_2026.pdf)
-has no classes on November 25 and the college is closed November 26-27.
-Brightspace gives the section's meeting and submission dates.
-
-For that 100-minute meeting, use this focused plan:
-
-- **15 minutes:** discuss capacity, replication, and sharding with selected slides.
-- **20 minutes:** inspect the embedded snapshot and compare vulnerability ID with date added in Notebook 06.
-- **45 minutes:** use `TARGET = "sqlite"` to import, repeat the import, verify a known record, and change the grouping to product. Cloud paths are optional extensions.
-- **10 minutes:** write the short handoff and clean up the practice objects.
-- **10 minutes:** review the existing [final-project checkpoint](../week_12/materials/assignments/final_project.md): model, seed data, and the first two queries. Record progress and the next step in the existing project package.
-
-Submit the same one lab notebook. The project checkpoint adds no separate
-submission. Any unfinished guided work continues in the next scheduled class.
-Use the slides as references; this plan does not require presenting all 32 slides.
-If the section has two scheduled meetings for this lesson, spread the same parts
-across those meetings.
+Week 12 is the Thanksgiving week with one scheduled class. This week returns to the section's published schedule; Brightspace gives actual dates. Use Part 1 for distribution and source checks, then Part 2 for the repeatable import. Continue in the same notebook across the meetings. The final-project checkpoint stays inside the existing project package and adds no separate submission.
 
 ## Part 1: Evaluate Distribution Without Pretending to Shard
 
-Use relevant examples from **slides 1-16**. We distinguish latency from throughput, calculate a small
+Use relevant examples from **slides 1-17**. We distinguish latency from throughput, calculate a small
 latency percentile, and compare replication, partitioning, and sharding. We then
 use Notebook 06's Sections 1 and 2 to inspect the source and measure candidate
 keys. The range/hash experiment makes placement visible without deploying a
@@ -93,7 +76,7 @@ same notebook for Part 2; there is no separate Part 1 submission.
 
 ## Part 2: Connect, Load, Verify, and Reuse
 
-Use relevant examples from **slides 17-32**. We read the connection and import code, distinguish
+Use relevant examples from **slides 18-34**. We read the connection and import code, distinguish
 transaction atomicity from repeat behavior, and examine a wrong stored value
 that a correct row count would miss.
 
@@ -107,8 +90,7 @@ Repeat the chosen import against its existing output, change the grouping from
 vendor to product, and compare the result with the source. Write the short
 maintenance handoff in the notebook, then clean up the practice objects.
 
-Submit only the completed `06_public_data_capacity_integration.ipynb` notebook in
-Brightspace. The handoff practices explaining a data pipeline to a future
+Submit the **viewable sharing link to your completed Colab copy** in Brightspace. Save the changed query, outputs, and handoff in Drive; grant the instructor viewer access. Do not submit the starter link or an `.ipynb` attachment. The handoff practices explaining a data pipeline to a future
 colleague; it does not require a partner or another document.
 
 ## Optional Industry Extension: A Catalog Question
@@ -120,6 +102,16 @@ directly. Discuss which index or placement rule could help that query under a
 larger measured workload. Do not use the subset to declare a real system safe,
 rank vendor security, or decide a current patch deadline. No additional writing
 or final-project deliverable is required.
+
+## Industry/Career Connection — Discord: access patterns and hot partitions
+
+Discord's 2023 engineering account describes message-storage growth, hot partitions, a data-service layer, and migration from Cassandra to ScyllaDB. Its workload is not our CISA catalog and its design is not a MongoDB recommendation. The useful comparison is methodological: measure the distribution and access pattern before selecting infrastructure, and verify a migration rather than trusting row counts alone. A data engineer should report the import key, repeat behavior, field checks, and remaining limits. Our 75-record subset provides no evidence that it needs sharding.
+
+Read the [company's own account](https://discord.com/blog/how-discord-stores-trillions-of-messages). This supports the lesson; it adds no submission. Keep the case distinct from the measured classroom outputs.
+
+## Notebook route and data
+
+Read the [complete data reference](DATA_REFERENCE.md) before the first query. Notebook code cells now have stable numbered titles. Expand setup code when you want its mechanics; keep student changes and query results visible. The [static illustration and editable Manim source](illustrations/README.md) show the lesson's actual record relationships. Embedded PowerPoint videos and separate subtitle files remain available; the PDF and GitHub previews show still images.
 
 ## End-of-Week Self-Check
 

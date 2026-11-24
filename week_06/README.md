@@ -155,3 +155,10 @@ ordinary authenticated application user can see.
 ## Reuse
 
 See the [licenses](materials/LICENSE.md) and [source attributions](materials/ATTRIBUTIONS.md). External resources retain their own terms.
+
+## Worked examples and complete reference
+
+- [Complete data reference](DATA_REFERENCE.md): read the relevant fixture before the first query or design.
+- [Industry / career connection](INDUSTRY_CONNECTION.md): a primary-source company case with a short application; no extra submission.
+- The deck’s **worked-example appendix, slides 36–38**, brings the relevant records, result, and industry connection together. Use it before the lab, then return to the existing lab instructions.
+- [Static concept diagram](illustrations/README.md): a still image with an editable Manim source and text description. The PowerPoint keeps the original embedded videos; PDF and GitHub previews show still images.

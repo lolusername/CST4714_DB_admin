@@ -74,3 +74,14 @@ and [CTE documentation](https://www.postgresql.org/docs/current/queries-with.htm
 provide further explanation. These are references, not additional assignments.
 
 See [licenses](materials/LICENSE.md) and [attributions](materials/ATTRIBUTIONS.md).
+
+## Data, illustration, and career connection
+
+[Complete data reference](DATA_REFERENCE.md) explains every field, relationship, NULL, and fixture difference. Read it before the first lab query.
+
+- [Worked still diagram and editable Manim source](illustrations/README.md): slide **26**.
+- [Industry / Career Connection](INDUSTRY_CONNECTION.md): slide **27**.
+
+Teach the diagram beside its matching example and the three-minute company case before the lab. Existing slide numbers and embedded videos remain intact; the deck now has **27 slides**. PDF/GitHub previews show stills; desktop PowerPoint or the external MP4/VTT is the playback route.
+
+**Required hand-ins remain:** Day 1: `week_04_category_report.sql`; Day 2: `week_04_latest_event.sql`. The runnable notebook is a workspace when a SQL file is assigned. Keep required comments and observed error details in the SQL file. No additional notebook hand-in is required.

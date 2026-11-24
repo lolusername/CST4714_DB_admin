@@ -1,5 +1,7 @@
 # Week 14: Polyglot Incident Response and Final Project Clinic - Spoken Transcript
 
+This transcript follows the current presentation order. Source references marked as not spoken are included for review.
+
 ## Slide 1
 
 Welcome to Week 14. Look at the two lines in the middle of the slide. The staff dashboard says resolved. The resident page says open. Both screens are working. Both databases answer their own queries just fine. And they disagree. That is our problem for the week.
@@ -205,6 +207,10 @@ That is why your experiment moves the old event to the very end. A correct final
 
 ## Slide 14
 
+Cell 05 models a single ticket, not a live concurrent consumer. Move version sixteen to the end of the list. The order is now seventeen, seventeen again, eighteen, sixteen. With the version guard enabled, the second seventeen and the late sixteen do not replace newer state, so the projection ends closed at version eighteen. With the guard disabled, the last delivery wins and incorrectly puts the projection back to open at sixteen. These events carry complete state; a sequence of increments would need different handling. Use this experiment as evidence in the incident update. It does not create a second notebook submission.
+
+## Slide 15
+
 Now it is your turn. There are four steps on the slide.
 
 In the delivery cell, move the whole version 16 event to the end of the deliveries list. Keep all of its fields together. The order is now 17, 17 again, 18, and 16 last. Run it with ENFORCE_VERSION equal to True. You should end at closed, version 18.
@@ -220,7 +226,7 @@ If Python gives you a syntax error after the move, it is almost always a missing
 [Sources]
 - CST4714 Week 14 lab and Notebook 08, individual experiment.
 
-## Slide 15
+## Slide 16
 
 This slide marks the edge of the technique, and it is worth understanding, because it is where the simple guard stops working.
 
@@ -237,7 +243,7 @@ This is good interview reasoning, by the way. You can say where your technique w
 [Sources]
 - CST4714 textbook, Chapter 14, complete-state and delta-event comparison.
 
-## Slide 16
+## Slide 17
 
 Here is what the version rule looks like as a real database operation. Read the updateOne.
 
@@ -255,7 +261,7 @@ And notice there is no upsert option on this command. That is on purpose, and th
 - CST4714 Notebook 08, corresponding MongoDB operation.
 - https://www.mongodb.com/docs/manual/core/write-operations-atomicity/
 
-## Slide 17
+## Slide 18
 
 Suppose the command from the last slide comes back with a matched count of zero. What does that mean? Nothing matched the filter. It does not tell you why. Look at the three rows.
 
@@ -273,7 +279,7 @@ So three different states need three different decisions. One retry option canno
 - CST4714 Notebook 08 and Chapter 14, tested version-filtered update example.
 - https://www.mongodb.com/docs/manual/reference/method/db.collection.updateOne/
 
-## Slide 18
+## Slide 19
 
 Now the supplied incident. This is the paper incident in your lab, and it follows one event. All the times are UTC. Read down the timeline.
 
@@ -288,7 +294,7 @@ Read the box at the bottom. The record does not establish the state of every oth
 [Sources]
 - CST4714 Week 14 lab, supplied incident record.
 
-## Slide 19
+## Slide 20
 
 So how do we fix it? Read the steps on the slide in order.
 
@@ -305,7 +311,7 @@ In your write-up, this credential repair is a proposal. You did not perform it. 
 [Sources]
 - CST4714 Week 14 lab and Chapter 14 incident response.
 
-## Slide 20
+## Slide 21
 
 Now we zoom out from one ticket to several. These are still the notebook's synthetic tickets. Look at the table.
 
@@ -313,7 +319,7 @@ Ticket 1008: closed, 18 on both sides. After the guarded experiment, it matches.
 
 Ticket 1009: resolved, version 5 in the source, absent from the projection. It is missing. Ticket 9999: absent from the source, open, version 1 in the projection. It is an extra record with no source. One missing plus one extra, and the count comes out even. That is why equal counts tell you almost nothing.
 
-Ticket 1010 is the nasty one. Both sides say version 7, but the source says resolved and the resident says open. If you only compared versions, you would miss it. This is the third row from slide 17, a wrong value at an equal version.
+Ticket 1010 is the nasty one. Both sides say version 7, but the source says resolved and the resident says open. If you only compared versions, you would miss it. This is the third row from slide 18, a wrong value at an equal version.
 
 So the second line of the box is the method. Compare the union of IDs from both sides, and compare the source-owned fields, status and version, for each one.
 
@@ -322,7 +328,7 @@ The notebook reports three findings with the guard restored. If you leave the gu
 [Sources]
 - CST4714 Notebook 08, reconciliation fixture and comparison loop.
 
-## Slide 21
+## Slide 22
 
 So how do we repair the projection? Not by patching it in place. We build a separate candidate from the authority. Read the code.
 
@@ -339,7 +345,15 @@ And ticket 9999, the extra record? Investigate it before you delete it. It might
 [Sources]
 - CST4714 Notebook 08, separate rebuild candidate and stated cutover limitations.
 
-## Slide 22
+## Slide 23
+
+Netflix's 2019 DBLog account explains propagating committed database changes and combining log processing with chunks of a table dump. Keeping downstream stores current requires controlling the interaction between past snapshot rows and newer changes. Our transaction/outbox and version-guard example is a smaller teaching model, not Netflix's implementation. A platform engineer should identify the authoritative source, replay behavior, and reconciliation evidence before calling a derived view repaired.
+
+For this class, connect the case to the experiment already on the screen. It is context for your technical reasoning, not another assignment. Keep classroom results separate from the company’s production system.
+
+Source: https://netflixtechblog.com/dblog-a-generic-change-data-capture-framework-69351fb9099b
+
+## Slide 24
 
 Here is what you hand in. One Brightspace text response, and it is short.
 
@@ -356,7 +370,7 @@ Read the bottom box. Work individually. No notebook attachment, no separate time
 [Sources]
 - CST4714 Week 14 lab submission instructions.
 
-## Slide 23
+## Slide 25
 
 Welcome back. Today is Day 2, the Final Project Operations Clinic. Read the line in the middle. A useful query runs. The next task is to make its operation understandable.
 
@@ -371,7 +385,7 @@ We will walk through access, indexes, recovery, and demonstration choices, and t
 [Sources]
 - CST4714 final-project assignment and Week 14 project clinic.
 
-## Slide 24
+## Slide 26
 
 First, access. An access test means something only if you know which identity ran it. Look at the table.
 
@@ -390,7 +404,7 @@ Read the bottom box. Use disposable project data, and keep passwords, connection
 - https://supabase.com/docs/guides/database/postgres/row-level-security
 - https://www.mongodb.com/docs/atlas/security-add-mongodb-users/
 
-## Slide 25
+## Slide 27
 
 Next, indexes. Read the top line: an index decision begins with one query. Our example workload is finding a resident's recent open tickets. The filter fields and the sort order tell you what the database has to find and how it has to order it. An index name alone does not explain why the index helps.
 
@@ -407,11 +421,11 @@ Also record the cost. Every index takes storage and adds work to every write. In
 - https://www.postgresql.org/docs/current/using-explain.html
 - https://www.mongodb.com/docs/manual/reference/explain-results/
 
-## Slide 26
+## Slide 28
 
 Recovery next. Read the title: a restore test answers more than a backup command. A backup command tells you a file was created. It does not tell you what is in it, or whether you can get a working database back from it.
 
-Look at the table. Each row is something you observe in an isolated restore target, a separate place, not your original project. First, expected IDs and selected field values. That checks the data survived in the expected form. Remember slide 20: matching counts alone can hide missing and wrong records. Second, a familiar query returns its expected answer. That checks the restored data actually supports something the application does.
+Look at the table. Each row is something you observe in an isolated restore target, a separate place, not your original project. First, expected IDs and selected field values. That checks the data survived in the expected form. Remember slide 21: matching counts alone can hide missing and wrong records. Second, a familiar query returns its expected answer. That checks the restored data actually supports something the application does.
 
 Third, inspect indexes, constraints, and access. Read the bottom box: a CSV or JSON export alone does not recreate every database object. You do not get the indexes, validators, roles, or policies. If something needs a separate step to recreate, write that step in your project guide.
 
@@ -424,7 +438,7 @@ Keep the restore isolated so the original data stays available while you inspect
 - https://www.postgresql.org/docs/current/app-pgdump.html
 - https://www.mongodb.com/docs/database-tools/mongoexport/
 
-## Slide 27
+## Slide 29
 
 If you have two stores, recovery needs an order, and the order comes from ownership. Read the first box.
 
@@ -441,7 +455,7 @@ The skill here is knowing which data can be rebuilt, which must be preserved ind
 [Sources]
 - CST4714 textbook, Chapter 14, recovery order and ownership.
 
-## Slide 28
+## Slide 30
 
 Now the demonstration. The question is whether another person can follow it. Look at the table, Show on the left, Explain on the right.
 
@@ -460,7 +474,7 @@ And a smooth demo is not the same as a good one. If something breaks and you can
 [Sources]
 - CST4714 final-project presentation requirement and Week 14 clinic.
 
-## Slide 29
+## Slide 31
 
 Here is what you do for the rest of class. There are three steps on the slide.
 
@@ -477,7 +491,7 @@ This is individual work. By the end of class, you want one concrete improvement 
 [Sources]
 - CST4714 final-project assignment and Week 14 README.
 
-## Slide 30
+## Slide 32
 
 Last slide for the week, and it is about how you talk about this work. Read the paragraph in the box.
 
@@ -494,7 +508,7 @@ Next week is course review, final demonstrations, and career explanations. The g
 [Sources]
 - CST4714 textbook, Chapters 14 and 15, and Notebook 08.
 
-## Slide 31
+## Slide 33
 
 These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Polyglot persistence: one owner per fact (1:30); Keeping two databases consistent: outbox and version guard (1:42); Triage a cross-database incident (1:24). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 14 README. The diagrams are schematic illustrations, not benchmarks.
 

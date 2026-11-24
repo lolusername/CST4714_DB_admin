@@ -10,7 +10,7 @@ total can hide an incorrect result.
 
 Work individually in class. Submit the **sharing link to your completed Colab copy** in Brightspace.
 
-**Validation is not needed for this lab. We will cover it next week.** All
+**Validation is not needed for this lab. It remains optional reference.** All
 validator material is grouped into one collapsed section in the notebook.
 Leave it collapsed and keep `RUN_VALIDATION = False` for this lab.
 
@@ -53,15 +53,15 @@ screenshot, or extra report is required. Assignee sets and event analytics are
 optional extensions.
 
 <details>
-<summary>Validation — not needed for this lab; we will cover it next week</summary>
+<summary>Validation — not needed for this lab; optional reference</summary>
 
-The notebook keeps the validator and its examples together for next week's
-lesson. The supplied rule allows optional fields but requires a valid ticket ID,
+The notebook keeps the validator and its examples together as optional
+reference. The supplied rule allows optional fields but requires a valid ticket ID,
 status, and subject. The later example adds a required BSON `opened_at` date and
 compares an allowed date, an invalid status, a date stored as text, and a missing
 date. Atlas can enforce the rule; local mode provides an explicitly labeled
 trace to interpret. That trace is not a live server test.
 
-Leave this material for next week. It is not part of this lab's submission.
+Leave this material as optional reference. It is not part of this lab's submission.
 
 </details>

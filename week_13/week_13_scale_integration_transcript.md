@@ -1,5 +1,7 @@
 # Week 13: Capacity, Sharding, and Python Integration - Spoken Transcript
 
+This transcript follows the current presentation order. Source references marked as not spoken are included for review.
+
 ## Slide 1
 
 Welcome to Week 13. The case is in the two lines on the slide. A public dataset becomes a database, and the next import arrives tomorrow. That second line is the whole week.
@@ -222,6 +224,14 @@ For a real plan, you would measure actual record and index sizes, set the retent
 
 ## Slide 16
 
+Discord's 2023 engineering account describes message-storage growth, hot partitions, a data-service layer, and migration from Cassandra to ScyllaDB. Its workload is not our CISA catalog and its design is not a MongoDB recommendation. The useful comparison is methodological: measure the distribution and access pattern before selecting infrastructure, and verify a migration rather than trusting row counts alone. A data engineer should report the import key, repeat behavior, field checks, and remaining limits. Our 75-record subset provides no evidence that it needs sharding.
+
+For this class, connect the case to the experiment already on the screen. It is context for your technical reasoning, not another assignment. Keep classroom results separate from the company’s production system.
+
+Source: https://discord.com/blog/how-discord-stores-trillions-of-messages
+
+## Slide 17
+
 Time for Part 1 of the lab. Work individually in Notebook 06, and start from the embedded snapshot. Why the snapshot and not the live feed? Because then your numbers match the ones on these slides, and we can check each other's results.
 
 Run Sections 1 and 2. They inspect the source, check the fields, measure the candidate keys, and run the range and hash comparison. Read the cells as you go. The code is part of the lesson, not a black box.
@@ -230,11 +240,11 @@ Then focus on two candidates: cveID and dateAdded. Use two numbers the notebook 
 
 Second question: does this seventy-five-record database need sharding? A well-supported no is a perfectly good answer, as long as you say what measured change would make you reconsider.
 
-You do not need a paid cluster, a sharded deployment, or a database account for any of this. Read the box at the bottom. Save the notebook, because Part 2 continues in the same file, and there is no separate Day 1 submission. If we are doing both parts in one meeting this week, go straight on to Section 3 when you finish.
+You do not need a paid cluster, a sharded deployment, or a database account for any of this. Read the box at the bottom. Save the notebook, because Part 2 continues in the same file, and there is no separate Day 1 submission. Continue Part 2 at the next scheduled meeting; Week 12 was the one-meeting holiday week.
 
-## Slide 17
+## Slide 18
 
-Day 2 starts with the two lines on the slide. The import ran yesterday, and today it runs again. That second run is not an edge case. Retries and scheduled refreshes are an ordinary part of running any data system, so what the second run does has to be designed, not discovered.
+Day 2 starts with the two lines on the slide. The import ran in Part 1, and now it runs again. That second run is not an edge case. Retries and scheduled refreshes are an ordinary part of running any data system, so what the second run does has to be designed, not discovered.
 
 Our design uses the stable CVE identifier to recognize a record. If that identifier is already in the database, the load updates the selected values. If it is not, the load inserts it. Run the same unchanged source again, and you should end up with the same logical records and the same values.
 
@@ -244,13 +254,13 @@ SQLite runs the whole example with no remote database. If you pick Atlas or Post
 
 The written part is a short handoff in the notebook, explaining your work to an imagined colleague. It is still individual work, and still one submission.
 
-## Slide 18
+## Slide 19
 
 One variable controls the database path: TARGET. Look at the three rows.
 
 sqlite is the default, and the simplest. Python already includes the SQLite driver, and the notebook builds an in-memory database inside its own process. Nothing to sign up for, nothing to download.
 
-atlas uses PyMongo to connect to your MongoDB Atlas project. It needs a database user and an IP rule that lets the notebook runtime in. We will see why on slide 20.
+atlas uses PyMongo to connect to your MongoDB Atlas project. It needs a database user and an IP rule that lets the notebook runtime in. We will see why on slide 21.
 
 postgres uses Psycopg to connect to PostgreSQL, including your Supabase project through the right connection endpoint.
 
@@ -260,7 +270,7 @@ Now the line at the bottom, which is the most important instruction of the day. 
 
 And if you want to try another target, clean up this run first. The notebook actually stops you from starting another setup while one is still open. That keeps you from leaving practice objects and open connections scattered across services.
 
-## Slide 19
+## Slide 20
 
 The source is JSON, but every database still needs a decision about how to store each field. Read the table row by row.
 
@@ -272,7 +282,7 @@ cwes is the list. SQLite gets it as JSON text. MongoDB gets a real array. Postgr
 
 Then the last lines. When we verify, we convert back. A PostgreSQL date object and the string 2026-07-10 are different Python values, even though they mean the same day. So the check converts dates and JSON text back to the source form first, and only then compares. A field's name alone never tells you its type or how it round-trips.
 
-## Slide 20
+## Slide 21
 
 If you choose Atlas, this is the step that trips everyone up. Atlas checks the network address of whatever connects to it. In Colab, your Python code is not running on your laptop. It runs on a remote notebook machine, and that machine has a different public address from the laptop running your browser.
 
@@ -287,7 +297,7 @@ Keep that credential in the hidden prompt, never in a code cell, screenshot, or 
 Sources:
 https://www.mongodb.com/docs/atlas/security/ip-access-list/
 
-## Slide 21
+## Slide 22
 
 Here is the actual connection code, shown in the open instead of buried in a helper. Read it line by line.
 
@@ -305,7 +315,7 @@ Sources:
 https://www.mongodb.com/docs/languages/python/pymongo-driver/current/security/tls/
 https://www.mongodb.com/docs/languages/python/pymongo-driver/current/connect/connection-options/server-selection/
 
-## Slide 22
+## Slide 23
 
 If you pick postgres with Supabase, this is where you get the connection details. Read the box at the top right: Connect, then Session pooler.
 
@@ -323,7 +333,7 @@ Sources:
 https://supabase.com/docs/guides/database/connecting-to-postgres
 https://www.postgresql.org/docs/current/libpq-ssl.html
 
-## Slide 23
+## Slide 24
 
 After the PostgreSQL import, this code reads one known record back. Two things get substituted into SQL here, and they use two different tools. That is the point of the slide.
 
@@ -343,7 +353,7 @@ Sources:
 https://www.psycopg.org/psycopg3/docs/api/sql.html
 https://www.psycopg.org/psycopg3/docs/basic/params.html
 
-## Slide 24
+## Slide 25
 
 This table is the repeat-run test, and only one row of it is the real test. Read all three.
 
@@ -357,7 +367,11 @@ Then read the last line. Equal counts can hide changes. A program could overwrit
 
 For our unchanged source, idempotent means running it again leaves the same logical records and values. It does not mean no work happens. It does not keep history, and it does not delete records a future source leaves out.
 
-## Slide 25
+## Slide 26
+
+Run Cell 08 once to choose SQLite and create the isolated target. Then run Cell 09 twice without rerunning setup. The first import starts with zero rows and leaves seventy-five. The second meets the same CVE identifiers and leaves seventy-five again. That is what the arrows mean. It is not two first imports into two empty databases. The full field comparison in Cell 14 adds evidence that matching counts alone cannot give. Cell 15 changes the grouped question from vendor to product. Keep the original historical source metadata so the reader knows which seventy-five records produced the result.
+
+## Slide 27
 
 Here is the MongoDB version of the repeat import. Read the loop. For each record, replace_one looks for a document whose cveID matches this record's cveID. If it finds one, it replaces it with the source record. upsert equals True means that if nothing matches, it inserts the record instead. Match or insert, in one call.
 
@@ -372,7 +386,7 @@ Read the line at the bottom. This loop only touches IDs that are in the source. 
 Sources:
 https://www.mongodb.com/docs/languages/python/pymongo-driver/current/crud/replace/
 
-## Slide 26
+## Slide 28
 
 Two words that sound similar and answer different questions. Read the box at the bottom. Atomicity defines which changes succeed together. Idempotency defines what happens when you repeat the operation. A good import can have one without the other.
 
@@ -390,7 +404,7 @@ Sources:
 https://www.psycopg.org/psycopg3/docs/basic/transactions.html
 https://www.mongodb.com/docs/manual/core/write-operations-atomicity/
 
-## Slide 27
+## Slide 29
 
 This slide is about checks that pass while the data is wrong. Picture this. Somebody changes the title of our known record, CVE-2026-56291, the first record in the source, to the wrong text. There is no notebook cell that does this for you. It is a scenario to reason through. Now run our checks down the table.
 
@@ -404,7 +418,7 @@ How do we fix it? Rerun the unchanged import. The source is authoritative, so th
 
 But read the last line on the slide. This compares that one known record. If a different record's title had changed, this check would miss it. One known record does not prove every untested field is correct, and the grouping check covers only the grouping.
 
-## Slide 28
+## Slide 30
 
 Two grouped results from the same selected records, answering two different questions. Look at the left table first, grouped by vendor label: Microsoft sixteen, Cisco seven, SimpleHelp with a trailing space three, Ubiquiti three, Adobe two. Now the right table, grouped by product label: Catalyst SD-WAN Manager four, Windows four, Defender three, SimpleHelp three, UniFi OS three.
 
@@ -419,9 +433,9 @@ In the lab, run the vendor grouping first, change GROUP_FIELD to product, rerun,
 Sources:
 course/datasets/cisa_kev_sample/kev_sample.json
 
-## Slide 29
+## Slide 31
 
-So how does changing GROUP_FIELD actually reach the SQL? This slide answers that, and it connects back to slide 23.
+So how does changing GROUP_FIELD actually reach the SQL? This slide answers that, and it connects back to slide 24.
 
 Read the code. GROUP_FIELD is set to product. allowed_columns is a small dictionary with exactly two entries. vendorProject maps to the column vendor_project, and product maps to product. The next line looks up the column name. The full cell rejects any choice outside those two entries, so a misspelling or something malicious stops right there. Only those two names can ever reach the SQL.
 
@@ -436,7 +450,7 @@ On the Atlas path, the same choice becomes a field expression, dollar product, i
 Sources:
 https://www.psycopg.org/psycopg3/docs/api/sql.html
 
-## Slide 30
+## Slide 32
 
 Here is Part 2 of the lab, in the same notebook as Part 1.
 
@@ -444,11 +458,11 @@ Choose one target. Run its setup once. Then run its import cell twice, without r
 
 Then write the handoff, as if a colleague will maintain this small import tomorrow. The slide names four things: your question, two key measurements, the repeat-run result, and a limitation. The lab asks for two more, so include them: one verification result, and the changed product row as your concrete example. Add a text cell under the Submission Record heading and write it there. Use the evidence already in your notebook. You do not need to paste every output again.
 
-The colleague is your audience, not a partner. Work individually and submit one completed notebook, 06_public_data_capacity_integration.ipynb, in Brightspace. Read the bottom box: no separate report, screenshot, matrix, or repository is required.
+The colleague is your audience, not a partner. Work individually and submit the viewable sharing link to your own saved Colab copy in Brightspace. Read the bottom box: no separate report, screenshot, matrix, or repository is required.
 
 Before you submit, run cleanup, remove any temporary Atlas rule, and make sure no credential is saved in any cell or output.
 
-## Slide 31
+## Slide 33
 
 Cleanup is part of the program, not an afterthought. The rule is simple: remove what this run created, and nothing else. Read the table one row at a time.
 
@@ -462,7 +476,7 @@ Now read the note at the bottom. Closing a client does not pause a hosted databa
 
 Our data is public and our names are unique, but that is no excuse for broad cleanup commands. The professional habit is to know exactly what your process owns, and remove exactly that.
 
-## Slide 32
+## Slide 34
 
 Let's finish with how you would describe this work, say in an interview, without overstating it. The paragraph on the slide is a model. I built a small, repeatable import from a documented public source. I compared distribution keys, tested the same import twice, and checked both a query result and stored record values. I can explain which behavior I ran and which scaling claims this small dataset cannot support.
 
@@ -474,7 +488,7 @@ For your project, look at the second box: one source, one important query, and a
 
 Next week, an application with more than one store. Stable identifiers, repeat behavior, and verification will help us figure out why two copies disagree and how to repair them safely.
 
-## Slide 33
+## Slide 35
 
 These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Capacity: measure before you scale (1:17); Shard keys: distribution and targeting (1:37); A repeatable Python import (1:28). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 13 README. The diagrams are schematic illustrations, not benchmarks.
 

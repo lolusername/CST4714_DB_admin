@@ -143,3 +143,5 @@ DROP ROLE metro_analyst_lab;
 
 **Submit:** `week_06_least_privilege.sql` containing setup, tests, your short
 explanation, and cleanup. No password, screenshot, or additional report is needed.
+
+**Before working:** use the [complete data reference](DATA_REFERENCE.md) for this week’s fixture and exact field names.

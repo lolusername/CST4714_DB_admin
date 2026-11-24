@@ -1,40 +1,49 @@
-# Week 12: Reliability and Logical Recovery in Atlas
+# Week 12: Connect to Atlas and Recover a Ticket
 
-## The Week's Question
+## One class for Thanksgiving week
 
-Which reliability promise does a replica set support, and which separate recovery
-steps are needed after a destructive change?
+This week has **one 100-minute class**. The course's holiday schedule replaces the old Day 1/Day 2 sequence. There is **one required lab and one viewable Colab-link submission**. Use this page and the Atlas notebook rather than the older two-day instructions. Brightspace remains the source of actual due dates.
 
-## What You Will Be Able to Do
+## What you will learn
 
-- explain primary, secondary, oplog, election, and failover roles;
-- distinguish write concern, read preference, and read concern;
-- apply CAP only to behavior during a partition;
-- explain why replication is not backup;
-- recover a document from a saved artifact when count and type checks miss a
-  wrong value;
-- perform a collection-level logical export and restore to a separate target; and
-- describe when `mongodump` is required instead of a JSON interchange export.
+Explain what an acknowledged write does and does not promise; distinguish a replicated copy from a retained recovery artifact; connect Colab to a real Atlas Free cluster; restore five documents to a separate collection; and repair a value that counts alone did not catch.
 
-## Before Class: Assigned Reading
+## Start here
 
-Use [Chapter 12: Reliability Is a Set of Explicit Promises](../Operating_Cloud_Databases.pdf).
+- [Open the required Atlas notebook in Colab](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_12/materials/notebooks/05_mongodb_atlas_recovery.ipynb) and save your own copy in Drive.
+- [Required short lab: connect, recover, and verify](lab_02_mongodb_recovery.md).
+- [Week 12 PowerPoint](week_12_mongodb_reliability.pptx), [PDF handout](week_12_mongodb_reliability.pdf), and [spoken transcript](week_12_mongodb_reliability_transcript.md).
+- [Complete field and record reference](DATA_REFERENCE.md), also in the notebook before the first write.
+- [Course corrections](../COURSE_CORRECTIONS.md) clarify dated screenshots and backup availability.
+- [Chapter 12](../Operating_Cloud_Databases.pdf): read the replica/acknowledgment and logical-recovery sections. There is no separate reading report.
 
-- **Before Day 1:** read the replica-set, acknowledgment, read-control, and CAP sections. Explain the A/B/C partition case without changing a real deployment.
-- **Before Day 2:** read from **Replication Is Not Backup** through **Verify a MongoDB Restore**. Distinguish BSON-aware data recovery from restoring indexes, validators, and project configuration.
+## Prepare the actual Atlas connection
 
-Bring one point you want clarified. Reading supports the in-class work; it does
-not add a separate reading report. Optional textbook practice is not required
-unless the weekly lab assigns it.
+Use your own **Free** cluster and a database user with `readWrite` on `cst4714_week12`. The notebook explains the difference between an Atlas login and database credentials. Add the **Colab runtime's** temporary IPv4 `/32` rule; do not authorize every IP. Use the hidden URI input or a Colab Secret. Never save a URI in code, output, or screenshots. No paid cluster, payment card, backup subscription, or API key is required.
 
-## Class Materials
+The notebook uses real PyMongo requests. A successful ping is followed by a synthetic write/read and a Data Explorer check. It does not silently replace Atlas with `mongomock` when setup fails. If access is blocked, follow the instructor's actual Atlas demonstration and label observed outputs honestly while resolving your connection.
 
-- [15-minute logical recovery notebook — today's Day 2 lab](materials/notebooks/05_mongodb_logical_recovery_short.ipynb)
-- [Original full recovery notebook — optional reference](materials/notebooks/05_mongodb_logical_recovery.ipynb)
-- [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_12/materials/notebooks/05_mongodb_logical_recovery_short.ipynb) for the short Lab 2; save a working copy in Drive.
-- [Week 12 student deck](week_12_mongodb_reliability.pptx)
-- [Week 12 PDF handout](week_12_mongodb_reliability.pdf)
-- [Week 12 transcript](week_12_mongodb_reliability_transcript.md)
+## Class sequence
+
+| Time | Work |
+|---|---|
+| 0–25 minutes | One document, application/driver/server, replication, majority acknowledgment, and why replication is not historical recovery |
+| 25–45 minutes | Atlas connection and five-ticket source: notebook Cells 01–04 |
+| 45–65 minutes | Artifact, separate restore, and the wrong subject: Cells 05–06; retain the synthetic file with Cell 05b |
+| 65–85 minutes | Individual short lab: repair ticket 1004 in Cell 07 and repeat-check in Cell 08 |
+| 85–100 minutes | Explanation in Section 09, share/save, recovery limits, and project handoff |
+
+The slide-to-cell route is explicit in the deck and transcript. Setup time comes before the 20-minute individual repair. No one is expected to provision an unfamiliar account and finish the entire exercise in 20 minutes.
+
+## What to submit
+
+**Submit your own saved Colab notebook's viewable sharing link in Brightspace.** Include the changed lookup, outputs, and 3–4-sentence explanation. Grant the instructor viewer access. Do not submit an `.ipynb` attachment, the starter link, a separate Lab 1 response, JSON file, or Atlas screenshot.
+
+## Industry/Career Connection — GitLab's recovery incident
+
+GitLab's account of its January 2017 PostgreSQL outage describes accidental deletion and problems with available recovery mechanisms. The platform differs from Atlas, but the operational responsibility is the same: retain a usable artifact, rehearse restoration, and check meaningful data values. Our five-ticket exercise practices those checks; it does not reproduce the production incident or prove a production recovery target. In a database administration interview, explain what you recovered and what your test did not establish.
+
+[Read GitLab’s own postmortem](https://about.gitlab.com/blog/postmortem-of-database-outage-of-january-31/). This is lecture context, not another assignment.
 
 <!-- videos:start -->
 ## Videos
@@ -47,77 +56,18 @@ Short silent animations with captions (3 for this week). Each has a subtitle fil
 
 <!-- videos:end -->
 
-## Free External References
+## Optional reference and limits
 
-- [Atlas Free cluster limits](https://www.mongodb.com/docs/atlas/reference/free-shared-limitations/)
-- [MongoDB Atlas Backup and Recovery course](https://learn.mongodb.com/learn/course/mongodb-atlas-backup-recovery/lesson-1-back-up-and-recover-an-atlas-free-tier/learn)
+- [The former reliability decision exercise](lab_01_reliability_decisions.md) is optional, ungraded practice; it has no separate submission this week.
+- [Full recovery notebook](materials/notebooks/05_mongodb_logical_recovery.ipynb) and [extended reference](reference_mongodb_recovery_extended.md) retain deeper reconstruction examples. They are not the required route.
+- [Legacy local short notebook](materials/notebooks/05_mongodb_logical_recovery_short.ipynb) is a clearly labeled mock reference, not evidence of an Atlas connection.
+- Validator reconstruction is **not required this week**. It is optional reference; there is no next-week requirement implied.
+- Free clusters have managed replicas but do not support the class forcing a primary failover. A normal ping/write does not test an election. [Free limits](https://www.mongodb.com/docs/atlas/reference/free-shared-limitations/).
+- Atlas documents an optional billed Free-cluster backup subscription in private preview. Do not enable it. We use our own synthetic document artifact. [Current backup options](https://www.mongodb.com/docs/atlas/backup-restore-cluster/).
+- This document file does not rebuild indexes, validators, users, or application configuration. A temporary runtime file must be retained elsewhere; it is not a full production backup.
 
-## Day 1: Build a Reliability Promise
-
-Use **slides 1-16**. Follow one request from the primary's write through oplog
-replication, acknowledgment, and the next read. Compare what A and B can do while
-C is isolated, then work through separate recovery-point and recovery-time
-examples. The Atlas screen explains why the free path needs a retained logical
-artifact rather than a paid backup feature.
-
-Complete [Lab 1: Match user expectations to replica and recovery decisions](lab_01_reliability_decisions.md).
-
-Submit one Brightspace text response: a confirmation/read policy and the supplied
-recovery-timeline analysis. No live failover or cluster reconfiguration is needed.
-
-The final project is introduced through the
-[canonical final-project page](materials/assignments/final_project.md). Use project work
-to choose a scenario and its important reads/writes in your existing project
-notes, rather than making another Week 12 submission.
-
-## Day 2: Export, Restore Elsewhere, and Verify
-
-For the **one-hour class**, use **slides 17–24** for the core recovery explanation
-and the short notebook's numbered cells **01–07** for the demonstration. Briefly
-use slides **25/28** to distinguish data from rules; the remaining full-lab
-activities are optional today.
-The five-ticket fixture matches the longer course example.
-
-Complete [Lab 2: Recover one ticket in 15 minutes](lab_02_mongodb_recovery.md).
-
-**Today's short-lab directions supersede the longer assignment wording on
-slide 29 and in the older deck transcript.** Use ticket **1004**, the short
-notebook, and a **viewable Colab link** for submission. The deck's Atlas setup,
-rule-reconstruction, and PostgreSQL archive-comparison activities are optional
-reference, not extra tasks for today's lab.
-
-Run the supplied `mongomock` setup, inspect Extended JSON, restore the five
-saved documents into a separate target, and diagnose the wrong subject on
-ticket **1004**. Change one line to select its saved document, repair it, and
-repeat the repair to check that five tickets remain. Finish with a **2–3 sentence**
-explanation. No Atlas account or validator exercise is required today.
-
-A document file does not restore index definitions, validators, or application
-configuration. Recognize that limitation; the longer reconstruction and testing
-activities remain [optional reference](reference_mongodb_recovery_extended.md).
-
-**Submit a shared, viewable Colab notebook link in Brightspace. Do not submit an
-`.ipynb` attachment.** Keep the failed check, repaired outputs, and explanation in
-your saved Drive copy.
-
-For support with the lab's explanation, use [Writing About Database Decisions](materials/assessments/critical_writing.md). It develops the response already included in your lab, not an additional assignment.
-
-## Optional Industry Extension: Ticket-Sale Partition Tabletop
-
-This activity is optional, ungraded, and does not add a submission.
-
-A ticket-sale service loses communication with a minority of replica-set members
-during a high-demand release. Write one promise for purchase writes and one for
-inventory reads. Choose a write concern, read preference, and read concern only
-after stating whether stale availability or overselling is the greater risk.
-Describe the expected client behavior during the partition, the role of
-idempotency on retry, and why a later backup is still a separate requirement.
-
-## End-of-Week Self-Check
-
-Explain why a three-node Atlas Free replica set can help with node failure while
-still requiring a manual recovery artifact for an accidental deletion.
+The existing [final-project page](materials/assignments/final_project.md) remains the sole project requirements document. This week's work adds no project deliverable.
 
 ## Reuse
 
-See the [licenses](materials/LICENSE.md) and [source attributions](materials/ATTRIBUTIONS.md). External resources retain their own terms.
+See the [licenses](materials/LICENSE.md) and [source attributions](materials/ATTRIBUTIONS.md). The [static recovery illustration](illustrations/README.md) includes its editable Manim source. External materials keep their own terms.

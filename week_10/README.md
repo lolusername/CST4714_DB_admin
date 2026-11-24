@@ -75,7 +75,7 @@ the changes you make.
 
 Complete [Lab 1: Query and change documents safely](lab_01_atlas_mql.md).
 
-Submit only the completed `04_atlas_mql_modeling.ipynb` notebook.
+Submit the sharing link to your saved Colab copy of `04_atlas_mql_modeling.ipynb`, with query changes, output, and short explanation; give the instructor viewer access.
 
 ## Day 2: MongoDB University lab
 
@@ -105,3 +105,10 @@ referencing.
 ## Reuse
 
 See the [licenses](materials/LICENSE.md) and [source attributions](materials/ATTRIBUTIONS.md). External resources retain their own terms.
+
+## Worked examples and complete reference
+
+- [Complete data reference](DATA_REFERENCE.md): read the relevant fixture before the first query or design.
+- [Industry / career connection](INDUSTRY_CONNECTION.md): a primary-source company case with a short application; no extra submission.
+- The deck’s **worked-example appendix, slides 40–42**, brings the relevant records, result, and industry connection together. Use it before the lab, then return to the existing lab instructions.
+- [Static concept diagram](illustrations/README.md): a still image with an editable Manim source and text description. The PowerPoint keeps the original embedded videos; PDF and GitHub previews show still images.

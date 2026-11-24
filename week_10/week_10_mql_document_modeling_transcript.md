@@ -1,6 +1,6 @@
-# Week 10 Basic MQL and Document Modeling
+# Week 10: Basic MQL and Document Modeling - Spoken Transcript
 
-This transcript follows the Week 10 presentation in order. Use the numbered headings to find each explanation. Sections marked Reference (not spoken) provide sources for review.
+This transcript follows the current presentation order. Source references marked as not spoken are included for review.
 
 ## Slide 1
 
@@ -230,7 +230,7 @@ The lecture has introduced the concepts that Lab 1 practices. The handout and no
 
 The lab asks for an active lighting and sanitation queue, an explanation of array matching, and evidence from repeated and conditional updates. The small examples in the lecture explain how to reason about those operations. The lab's own records determine its actual results.
 
-Submit the completed notebook with its short results record. Use the handout's guidance for recovery and cleanup. I will help with the workspace and commands during the lab.
+Submit your saved Colab sharing link, with output and its short results record. Use the handout's guidance for recovery and cleanup. I will help with the workspace and commands during the lab.
 
 ## Slide 25
 
@@ -371,6 +371,26 @@ This complete document describes Example Press and one headquarters address. The
 If an address had a separate owner, an independent lifecycle, or many records that needed to share its current value, a reference could be useful. The decision depends on the operations and responsibilities the application needs to support.
 
 This one-to-one example complements the growing event history. The words one and many describe relationships, while ownership and workload help choose the stored shape.
+
+## Slide 40
+
+The dispatcher’s words are at least thirty minutes. Start with the status condition: tickets 1001 and 1090 are open. Now test age. Twelve is too small, but thirty meets a greater-than-or-equal comparison. Only 1090 remains. Ticket 1003 is older, but it fails the open-status condition. Both conditions must hold in the same ticket document. If we change just gte to gt, the boundary changes. Thirty is no longer enough, so no open ticket qualifies. Empty output can be a correct answer. The records remain stored; the query changed what was returned.
+
+Teaching placement (not spoken): Day 2: before slide 34; leave the original custom show and select slide 40 in the normal deck.
+
+## Slide 41
+
+Now return to the Day 1 update example. The first update finds the disposable ticket and changes its status and assignee. The second update uses the same filter and asks for the same values, without resetting the ticket in between. It still matches one document, but modifies zero because the desired values are already there. Matched and modified answer different questions. Read the saved document to connect the counts with actual state. Do not turn every zero into an error, and do not remove the narrow ticket filter to make the count larger.
+
+Teaching placement (not spoken): Day 1: after the repeated-update example, before slide 24 and the notebook.
+
+## Slide 42
+
+The Forbes story is a vendor-published customer account, so treat it as an account of one use of document storage rather than an independent benchmark. The useful connection is that changing content can benefit from a flexible representation. Flexibility does not remove the need to know what fields mean or to verify a write. Our ticket example gives us a small version of that operational discipline: choose the intended document, change only the intended values, inspect the counts, and read the result back. The source does not publish the hypothetical schema we might sketch in class.
+
+Primary source: https://www.mongodb.com/company/blog/innovation/forbes-cloud-migration-helps-worlds-biggest-media-brand-continue-standard-digital-innovation
+
+Teaching placement (not spoken): Day 1: before slide 24 and the notebook.
 
 ## License
 

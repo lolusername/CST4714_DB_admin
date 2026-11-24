@@ -1,4 +1,4 @@
-# Lab 1: What Does a Confirmation Promise?
+# Optional reference: What Does a Confirmation Promise?
 
 [Open in GitHub](https://github.com/lolusername/CST4714_DB_admin/blob/main/week_12/lab_01_reliability_decisions.md)
 
@@ -6,7 +6,7 @@ A resident submits a request and sees a confirmation. The next read shows nothin
 Did the database lose the request, is a copy behind, or did the client fail to
 learn whether the write succeeded? Those possibilities need different responses.
 
-Work individually in class. Submit one Brightspace text response. You will reason
+This is optional, ungraded reference for the single-session Week 12. No response is due. You may reason
 from the supplied cases, not stop or reconfigure an Atlas cluster.
 
 ## 1. Choose a Read and Write Policy
@@ -50,7 +50,7 @@ End with two or three sentences proposing a safer *free-tier* classroom recovery
 plan and acknowledging what it cannot guarantee. You do not need to purchase a
 feature or perform a failover.
 
-**Submit:** one text response with your confirmation policy and recovery analysis.
+**Optional practice only:** discuss your confirmation policy and recovery analysis; do not submit a separate response.
 Use precise reasons rather than a large matrix. During project work, reuse the
 same reasoning for one important write in your project; the
 [final project](materials/assignments/final_project.md) remains its sole requirements

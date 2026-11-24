@@ -1,16 +1,18 @@
 # Week 11: Aggregation, Validation, and MongoDB Index Design - Spoken Transcript
 
+This transcript follows the current presentation order. Source references marked as not spoken are included for review.
+
 ## Slide 1
 
 Welcome to Week 11. Read the line in the middle of the slide: a request summary can look right and still count the wrong things. That is the warning for the whole week.
 
 Picture a manager opening a dashboard that says three active requests. The page loaded, there were no errors, and three sounds reasonable. But neither of those facts tells you which requests were counted. A duplicate and a missing record can cancel each other out and leave a total that looks perfectly fine. You will watch exactly that happen on Day 1.
 
-So on Day 1 we take four tickets, follow a summary through every stage of a MongoDB pipeline, and add a useful calculation. Validation is not needed for this lab. Next week, we will examine how to require a real opening date whenever the application writes a ticket. The notebook gives you the starting code, so your job is understanding it and changing it, not building a connection from scratch.
+So on Day 1 we take four tickets, follow a summary through every stage of a MongoDB pipeline, and add a useful calculation. Validation is not needed for this lab. The optional reference examines how to require a real opening date whenever the application writes a ticket. The notebook gives you the starting code, so your job is understanding it and changing it, not building a connection from scratch.
 
 On Day 2 we look at an ordered queue. The page shows twenty requests, but the database might look at thousands to find them. We add a compound index and check that the answer stays the same while the work goes down.
 
-Chapter 11 covers all of this in more detail. By the end of the week you should be able to explain a result and back an index decision with measurements instead of product claims. Next week we will examine where a validation rule stops.
+Chapter 11 covers all of this in more detail. By the end of the week you should be able to explain a result and back an index decision with measurements instead of product claims. The optional reference examines where a validation rule stops.
 
 Sources: Course textbook Chapter 11; Notebook 07; Week 11 assignments and implementation guide. The ticket cases are synthetic course examples.
 
@@ -128,6 +130,10 @@ Sources: Notebook 07 event arrays. Unwind behavior: https://www.mongodb.com/docs
 
 ## Slide 11
 
+Before we run Cell 07, follow the IDs in this diagram. The active tickets are 1001, 1002, and 1004. Ticket 1001 has two events, so unwind makes two rows from that document. Ticket 1002 contributes one. Ticket 1004 has an empty array, so the default unwind contributes no row. We happen to end with three rows again, but one ticket appears twice and another disappears. That is why the equal total is misleading. Now run Cell 07 and compare the two printed lists of IDs. The figure is a trace of this exact fixture, not a separate dataset.
+
+## Slide 12
+
 Here is the trap in full, and it is the reason this week exists. Look at the table. Active tickets: 1001, 1002, 1004, total 3. Events on active tickets: 1001, 1001, 1002, total 3. Same total. A test that only checks the grand total passes, even though one ticket was counted twice and another disappeared.
 
 It gets worse. Read the first note. Even the category totals match: streetlight 2, sanitation 1. But both streetlight rows in the event version are ticket 1001. So a check by category passes too.
@@ -138,79 +144,17 @@ Now the second note. You might think preserving empty arrays fixes it. That brin
 
 Sources: Original counterexample and computed identity lists from Notebook 07. Related mechanism: https://www.mongodb.com/docs/manual/reference/operator/aggregation/unwind/
 
-## Slide 12
-
-Validation is not needed for this lab. We’ll cover it next week; skip these reference slides in today’s class.
-
-Let's switch from reading data to protecting it on the way in. A report is only as trustworthy as its inputs, and MongoDB lets us attach a validator to a collection that describes which documents are allowed.
-
-Look at the table, because each rule checks one thing and leaves something else alone. Required checks that the field exists. It says nothing about its type or value. bsonType date checks that the value is a real BSON date. It does not check whether that date is plausible. Enum checks that a value belongs to a list. It does not check whether a status change is allowed.
-
-Why spend time on that last column? Because people overclaim what a rule does. Our status list is new, open, in progress, resolved, and closed. It stops a value like almost done. But it cannot stop someone from reopening a closed ticket, because that depends on what the status was before. That needs a separate rule in the application or the database. Dates are the same: a date in the distant future still has the right type.
-
-The note at the bottom matters too. A focused schema can allow additional fields. Our baseline requires ticket_id, status, and subject, and other fields can still appear. Flexibility is the point of a document database, and validation does not have to take it away. Next week we will study this small example rule and say honestly what it protects and what it does not.
-
-Sources: Schema validation: https://www.mongodb.com/docs/manual/core/schema-validation/ Specify allowed field values: https://www.mongodb.com/docs/manual/core/schema-validation/specify-json-schema/#std-label-schema-validation-json
-
 ## Slide 13
-
-Validation is not needed for this lab. We’ll cover it next week; skip these reference slides in today’s class.
-
-Here is the baseline validator as a Python dictionary. Let's read it from the outside in.
-
-The outer key, $jsonSchema, tells MongoDB what kind of rule this is. bsonType object applies to the document itself. The required list names the three fields that must be present: ticket_id, status, and subject. Then properties sets rules for individual fields. ticket_id can be either of two BSON integer types, int or long. Status has to be one of the five strings in the enum. Subject has to be a string.
-
-Notice what is not required yet: category, priority, events, and the opening date. That is deliberate. Next week, we will use an opening date to demonstrate how to require a field and specify its type.
-
-Now read the note at the bottom, because it trips people up. A Python variable by itself does not install a server validator. Creating a dictionary called validator does nothing to the database. It is like typing a SQL constraint into an editor and never running it. A separate command installs it, and you will see that command on the next slide.
-
-One more thing. This looks like standard JSON Schema, but it is MongoDB's version. Words like date and long in bsonType are MongoDB-specific. Knowing where Python ends and MongoDB begins helps you diagnose problems. A Python syntax error, an unsupported command, a permission failure, and a rejected document are four different messages with four different fixes.
-
-Sources: Notebook 07 baseline validator. JSON Schema validation: https://www.mongodb.com/docs/manual/core/schema-validation/specify-json-schema/
-
-## Slide 14
-
-Validation is not needed for this lab. We’ll cover it next week; skip these reference slides in today’s class.
-
-The new rule says every ticket needs a real opening date. Look at the title: that takes two declarations, and here is why.
-
-The second line puts opened_at in the required list. The third line says opened_at must be a BSON date. If you only wrote the type rule, a document could leave the field out entirely. If you only wrote the required rule, a document could put text in it. You need both. Also notice that we assign the whole required list instead of appending to it. That way, rerunning the cell does not add opened_at twice.
-
-Then comes the command that actually installs it. collMod changes settings on the tickets collection. Validation level strict and validation action error are the enforcement we use in this lesson: writes get checked against the rule, and a bad document is refused.
-
-Two practical points. First, collMod needs its own permission, separate from connecting or reading. A database user with only the ordinary read and write role cannot run it, and a successful ping does not prove you have it. Second, read the comment and the note at the bottom. This command is for a real MongoDB connection. Local mongomock mode does not enforce validators, so the notebook skips the install instead of pretending.
-
-Our four tickets already have dates, so they fit the new rule. On a real collection, you would inspect the old data and plan a migration before tightening a rule like this.
-
-Sources: Notebook 07 date extension. collMod: https://www.mongodb.com/docs/manual/reference/command/collMod/ Validation level: https://www.mongodb.com/docs/manual/core/schema-validation/specify-validation-level/
-
-## Slide 15
-
-Validation is not needed for this lab. We’ll cover it next week; skip these reference slides in today’s class.
-
-Now we test the rule with one document that should pass and three that should fail, each different in one specific way. Look at the table.
-
-1099 has status new and a real BSON date: accept. 1100 has status almost_done: reject, invalid status. 1101 has an opened_at that is text shaped like a date: reject, incorrect type. 1102 has no opened_at at all: reject, missing field.
-
-Why change only one thing per document? Because when a rejection comes back, you want to know exactly which condition caused it. That is also why each test gets its own ID. If you reused an ID, you could get a duplicate key error and mistake it for a validation failure. And the test cell cleans up its records afterward, so your summary stays a four-ticket exercise.
-
-One timing point. The text-date and missing-date cases only appear after you add and reinstall the date rule. Before that, the schema did not require a date, so you cannot say those documents broke a rule that did not exist yet.
-
-Now read the last line on the slide. Atlas executes validation. Local mode supplies a labeled trace to interpret. On Atlas, the database really attempts each insert, and a validation error looks different from a network or authorization error. In local mode, you reason about what the rule would do. That is good work, but say which path you used, and never call a trace a live server test.
-
-Sources: Notebook 07 test cell. Handling invalid documents: https://www.mongodb.com/docs/manual/core/schema-validation/handle-invalid-documents/
-
-## Slide 16
 
 This is a real engineering account from Buffer, the social media software company. Sunil Sadasivan published it in July 2014, so treat it as a historical case, not a description of Buffer's current architecture. The team wanted product and operational metrics. They used MongoDB aggregation for reports such as API requests by hour, response times by endpoint, and visitors by referrer. Those examples have the same structure as our ticket summary: choose the relevant records, decide what one output represents, and calculate a measure.
 
 The article also describes a data-modeling problem. At first, Buffer stored event arrays inside user documents. Those arrays could keep growing. Some documents reached MongoDB's 16 MB limit, and subsequent writes failed. The team moved to collections organized by event type. That is a concrete design response to a real failure: changing the stored shape of the data, not merely changing the chart that displays it.
 
-The article does not say the team used our particular $unwind pipeline or our validator. We will use their experience to connect today's concepts to engineering decisions. One historical detail needs updating: the 2014 article says MongoDB did not perform schema validation. Current MongoDB does support collection validation; we will study that feature next week. It is not needed for this lab.
+The article does not say the team used our particular $unwind pipeline or our validator. We will use their experience to connect today's concepts to engineering decisions. One historical detail needs updating: the 2014 article says MongoDB did not perform schema validation. Current MongoDB does support collection validation; that feature remains optional reference. It is not needed for this lab.
 
 Sources: Buffer, Sunil Sadasivan, July 9, 2014, https://buffer.com/resources/how-buffer-uses-mongodb-to-power-its-growth-platform/ . Current MongoDB schema validation: https://www.mongodb.com/docs/manual/core/schema-validation/ .
 
-## Slide 17
+## Slide 14
 
 Separate the evidence in the case from our classroom application. Buffer reports building event analytics and encountering growing arrays. The event-versus-ticket comparison on this slide is our application of that experience to the four records in Notebook 07. We are not claiming Buffer ran this exact pipeline.
 
@@ -222,13 +166,13 @@ Finally, validation and correct metrics are separate. Requiring a date prevents 
 
 Sources: Buffer historical case, https://buffer.com/resources/how-buffer-uses-mongodb-to-power-its-growth-platform/ . MongoDB unbounded arrays guidance, https://www.mongodb.com/docs/manual/data-modeling/design-antipatterns/unbounded-arrays/ . MongoDB validation, https://www.mongodb.com/docs/manual/core/schema-validation/ . The four-ticket mapping is a classroom interpretation, not a claim about Buffer's implementation.
 
-## Slide 18
+## Slide 15
 
 These are concrete kinds of engineering work that today's lesson prepares you to discuss. They are teaching applications of the case, not a claim about Buffer's staffing or a list of current job openings.
 
 For data engineering, the deliverable is more than a query that runs. State whether a row represents a ticket, an event, or a category. Keep a small known-answer fixture and compare identifiers as well as totals. Our fixture is useful precisely because a duplicate and a missing ticket can cancel each other out numerically.
 
-Next week’s validation topic connects to backend engineering: describe the write contract and exercise it. The allowed status list and required date should have examples that pass and examples that fail for one clear reason. Test enforcement on a real MongoDB server. A Python rule rehearsal or a supplied trace can teach the expected behavior, but it cannot prove that a server rejected a write.
+The optional validation topic connects to backend engineering: describe the write contract and exercise it. The allowed status list and required date should have examples that pass and examples that fail for one clear reason. Test enforcement on a real MongoDB server. A Python rule rehearsal or a supplied trace can teach the expected behavior, but it cannot prove that a server rejected a write.
 
 For database administration, verify that the intended rule was actually installed with the necessary permissions. Reading a collection successfully does not establish that a user can modify its validator. For the next class, the same evidence habit applies to indexes: check the query's result and then measure the work it performs.
 
@@ -236,19 +180,23 @@ In a portfolio or interview, you can describe the actual artifact: a pipeline, t
 
 Sources: Classroom interpretation of Buffer's historical account, https://buffer.com/resources/how-buffer-uses-mongodb-to-power-its-growth-platform/ . MongoDB validation documentation, https://www.mongodb.com/docs/manual/core/schema-validation/ . Role labels describe related engineering tasks, not advertised positions.
 
-## Slide 19
+## Slide 16
+
+Save your own Colab copy before starting. The small labels on code cells are our route, so nobody has to guess where the example lives. Setup mechanics are collapsed, but the environment choice and write filters remain visible. Run the worked summary in Cell 05 first. In Cell 06, both new values accumulate across the documents in each category, so they belong in group; project only names or includes the completed fields. Cell 07 then asks a different question about events. Put the explanation in the notebook, save the outputs, and submit your own viewable Colab link. The optional validator section adds no required work.
+
+## Slide 17
 
 Today we complete the aggregation and $unwind work in Notebook 07. Extend the active-ticket summary with urgent count and newest opening, and use ticket IDs to explain the array-counting error. Save the pipeline, its outputs, and your aggregation explanation.
 
 Submit the Colab link to your completed notebook in Brightspace. Make sure the instructor has viewing access. Share your own saved Colab copy, not the starter link. Your explanation stays in the notebook’s existing explanation cell; there is no separate report or repository.
 
-Validation is not needed for this lab. We’ll cover it next week. Keep the reference section collapsed and do not run it or include validation answers in this lab submission. The work for this lab ends with the aggregation explanation.
+Validation is not needed for this lab. It remains optional reference. Keep the reference section collapsed and do not run it or include validation answers in this lab submission. The work for this lab ends with the aggregation explanation.
 
 Use the local practice mode for today’s aggregation. It computes the pipeline results from the four-ticket fixture. When your work and outputs are saved, any cleanup should affect only this notebook’s uniquely named practice collection. Keep the saved Colab copy accessible to the instructor.
 
 Sources: Week 11 Lab 1 and Notebook 07; instructor’s current submission and sequencing instructions.
 
-## Slide 20
+## Slide 18
 
 Welcome back. Day 2 starts from a different screen. Instead of a category summary, picture a queue that shows the newest open requests.
 
@@ -262,7 +210,7 @@ We will measure documents returned, documents examined, index keys examined, and
 
 Sources: Course implementation guide, Day 2 sort demonstration. Explain overview: https://www.mongodb.com/docs/manual/reference/method/cursor.explain/
 
-## Slide 21
+## Slide 19
 
 Here is the dataset for my live demonstration. Look at the table. A collection called sort_tickets in a new practice database. Ten thousand synthetic tickets, each with a unique ID. Two thousand are open and eight thousand are resolved, because every fifth ticket is open. And the opening dates go up one minute at a time, starting February 1, 2026, in UTC.
 
@@ -274,7 +222,7 @@ Keep in mind that this is a controlled teaching dataset, not a production benchm
 
 Sources: Original 10,000-record fixture in course/instructor/implementation_guide.md. Counts and expected identifiers derive from its generator.
 
-## Slide 22
+## Slide 20
 
 This is the queue query, and notice that it is mongosh, so it is JavaScript, not Python. The note at the bottom says so: Day 2 live code uses mongosh JavaScript, and Notebook 07 uses Python. Const declares a variable, and toArray reads the cursor into an array. The ideas are the same ones you used in PyMongo: a filter, a projection, an order, and a limit.
 
@@ -286,7 +234,7 @@ Last, we save the normal result as beforeRows. After we add the index we compare
 
 Sources: Course sort demonstration. Cursor sort: https://www.mongodb.com/docs/manual/reference/method/cursor.sort/ Cursor limit: https://www.mongodb.com/docs/manual/reference/method/cursor.limit/
 
-## Slide 23
+## Slide 21
 
 Here is the candidate index. Look at its field order, because the order is the whole design. Status ascending, then opened_at descending, then ticket_id descending. The table explains each position.
 
@@ -300,7 +248,7 @@ Two more things. Creating an index does not guarantee the planner chooses it, so
 
 Sources: Course sort query and observed local plan. Index-supported sorting: https://www.mongodb.com/docs/manual/tutorial/sort-results-with-indexes/ Compound indexes: https://www.mongodb.com/docs/manual/core/indexes/index-types/index-compound/
 
-## Slide 24
+## Slide 22
 
 Now we ask MongoDB to show its work. This is the same query, with the same filter, projection, sort, and limit, but it ends in explain with executionStats. Read the first note under the code: the same command runs before index creation in the live example. I run it before and after, so both measurements describe one workload.
 
@@ -314,13 +262,13 @@ Now the second note: compare the normal query results as well as both execution 
 
 Sources: Explain results and stage meanings: https://www.mongodb.com/docs/manual/reference/explain-results/ Course implementation guide's fixed query comparison.
 
-## Slide 25
+## Slide 23
 
 Here are the actual measurements, observed on local MongoDB 8.0.29 with the supplied synthetic data. Look at the table row by row.
 
 Returned documents: 20 before, 20 after. Documents examined: 10,000 before, 20 after. Index keys examined: 0 before, 20 after. Main plan operations: COLLSCAN plus SORT before, IXSCAN plus FETCH after.
 
-So before the index, MongoDB read all ten thousand documents, kept the open ones, and sorted them to find the newest twenty. After the index, it walked into the open section in the right order and stopped after twenty entries. That is the access path we designed on slide 23.
+So before the index, MongoDB read all ten thousand documents, kept the open ones, and sorted them to find the newest twenty. After the index, it walked into the open section in the right order and stopped after twenty entries. That is the access path we designed on slide 21.
 
 Now read the notes, because they keep us honest. First, both runs return the same ordered IDs and field values. That matters, because a query that returns different tickets can look faster for the wrong reason. Second, these work counts do not establish a 500-times runtime speedup. Ten thousand divided by twenty is five hundred, and it is very tempting to say that. But we measured work, not elapsed time.
 
@@ -328,7 +276,7 @@ These numbers also belong to this fixture, this query, and this set of indexes. 
 
 Sources: Executed local course sort demonstration on MongoDB 8.0.29. Explain metric definitions: https://www.mongodb.com/docs/manual/reference/explain-results/ This is not an Atlas production benchmark.
 
-## Slide 26
+## Slide 24
 
 After the index, the plan still has FETCH in it. Is that a problem? No. Look at the first box. The index contains status, opened_at, and ticket_id. But the page also needs subject, and subject is not in the index. So for each matching entry, MongoDB goes to the document to get it. Using an index does not mean every returned value comes from the index.
 
@@ -340,7 +288,7 @@ The right decision weighs what the read gains against what it costs to keep the 
 
 Sources: Covered-query requirements: https://www.mongodb.com/docs/manual/core/query-optimization/#covered-query Index costs: https://www.mongodb.com/docs/manual/core/write-performance/
 
-## Slide 27
+## Slide 25
 
 Back to our four tickets for a correctness check on optimization. Look at the table. Two pipelines built from the same three operations, just in a different order.
 
@@ -356,7 +304,7 @@ MongoDB's optimizer does make safe rearrangements internally. But when you rearr
 
 Sources: Original four-ticket counterexample. Pipeline optimization and dependency boundaries: https://www.mongodb.com/docs/manual/core/aggregation-pipeline-optimization/
 
-## Slide 28
+## Slide 26
 
 Let's put the week together. Look at the title: a faster query can still be incorrect. Then look at the table: three mechanisms, and what each experiment establishes.
 
@@ -370,7 +318,7 @@ So when something is wrong, work in order. Define the output you need and check 
 
 Sources: Original course synthesis based on the executed fixture, validation tests, and sort experiment. Chapter 11, Validation and Indexing Solve Different Problems.
 
-## Slide 29
+## Slide 27
 
 Here is Lab 2, part one. Look at the name in the first box: MongoDB University, Improving Performance of $sort stages, Lab Only. Open it from the exact link in the Week 11 guide and the Lab 2 assignment, so you land on the right activity.
 
@@ -384,7 +332,7 @@ The image or the fallback goes in one Brightspace text submission together with 
 
 Sources: Week 11 Lab 2. Exact external activity: https://learn.mongodb.com/courses/improving-performance-of-sort-stages-lab-only The provider controls its account-gated interface and completion requirements.
 
-## Slide 30
+## Slide 28
 
 Lab 2, part two, is the inventory case. The video is Building an Event-Driven Inventory Platform: A Case Study, and the link is in Week 11 Lab 2.
 
@@ -398,7 +346,7 @@ Include one sentence on how you would communicate the decision to a developer or
 
 Sources: Week 11 Lab 2. Assigned video: https://www.youtube.com/watch?v=1XeG3VDtdsA&list=PL4WbxRsNWc_Z2O2zq3syRit8b83M923QP&index=13 This script introduces the response method and does not assert unverified video details.
 
-## Slide 31
+## Slide 29
 
 Last slide. Read the paragraph in the box. It is one way to describe this week's work in an interview. Notice what makes it work. It names the calculation, the error you caught, the input rule you tested, and the comparison behind an index choice. That gives an interviewer four concrete things to ask you about. Compare it with "I know MongoDB," which gives them nothing.
 
@@ -412,7 +360,69 @@ Next week: replication, consistency, and recovery after data loss. A query can r
 
 Sources: Original career-communication example tied to Week 11 work. Notebook 07 and the implementation guide define their respective cleanup boundaries.
 
+## Slide 30
+
+Validation is not needed for this lab. It remains optional reference; skip these slides in the required route.
+
+Let's switch from reading data to protecting it on the way in. A report is only as trustworthy as its inputs, and MongoDB lets us attach a validator to a collection that describes which documents are allowed.
+
+Look at the table, because each rule checks one thing and leaves something else alone. Required checks that the field exists. It says nothing about its type or value. bsonType date checks that the value is a real BSON date. It does not check whether that date is plausible. Enum checks that a value belongs to a list. It does not check whether a status change is allowed.
+
+Why spend time on that last column? Because people overclaim what a rule does. Our status list is new, open, in progress, resolved, and closed. It stops a value like almost done. But it cannot stop someone from reopening a closed ticket, because that depends on what the status was before. That needs a separate rule in the application or the database. Dates are the same: a date in the distant future still has the right type.
+
+The note at the bottom matters too. A focused schema can allow additional fields. Our baseline requires ticket_id, status, and subject, and other fields can still appear. Flexibility is the point of a document database, and validation does not have to take it away. In optional study, examine this small example rule and say honestly what it protects and what it does not.
+
+Sources: Schema validation: https://www.mongodb.com/docs/manual/core/schema-validation/ Specify allowed field values: https://www.mongodb.com/docs/manual/core/schema-validation/specify-json-schema/#std-label-schema-validation-json
+
+## Slide 31
+
+Validation is not needed for this lab. It remains optional reference; skip these slides in the required route.
+
+Here is the baseline validator as a Python dictionary. Let's read it from the outside in.
+
+The outer key, $jsonSchema, tells MongoDB what kind of rule this is. bsonType object applies to the document itself. The required list names the three fields that must be present: ticket_id, status, and subject. Then properties sets rules for individual fields. ticket_id can be either of two BSON integer types, int or long. Status has to be one of the five strings in the enum. Subject has to be a string.
+
+Notice what is not required yet: category, priority, events, and the opening date. That is deliberate. The optional example uses an opening date to demonstrate how to require a field and specify its type.
+
+Now read the note at the bottom, because it trips people up. A Python variable by itself does not install a server validator. Creating a dictionary called validator does nothing to the database. It is like typing a SQL constraint into an editor and never running it. A separate command installs it, and you will see that command on the next slide.
+
+One more thing. This looks like standard JSON Schema, but it is MongoDB's version. Words like date and long in bsonType are MongoDB-specific. Knowing where Python ends and MongoDB begins helps you diagnose problems. A Python syntax error, an unsupported command, a permission failure, and a rejected document are four different messages with four different fixes.
+
+Sources: Notebook 07 baseline validator. JSON Schema validation: https://www.mongodb.com/docs/manual/core/schema-validation/specify-json-schema/
+
 ## Slide 32
+
+Validation is not needed for this lab. It remains optional reference; skip these slides in the required route.
+
+The new rule says every ticket needs a real opening date. Look at the title: that takes two declarations, and here is why.
+
+The second line puts opened_at in the required list. The third line says opened_at must be a BSON date. If you only wrote the type rule, a document could leave the field out entirely. If you only wrote the required rule, a document could put text in it. You need both. Also notice that we assign the whole required list instead of appending to it. That way, rerunning the cell does not add opened_at twice.
+
+Then comes the command that actually installs it. collMod changes settings on the tickets collection. Validation level strict and validation action error are the enforcement we use in this lesson: writes get checked against the rule, and a bad document is refused.
+
+Two practical points. First, collMod needs its own permission, separate from connecting or reading. A database user with only the ordinary read and write role cannot run it, and a successful ping does not prove you have it. Second, read the comment and the note at the bottom. This command is for a real MongoDB connection. Local mongomock mode does not enforce validators, so the notebook skips the install instead of pretending.
+
+Our four tickets already have dates, so they fit the new rule. On a real collection, you would inspect the old data and plan a migration before tightening a rule like this.
+
+Sources: Notebook 07 date extension. collMod: https://www.mongodb.com/docs/manual/reference/command/collMod/ Validation level: https://www.mongodb.com/docs/manual/core/schema-validation/specify-validation-level/
+
+## Slide 33
+
+Validation is not needed for this lab. It remains optional reference; skip these slides in the required route.
+
+Now we test the rule with one document that should pass and three that should fail, each different in one specific way. Look at the table.
+
+1099 has status new and a real BSON date: accept. 1100 has status almost_done: reject, invalid status. 1101 has an opened_at that is text shaped like a date: reject, incorrect type. 1102 has no opened_at at all: reject, missing field.
+
+Why change only one thing per document? Because when a rejection comes back, you want to know exactly which condition caused it. That is also why each test gets its own ID. If you reused an ID, you could get a duplicate key error and mistake it for a validation failure. And the test cell cleans up its records afterward, so your summary stays a four-ticket exercise.
+
+One timing point. The text-date and missing-date cases only appear after you add and reinstall the date rule. Before that, the schema did not require a date, so you cannot say those documents broke a rule that did not exist yet.
+
+Now read the last line on the slide. Atlas executes validation. Local mode supplies a labeled trace to interpret. On Atlas, the database really attempts each insert, and a validation error looks different from a network or authorization error. In local mode, you reason about what the rule would do. That is good work, but say which path you used, and never call a trace a live server test.
+
+Sources: Notebook 07 test cell. Handling invalid documents: https://www.mongodb.com/docs/manual/core/schema-validation/handle-invalid-documents/
+
+## Slide 34
 
 These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Follow the documents through a pipeline (1:11); Schema validation: which documents may exist? (1:05); Did the index change the work? (1:18). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 11 README. The diagrams are schematic illustrations, not benchmarks.
 
