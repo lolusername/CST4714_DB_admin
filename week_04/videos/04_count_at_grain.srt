@@ -1,6 +1,6 @@
 1
 00:00:02,100 --> 00:00:03,600
-Count requests, not ticket-event pairs. Build a category report whose rows mean what its labels say.
+Count each request once. Build a category report whose rows mean what its labels say.
 
 2
 00:00:06,500 --> 00:00:10,500
@@ -8,7 +8,7 @@ A dashboard query: requests per category. It runs with no error.
 
 3
 00:00:11,000 --> 00:00:15,000
-The column sums to 21: the number of events, not the 12 requests.
+The column sums to 21 events across 12 requests.
 
 4
 00:00:15,500 --> 00:00:19,000
@@ -36,7 +36,7 @@ That property is what makes the next join safe: no ticket can be repeated.
 
 10
 00:00:38,300 --> 00:00:39,800
-A CTE is a named step of one statement, not a saved table.
+A CTE gives a query step a name within one statement.
 
 11
 00:00:43,500 --> 00:00:45,000

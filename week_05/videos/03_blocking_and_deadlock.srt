@@ -28,11 +28,11 @@ Read the waiter's row: 7332's blocking list is {7310}. B waits for A.
 
 8
 00:00:35,100 --> 00:00:38,100
-A is 'idle in transaction': idle, yet holding the row. Its empty list ≠ holds no locks.
+A is idle in its transaction and still holds the row lock B needs.
 
 9
 00:00:38,600 --> 00:00:42,800
-A PID identifies a server process, not a user or a ticket. These numbers are illustrative.
+A PID identifies a server process. These numbers are illustrative.
 
 10
 00:00:43,300 --> 00:00:47,600
@@ -44,7 +44,7 @@ Decided case: A rolls back. B finishes. Final row: low, in_progress.
 
 12
 00:00:52,100 --> 00:00:55,300
-Both endings let B finish, but they keep different data. Report the final row, not the spinner.
+Both endings let B finish, but they keep different data. Report the final row values.
 
 13
 00:00:58,800 --> 00:01:02,400
@@ -60,7 +60,7 @@ Neither can finish by waiting. PostgreSQL detects the cycle.
 
 16
 00:01:10,400 --> 00:01:13,400
-It aborts one transaction (here B) so the other can continue. Which one is not up to you.
+PostgreSQL chooses one transaction to abort. Here it picks B, so A can continue.
 
 17
 00:01:13,900 --> 00:01:16,900

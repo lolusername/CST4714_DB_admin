@@ -31,7 +31,7 @@ Prepare access to your own MongoDB Atlas **Free** cluster and a database user wi
 | 65–85 | Individual product grouping and 5–7 sentence handoff | Change Cell 15; Submission Record |
 | 85–100 | Career connection, limits, saving and sharing | Submit one viewable saved Colab link |
 
-Keep `USE_LIVE_FEED = False`. Use Cells **01, 02a–02b, 03–08, 10, 11 twice, 14 and 15**. Skip **09, 12 and 13**, which are optional SQL paths. Cell 16 is optional cleanup after retaining evidence. Supplied setup code can stay collapsed; it still needs to run. Run each numbered cell in sequence so you can respond to the connection prompt.
+Keep `USE_LIVE_FEED = False`. Use Cells **01, 02a–02b, 03–06, **07a** (one ID), **07** (15 arrivals), 08, 10, 11 twice, 14 and 15**. Skip **09, 12 and 13**, which are optional SQL paths. Cell 16 is optional cleanup after retaining evidence. Supplied setup code can stay collapsed; it still needs to run. Run each numbered cell in sequence so you can respond to the connection prompt.
 
 The expected record counts are **0 → 75 → 75**, with the same collection on both imports. Do not rerun the name-generating Cell 08 between them. Cell 14 independently reads all 75 records and compares all eight selected fields and their types with the source; it also displays one known record. Cell 15 compares the database grouping with a separate calculation from the source. Use the read-back comparison to verify the stored values.
 

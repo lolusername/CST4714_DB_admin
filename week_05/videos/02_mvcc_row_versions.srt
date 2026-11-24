@@ -40,7 +40,7 @@ A Repeatable Read transaction keeps the snapshot from its first statement: still
 
 11
 00:00:48,600 --> 00:00:52,000
-A's commit was not lost. It is outside that older snapshot; a new transaction sees high.
+The older snapshot still sees low. A new transaction sees the committed value high.
 
 12
 00:00:52,500 --> 00:00:59,100
@@ -52,11 +52,11 @@ Now no snapshot needs the low version. It is a dead row version.
 
 14
 00:01:04,100 --> 00:01:07,100
-VACUUM (usually autovacuum) marks that space reusable. Routine maintenance, not a malfunction.
+VACUUM (usually autovacuum) marks that space reusable. Routine maintenance
 
 15
 00:01:07,600 --> 00:01:10,600
-MVCC is not a history log. To keep what changed, record it on purpose, like ticket_events.
+Use an event table to retain history. To keep what changed, record it on purpose, like ticket_events.
 
 16
 00:01:12,200 --> 00:01:22,200

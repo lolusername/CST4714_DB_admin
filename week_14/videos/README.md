@@ -1,6 +1,6 @@
 # Week 14 videos
 
-Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams illustrate the design.
+Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams trace the steps in each example.
 
 ## [Polyglot persistence: one owner per fact](01_one_owner_per_fact.mp4) (1:30)
 
@@ -26,4 +26,4 @@ Follow ticket 1008 from commit to event to consumer to projection, find where pr
 
 [Watch](03_incident_triage.mp4) · [Subtitles](03_incident_triage.srt)
 
-Editable source: `course/animations/week_14/` in the course authoring folder. Videos © 2026 Atilio Barreda, CC BY-NC-SA 4.0; source code MIT.
+Videos © 2026 Atilio Barreda, CC BY-NC-SA 4.0; source code MIT.

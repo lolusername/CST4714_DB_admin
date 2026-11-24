@@ -10,7 +10,7 @@ A public dataset becomes a database. The next import arrives tomorrow. Suppose a
 
 Start before the terminology. A document is one record with named fields. Our records describe vulnerabilities in CISA's historical Known Exploited Vulnerabilities catalog. Colab runs Python on a remote computer, PyMongo carries requests, and Atlas stores documents. A collection holds the documents in a database.
 
-Open Notebook 06 and save your own Drive copy. Use Cells 01, 02a with USE_LIVE_FEED False, 02b, and 03–08; then 10, 11 twice, 14, and 15. Skip the optional SQLite and PostgreSQL cells. Setup comes before the twenty-minute individual lab. In that lab you change the grouped question and write a five-to-seven-sentence handoff. Submit one viewable Colab link in Brightspace.
+Open Notebook 06 and save your own Drive copy. Start with 01 and 02a–02b, keeping USE_LIVE_FEED False. Run 03–06, then 07a for one ID and 07 for all 15 arrivals. Continue with 08, 10, 11 twice, 14 and 15. Skip the optional SQLite and PostgreSQL cells. Setup comes before the twenty-minute individual lab. In that lab you change the grouped question and write a five-to-seven-sentence handoff. Submit one viewable Colab link in Brightspace.
 
 Teaching route: 0–10 minutes slides 1 and 7; 10–25 slides 8, 5, 9, 10, and 12; 25–50 slides 19, 21, and 22; 50–65 slides 27, 25, 26, 29, and 30; 65–85 slide 32; 85–100 slides 16, 33, and 34. Use the remaining slides for optional reference.
 
@@ -234,7 +234,7 @@ Source: https://discord.com/blog/how-discord-stores-trillions-of-messages
 
 ## Slide 17
 
-Use the guided inspection to prepare for the lab. In this single Thanksgiving-week meeting, Cells 03–07 prepare the import we will run today.
+Use the guided inspection to prepare for the lab. In this single Thanksgiving-week meeting, run 03–06, then 07a with one ID and 07 with all 15 arrivals to prepare for the import.
 
 Keep the retained historical snapshot so the counts match the slides. Cell 06 measures distinct values and repeated values. Compare cveID and dateAdded using the displayed measurements. Cell 07 then places the same records into four teaching buckets under two simplified rules. Run the simulation in Python. The exact slide 12 result is fifteen later records in the last date bucket and three, three, six, three under the displayed hash rule.
 

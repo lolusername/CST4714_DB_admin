@@ -1,8 +1,8 @@
 # Week 10 videos
 
-Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams illustrate the design.
+Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams trace the steps in each example.
 
-All three videos are embedded in the Week 10 PowerPoint on slide 36 and have inline players in the Colab notebook. The notebook fetches them from this repository; no upload is needed. Four separate [static Manim diagrams](../illustrations/README.md) appear in the main lesson slides and notebook.
+All three videos are embedded in the Week 10 PowerPoint on slide 36 and have inline players in the Colab notebook. Four separate [static Manim diagrams](../illustrations/README.md) appear in the lesson slides and notebook.
 
 ## [Querying inside documents: arrays and $elemMatch](01_array_queries.mp4) (1:12)
 
@@ -28,4 +28,4 @@ Five access patterns for the ticket page are tested against an embedded events a
 
 [Watch](03_embed_or_reference.mp4) · [Subtitles](03_embed_or_reference.srt)
 
-Editable source: `course/animations/week_10/` in the course authoring folder. Videos © 2026 Atilio Barreda, CC BY-NC-SA 4.0; source code MIT.
+Videos © 2026 Atilio Barreda, CC BY-NC-SA 4.0; source code MIT.

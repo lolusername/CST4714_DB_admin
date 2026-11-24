@@ -10,7 +10,7 @@
 
 Save your own copy of the [notebook](materials/notebooks/06_public_data_capacity_integration.ipynb) in Drive. Use the [data reference](DATA_REFERENCE.md) to inspect the fields in one catalog entry. Keep `USE_LIVE_FEED = False` so the supplied 75 records and measurements are reproducible.
 
-Follow **Cells 01, 02a–02b and 03–07** with the instructor. Inspect the source and data checks; compare CVE-ID and date-added measurements. Cell 07 simulates range and hash placement in Python.
+Follow **Cells 01, 02a–02b, 03–06, 07a and 07** with the instructor. Inspect the source and data checks; compare CVE-ID and date-added measurements. Cell 07 simulates range and hash placement in Python.
 
 In **Cell 08**, keep `TARGET = "atlas"`. **Cell 10** prints the runtime IPv4 address, pauses for its temporary `/32` access-list rule, and then reads the hidden URI or allowed Colab secret. Use your own Free cluster and database user scoped to `cst4714_week13`. Keep credentials out of code/output. Do not enable a paid feature or access from everywhere.
 

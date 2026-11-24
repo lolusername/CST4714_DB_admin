@@ -1,6 +1,6 @@
 # Week 14: Polyglot Incident Response and Final Project Clinic - Spoken Transcript
 
-This transcript follows the current presentation order. Source references marked as not spoken are included for review.
+The transcript follows the slide order and includes source references.
 
 ## Slide 1
 

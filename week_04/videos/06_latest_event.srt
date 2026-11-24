@@ -40,7 +40,7 @@ The larger event_id wins the tie: 9902 gets rn = 1, 9901 gets 2.
 
 11
 00:00:43,200 --> 00:00:45,700
-It is a reporting rule you declare. A larger ID need not mean a later event.
+It is a reporting rule you declare. Use the event time to compare event dates.
 
 12
 00:00:46,200 --> 00:00:47,700
@@ -88,5 +88,5 @@ Check it: 12 rows, 12 distinct IDs, and 1003's pick matches its own history.
 
 23
 00:01:30,800 --> 00:01:40,800
-Rank, filter, then join from tickets: ROW_NUMBER keeps every row and adds a position: still 21 events. PARTITION BY ticket_id restarts the numbering for each ticket. event_id DESC breaks timestamp ties: a rule, not proof of real order. Filter rn = 1 in an outer query; the same SELECT can't see rn yet. Start FROM tickets and LEFT JOIN: all 12 requests stay, 1004 and 1009 too.
+Rank, filter, then join from tickets: ROW_NUMBER keeps every row and adds a position: still 21 events. PARTITION BY ticket_id restarts numbering for each ticket. event_id DESC breaks timestamp ties consistently. Filter rn = 1 in an outer query; the same SELECT can't see rn yet. Start FROM tickets and LEFT JOIN: all 12 requests stay, 1004 and 1009 too.
 

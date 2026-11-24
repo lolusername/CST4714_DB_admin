@@ -36,7 +36,7 @@ Same starting state, same pair, but ending with COMMIT instead:
 
 10
 00:00:35,800 --> 00:00:38,300
-Both changes remain together. ROLLBACK and COMMIT are alternatives, not two steps.
+Both changes remain together. Use ROLLBACK to discard pending work or COMMIT to save it.
 
 11
 00:00:38,800 --> 00:00:42,000
@@ -64,7 +64,7 @@ Event 5001 is untouched: the error refused a duplicate; it erased nothing.
 
 17
 00:01:05,100 --> 00:01:08,600
-Ticket 1004 is new, not resolved. Nothing matches, and that is valid SQL.
+Ticket 1004 has status new. Nothing matches, and that is valid SQL.
 
 18
 00:01:09,100 --> 00:01:12,600
@@ -76,5 +76,5 @@ The application must check for one returned ticket before writing history or com
 
 20
 00:01:17,700 --> 00:01:27,700
-Remember: A transaction makes related changes commit together or not at all. Your own session sees its uncommitted work; that is not a commit. After an error, the transaction is failed: end it with ROLLBACK. An UPDATE that matches zero rows is not an error. Verify the stored state with a fresh query afterwards.
+Remember: A transaction makes related changes commit together or not at all. Your session can read its changes before commit. After an error, the transaction is failed: end it with ROLLBACK. An UPDATE can succeed with zero matching rows. Verify the stored state with a fresh query afterwards.
 

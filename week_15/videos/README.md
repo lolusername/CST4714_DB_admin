@@ -1,6 +1,6 @@
 # Week 15 videos
 
-Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams illustrate the design.
+Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams trace the steps in each example.
 
 ## [Four tickets, two totals: the course in one report](01_four_tickets_two_totals.mp4) (1:32)
 
@@ -26,4 +26,4 @@ Answer "why did you add that index?" with decision, result, and tradeoff, reason
 
 [Watch](03_presenting_a_decision.mp4) · [Subtitles](03_presenting_a_decision.srt)
 
-Editable source: `course/animations/week_15/` in the course authoring folder. Videos © 2026 Atilio Barreda, CC BY-NC-SA 4.0; source code MIT.
+Videos © 2026 Atilio Barreda, CC BY-NC-SA 4.0; source code MIT.
