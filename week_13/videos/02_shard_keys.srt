@@ -4,7 +4,7 @@ Shard keys: distribution and targeting. Which records land together, and which s
 
 2
 00:00:06,500 --> 00:00:09,500
-The application talks to mongos, a router. It never needs to know where a record lives.
+The application sends its request to mongos. The router locates the relevant shards.
 
 3
 00:00:10,000 --> 00:00:13,000
@@ -16,7 +16,7 @@ Each shard stores part of the collection and is normally its own replica set.
 
 5
 00:00:16,000 --> 00:00:18,200
-Atlas Free cannot create this. We analyze candidate keys instead of measuring a cluster.
+We use Python to test how candidate keys distribute the records.
 
 6
 00:00:22,300 --> 00:00:24,800
@@ -24,7 +24,7 @@ Cardinality counts distinct values. Frequency asks how often the most common one
 
 7
 00:00:25,300 --> 00:00:27,800
-These describe stored records, not traffic: one popular ID could still get most requests.
+These counts describe the stored records. Request logs can show which IDs people query most often.
 
 8
 00:00:31,300 --> 00:00:37,800
@@ -52,7 +52,7 @@ Key on vendor instead: all 16 Microsoft records hash to the same bucket.
 
 14
 00:01:03,400 --> 00:01:05,400
-Same input, same hash. Hashing can't split a repeated value.
+The same input produces the same hash and therefore the same bucket.
 
 15
 00:01:09,900 --> 00:01:15,366
@@ -64,13 +64,13 @@ No shard key in the filter: the query may go to every shard (scatter-gather).
 
 17
 00:01:18,566 --> 00:01:21,366
-A vendor index helps inside each shard, but it doesn't tell the router which shards to skip.
+The shard key controls routing. A vendor index can speed up the search on each shard the router contacts.
 
 18
 00:01:21,866 --> 00:01:24,666
-Counting all records by vendor needs every shard anyway: that's the question's cost, not a mistake.
+Counting all records by vendor combines results from every shard.
 
 19
 00:01:27,266 --> 00:01:37,266
-Four shard-key questions: Cardinality: how many distinct values? Frequency: does one value dominate? Hashing can't split it. Monotonicity: do new values pile into the last range? Targeting: do common queries include the key? Measure the real queries; no single property guarantees all four.
+Four shard-key questions: Cardinality: how many distinct values? Frequency: how often does each key value appear? Monotonicity: do new values pile into the last range? Targeting: do common queries include the key? Measure the real queries; no single property guarantees all four.
 

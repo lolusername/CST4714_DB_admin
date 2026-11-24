@@ -1,6 +1,6 @@
 # Week 13 videos
 
-Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams illustrate the design.
+Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams trace the steps in each example.
 
 ## [Capacity: measure before you scale](01_capacity_before_scaling.mp4) (1:17)
 
@@ -26,4 +26,4 @@ A Python client connects with a hidden URI, TLS checks on, and timeouts, then im
 
 [Watch](03_repeatable_import.mp4) · [Subtitles](03_repeatable_import.srt)
 
-Editable source: `course/animations/week_13/` in the course authoring folder. Videos © 2026 Atilio Barreda, CC BY-NC-SA 4.0; source code MIT.
+Videos © 2026 Atilio Barreda, CC BY-NC-SA 4.0; source code MIT.

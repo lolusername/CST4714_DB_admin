@@ -65,7 +65,7 @@ Why bother with the distinctions? Because a broken query is a different problem 
 
 ## Slide 5
 
-This is a real Supabase project screen, captured for the course in August 2026, with the account details redacted. Notice what it shows: the project overview, the health of the service, resource use. It does not show a single ticket. Use the labels to find the same tools as the interface changes. Learn what each tool is for.
+This is a real Supabase project screen, captured for the course in August 2026, with the account details redacted. Notice what it shows: the project overview, the health of the service, resource use. Open Data Explorer to inspect the ticket collection. Use the labels to find the same tools as the interface changes. Learn what each tool is for.
 
 Look at the two boxes at the bottom. The first one is what the platform adds: the dashboard, managed infrastructure, API services, authentication, logs, and configuration. The second is what PostgreSQL still does: tables, SQL, constraints, transactions, query planning, indexes, and roles. Supabase gives each project a real PostgreSQL database. All the relational work happens there.
 

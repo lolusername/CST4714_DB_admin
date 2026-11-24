@@ -1,6 +1,6 @@
 # Week 11 videos
 
-Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams illustrate the design.
+Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams trace the steps in each example.
 
 ## [Follow the documents through a pipeline](01_pipeline_grain.mp4) (1:11)
 
@@ -26,4 +26,4 @@ The course's 10,000-ticket sort demo read through explain("executionStats"): new
 
 [Watch](03_explain_counts.mp4) · [Subtitles](03_explain_counts.srt)
 
-Editable source: `course/animations/week_11/` in the course authoring folder. Videos © 2026 Atilio Barreda, CC BY-NC-SA 4.0; source code MIT.
+Videos © 2026 Atilio Barreda, CC BY-NC-SA 4.0; source code MIT.

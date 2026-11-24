@@ -1,6 +1,6 @@
 # Week 8 videos
 
-Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams illustrate the design.
+Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams trace the steps in each example.
 
 ## [RPO and RTO on the clock](01_rpo_rto_clock.mp4) (1:29)
 
@@ -26,4 +26,4 @@ A schematic of physical recovery: restore a base backup, then replay retained wr
 
 [Watch](03_wal_point_in_time.mp4) · [Subtitles](03_wal_point_in_time.srt)
 
-Editable source: `course/animations/week_08/` in the course authoring folder. Videos © 2026 Atilio Barreda, CC BY-NC-SA 4.0; source code MIT.
+Videos © 2026 Atilio Barreda, CC BY-NC-SA 4.0; source code MIT.

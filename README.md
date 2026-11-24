@@ -61,9 +61,7 @@ when one is provided.
 
 When a lab requires a completed notebook, save your own Drive copy, retain the
 requested outputs and explanation, and submit its **viewable Colab sharing link**
-in Brightspace. Do not attach an `.ipynb` file. Written responses, SQL scripts,
-vendor exercises, and project URLs keep the deliverable stated on their own lab
-page; a practice notebook does not automatically add another submission.
+in Brightspace. Do not attach an `.ipynb` file. Follow the lab page for written responses, SQL scripts, vendor exercises, and project URLs.
 
 Do not post passwords, connection strings, or private information in this repository.
 For help accessing the materials, email

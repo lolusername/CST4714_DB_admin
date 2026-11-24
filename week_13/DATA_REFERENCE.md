@@ -2,7 +2,7 @@
 
 ## Source and population
 
-The required path uses the retained 75-record CISA Known Exploited Vulnerabilities teaching subset. It is historical, nonrandom, and not today's complete catalog. Its metadata is below. Each record represents one vulnerability in the historical CISA catalog. The source CVE ID is retained as the import key; no course-generated ID replaces it.
+The required path uses the retained 75-record CISA Known Exploited Vulnerabilities teaching subset. The sample contains the first 75 entries in the July 10, 2026 catalog snapshot. Each record describes one vulnerability. Its CVE ID identifies the same entry on every import.
 
 ## Field dictionary: required Atlas storage and optional SQL naming
 
@@ -14,10 +14,10 @@ The required path uses the retained 75-record CISA Known Exploited Vulnerabiliti
 | vulnerabilityName | vulnerability_name | Text catalog description/name |
 | dateAdded | date_added | Canonical YYYY-MM-DD text in Atlas/SQLite; calendar day added to this catalog; optional PostgreSQL date |
 | dueDate | due_date | CISA due date as YYYY-MM-DD text in Atlas/SQLite or a date in PostgreSQL |
-| knownRansomwareCampaignUse | ransomware_use | Catalog text such as Known/Unknown; Unknown does not prove no use |
+| knownRansomwareCampaignUse | ransomware_use | CISA’s recorded assessment, such as Known or Unknown |
 | cwes | cwes_json (SQLite), cwes (PostgreSQL) | Real array of CWE strings in Atlas; JSON text in SQLite; jsonb array in PostgreSQL |
 
-The normalization uses `.get`: an absent field becomes Python None, so inspect source completeness before importing. Distinguish missing values, empty strings, and empty arrays when validating fields. The notebook checks required values before writing; no claim is made that the historical subset exhausts every possible catalog value. Other original source fields are deliberately excluded. No relationship table is joined in this lab.
+The normalization uses `.get`: an absent field becomes Python None, so inspect source completeness before importing. Distinguish missing values, empty strings, and empty arrays when validating fields. The notebook validates the eight selected fields before writing.
 
 The required class writes these checked records to `cst4714_week13`, in a unique `kev_<run suffix>` collection. It compares all selected values and types after importing twice. SQLite and PostgreSQL are optional practice paths.
 

@@ -252,7 +252,7 @@ Two practical habits. Create the view only after you can run and explain the SEL
 
 ## Slide 22
 
-How do we know the latest-event report is right? Here is a trap. Suppose it has exactly twelve distinct ticket IDs. That shows the population and the uniqueness are right. It does not show the right event was picked. A query that always picked the oldest event would pass both of those checks.
+How do we know the latest-event report is right? Here is a trap. Suppose it has exactly twelve distinct ticket IDs. That shows the population and the uniqueness are right. Now check which event each ticket received. A query that always picked the oldest event would pass both of those checks.
 
 So check selected rows against tickets you know. For 1003, the latest event is 5007. For 1004, the only event is 5008. Read their original rows in time order first, so you have your own reason for the expected answer.
 
@@ -288,7 +288,7 @@ These short animations go with this week's reading. Students can watch them befo
 
 ## Slide 26
 
-Consider one additional example. Imagine two events for the same ticket with exactly the same timestamp. Ordering only by time does not state which tied event should win. We choose a policy: newest timestamp first, and within a time tie the larger event ID first. Event 7002 receives row number one under that policy. The ID rule makes the choice repeatable; it does not prove which real-world action happened first. Say the rule out loud before reading the latest-event report.
+Consider one additional example. Imagine two events for the same ticket with exactly the same timestamp. Ordering only by time does not state which tied event should win. We choose a policy: newest timestamp first, and within a time tie the larger event ID first. Event 7002 receives row number one under that policy. The larger ID breaks the timestamp tie consistently. Say the rule out loud before reading the latest-event report.
 
 Image description: Two explicitly illustrative events 7001 and 7002 share ticket 1001 and the timestamp February 15, 2026 at noon UTC. Ordering by time descending then event ID descending gives event 7002 row number one.
 

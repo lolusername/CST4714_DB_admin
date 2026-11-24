@@ -145,7 +145,7 @@ Look at the line at the bottom. On a freshly created table, those three RETURNIN
 
 Why the explicit BEGIN and COMMIT around the first insert? Because we should not trust an editor's batch behavior to draw the transaction boundaries we meant. Writing them out says clearly: the first row survives no matter what happens to the second.
 
-A practical warning. Some editors, including the Supabase SQL Editor, only show the last result from a run. So you may only see the three. That does not mean the first two failed. The SELECT on the next slide shows what actually stayed.
+A practical warning. Some editors, including the Supabase SQL Editor, only show the last result from a run. Your editor may display only the final result. The SELECT on the next slide shows what actually stayed.
 
 Run the whole batch together. Do not leave it paused halfway inside a transaction while you go do something else. An open transaction can hold locks. And if something does fail and the session says the transaction is aborted, run ROLLBACK to end it before you try again.
 
@@ -246,7 +246,7 @@ These rows check two different things: structure and meaning. We could build a p
 
 If your editor shows only one result at a time, run the read-only checks on their own, after the transaction ends.
 
-One honest limit. This rehearsal shows that this particular PostgreSQL change can be rolled back. It does not show that holding a lock is harmless, or that undoing a future data change will bring back lost detail. Keep each check right next to the change it verifies in your SQL file.
+One honest limit. This rehearsal shows that this particular PostgreSQL change can be rolled back. During the rehearsal, check how long the lock lasts and which values return after rollback. Keep each check right next to the change it verifies in your SQL file.
 
 ## Slide 20
 
@@ -323,7 +323,7 @@ Let's finish with what we can now claim. Read the title: a change is ready when 
 
 Look at the three lines on the slide. First, the queue still includes unassigned work. Check that the view includes the two unassigned requests, 1004 and 1009.
 
-Second, generated IDs distinguish records without counting them. A gap can be the normal result of a rolled-back insert. The key tells one record from another. It does not tell you how many committed. We could explain the actual result because we followed the transaction boundaries.
+Second, generated IDs distinguish records without counting them. A gap can be the normal result of a rolled-back insert. The key tells one record from another. Count the saved rows to see how many committed. We could explain the actual result because we followed the transaction boundaries.
 
 Third, the new channel rule accepts known values without inventing old facts. We added a useful field without making up history. We kept older writers working by letting them leave the field out. We kept the view's columns and appended the new one. And we tested one value that should pass and one that should fail.
 

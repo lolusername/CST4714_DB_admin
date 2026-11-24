@@ -12,7 +12,7 @@ Records accumulate in order, filling log segments one after another.
 
 4
 00:00:12,100 --> 00:00:15,100
-They describe low-level changes to recover the database, not a business event spreadsheet.
+PostgreSQL uses these records to replay low-level changes during recovery.
 
 5
 00:00:15,600 --> 00:00:18,800
@@ -72,5 +72,5 @@ Supabase Free shows no automatic backups. Check your plan before you promise an 
 
 19
 00:01:10,400 --> 00:01:20,400
-Remember: WAL records the information needed to redo committed changes, in order. Physical recovery: restore a base backup, then replay retained WAL. Stop at a chosen target, e.g. just before a harmful commit. One missing segment or an incompatible base backup breaks the chain. It needs platform support and practice. A plan is not a tested drill.
+Remember: WAL records the information needed to redo committed changes, in order. Physical recovery: restore a base backup, then replay retained WAL. Stop at a chosen target, e.g. just before a harmful commit. One missing segment or an incompatible base backup breaks the chain. Check which recovery features your platform supports and practise a restore.
 

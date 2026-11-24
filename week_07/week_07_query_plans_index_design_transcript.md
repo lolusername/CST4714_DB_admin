@@ -268,7 +268,7 @@ These short animations go with this week's reading. Students can watch them befo
 
 ## Slide 25
 
-First solve the question without an index. Open is one of the unfinished status labels. These are all three open tickets in our supplied fixture. Sorting their opening dates from newest to oldest gives 1011, 1007, and 1001. Ticket 1009 is not included because its status is new. LIMIT 20 is a maximum; it cannot create twenty matching rows when only three exist. Today the notebook calculates this from CSV records. That tells us the answer to preserve when we later run the SQL. It does not tell us which PostgreSQL plan will be chosen.
+First solve the question without an index. Open is one of the unfinished status labels. These are all three open tickets in our supplied fixture. Sorting their opening dates from newest to oldest gives 1011, 1007, and 1001. Ticket 1009 is not included because its status is new. LIMIT 20 is a maximum; it cannot create twenty matching rows when only three exist. Today the notebook calculates this from CSV records. That tells us the answer to preserve when we later run the SQL. Use EXPLAIN to see which plan PostgreSQL chooses.
 
 Teaching placement (not spoken): At minutes 40–45, before opening the research notebook.
 

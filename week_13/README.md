@@ -10,7 +10,7 @@ If we import the same dataset again, do we recognize the same records or create 
 
 **Before the single meeting:** read [Chapter 13: Scale Changes the Questions a System Must Answer](../Operating_Cloud_Databases.pdf), focusing on capacity and distribution, **Inspect the Public Source Before Loading It**, the Python connection, and repeat-import explanations. Read the [textbook corrections](../COURSE_CORRECTIONS.md) with it. Use the reading to prepare for the guided example.
 
-Prepare access to your own MongoDB Atlas **Free** cluster and a database user with `readWrite` on **cst4714_week13**. This user is separate from your Atlas website login. Keep the Drivers URI private. The notebook discovers the current Colab runtime's IPv4 address and pauses so you can add its temporary `/32` rule. No paid upgrade, backup subscription, or access-from-everywhere rule is needed. Setup time is outside the 20-minute lab.
+Prepare access to your own MongoDB Atlas **Free** cluster and a database user with `readWrite` on **cst4714_week13**. This user is separate from your Atlas website login. Keep the Drivers URI private. The notebook discovers the current Colab runtime's IPv4 address and pauses so you can add its temporary `/32` rule. Choose the Free tier and allow only that runtime address. Setup time is outside the 20-minute lab.
 
 ## Class materials
 
@@ -25,7 +25,7 @@ Prepare access to your own MongoDB Atlas **Free** cluster and a database user wi
 | Minutes | What happens | Exact notebook route |
 |---|---|---|
 | 0–10 | Understand one catalog entry and the Colab/Python/PyMongo/Atlas roles | 01, 02a, 02b; open the data reference |
-| 10–25 | Inspect the source; read key measurements and the guided placement simulation | 03–07 |
+| 10–25 | Inspect the source and compare two ways of assigning entries to buckets | 03–06, then **07a** (one ID) and **07** (15 arrivals) |
 | 25–50 | Choose one target, allow the runtime IP, connect and ping | 08 with TARGET=atlas; 10 |
 | 50–65 | Import twice into the same collection, read back all fields and inspect vendor groups | 11 twice; 14; 15 with vendorProject; Atlas Data Explorer |
 | 65–85 | Individual product grouping and 5–7 sentence handoff | Change Cell 15; Submission Record |
@@ -60,7 +60,7 @@ Short silent animations with captions (3 for this week). Each has a subtitle fil
 
 ## Industry/Career Connection — Discord: access patterns and hot partitions
 
-Discord's 2023 engineering account describes message-storage growth, hot partitions, a data-service layer, and migration from Cassandra to ScyllaDB. Discord studied its message-storage workload. Measure distribution and access patterns before selecting infrastructure, then verify the migrated values against the source. A data engineer should report the import key, repeat behavior, field checks, and remaining limits.
+Discord's 2023 engineering account describes message-storage growth, hot partitions, a data-service layer, and migration from Cassandra to ScyllaDB. Measure distribution and access patterns before selecting infrastructure, then verify the migrated values against the source. A data engineer should report the import key, repeat behavior, field checks, and remaining limits.
 
 Read the [company's own account](https://discord.com/blog/how-discord-stores-trillions-of-messages).
 

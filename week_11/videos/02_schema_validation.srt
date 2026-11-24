@@ -32,15 +32,15 @@ opened_at is required, and it is missing.
 
 9
 00:00:39,700 --> 00:00:42,700
-An extra optional field is fine. A focused rule protects core meaning, not every field.
+The rule checks the required fields and allows additional fields.
 
 10
 00:00:43,200 --> 00:00:46,700
-enum checks a value is in the list. It can't stop reopening a closed ticket.
+The enum checks each status value. Application logic controls transitions between statuses.
 
 11
 00:00:47,200 --> 00:00:50,200
-A document stored BEFORE the rule may still be invalid. collMod does not scan or fix it.
+Audit existing documents before installing the rule with collMod.
 
 12
 00:00:50,700 --> 00:00:53,200
@@ -48,5 +48,5 @@ Audit and migrate existing documents, then tighten the rule. Record the rollout.
 
 13
 00:00:54,800 --> 00:01:04,800
-Remember: required = the field is present. bsonType = its type. enum = allowed values. A date-shaped string is not a BSON date: rejected, code 121. Focused rules still allow intentional extra fields. Adding a rule does not scan or repair stored documents. Audit first. Test one valid and several invalid writes; don't just say "it's on".
+Remember: required = the field is present. bsonType = its type. enum = allowed values. The validator requires a BSON date. Sending a string returns error code 121. Focused rules still allow intentional extra fields. Check existing documents before installing a new rule. Try one valid write and several invalid writes. Record the outcome of each.
 

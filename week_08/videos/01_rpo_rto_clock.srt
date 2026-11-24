@@ -16,7 +16,7 @@ Nothing crashed. Restarting the server brings nothing back.
 
 5
 00:00:18,300 --> 00:00:20,300
-A replica copies the deletion too. High availability is not a backup.
+Replicas copy the deletion. A separate backup lets us recover the earlier records.
 
 6
 00:00:20,800 --> 00:00:22,800
@@ -68,15 +68,15 @@ And an RTO of 10 minutes: 12 is more than 10. Missed again.
 
 18
 00:01:00,800 --> 00:01:03,200
-We did recover. We did not keep the promise. Those are different outcomes.
+We recovered service after the deadline. Record the actual time and compare it with the target.
 
 19
 00:01:06,500 --> 00:01:11,900
-The same 17-minute gap can hold 3 writes or thousands. Time is not a row count.
+The same 17-minute gap can hold three writes or thousands. Check the activity log for this interval.
 
 20
 00:01:12,400 --> 00:01:14,800
-A logical export represents its consistent snapshot, not the time the file finished.
+A logical export reflects the data visible when its snapshot began.
 
 21
 00:01:15,300 --> 00:01:17,700
@@ -84,5 +84,5 @@ Other history sources may hold some later writes. State which sources your numbe
 
 22
 00:01:19,300 --> 00:01:29,300
-Remember: A committed mistake survives restarts and is copied by replicas. RPO limits the data-loss window:  t_f − t_r  (failure − newest recoverable state). RTO limits the recovery duration:  t_a − t_f  (start the clock at the failure). Writing a target down does not meet it. Measure it in a restore drill. A time gap is not a row count. Say which state your artifact represents.
+Remember: A committed mistake survives restarts and is copied by replicas. RPO limits the data-loss window:  t_f − t_r  (failure − newest recoverable state). RTO limits the recovery duration:  t_a − t_f  (start the clock at the failure). Measure both targets in a restore drill. Record the time of the snapshot and the activity since then.
 

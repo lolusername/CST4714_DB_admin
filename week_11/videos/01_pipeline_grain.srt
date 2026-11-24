@@ -12,7 +12,7 @@ Four tickets in the collection. One of them, 1003, is resolved.
 
 4
 00:00:15,900 --> 00:00:20,400
-$match keeps the 3 active tickets. 1003 stays stored; it just isn't in this stream.
+$match passes the three active tickets to the next stage.
 
 5
 00:00:20,900 --> 00:00:23,400
@@ -20,7 +20,7 @@ $match keeps the 3 active tickets. 1003 stays stored; it just isn't in this stre
 
 6
 00:00:23,900 --> 00:00:28,000
-$sum: 1 counts members. After $group, a document is a category, not a ticket.
+$sum: 1 counts the tickets in each category. $group returns one document per category.
 
 7
 00:00:28,500 --> 00:00:31,000
@@ -56,5 +56,5 @@ preserveNullAndEmptyArrays brings 1004 back, but 1001 is still counted twice.
 
 15
 00:01:01,000 --> 00:01:11,000
-Remember: Each stage receives the previous stage's output stream. $match removes documents; the grain stays one per ticket. $group makes one NEW document per _id (here, per category). $unwind makes one document per array element: events, not tickets. Equal totals can hide a missing and a duplicated ticket.
+Remember: Each stage receives the previous stage's output stream. $match removes documents; the grain stays one per ticket. $group makes one NEW document per _id (here, per category). $unwind produces one document for each event in the array. Equal totals can hide a missing and a duplicated ticket.
 

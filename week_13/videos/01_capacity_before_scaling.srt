@@ -32,7 +32,7 @@ Each option relieves a different pressure and leaves a decision behind.
 
 9
 00:00:33,600 --> 00:00:35,800
-Don't shard a bad query just to run the bad query on more machines.
+Check the query and its indexes before deciding whether the workload needs sharding.
 
 10
 00:00:36,300 --> 00:00:38,500
@@ -40,7 +40,7 @@ For a 75-record catalog, the honest answer is tuning, or keeping it small.
 
 11
 00:00:41,400 --> 00:00:45,300
-A replica set: every member keeps the same 75 logical records. Protection, not three times the room.
+Each member of the replica set keeps a copy of the same 75 records.
 
 12
 00:00:45,800 --> 00:00:50,400
@@ -52,7 +52,7 @@ Each portion still needs protection from member failure. The even split is only 
 
 14
 00:00:59,400 --> 00:01:02,200
-The multiplier is an assumption, not a billing rule. Retention and growth can change everything.
+This estimate uses a sample multiplier. Recalculate it as retention and growth change.
 
 15
 00:01:02,700 --> 00:01:05,000

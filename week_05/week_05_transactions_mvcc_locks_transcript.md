@@ -124,7 +124,7 @@ Consistency means the data stays valid. Declared rules are part of that, like th
 
 Isolation is about concurrent work. When several sessions run at once, what can each one see, and what happens when they conflict? That is Day 2.
 
-Durability means a successful commit survives the failures the system is configured to handle. It does not mean the data can never be deleted. An authorized delete later is itself a durable transaction. That is one reason backups and recovery still matter.
+Durability means a successful commit survives the failures the system is configured to handle. A later authorized deletion is also a durable transaction. That is one reason backups and recovery still matter.
 
 Now read the line at the bottom. A transaction covers database effects only. If your program sends an email and then rolls back, that email is already in someone's inbox. And earlier in the course we saw that a sequence can leave gaps after a rollback. These limits tell you exactly which problem a transaction solves, and where the application has to do more.
 
@@ -247,11 +247,11 @@ Transaction age helps you tell a brief, normal overlap from something old and fo
 
 ## Slide 16
 
-Here is what that query returns. These PIDs are illustrative. These values come from the supplied teaching trace. Start with the second row, B, PID 7332. State: active. Wait: Lock, transactionid. Active means the backend is in the middle of a command. It does not mean the command is making progress. B is active and stuck at the same time.
+Here is what that query returns. These PIDs are illustrative. These values come from the supplied teaching trace. Start with the second row, B, PID 7332. State: active. Wait: Lock, transactionid. Active means the backend is in the middle of a command. B reports active while it waits for A’s lock.
 
 Now look at B's last column. Blocking PIDs: 7310. That points to A. Look at A's row, PID 7310. State: idle in transaction. A is waiting for its client to send the next command, but its transaction is still open. An idle transaction can still hold a lock. The idle one is the one holding everybody up.
 
-A's blocking list is empty. That only says this observation does not show A waiting on anyone. It does not say A holds no locks. In fact A's uncommitted change is exactly what B is waiting for. B is waiting for A.
+A's blocking list is empty. A has no blocker of its own. It still holds the row lock that B needs. B is waiting for A.
 
 Compare the two wait descriptions. A's ClientRead means it is waiting for input from its client. B's lock wait means it is waiting for another transaction to end. So a session can be waiting in one sense and blocking in another.
 

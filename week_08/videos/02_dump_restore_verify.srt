@@ -20,11 +20,11 @@ And CSV rows carry no keys, checks, indexes, or grants: rows without rules.
 
 6
 00:00:23,100 --> 00:00:25,100
-A logical dump rebuilds the meaning of objects, not a byte copy of storage files.
+A logical dump records how to recreate database objects and their contents.
 
 7
 00:00:25,600 --> 00:00:27,600
-Scope is a choice: this schema only. Roles and other project services are not in it.
+This export contains the objects in the selected schema.
 
 8
 00:00:31,300 --> 00:00:33,800
@@ -80,9 +80,9 @@ Pass only on the check-constraint code and the exact constraint name.
 
 21
 00:01:21,766 --> 00:01:23,766
-Any error is not a test. ROLLBACK keeps the data clean either way.
+Check the error code, then roll back the test.
 
 22
 00:01:25,366 --> 00:01:35,366
-Remember: pg_dump exports related tables from one consistent snapshot. A list or checksum describes the file. Only a restore tests it. Restore into a separate, empty target. Never over the only copy. Counts, a known record, and a constraint test catch different failures. Say what you did not check: roles, grants, the app connection.
+Remember: pg_dump exports related tables from one consistent snapshot. A list or checksum describes the file. Only a restore tests it. Restore into a separate, empty target. Counts, a known record, and a constraint test catch different failures. List the checks still to run on roles, grants, and the application connection.
 

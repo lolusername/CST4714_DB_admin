@@ -1,6 +1,6 @@
 """Editable static Manim diagrams for CST4714 weeks11–15.
 Run: manim -s -r 2240,960 --disable_caching --media_dir build course_stills.py Grain Recovery RepeatImport VersionGuard Populations
-These are teaching diagrams of the supplied fixture, not screenshots or performance measurements.
+These diagrams trace the supplied fixture.
 """
 from manim import *
 config.frame_width=16;config.frame_height=48/7;config.background_color='#FCFCFA'

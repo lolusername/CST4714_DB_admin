@@ -26,7 +26,7 @@ Four words that people mash together, and we are going to keep them apart all we
 
 Identity: who is claiming to act? That is the account saying "I am Resident A." Authentication: can we verify that claim? That is the password check or the token check. Authorization: now that we believe you are A, are you allowed to do this specific action on this specific data? And auditing: did we write down what happened?
 
-Here is why the separation matters. On the previous slide, authentication was perfect and authorization was missing. Those are different jobs done by different code. A working password proves exactly one thing: the identity claim checked out. It does not mean the account should read every row.
+Here is why the separation matters. On the previous slide, authentication was perfect and authorization was missing. Those are different jobs done by different code. A working password proves exactly one thing: the identity claim checked out. Permissions determine which rows the account can read.
 
 When something goes wrong this week, your first question is always "which of these four failed?" because the fix is different for each one. You will see that concretely on slide 10.
 
@@ -140,7 +140,7 @@ One housekeeping note. Your lab uses a separate schema called security_lab and r
 
 Two statements here, and I want to run them separately, because the gap between them teaches something.
 
-First: ALTER TABLE, ENABLE ROW LEVEL SECURITY. That flips a switch on the table. It does not say who can see what. Watch what happens when I rerun resident A's query right now. Zero rows. No error, just nothing. Once row security is on, the default is deny. An ordinary role sees no rows until a policy allows some. That is a safe default. It is also the moment where people panic and write USING true to make the rows come back. Do not do that. That allows every row, and you are right back where you started.
+First: ALTER TABLE, ENABLE ROW LEVEL SECURITY. That enables row-level security. Policies determine which rows each role can see. Watch what happens when I rerun resident A's query right now. Zero rows. No error, just nothing. Once row security is on, the default is deny. An ordinary role sees no rows until a policy allows some. That is a safe default. It is also the moment where people panic and write USING true to make the rows come back. Do not do that. That allows every row, and you are right back where you started.
 
 Second statement: CREATE POLICY. Read it clause by clause. ON names the table. FOR SELECT means this rule only governs reading. Writes would need their own rule. TO lists the roles the rule applies to, our two residents. USING is the condition PostgreSQL checks against every row: keep the row if owner_role equals current_user, the role running the query.
 

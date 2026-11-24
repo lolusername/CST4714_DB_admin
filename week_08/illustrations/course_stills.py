@@ -1,6 +1,6 @@
 """Static CST4714 worked-example diagrams. No animation is authored.
 Render: manim -s -r 2240,960 --disable_caching --media_dir <build> course_stills.py OwnershipStill IndexEvidenceStill RecoveryStill DocumentGrowthStill
-Each value is a teaching fixture value; these are conceptual diagrams, not storage internals.
+The diagrams show relationships between values in the teaching fixture.
 """
 from manim import *
 config.frame_width=16

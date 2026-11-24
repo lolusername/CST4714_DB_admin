@@ -1,6 +1,6 @@
 1
 00:00:02,100 --> 00:00:03,600
-Replication is not backup. Logical recovery on Atlas Free: keep an artifact, restore elsewhere, verify.
+Recovering deleted records. Logical recovery on Atlas Free: keep an artifact, restore elsewhere, verify.
 
 2
 00:00:07,700 --> 00:00:10,700
@@ -20,19 +20,19 @@ RPO: tolerated gap in recoverable work. No later export or log exists, so 12 min
 
 6
 00:00:26,800 --> 00:00:32,100
-12 minutes is a time window, not a count of lost tickets.
+Check the activity during the twelve minutes between the snapshot and the incident.
 
 7
 00:00:32,600 --> 00:00:34,600
-RTO: the clock starts at the incident, not when someone types restore.
+Start the recovery clock when the incident begins.
 
 8
 00:00:35,100 --> 00:00:38,100
-Same incident: one objective met, one missed. A faster restore can't add the missing 12 minutes.
+The restore met its time target. The file was twelve minutes old when the incident began.
 
 9
 00:00:40,600 --> 00:00:44,800
-On the Free tier the backup screen offers paid upgrades, not a backup that already ran.
+The Free tier lists backup upgrades. We use the export for this recovery.
 
 10
 00:00:45,300 --> 00:00:48,500
@@ -40,11 +40,11 @@ Export the documents with their BSON types, and record a manifest beside them.
 
 11
 00:00:49,000 --> 00:00:51,500
-Restore into a separate target, never on top of the source. Check the hash before parsing.
+Restore into a separate, empty target. Check the hash before parsing.
 
 12
 00:00:52,000 --> 00:00:54,800
-The data file brings back documents, not rules: indexes and the validator are rebuilt separately.
+Load the documents from the file, then rebuild the indexes and validator separately.
 
 13
 00:00:57,700 --> 00:01:01,566
@@ -52,7 +52,7 @@ The restore matched. Then an incorrect migration changes one subject.
 
 14
 00:01:02,066 --> 00:01:05,266
-Four checks pass. A schema checks a value's form, not whether it is the intended request.
+Four checks pass. Compare the saved subject with the source ticket to check its meaning.
 
 15
 00:01:05,766 --> 00:01:10,566
@@ -72,5 +72,5 @@ Then test the rebuilt rules: a duplicate ticket_id and invalid documents must be
 
 19
 00:01:21,266 --> 00:01:31,266
-Remember: Replicas copy a deletion as faithfully as an insert. Recovery needs a separate artifact: its moment sets the recovery point. RPO (data gap) and RTO (time to service) pass or fail separately. Atlas Free: no native backup. Export and restore yourself, elsewhere. Verify values and rules, not just the count.
+Remember: Replicas copy a deletion as faithfully as an insert. Recovery needs a separate artifact: its moment sets the recovery point. RPO (data gap) and RTO (time to service) pass or fail separately. Atlas Free: no native backup. Export and restore yourself, elsewhere. Check the count, values, and rules.
 

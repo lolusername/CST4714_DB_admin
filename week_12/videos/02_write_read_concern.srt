@@ -20,7 +20,7 @@ B has made the oplog entry durable, but has not yet applied it to its collection
 
 6
 00:00:20,900 --> 00:00:23,700
-MongoDB 8.0+, default journaling: majority waits for durable oplog entries, not for applying.
+With default journaling in MongoDB 8.0+, a majority acknowledges a durable oplog entry. Members can apply it later.
 
 7
 00:00:24,200 --> 00:00:27,200
@@ -36,7 +36,7 @@ w: 1 asks only the primary. If A fails right after, that write may exist nowhere
 
 10
 00:00:37,300 --> 00:00:40,800
-Majority here is two. Count your own voting members; don't reuse "2" blindly.
+Two of these three voting members make a majority. Calculate the majority for your own configuration.
 
 11
 00:00:41,300 --> 00:00:43,800
@@ -48,7 +48,7 @@ Suppose the client asked for w: 3. A and B hold the write, C cannot answer.
 
 13
 00:00:52,300 --> 00:00:56,300
-The wait stopped. The write was not undone: A and B still have it.
+The client stopped waiting. A and B still have the write.
 
 14
 00:00:56,800 --> 00:00:59,800
@@ -64,7 +64,7 @@ Read preference is routing. Sent to the primary, this read finds the ticket.
 
 17
 00:01:09,900 --> 00:01:12,700
-If a read lands on C, it finds nothing. That shows the state C saw, not that the write failed.
+Reading C returns the version C has applied so far.
 
 18
 00:01:13,200 --> 00:01:15,000
@@ -72,7 +72,7 @@ Read concern is about state: "majority" returns majority-committed data...
 
 19
 00:01:15,500 --> 00:01:18,300
-...but C's older majority-committed data can still predate 1099. Majority is not "latest everywhere".
+C's last majority-committed view can still predate ticket 1099.
 
 20
 00:01:18,800 --> 00:01:22,600
@@ -84,5 +84,5 @@ For a confirmation page, tie the read to the write: one documented recipe (timeo
 
 22
 00:01:28,700 --> 00:01:38,700
-Three separate questions: Write concern: what must acknowledge before my write returns? Read preference: which member may answer my read? Read concern: which state may that read return? A timeout means "unknown": read back by a stable _id. A miss on a lagging or isolated member is not proof of failure.
+Three separate questions: Write concern: what must acknowledge before my write returns? Read preference: which member may answer my read? Read concern: which state may that read return? A timeout means "unknown": read back by a stable _id. Check the stable request ID on a member with an appropriate read view.
 

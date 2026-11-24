@@ -27,8 +27,7 @@ records in source order, and keeps only:
 
 The snapshot metadata records the source catalog version, source release time,
 retrieval time, URL, and selection. Descriptions, remediation text, and notes are
-omitted to keep the classroom fixture compact. The sample is not a complete or
-current vulnerability-management source.
+omitted to keep the classroom fixture compact. For current vulnerability-management decisions, consult the live CISA catalog.
 
 ## Source and Use
 
@@ -42,6 +41,4 @@ README is CC BY-NC-SA 4.0. Source data retains applicable U.S. government terms.
 
 ## Safety
 
-The catalog identifies publicly known vulnerabilities. It does not contain
-exploit code and is not a substitute for current CISA guidance, asset inventory,
-risk assessment, or professional vulnerability management.
+The catalog identifies publicly known vulnerabilities. Use the snapshot for the classroom exercises above.

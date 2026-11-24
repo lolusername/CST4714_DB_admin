@@ -1,6 +1,6 @@
 # Week 13: Capacity, Sharding, and Python Integration - Spoken Transcript
 
-This transcript follows the current presentation order. Source references marked as not spoken are included for review.
+The transcript follows the slide order and includes source references.
 
 ## Slide 1
 
@@ -10,7 +10,7 @@ A public dataset becomes a database. The next import arrives tomorrow. Suppose a
 
 Start before the terminology. A document is one record with named fields. Our records describe vulnerabilities in CISA's historical Known Exploited Vulnerabilities catalog. Colab runs Python on a remote computer, PyMongo carries requests, and Atlas stores documents. A collection holds the documents in a database.
 
-Open Notebook 06 and save your own Drive copy. Use Cells 01, 02a with USE_LIVE_FEED False, 02b, and 03–08; then 10, 11 twice, 14, and 15. Skip the optional SQLite and PostgreSQL cells. Setup comes before the twenty-minute individual lab. In that lab you change the grouped question and write a five-to-seven-sentence handoff. Submit one viewable Colab link in Brightspace. No paid tier, sharded deployment, or second assignment is required.
+Open Notebook 06 and save your own Drive copy. Use Cells 01, 02a with USE_LIVE_FEED False, 02b, and 03–08; then 10, 11 twice, 14, and 15. Skip the optional SQLite and PostgreSQL cells. Setup comes before the twenty-minute individual lab. In that lab you change the grouped question and write a five-to-seven-sentence handoff. Submit one viewable Colab link in Brightspace.
 
 Teaching route: 0–10 minutes slides 1 and 7; 10–25 slides 8, 5, 9, 10, and 12; 25–50 slides 19, 21, and 22; 50–65 slides 27, 25, 26, 29, and 30; 65–85 slide 32; 85–100 slides 16, 33, and 34. Use the remaining slides for optional reference.
 
@@ -36,7 +36,7 @@ Now the ninety-fifth percentile, using nearest rank. Twenty times zero point nin
 
 Run it, and it prints ninety-three point zero and five hundred. Same data, two very different stories. The average says everything is quick. The p95 says one request in twenty waits half a second. And the slowest request took a full second. That slow tail is what people actually complain about, and the mean smoothed it away.
 
-Two cautions. Percentile conventions differ, especially with small samples, so always say which one you used. And twenty fake requests cannot set a service-level objective. They just make the difference between an average and a tail concrete.
+Two cautions. Percentile conventions differ, especially with small samples, so always say which one you used. These twenty example requests show how a few long waits affect the 95th percentile.
 
 ## Slide 4
 
@@ -60,11 +60,11 @@ Two words that get mixed up constantly: replication and sharding. They are diffe
 
 First row. One replica set with three members. Every member keeps the same logical seventy-five records. These are copies. Why have copies? Availability. If one member fails, another can take over, depending on the configuration and the durability the operation asked for.
 
-Second row. Three shards with a balanced split. Now each shard owns about twenty-five of the seventy-five. Each shard owns a portion of the records. The collection still has seventy-five logical records. We did not make three separate catalogs. A router presents the pieces as one collection.
+Second row. Three shards with a balanced split. Now each shard owns about twenty-five of the seventy-five. Each shard owns a portion of the records. The collection still has seventy-five logical records. A router presents the pieces as one collection.
 
-Third row, and people forget this one. Each shard has its own replicas. Splitting the data does not remove the need to protect each piece from a member failure. The first shard's replicas copy the first shard's portion, and so on.
+Look at the third row. Each shard has its own replicas. The first shard's replicas copy the first shard's portion, and so on.
 
-Now read the warning under the table. The example shows an even split. Real placement depends on keys, sizes, ranges, and balancing. And equal record counts do not mean equal work. One shard might own the records that get almost every request.
+Now read the warning under the table. The example shows an even split. Real placement depends on keys, sizes, ranges, and balancing. Now consider which records receive the most requests. One shard might own the records that get almost every request.
 
 The mistake this slide prevents is counting replicas as extra write capacity for the same data. Three replicas hold copies of the same records to support availability.
 
@@ -75,7 +75,7 @@ https://www.mongodb.com/docs/manual/sharding/
 
 Here is what is actually inside a sharded MongoDB cluster. Follow the boxes from the top.
 
-The application does not talk to the shards directly. It connects to mongos, the query router. Why put a router in the middle? So the application never has to know which machine holds which record. The router figures that out, sends the work where it needs to go, and merges the answers.
+ It connects to mongos, the query router. The router figures that out, sends the work where it needs to go, and merges the answers.
 
 How does it figure it out? The config servers. They hold the cluster metadata, including how the data is currently distributed. Because placement is described there, it can change without anybody rewriting application code. That is a different job from the shards, which store the application's data.
 
@@ -105,7 +105,7 @@ course/datasets/cisa_kev_sample/kev_sample.json
 
 ## Slide 8
 
-Validate the parsed JSON before loading it. Parsing only proves the text follows JSON syntax. Check that each ID is present, each date is valid, and each field has the expected type. So the notebook runs the checks in this table before it opens any import path. Let's go down the left column.
+Validate the parsed JSON before loading it. Check that each ID is present, each date is valid, and each field has the expected type. So the notebook runs the checks in this table before it opens any import path. Let's go down the left column.
 
 A missing vendor, ID, or required text field stops the import before anything loads. IDs also have to look like CVE identifiers.
 
@@ -113,7 +113,7 @@ February 30, 2026 fails because that day does not exist. The compact form, 20260
 
 A repeated CVE identifier stops everything. Which record is the real one? If the code silently kept whichever came last, it would hide a conflict in the source. So the notebook makes us decide.
 
-If cwes arrives as text instead of a list, that is rejected. And an empty list stays empty. We do not invent a weakness to fill it.
+If cwes arrives as text instead of a list, that is rejected. And an empty list stays empty.
 
 Last row. One vendor label is SimpleHelp with a trailing space. The notebook shows you the space and keeps the label as the source wrote it. Trimming changes the grouping, so document and test that choice.
 
@@ -127,7 +127,7 @@ Second row. Give each ticket its own ID. Cardinality eight, and each value appea
 
 But read the line in the middle of the slide. A unique ID distributes records finely, but one ID can still receive most reads. Suppose everyone keeps opening the same ticket. The stored records are perfectly spread, and the traffic is all on one.
 
-That is the line at the bottom. Record frequency and request frequency are different measurements. Our notebook measures records in a fixture. We have no production request log. So we can describe a candidate key's properties and its risks, but we cannot say anything about real user demand from uniqueness alone. Keep that boundary in mind when you write your recommendation.
+That is the line at the bottom. Record frequency and request frequency are different measurements. This fixture tells us how often a value appears in the stored records. To find the busiest keys, we would also need a request log.
 
 ## Slide 10
 
@@ -171,9 +171,9 @@ The gray bars are the fixed date ranges from the last slide. All fifteen sit in 
 
 Do a quick check with me. Three plus three plus six plus three is fifteen. The gray series is fifteen too. Why bother adding them up? Because a comparison that silently dropped records could look like better distribution for a bad reason. Always check that both sides account for every row.
 
-Notice that hashing did not produce a perfect split. Six in one bucket and three in the others is completely normal with only fifteen records. And we gave something up. Under the hash rule, two dates next to each other on the calendar no longer land next to each other.
+Run Cell 07a for one ID, then Cell 07 for the 15 arrivals. One bucket received six of the fifteen records. Each of the other three buckets received three. And we gave something up. Under the hash rule, two dates next to each other on the calendar no longer land next to each other.
 
-Read the scope note above the chart. This is our own SHA-256 with four teaching buckets. Python assigns the example buckets. MongoDB uses its own hashing and range management. There is no latency, size, or balancing cost in this chart. We can say the two rules placed these records differently. We cannot say the green rule makes every query faster.
+Read the scope note above the chart. This is our own SHA-256 with four teaching buckets. Python assigns the example buckets. MongoDB uses its own hashing and range management. Read the chart as a count of the records each bucket receives under the two rules.
 
 Sources:
 course/notebooks/06_public_data_capacity_integration.ipynb
@@ -184,7 +184,7 @@ Here is a property of hashing that people forget when they say "just hash it." H
 
 Read the code. We take the string Microsoft, encode it to bytes, compute its SHA-256 digest in hexadecimal, turn that into an integer, and take the remainder after dividing by four. Run it, and it prints one. Bucket one.
 
-Now run it again. Still one. Run it sixteen times, once for each Microsoft record in our fixture, and you get bucket one sixteen times. Hashing does not turn repeated values into different values. If vendor were our key, all sixteen Microsoft records would land together, hashed or not.
+Now run it again. Still one. Run it sixteen times, once for each Microsoft record in our fixture, and you get bucket one sixteen times. Each repetition gives the same result. If vendor were our key, all sixteen Microsoft records would land together, hashed or not.
 
 So why did the previous slide spread out? Read the last line on the slide. The notebook hashes each distinct CVE ID. Distinct inputs are what give the hash something to spread.
 
@@ -226,7 +226,7 @@ For a real plan, you would measure actual record and index sizes, set the retent
 
 ## Slide 16
 
-Discord's 2023 engineering account describes message-storage growth, hot partitions, a data-service layer, and migration from Cassandra to ScyllaDB. Discord studied its message-storage workload. Measure distribution and access patterns before selecting infrastructure, then verify the migrated values against the source. A data engineer should report the import key, repeat behavior, field checks, and remaining limits.
+Discord's 2023 engineering account describes message-storage growth, hot partitions, a data-service layer, and migration from Cassandra to ScyllaDB. Measure distribution and access patterns before selecting infrastructure, then verify the migrated values against the source. A data engineer should report the import key, repeat behavior, field checks, and remaining limits.
 
 For this class, connect the case to the experiment already on the screen. Use this case to interpret your own measurements. Keep classroom results separate from the company’s production system.
 
@@ -238,7 +238,7 @@ Use the guided inspection to prepare for the lab. In this single Thanksgiving-we
 
 Keep the retained historical snapshot so the counts match the slides. Cell 06 measures distinct values and repeated values. Compare cveID and dateAdded using the displayed measurements. Cell 07 then places the same records into four teaching buckets under two simplified rules. Run the simulation in Python. The exact slide 12 result is fifteen later records in the last date bucket and three, three, six, three under the displayed hash rule.
 
-Seventy-five small records do not establish a need for sharding. The point is to explain how a candidate key and the workload affect a distribution decision. Keep this evidence in the same saved notebook. Continue directly to the Atlas connection; the twenty-minute individual lab comes after guided setup, import, and verification.
+Explain how the candidate key would distribute writes and help the router find records. Keep this evidence in the same saved notebook. Continue directly to the Atlas connection; the twenty-minute individual lab comes after guided setup, import, and verification.
 
 ## Slide 18
 
@@ -252,19 +252,19 @@ Our required path uses real Atlas. We will import twice into the same collection
 
 Cell 08 sets TARGET to atlas for today's required lesson. Python runs in Colab; MongoDB runs in Atlas; PyMongo is the driver that sends the requests between them. SQLite and PostgreSQL remain optional reference paths in this notebook.
 
-Run Cell 08 once. It chooses the database cst4714_week13 and a collection name beginning kev_ followed by twelve random hexadecimal characters. The database is fixed so your database user only needs readWrite on that teaching database. The collection name isolates your run. Choosing names does not connect or import anything.
+Run Cell 08 once. It chooses the database cst4714_week13 and a collection name beginning kev_ followed by twelve random hexadecimal characters. The database is fixed so your database user only needs readWrite on that teaching database. The collection name isolates your run.
 
 Then run Cell 10 to connect. Run Cell 11 twice without rerunning Cell 08 or changing collection names. If every import starts with a fresh collection, the second import never meets the first import's records. Keep the same collection on the second import to test repeat behavior.
 
-Use an existing Free cluster and a database user prepared before class. Authenticate Python with a database user. No paid tier, API key, or sharded deployment is needed. If access is blocked, label the instructor's demonstrated evidence as observed and complete the same notebook when access works; do not claim a local or mock connection was Atlas.
+Use an existing Free cluster and a database user prepared before class. Authenticate Python with a database user. If access is blocked, label the instructor's demonstrated evidence as observed and complete the same notebook when you can connect.
 
 ## Slide 20
 
 The source is JSON, but every database still needs a decision about how to store each field. Read the table row by row.
 
-cveID becomes a text primary key in SQLite and PostgreSQL. In MongoDB, we create a unique index on cveID. Why not just use MongoDB's own document identifier? Because MongoDB generates that one, and ours is the business identifier from the source. A repeat import has to match on the identifier the source gives us.
+cveID becomes a text primary key in SQLite and PostgreSQL. In MongoDB, we create a unique index on cveID. The catalog provides the CVE ID before MongoDB creates a document. A repeat import has to match on the identifier the source gives us.
 
-dateAdded is a calendar day with no time. SQLite stores the year-month-day text. MongoDB keeps the same string in this lesson. PostgreSQL uses a real date type. What we do not do is turn it into a timestamp at midnight. That would invent a time of day the source never gave us. That is the first line under the table.
+dateAdded is a calendar day with no time. SQLite stores the year-month-day text. MongoDB keeps the same string in this lesson. PostgreSQL uses a real date type.
 
 cwes is the list. SQLite gets it as JSON text. MongoDB gets a real array. PostgreSQL gets a jsonb array. In every case it stays a list. We never glue the entries into a comma-separated label that someone has to parse later.
 
@@ -278,7 +278,7 @@ Cell 10 prints that runtime's public IPv4 address with slash thirty-two. That me
 
 Get the Python Drivers URI from your own Free cluster. Use a database user with readWrite on cst4714_week13. Put the completed URI in a Colab Secret named MONGODB_URI or the hidden prompt. Never paste it into a saved code cell, screenshot, or notebook output.
 
-The redacted screenshot shows the Atlas interface on August 25. The code's ping and later write/read are our evidence. Remove the temporary runtime rule when no longer needed; closing Python does not remove that provider setting.
+The redacted screenshot shows the Atlas interface on August 25. The code's ping and later write/read are our evidence. Remove the temporary runtime rule from Atlas when you finish.
 
 Source: https://www.mongodb.com/docs/atlas/security/ip-access-list/
 
@@ -286,13 +286,13 @@ Source: https://www.mongodb.com/docs/atlas/security/ip-access-list/
 
 This is an excerpt of Cell 10, after the hidden URI input. MongoClient creates the driver client. TLS encrypts the connection; keeping tlsInsecure False preserves the certificate and hostname checks that help identify the server. Do not disable those checks to work around a connection error.
 
-The stable API setting requests version one. The two ten-thousand-millisecond settings bound server selection and client operations to about ten seconds each; they do not guarantee the whole interactive cell finishes in ten seconds. Network lookup, package setup, and the pause for your input are separate steps.
+The stable API setting requests version one. The two ten-thousand-millisecond settings bound server selection and client operations to about ten seconds each; the pause for your input and package setup take additional time.
 
- Ping sends a real request. After ping, the full cell selects the fixed teaching database and this run's collection, checks that it is empty, and creates a unique cveID index. Cell 11 writes the records. Cell 11 does that.
+Ping sends a request to the server. After ping, the full cell selects the fixed teaching database and this run's collection, checks that it is empty, and creates a unique cveID index. Cell 11 writes the records.
 
-The collection requests majority writes and majority reads from the primary. Those settings do not mean every replica has acknowledged a write or that a timed-out write certainly failed. If a write times out, inspect and verify the collection before deciding what happened; the stable-key import can be retried.
+The collection requests majority writes and majority reads from the primary. If a write times out, inspect and verify the collection before deciding what happened; the stable-key import can be retried.
 
-If setup fails, check the database user and role, completed Drivers URI, active runtime rule, deployment readiness, DNS name lookup, and TLS secure connection. Do not display the secret while diagnosing. The cell closes a failed client and raises a redacted error; it does not substitute a mock database.
+If setup fails, check the database user and role, completed Drivers URI, active runtime rule, deployment readiness, DNS name lookup, and TLS secure connection. Do not display the secret while diagnosing. The cell closes a failed client and displays the error category.
 
 Sources: https://www.mongodb.com/docs/languages/python/pymongo-driver/current/security/tls/ ; https://www.mongodb.com/docs/languages/python/pymongo-driver/current/connect/connection-options/server-selection/
 
@@ -310,7 +310,7 @@ Now the SSL box. sslmode equals require gives you encryption. verify-full also c
 
 The screenshot is a redacted overview from August 25, 2026. The image marks the Connect button.
 
-The code makes a uniquely named practice schema, so your table does not collide with a real one, and it clears the connection URL after the attempt. If it fails, check network reachability, credentials, project availability, the SSL settings, and permission to create the schema. SQLite remains optional later practice; it does not demonstrate an Atlas connection.
+The code makes a uniquely named practice schema, so your table does not collide with a real one, and it clears the connection URL after the attempt. If it fails, check network reachability, credentials, project availability, the SSL settings, and permission to create the schema. SQLite is available for later practice.
 
 Sources:
 https://supabase.com/docs/guides/database/connecting-to-postgres
@@ -350,15 +350,15 @@ Row three is the trap. If you reset setup before every import, every run starts 
 
 Then read the last line. Equal counts can hide changes. A program could overwrite a title with the wrong text, replace the wrong record, or store a broken list, and the total would still be seventy-five. So the notebook also compares stored values with the source and checks the grouped query independently.
 
-For our unchanged source, idempotent means running it again leaves the same logical records and values. It does not keep history, and it does not delete records a future source leaves out.
+For our unchanged source, idempotent means running it again leaves the same logical records and values.
 
 ## Slide 26
 
 This retained diagram shows the evidence we want: zero records, then seventy-five after the first import, then seventy-five after the second import. For today's Atlas path, run Cell 08 once, connect in Cell 10, and run Cell 11 twice in the same collection. The stable source field is cveID. The small SQL cve_id label in the diagram is only the optional SQL paths' name for that same identifier; Atlas keeps cveID.
 
-The first import inserts seventy-five documents. The repeated import inserts zero and matches seventy-five existing identifiers. Read the modified counter actually returned; do not promise it will be zero. In our real local MongoDB test it reported seventy-five on the repeat even though the complete selected values and types matched. Idempotency here means rerunning the import preserves the same logical records and values. Preserve both count pairs in the printed history.
+The first import inserts seventy-five documents. The repeated import inserts zero and matches seventy-five existing identifiers. Read the modified counter from your own output. In our real local MongoDB test it reported seventy-five on the repeat even though the complete selected values and types matched. Idempotency here means rerunning the import preserves the same logical records and values. Preserve both count pairs in the printed history.
 
-Then Cell 14 compares every selected value and type of all seventy-five stored documents with the checked source. Cell 15 checks the grouping against a separate Python count. Equal row counts alone would not establish those things.
+Then Cell 14 compares every selected value and type of all seventy-five stored documents with the checked source. Cell 15 checks the grouping against a separate Python count.
 
 ## Slide 27
 
@@ -370,7 +370,7 @@ The SQL paths do the same thing in SQL. Their import uses INSERT with ON CONFLIC
 
 Replacing the whole document is a deliberate choice here. This is a disposable import collection, and the source is authoritative, so a replace even repairs a value someone changed. But if an application stored its own notes on these documents, a full replace would erase them. That application would need a different update design.
 
-Read the line at the bottom. This loop only touches IDs that are in the source. It does not delete a record a later source drops, and it does not keep earlier versions. Those are separate requirements you would build on purpose.
+Read the line at the bottom. This loop only touches IDs that are in the source.
 
 Sources:
 https://www.mongodb.com/docs/languages/python/pymongo-driver/current/crud/replace/
@@ -383,7 +383,7 @@ The table asks a question: something fails on the fourth write, so what happens 
 
 In the SQL paths, the notebook wraps the batch in a transaction. Say the fourth row breaks a constraint. The transaction rolls back, and the first three writes go with it. You never get a half-applied batch. Anything committed before that transaction is outside the rollback, of course.
 
-The MongoDB loop is different. Each replace_one is its own write, and each one is atomic for its one document. If the fourth call fails, the first three replacements are already done, and they stay. This code does not wrap the seventy-five documents in one transaction.
+The MongoDB loop is different. Each replace_one is its own write, and each one is atomic for its one document. If the fourth call fails, the first three replacements are already done, and they stay.
 
 Is that a disaster? Look at the third row. Rerun the unchanged source, and the stable IDs let the import match what is already there and finish the rest. That is idempotency doing its job. You still verify afterward, and a real retry policy would need more thought about changing sources, other writers, or a record that is permanently malformed.
 
@@ -399,9 +399,9 @@ Trace the hypothetical change in the example. Suppose somebody changes only the 
 
 Cell 14 independently reads back every document, leaving out only MongoDB's generated _id, sorts by cveID, and compares the result with the checked source. It also checks the seven string fields and the cwes array of strings. The known first record is printed separately so you can inspect a concrete example. Cell 14 checks all seventy-five stored records against their sources.
 
-This model stores each calendar date as a YYYY-MM-DD string. The source did not specify a time of day. Store cwes as a list.
+This model stores each calendar date as a YYYY-MM-DD string. Store cwes as a list.
 
-Rerunning the unchanged import would repair source-controlled values, because the source is authoritative for this disposable collection. This does not preserve edit history. The passing check confirms the imported records and types match this snapshot.
+Rerunning the unchanged import would repair source-controlled values, because the source is authoritative for this disposable collection. The passing check confirms the imported records and types match this snapshot.
 
 ## Slide 30
 
@@ -426,7 +426,7 @@ So how does changing GROUP_FIELD actually reach the SQL? This slide answers that
 
 Read the code. GROUP_FIELD is set to product. allowed_columns is a small dictionary with exactly two entries. vendorProject maps to the column vendor_project, and product maps to product. The next line looks up the column name. The full cell rejects any choice outside those two entries, so a misspelling or something malicious stops right there. Only those two names can ever reach the SQL.
 
-Then, in the PostgreSQL path, sql.Identifier quotes the chosen column as a name. The SQLite path builds its SQL from the same restricted mapping. Either way, no free text is pasted into a command.
+Then, in the PostgreSQL path, sql.Identifier quotes the chosen column as a name. The SQLite path builds its SQL from the same restricted mapping.
 
 Why not just use percent s, like we did for the CVE ID? Read the last line. A percent s placeholder binds a value. It can say "where cve_id equals this." It cannot say "group by this column," because the SQL parser treats names and values as different things.
 
@@ -453,7 +453,7 @@ Retain evidence before any optional cleanup. The final cleanup cell defaults to 
 
 Cleanup is optional after both grouped queries, verification, and the saved handoff. Cell 16 starts with RUN_CLEANUP False. Leaving it there keeps your practice collection for now. Do not run cleanup before completing the evidence.
 
-If you deliberately set it True, the Atlas branch removes only the named kev_ collection created by this run from cst4714_week13, then closes the client. It does not drop the whole database or any unrelated collection. The temporary runtime slash-thirty-two rule is separate; remove it in Atlas when no longer needed or let its intended expiration end it.
+If you deliberately set it True, the Atlas branch removes only the named kev_ collection created by this run from cst4714_week13, then closes the client. The temporary runtime slash-thirty-two rule is separate; remove it in Atlas when no longer needed or let its intended expiration end it.
 
 The other table rows describe optional SQLite and PostgreSQL paths. SQLite closes its in-memory database. PostgreSQL removes its practice table and only removes the schema if it is empty; no CASCADE is used.
 

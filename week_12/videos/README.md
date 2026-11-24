@@ -1,6 +1,6 @@
 # Week 12 videos
 
-Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams illustrate the design.
+Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams trace the steps in each example.
 
 ## [Replica sets: oplog, lag, and elections](01_replica_set_election.mp4) (1:24)
 
@@ -26,4 +26,4 @@ A deletion replicates to every member, so only a separate artifact still holds t
 
 [Watch](03_logical_recovery.mp4) · [Subtitles](03_logical_recovery.srt)
 
-Editable source: `course/animations/week_12/` in the course authoring folder. Videos © 2026 Atilio Barreda, CC BY-NC-SA 4.0; source code MIT.
+Videos © 2026 Atilio Barreda, CC BY-NC-SA 4.0; source code MIT.

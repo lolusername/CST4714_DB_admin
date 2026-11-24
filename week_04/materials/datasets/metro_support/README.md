@@ -24,17 +24,14 @@ loading instructions below. Run this setup before the lab.
 ### Supabase SQL Editor
 
 Supabase hosts a PostgreSQL database for each project. Your browser's SQL Editor
-sends statements to that database and displays its response. Closing the editor
-does not remove committed tables or rows.
+sends statements to that database and displays its response. Committed tables and rows persist after you close the editor.
 
 1. Open the [Supabase dashboard](https://supabase.com/dashboard). Use a personal
    course-practice project, or create one in an organization on the **Free** plan.
    Name it something recognizable, such as `cst4714-practice`, and select a nearby
    region. Keep its database password private; it is different from your
    dashboard login. Wait for the database to finish starting.
-2. In that project, open **SQL Editor** and create a new query. You do not need
-   Python, a connection string, an API key, or an IP allowlist for this dashboard
-   exercise. Native database connections come later.
+2. In that project, open **SQL Editor** and create a new query. Use the dashboard’s SQL Editor for this exercise. Native database connections come later.
 3. Paste this first statement into the editor and choose **Run**:
 
 ```sql
@@ -42,12 +39,11 @@ SELECT 2 + 3 AS sum, current_database() AS database_name;
 ```
 
 The result contains one row with `sum = 5`. `AS` labels an output column;
-`current_database()` asks the server which database answered. This calculation
-does not create a table. It checks that you can submit SQL and read a result.
+`current_database()` asks the server which database answered. The query displays its result in the editor. It checks that you can submit SQL and read a result.
 
 If Supabase offers only a paid option or says you have no free project available,
 use the browser option below. Do not upgrade or delete another project's work
-for this lab. You do not need to enable public API access to the course schema.
+for this lab. Keep the course schema private.
 
 ### Browser PostgreSQL Without an Account
 
@@ -57,8 +53,7 @@ first statement above, and press **Enter** to execute it. Leave extension
 settings unchanged. Paste complete multiline blocks into that prompt, then press
 Enter once. Results appear above the prompt.
 
-This option supports both of this week's exercises. Its database is stored in this
-browser's local storage, not in a Supabase project. Return using the same browser
+This option supports both of this week's exercises. This database lives in the browser’s local storage. Return using the same browser
 profile and keep your SQL file outside the page. Clearing site data, using a
 different profile, or choosing **Clear Playground Database** can remove your
 practice state. Export your SQL and keep a saved copy.
@@ -77,8 +72,7 @@ dedicated practice environment with no work you need to keep. Do not rerun it
 between these two labs; the second lab uses the first lab's view.
 
 1. Open [postgres_setup.sql](postgres_setup.sql). On GitHub, use **Raw** to see
-   just the SQL. Copy the entire file, including its final count query. The
-   triple backticks surrounding examples in Markdown are not part of SQL.
+   just the SQL. Copy the entire file, including its final count query. Copy only the SQL inside the Markdown code block.
 2. Paste it into a new Supabase SQL query and run the complete script, or paste
    it at the PGlite prompt and press Enter. If the editor warns about destructive
    SQL, reread the reset warning above and confirm the target is disposable
@@ -121,8 +115,7 @@ of the twelve stored tickets. The missing assignee for 1004 represents a request
 that has not yet been assigned.
 
 In Supabase **Table Editor**, change the schema selector from `public` to
-`metro_support`, then open `tickets`. An empty `public` list does not mean the
-whole database is empty. The screenshot shows where to find this selector;
+`metro_support`, then open `tickets`. Select the `metro_support` schema to find the lab tables. The screenshot shows where to find this selector;
 it predates your loaded tables.
 
 ![Supabase Table Editor showing the schema selector set to public, above the table list. Account identifiers are redacted. Captured August 25, 2026.](../../textbook/figures/cloud_interfaces/supabase_table_editor.png)
@@ -132,9 +125,9 @@ it predates your loaded tables.
 | What you see | What it means and what to do |
 |---|---|
 | `relation "tickets" does not exist` | Try the qualified name `metro_support.tickets`. A new SQL Editor request may not use the setup's search path. |
-| `relation "metro_support.tickets" does not exist` | Check the selected project and whether the whole setup succeeded there. Opening a SQL file does not execute it. |
+| `relation "metro_support.tickets" does not exist` | Check the selected project and whether the whole setup succeeded there. Open the SQL file, select the setup statements, and run them. |
 | `syntax error` near a backtick or a heading | Paste SQL only, without Markdown fences or surrounding prose. Read the first reported error. |
-| A count or `SELECT` returns zero rows | The query ran. Check its filter and the starting data rather than treating an empty result as a broken connection. |
+| A count or `SELECT` returns zero rows | The query ran. Check the filter against the starting data to see which rows should match. |
 | `violates ... constraint` | The server reached the table and rejected a proposed value. Read the named rule and compare it with the value, especially during the lab's expected-failure test. |
 | `current transaction is aborted` | An earlier statement failed inside a transaction. Run `ROLLBACK;` by itself, correct the earlier error, and retry the intended block. |
 
