@@ -8,7 +8,7 @@ Discord describes partitioning messages by channel and time bucket, handling hot
 
 ## Connection to this lesson
 
-Begin with the application’s read and growth patterns. A ticket page and years of history may need different access paths; embedding all future events in one document is not automatically the right design.
+Begin with the application’s read and growth patterns. Compare the access patterns of the ticket page and the event history before deciding what to embed.
 
 We apply the company's example to the Metro Support design below.
 

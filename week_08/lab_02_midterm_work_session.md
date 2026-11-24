@@ -60,7 +60,7 @@ Run the cells in order. Each step says what you should see.
 | 4 | Part 5 | Write three checks first, then back up Supabase, restore the copy into a separate database in Colab, and compare | every check says MATCH | 15 |
 | 5 | | Write where you are and your next step, then run cleanup | | 5 |
 
-Part 3 (blocking) is not in this lab. Use the
+Use the Week 5 notebook for Part 3 on blocking. Use the
 [Week 5 notebook](materials/notebooks/02_postgres_transactions_locks.ipynb) or
 its supplied trace.
 

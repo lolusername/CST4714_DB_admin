@@ -20,7 +20,7 @@ The browser almost never talks to the database directly.
 
 6
 00:00:21,466 --> 00:00:25,566
-A field in the body is input, not proof of who sent it.
+The server verifies the sender's identity.
 
 7
 00:00:26,066 --> 00:00:30,166
@@ -48,7 +48,7 @@ Pressing Submit again could store a second copy of the same request.
 
 13
 00:00:48,566 --> 00:00:50,566
-"No success message" is not the same as "no change".
+Check the stored row after a lost reply.
 
 14
 00:00:51,066 --> 00:00:57,366
@@ -60,7 +60,7 @@ Showing a list later is a different operation: a query with its own conditions.
 
 16
 00:01:01,366 --> 00:01:03,866
-A successful save does not prove that a later query will include the row.
+Check which saved tickets the dashboard query returns.
 
 17
 00:01:04,366 --> 00:01:09,700
@@ -72,5 +72,5 @@ Random changes to several layers at once hide the real cause.
 
 19
 00:01:14,300 --> 00:01:24,300
-Remember: A request crosses several layers before it becomes stored data. Fields in a request body are input, not proof of identity. "The client saw no success" ≠ "the database made no change". Showing a list is a separate read with its own conditions. Find the failing layer before changing anything.
+Remember: A request crosses several layers before it becomes stored data. The server verifies who sent the request. After a lost reply, check the saved ticket. Showing a list is a separate read with its own conditions. Find the failing layer before changing anything.
 

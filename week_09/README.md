@@ -21,7 +21,7 @@ Use [Chapter 9: Documents Emerged From Changing Workloads](../Operating_Cloud_Da
 - **Before Day 2:** read from **JSON Became a Common Interchange Format** through **Worked Example: Compare Two Ticket Shapes**. No SQL, MQL, or Python execution is required for the JSON design lab.
 
 Bring one point you want clarified. Reading supports the in-class work; it does
-not add a separate reading report. Optional textbook practice is not required
+not add a separate reading report. Optional textbook practice
 unless the weekly lab assigns it.
 
 ## Class Materials
@@ -58,7 +58,7 @@ account may be required. The required lab works without these services.
 ## Day 1: Why Multiple Data Models Exist
 
 We move from relational history to the workload pressures behind key-value,
-wide-column, document, graph, and vector systems. The goal is not to rank models.
+wide-column, document, graph, and vector systems.
 The goal is to match an abstraction to a question and name the operational cost.
 
 **Slides 1-16:** recover the meaning of keys, follow a four-vertex dependency
@@ -102,6 +102,6 @@ See the [licenses](materials/LICENSE.md) and [source attributions](materials/ATT
 ## Worked examples and complete reference
 
 - [Complete data reference](DATA_REFERENCE.md): read the relevant fixture before the first query or design.
-- [Industry / career connection](INDUSTRY_CONNECTION.md): a primary-source company case with a short application; no extra submission.
+- [Industry / career connection](INDUSTRY_CONNECTION.md) includes a company case and a short application.
 - The deck’s **worked-example appendix, slides 34–36**, brings the relevant records, result, and industry connection together. Use it before the lab, then return to the existing lab instructions.
 - [Static concept diagram](illustrations/README.md): a still image with an editable Manim source and text description. The PowerPoint keeps the original embedded videos; PDF and GitHub previews show still images.

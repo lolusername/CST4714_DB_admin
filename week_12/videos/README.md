@@ -18,9 +18,9 @@ Follow submission-1099 while member C is cut off: which acknowledgments w:1, maj
 
 [Watch](02_write_read_concern.mp4) · [Subtitles](02_write_read_concern.srt)
 
-## [Replication is not backup: logical recovery](03_logical_recovery.mp4) (1:31)
+## [Recovering deleted records from an export](03_logical_recovery.mp4) (1:31)
 
-[![Replication is not backup: logical recovery](03_logical_recovery.png)](03_logical_recovery.mp4)
+[![Recovering deleted records from an export](03_logical_recovery.png)](03_logical_recovery.mp4)
 
 A deletion replicates to every member, so only a separate artifact still holds the five tickets. Restore it into a separate target, then catch a wrong subject that the count and ID checks miss and repair it from the saved version.
 

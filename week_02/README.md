@@ -41,9 +41,7 @@ For another explanation, the free PostgreSQL tutorial covers
 [transactions](https://www.postgresql.org/docs/current/tutorial-transactions.html).
 These optional tutorials use weather records.
 
-Bring one point you want clarified. Reading supports the in-class work; it does
-not add a separate reading report. Exercises on the linked documentation pages
-are optional unless the weekly lab assigns them.
+Bring one point you want clarified. Use the reading to prepare for class. The weekly lab lists the exercises to complete.
 
 ## Class Materials
 

@@ -27,9 +27,7 @@ rules to the supplied schema in class. There is no separate reading submission.
 - **Before Day 1:** read **Views Create a Query Interface** through **Introspection Reveals the Actual State**. Trace the explicitly committed and rolled-back insertions. Reading examples use separate object names so they can coexist with the lab.
 - **Before Day 2:** read from **What a Migration Must Establish** through **Verification Should Cover Structure and Meaning**. Focus on unknown historical values and compatibility with older clients.
 
-Bring one point you want clarified. Reading supports the in-class work; it does
-not add a separate reading report. Optional textbook practice is not required
-unless the weekly lab assigns it.
+Bring one point you want clarified. Use the reading to prepare for class. The weekly lab lists the exercises to complete.
 
 ## Class Materials
 

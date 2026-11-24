@@ -15,7 +15,7 @@ Explain what an acknowledged write does and does not promise; distinguish a repl
 - [Week 12 PowerPoint](week_12_mongodb_reliability.pptx), [PDF handout](week_12_mongodb_reliability.pdf), and [spoken transcript](week_12_mongodb_reliability_transcript.md).
 - [Complete field and record reference](DATA_REFERENCE.md), also in the notebook before the first write.
 - [Course corrections](../COURSE_CORRECTIONS.md) clarify dated screenshots and backup availability.
-- **Before the recovery lesson:** read [Chapter 12](../Operating_Cloud_Databases.pdf), focusing on the replica/acknowledgment and logical-recovery sections. There is no separate reading report.
+- **Before the recovery lesson:** read [Chapter 12](../Operating_Cloud_Databases.pdf), focusing on the replica/acknowledgment and logical-recovery sections.
 
 ## Prepare the actual Atlas connection
 
@@ -52,13 +52,13 @@ Short silent animations with captions (3 for this week). Each has a subtitle fil
 
 - [Replica sets: oplog, lag, and elections](videos/01_replica_set_election.mp4) (1:24): A primary records ticket 1099 in its oplog and two secondaries copy it at different speeds. When the primary is lost, a voting majority can elect a new one, but two isolated survivors cannot.
 - [Write concern, read preference, and read concern](videos/02_write_read_concern.mp4) (1:39): Follow submission-1099 while member C is cut off: which acknowledgments w:1, majority, and w:3 can collect, why a timeout means "unknown", and why a read from C can miss a write that A and B kept.
-- [Replication is not backup: logical recovery](videos/03_logical_recovery.mp4) (1:31): A deletion replicates to every member, so only a separate artifact still holds the five tickets. Restore it into a separate target, then catch a wrong subject that the count and ID checks miss and repair it from the saved version.
+- [Recovering deleted records from an export](videos/03_logical_recovery.mp4) (1:31): A deletion replicates to every member, so only a separate artifact still holds the five tickets. Restore it into a separate target, then catch a wrong subject that the count and ID checks miss and repair it from the saved version.
 
 <!-- videos:end -->
 
 ## Optional reference and limits
 
-- [The former reliability decision exercise](lab_01_reliability_decisions.md) is optional, ungraded practice; it has no separate submission this week.
+- [Reliability decisions](lab_01_reliability_decisions.md) is optional, ungraded practice.
 - [Full recovery notebook](materials/notebooks/05_mongodb_logical_recovery.ipynb) and [extended reference](reference_mongodb_recovery_extended.md) retain deeper reconstruction examples. Use the required Atlas route for class.
 - [Legacy local short notebook](materials/notebooks/05_mongodb_logical_recovery_short.ipynb) provides a local mock for reference.
 - Validator reconstruction is **not required this week**. It is optional reference; there is no next-week requirement implied.

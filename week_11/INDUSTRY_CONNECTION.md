@@ -6,4 +6,4 @@ Buffer's 2014 engineering account describes MongoDB aggregation reports and a re
 
 ## Use the case in this lesson
 
-Distinguish the company’s published situation from our classroom model. Explain one design choice and one piece of evidence you would carry into database work. This reading supports the existing activity and adds no separate submission.
+Distinguish the company’s published situation from our classroom model. Explain one design choice and one piece of evidence you would carry into database work.

@@ -21,7 +21,7 @@ Use [Chapter 11: MongoDB Operations Connect Pipelines, Rules, and Indexes](../Op
 - **Before Day 2:** read from **An Index Is an Ordered Access Path for a Workload** through **Validation and Indexing Solve Different Problems**. Use these ideas in the performance lab and case-study response.
 
 Bring one point you want clarified. Reading supports the in-class work; it does
-not add a separate reading report. Optional textbook practice is not required
+not add a separate reading report. Optional textbook practice
 unless the weekly lab assigns it.
 
 ## Class Materials

@@ -124,7 +124,7 @@ $unwind takes a document with an array and emits one document per element. Then 
 
 Look at the result table: 1001 assigned, 1001 created, 1002 created. Three rows. Two quick points. Assigned appears before created only because the sort is alphabetical. The sort orders the event labels alphabetically. And ticket 1004 is gone entirely. A default $unwind produces nothing for an empty array, so a ticket with no events contributes no rows.
 
-This is a perfectly good operation when events are what you want to analyze. If you want to count event types, you need the individual events. The problem comes when you put this stage in front of a ticket count. A ticket with two events now shows up twice. And here is the sneaky part: every row still has a ticket_id field, so the output looks like ticket rows. Seeing that field does not mean each ticket appears once. Trace a source record through the stage to identify what each output row represents.
+This is a perfectly good operation when events are what you want to analyze. If you want to count event types, you need the individual events. The problem comes when you put this stage in front of a ticket count. A ticket with two events now shows up twice. And here is the sneaky part: every row still has a ticket_id field, so the output looks like ticket rows. Read the IDs to see how many times each ticket appears. Trace a source record through the stage to identify what each output row represents.
 
 Sources: Notebook 07 event arrays. Unwind behavior: https://www.mongodb.com/docs/manual/reference/operator/aggregation/unwind/
 
@@ -156,7 +156,7 @@ Sources: Buffer, Sunil Sadasivan, July 9, 2014, https://buffer.com/resources/how
 
 ## Slide 14
 
-Separate the evidence in the case from our classroom application. Buffer reports building event analytics and encountering growing arrays. The event-versus-ticket comparison on this slide is our application of that experience to the four records in Notebook 07. We are not claiming Buffer ran this exact pipeline.
+Separate the evidence in the case from our classroom application. Buffer reports building event analytics and encountering growing arrays. The event-versus-ticket comparison on this slide is our application of that experience to the four records in Notebook 07. Apply this pipeline to our tickets.
 
 In our collection, one source document represents one ticket. Ticket 1001 owns two events. After unwind, each output document represents one event, so 1001 appears twice. Ticket 1004 has an empty array and contributes no output row under the default unwind behavior. The three resulting rows are a valid event list, but interpreting them as three distinct active tickets would be a reporting error. A developer needs to name the unit being counted before writing the calculation.
 
@@ -174,7 +174,7 @@ For data engineering, the deliverable is more than a query that runs. State whet
 
 The optional validation topic connects to backend engineering: describe the write contract and exercise it. The allowed status list and required date should have examples that pass and examples that fail for one clear reason. Test enforcement on a real MongoDB server. A Python rule rehearsal or a supplied trace can teach the expected behavior, but it cannot prove that a server rejected a write.
 
-For database administration, verify that the intended rule was actually installed with the necessary permissions. Reading a collection successfully does not establish that a user can modify its validator. For the next class, the same evidence habit applies to indexes: check the query's result and then measure the work it performs.
+For database administration, verify that the intended rule was actually installed with the necessary permissions. Check whether the account can change the validator. For the next class, the same evidence habit applies to indexes: check the query's result and then measure the work it performs.
 
 In a portfolio or interview, you can describe the actual artifact: a pipeline, the four source records, the expected output, the edge case, and the test environment. That makes the claim inspectable. We now return to the individual notebook assignment, where the same distinctions belong in the existing explanation cell.
 
@@ -188,7 +188,7 @@ Save your own Colab copy before starting. The small labels on code cells are our
 
 Today we complete the aggregation and $unwind work in Notebook 07. Extend the active-ticket summary with urgent count and newest opening, and use ticket IDs to explain the array-counting error. Save the pipeline, its outputs, and your aggregation explanation.
 
-Submit the Colab link to your completed notebook in Brightspace. Make sure the instructor has viewing access. Share your saved Colab copy. Your explanation stays in the notebook’s existing explanation cell; there is no separate report or repository.
+Submit the Colab link to your completed notebook in Brightspace. Make sure the instructor has viewing access. Share your saved Colab copy. Write your explanation in the notebook’s explanation cell.
 
 Validation is not needed for this lab. It remains optional reference. Keep the reference section collapsed and do not run it or include validation answers in this lab submission. The work for this lab ends with the aggregation explanation.
 
@@ -278,7 +278,7 @@ Sources: Executed local course sort demonstration on MongoDB 8.0.29. Explain met
 
 ## Slide 24
 
-After the index, the plan still has FETCH in it. Is that a problem? No. Look at the first box. The index contains status, opened_at, and ticket_id. But the page also needs subject, and subject is not in the index. So for each matching entry, MongoDB goes to the document to get it. Using an index does not mean every returned value comes from the index.
+After the index, the plan still has FETCH in it. Is that a problem? No. Look at the first box. The index contains status, opened_at, and ticket_id. The page also needs subject, so MongoDB fetches the document. So for each matching entry, MongoDB goes to the document to get it. Use the execution plan to see which fields MongoDB fetches from each document.
 
 A query that never has to touch the documents, because everything it needs is in the index, is called a covered query. Read the third box: this result uses an index without being a covered query. And that is fine. The index provided the first twenty matching tickets in order. Fetching those twenty documents afterward fits perfectly well with that benefit.
 

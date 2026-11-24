@@ -95,7 +95,7 @@ Ticket **1004** starts with priority **low**.
 - The six values you actually observed, in the table the template provides.
 - Why the final values differ.
 
-Leave the committed **medium** in place. Simple updates are enough; adding ticket events is not required.
+Leave the committed **medium** in place. A simple update meets this requirement.
 
 ## Part 3: Explain one blocking incident
 
@@ -110,7 +110,7 @@ Use your Week 5 results, or run the controlled example again in the [Week 5 bloc
 - **Blocked and blocking session IDs:** the blocked session waits with `wait_event_type` Lock, and its `blocking_pids` value lists the session it is waiting for.
 - **The row involved, the action that released the block, and the final row values.**
 
-The notebook uses a table called **lock_lab**. Read ticket 1004 from the supplied data. It starts at medium priority with status open. Include the notebook only if you changed its code. Screenshots are optional and earn no extra credit.
+The notebook uses a table called **lock_lab**. Read ticket 1004 from the supplied data. It starts at medium priority with status open. Include the notebook only if you changed its code. Screenshots are optional.
 
 ## Part 4: Test one improvement
 
@@ -130,7 +130,7 @@ The recommended route is the index experiment already in the starter. Its query 
 | Scan in the plan | Seq Scan on tickets | Seq Scan on tickets |
 | index_bytes | not applicable | 16384, which is 16 kB |
 
-With only 12 tickets, PostgreSQL may keep a sequential scan and timings may barely change. **That is a correct result.** An honest explanation can earn full credit; a faster time or an Index Scan is not required. Do not add fake rows or change planner settings to force a result. Cost numbers can drop after CREATE INDEX even when the plan stays the same, so compare the scan type.
+With only 12 tickets, PostgreSQL may keep a sequential scan and timings may barely change. **That is a correct result.** Explain the planner’s choice using the measurements you collected. Do not add fake rows or change planner settings to force a result. Cost numbers can drop after CREATE INDEX even when the plan stays the same, so compare the scan type.
 
 **Write in README, section "One improvement"**
 
@@ -236,7 +236,7 @@ def run_sql(sql_text):
         print("SQLSTATE", error.sqlstate, error.diag.message_primary)
 ```
 
-Then put one complete block, such as all of 2A, in a new cell: `run_sql("""paste the block here""")`. It prints each result in order. Run `connection.close()` when you finish. The helper is not part of your submission.
+Then put one complete block, such as all of 2A, in a new cell: `run_sql("""paste the block here""")`. It prints each result in order. Run `connection.close()` when you finish.
 
 ## Reuse
 

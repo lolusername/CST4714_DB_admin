@@ -8,7 +8,7 @@ MongoDB’s customer account describes Forbes using a document-based content sys
 
 ## Connection to this lesson
 
-Flexible documents still require deliberate field meanings, precise filters, and checks after writes. Our ticket examples provide those concrete checks; the case does not establish a particular schema for Forbes.
+Flexible documents still require deliberate field meanings, precise filters, and checks after writes. Apply the case to the ticket examples below.
 
 We apply the company's example to the Metro Support design below.
 

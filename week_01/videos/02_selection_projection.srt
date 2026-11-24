@@ -8,11 +8,11 @@ The lab's four tickets (subjects shortened). Each row is one support request.
 
 3
 00:00:11,200 --> 00:00:14,200
-ticket_id is the primary key: unique, never NULL. Follow IDs, not positions.
+ticket_id is the primary key: unique, never NULL. Follow each ticket ID.
 
 4
 00:00:14,700 --> 00:00:18,100
-NULL here means nobody is assigned yet. The ticket itself is not missing.
+Ticket 1004 is awaiting assignment.
 
 5
 00:00:18,600 --> 00:00:22,500
@@ -48,7 +48,7 @@ All four tickets remain, each with two columns. The stored table keeps every col
 
 13
 00:00:51,500 --> 00:00:57,700
-Hiding a column on a screen is not, by itself, security.
+Control access through database permissions.
 
 14
 00:00:58,200 --> 00:01:00,400

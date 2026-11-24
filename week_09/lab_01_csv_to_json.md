@@ -32,7 +32,7 @@ Here is a small JSON example using a different ticket:
 ```
 
 The number 104 identifies another record; the object does not contain that
-person's name. Also notice that `null` is not quoted.
+person's name. The unquoted literal null represents an explicit null value.
 
 In `week_09_json_models.md`, write two fenced `json` blocks. Each block must
 contain one complete JSON object:

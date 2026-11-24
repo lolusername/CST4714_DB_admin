@@ -1,6 +1,6 @@
 """Static Manim diagrams. Render with manim -s -r 2240,1000.
 
-Only self.add is used; these are still diagrams, not animations. Worked example
+These still diagrams use self.add. Worked example
 values come from the Metro Support fixture, except the explicitly labeled tie.
 """
 from manim import *

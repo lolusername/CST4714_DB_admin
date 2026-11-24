@@ -344,7 +344,7 @@ Submit that record as one Brightspace text entry. The Chapter 10 response in Par
 
 These three short videos review the week's examples. The first follows the array query and shows why conditions can match different events. The second compares write results and shows how a status change and an event can happen in one atomic update. The third compares embedding and referencing for a ticket page.
 
-Each video is silent, with captions on screen. The diagrams are illustrations of the operations we've discussed. They aren't measurements of database performance.
+Each video is silent, with captions on screen. The diagrams are illustrations of the operations we've discussed. They illustrate the number of operations in this design.
 
 You can use the videos to review a point that still feels unclear. Download the PowerPoint and open it in desktop PowerPoint to play the embedded videos from this slide. The weekly folder also has the individual MP4 files and subtitles. The PDF contains still thumbnails.
 

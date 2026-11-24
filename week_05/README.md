@@ -24,9 +24,7 @@ Connection help: [Supabase PostgreSQL connection guide](https://supabase.com/doc
 - **Before Day 1:** read from **A Transaction Is a Unit of Decision** through **ACID Describes Guarantees, Not a Product Label**, including the state/history pair and zero-row UPDATE discussion.
 - **Before Day 2:** read from **Concurrency Creates Useful Work and New Questions** through **Safe Incident Communication**. Follow the visible row versions, blocker, waiter, and final state. The on-call/write-skew example is enrichment; the lab does not require implementing isolation protocols.
 
-Bring one point you want clarified. Reading supports the in-class work; it does
-not add a separate reading report. Optional textbook practice is not required
-unless the weekly lab assigns it.
+Bring one point you want clarified. Use the reading to prepare for class. The weekly lab lists the exercises to complete.
 
 ## Class Materials
 

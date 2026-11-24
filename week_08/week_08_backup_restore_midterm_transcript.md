@@ -75,7 +75,7 @@ The data gap runs from fourteen hundred to fourteen seventeen. That is seventeen
 
 Now the bottom of the slide. An RPO of five minutes: seventeen is more than five, missed. An RTO of ten minutes: twelve is more than ten, missed again. We did recover. We did not keep the promise. Those are different outcomes.
 
-Two limits. Seventeen minutes does not tell you how many rows were lost; a quiet afternoon and a busy one look the same on a clock. An export represents the data visible at the snapshot moment. For a large, slow export those can differ a lot, so record which state your artifact represents.
+Two limits. Check the activity log to estimate how many rows changed in those seventeen minutes. An export represents the data visible at the snapshot moment. For a large, slow export those can differ a lot, so record which state your artifact represents.
 
 [Sources]
 - Course textbook, Chapter 8, Work Through the Clock Times. All times are an authored illustrative scenario.
@@ -89,7 +89,7 @@ Look at the first row. A logical export describes objects and rows as database c
 
 The second row is physical. A physical backup keeps database storage and a continuous sequence of write-ahead log records. With a compatible base backup and an unbroken chain of logs, a supported setup can recover to a chosen point in time. But if a required log segment is missing, the chain breaks.
 
-We are not building that infrastructure today. As the box at the bottom says, we use pg_dump and pg_restore for one course schema.
+ As the box at the bottom says, we use pg_dump and pg_restore for one course schema.
 
 Here is one reason pg_dump is a good tool for this: it exports related tables from one consistent snapshot. If you download several CSV files while the application keeps writing, each file can capture a different moment. And read the last line. A CSV alone does not carry its keys, checks, indexes, or grants. You get rows without rules, and after the restore we are going to test the rules.
 
@@ -122,7 +122,7 @@ Here is the database we will recover. It is a smaller cousin of Metro Support: t
 
 Look at the three boxes. In users, user_id is the primary key. In tickets, ticket_id is the primary key, and requester_id is a foreign key pointing at a user. In ticket_events, event_id is the primary key, and ticket_id points at the parent ticket. Read the line underneath: one user can request many tickets, and one ticket can have many events.
 
-Why do the foreign keys matter for recovery? The database enforces these rules. If a restore copied the rows but lost the rules, later writes could create states the original database would have rejected. So we test behavior, not only data. There is also a named status check on tickets. It allows values like open and in_progress and rejects a value like almost_done. We will use that in a controlled failure test.
+Why do the foreign keys matter for recovery? The database enforces these rules. If a restore copied the rows but lost the rules, later writes could create states the original database would have rejected. Test the restored data and its behavior. There is also a named status check on tickets. It allows values like open and in_progress and rejects a value like almost_done. We will use that in a controlled failure test.
 
 Now the note at the bottom, which trips people up. The notebook fixture is three, three, and five. The full Metro Support dataset from earlier weeks is eight users, twelve tickets, and twenty-one events, and some ticket details differ between the two. Neither is right for everything. Always compare against the actual source that produced your archive.
 
@@ -161,7 +161,7 @@ Look at the line at the bottom. For a custom archive, pg_dump ignores no-owner. 
 
 Versions matter too. We use client tools that match the server's major version. An older pg_dump cannot export a newer major server, and restoring into an older major version is not generally promised to work. Matching versions lets us concentrate on the restore.
 
-Finally, the schema is the scope. Server roles, other databases, and cloud project settings are not in this file. A real recovery plan lists the dependencies the selection leaves out.
+Finally, the schema is the scope. Export server roles and project settings separately if the recovery requires them. A real recovery plan lists the dependencies the selection leaves out.
 
 [Sources]
 - https://www.postgresql.org/docs/15/app-pgdump.html
@@ -171,11 +171,11 @@ Finally, the schema is the scope. Server roles, other databases, and cloud proje
 
 Before we trust the archive, we look inside it. pg_restore dash dash list reads the archive's table of contents without restoring anything. You should see the schema, the three tables, their table data, and the key constraints. One detail worth knowing: you will not see a separate line for the tickets_status_allowed check, and you will not see an index line. The check travels inside the table definition, so the list never shows it by name. That is one more reason we test it after the restore.
 
-Now read the table row by row, and focus on the last column. An inventory shows the expected objects appear. It does not show the restore will succeed; a dependency could be missing, or a command could fail. File size shows bytes exist. It says nothing about whether they are the right database or the complete scope.
+Now read the table row by row, and focus on the last column. An inventory shows the expected objects appear. Try the restore and check the exit status to uncover a missing dependency or a failing command. File size shows bytes exist. It says nothing about whether they are the right database or the complete scope.
 
 The third row is SHA-256, a cryptographic hash of the archive's bytes. Compare it with a trusted hash recorded earlier, and a mismatch tells you the file changed. But a hash of a bad original is still a hash of a bad original. It identifies the bytes in the file. Check the restored records separately.
 
-And the warning at the bottom is serious. Restoring a dump can run SQL chosen by whoever controlled the source. An unfamiliar dump is not passive data. In this lab, use only the archive you created from the notebook's own fixture.
+And the warning at the bottom is serious. Restoring a dump can run SQL chosen by whoever controlled the source. Review unfamiliar dumps before restoring them. In this lab, use only the archive you created from the notebook's own fixture.
 
 [Sources]
 - https://www.postgresql.org/docs/15/app-pgrestore.html
@@ -188,9 +188,9 @@ Now the restore itself, two commands. createdb makes the destination, RESTORE_DB
 
 Then pg_restore reads the archive into that target, and each option is there for a reason. exit-on-error stops at the first error. Without it, the restore keeps going and leaves you a confusing mix of successes and failures. single-transaction wraps this small restore in one transaction, so if anything fails, nothing half-restored is left behind. That is the first line in the box: stop on failure, keep it transactional.
 
-But notice what that option does not do. It does not clear out objects already in a target. It is not permission to aim the command at a populated project. That is why we start with an empty database made just for this drill.
+But notice what that option does not do. It does not clear out objects already in a target. Point the command at an empty practice database. That is why we start with an empty database made just for this drill.
 
-no-owner and no-privileges mean we are not recreating the source's owners and grants. That keeps the classroom example portable. But a restore that works under the local administrator does not prove the application's restricted role can connect and do its job. That is the second line in the box: review ownership and grants separately.
+The no-owner and no-privileges options leave ownership and grants for the target environment to supply. That keeps the classroom example portable. Test the restored application using its own restricted role. That is the second line in the box: review ownership and grants separately.
 
 Now the bottom box. Source and target are separate databases on one temporary server. That protects the source from being overwritten. It does not protect either one if the runtime disappears. Real backups need an independent location.
 
@@ -253,7 +253,7 @@ Run the cells in order and read the output as you go: source baseline, then dump
 
 In the section called Your Check: Compare One Known Ticket, first run the supplied check for ticket 1001. Then adapt it to ticket 1002 or 1003, read that ticket's original INSERT, and compare. Explain what this catches that row counts could miss. You may extend the columns for a different meaningful check.
 
-Then write your short recovery account right in the notebook, using the results already there. Say where you restored, what the checks showed, one thing still untested, and which connection would change if the source were Supabase. No second report.
+Then write your short recovery account right in the notebook, using the results already there. Say where you restored, what the checks showed, one thing still untested, and which connection would change if the source were Supabase.
 
 Keep the output, then run the final cleanup cell. It removes the practice databases and artifact folder and stops the Colab service. Submit your saved Colab sharing link individually through Brightspace. Keep the dump for the restore.
 
@@ -264,11 +264,11 @@ Keep the output, then run the final cleanup cell. It removes the practice databa
 
 ## Slide 17
 
-Welcome to Day 2, the PostgreSQL operations clinic. Read the line in the middle: a working schema must survive ordinary changes and mistakes. Accepting a few inserts is not enough. The relationships must model the problem, the transactions must keep the intended changes, and the operations must stay understandable when something waits, fails, or needs recovery.
+Welcome to Day 2, the PostgreSQL operations clinic. Read the line in the middle: a working schema must survive ordinary changes and mistakes. Test the stored records and the rules that govern future writes. The relationships must model the problem, the transactions must keep the intended changes, and the operations must stay understandable when something waits, fails, or needs recovery.
 
 We use your midterm operations case as the setting. The assignment already has the requirements and the rubric; these slides do not add new ones. The Week 8 page also asks you to revisit Chapter 3 on keys and constraints, so today, find the supplied schema's keys and three non-key integrity controls, and say which invalid state each one prevents.
 
-One distinction right away. The midterm has transaction work and a blocking investigation. They are related, but not interchangeable. A rollback in one connection does not show you diagnosed a second connection waiting on a lock. And a blocking observation does not show a correct committed business change.
+One distinction right away. The midterm has transaction work and a blocking investigation. They are related, but not interchangeable. Show the blocking session and the waiting session. Then read back the committed change.
 
 The improvement part lets you choose, for example, access control, an index, or a safe schema change. Pick a problem your case really has, and examine it with a comparison that fits.
 
@@ -301,7 +301,7 @@ This table is the decision you make in an incident, and the deciding factor is t
 
 Row one: the harmful write is still uncommitted. If we control that transaction and agree its work should go, ROLLBACK is the response. But look at the constraint: coordinate with the transaction owner, because that transaction may contain other work someone needs.
 
-Row two: the mistake has committed, but it is small and we know the correct fix. A reviewed compensating change is often safer than swapping in an older database. The constraint is to avoid overwriting valid newer work. Knowing a row was wrong yesterday does not mean its current value should be blindly replaced today.
+Row two: the mistake has committed, but it is small and we know the correct fix. A reviewed compensating change is often safer than swapping in an older database. The constraint is to avoid overwriting valid newer work. Check the current row before repairing the historical error.
 
 Row three: the needed state is gone and we need an earlier copy. Restore into a separate target, inspect it, then decide how to recover the content. Before the application uses it, reconcile the valid changes made since, and check permissions and behavior.
 
@@ -319,7 +319,7 @@ Here is that last point in practice. This table recalls the blocking exercise fr
 
 Why a separate connection? Because B is stuck waiting. You cannot ask a stuck session to diagnose itself.
 
-A query can appear slow while it waits for a lock. An index does not necessarily fix a lock wait. Here, release the blocking transaction.
+A query can appear slow while it waits for a lock. Find the session holding the lock. Here, release the blocking transaction.
 
 pg_blocking_pids gives you backend process identifiers. Explain what the number measures. You connect it to the transactions you deliberately started, and ask which operation it belongs to and why it still holds the lock.
 
@@ -358,7 +358,7 @@ Your checks must use your project's baseline. If you work with the full Metro Su
 
 Each check covers something different. Counts and structure catch missing objects. The known ticket and the report catch changed values. The constraint failure tests future behavior. And if getting the service back is the goal, roles, permissions, and a safe application connection belong in the plan too.
 
-Now the lines at the bottom. The midterm requires a plan. An executed restore is optional extra work. A plan can say an operator will compare the selected ticket. It cannot say the comparison passed unless someone ran it. Same for RPO and RTO: a fast restore of a tiny classroom fixture does not show a large production service will meet its target. Say what you measured and what still needs a drill.
+Now the lines at the bottom. The midterm requires a plan. An executed restore is optional extra work. A plan can say an operator will compare the selected ticket. It cannot say the comparison passed unless someone ran it. Measure RPO and RTO under the service’s expected workload and data volume. Say what you measured and what still needs a drill.
 
 [Sources]
 - Course assignments/midterm_project.md, Plan Recovery.
@@ -370,7 +370,7 @@ Read this paragraph as if a teammate just handed it to you. It is a worked examp
 
 It starts with scope: the three-table practice archive, restored into a separate database. Then the observations. The counts and the grouped status report matched the source. Ticket 1001 kept its subject and requester. The restored status rule rejected the invalid test value. Each sentence is a check someone could repeat.
 
-Then the last sentence names what was not done. Application roles were not restored, and reconnection was not tested, so this drill does not show the service is ready for traffic. That limit is part of the technical result. It tells the next person exactly what is left.
+Then the last sentence names what was not done. Restore the application roles and test reconnection before accepting traffic. That limit is part of the technical result. It tells the next person exactly what is left.
 
 Compare that with the sentence "everything worked." It tells the reader nothing: which database, which properties, what is still unsafe to assume. A precise handoff can be short and still let someone decide the next action.
 
@@ -404,7 +404,7 @@ On the left, IPv4. An IPv4 address is thirty-two bits, written as four numbers l
 
 On the right, IPv6. An IPv6 address is one hundred twenty-eight bits, written in groups of hexadecimal, like the second example. That is enough addresses for every device anyone will ever build.
 
-Here is the catch. They are two different protocols. A machine that can only speak IPv4 cannot open a connection to an address that exists only in IPv6. It is not slow. It simply has no route there.
+Here is the catch. They are two different protocols. A machine that can only speak IPv4 cannot open a connection to an address that exists only in IPv6. It simply has no route there.
 
 Now read the diagram at the bottom. A Colab runtime reaches only IPv4 addresses, and so do many home and campus networks. On the Free plan, Supabase's direct connection uses IPv6. So the top path fails, and the error usually says network is unreachable. The bottom path works: the session pooler accepts IPv4 and passes your connection on to your database.
 
@@ -486,7 +486,7 @@ The middle box is for any time left after Lab 2. Pick one incomplete part of you
 
 When you ask me for help, show me the exact command or query, the actual output, and what you expected. Tell me the operation and the error it returned. Keep passwords and private connection URLs off screen.
 
-This clinic adds no separate report. Everything stays in the midterm files the assignment describes.
+ Everything stays in the midterm files the assignment describes.
 
 Next week we start NoSQL models and JSON. We will compare them with the relational strengths you now know: keys and relationships, constraints, transactions, and declarative queries. Other models make sense once you can say what they keep, change, or give up for a particular workload.
 

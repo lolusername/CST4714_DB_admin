@@ -26,7 +26,7 @@ Use [Chapter 8: A Backup Matters Only When Recovery Works](../Operating_Cloud_Da
 - **Before Day 2:** read **Worked Example: A Recovery Runbook Entry** and **Safe Migrations and Recovery Are Connected**. Revisit Chapter 3's **Keys Identify and Connect Facts** and **Constraints Reject Invalid States** for the midterm schema work. In class, identify the supplied schema's keys and three non-key integrity controls, then explain which invalid state each prevents. This refresh prepares you for the midterm.
 
 Bring one point you want clarified. Reading supports the in-class work; it does
-not add a separate reading report. Optional textbook practice is not required
+not add a separate reading report. Optional textbook practice
 unless the weekly lab assigns it.
 
 ## Class Materials
@@ -111,6 +111,6 @@ See the [licenses](materials/LICENSE.md) and [source attributions](materials/ATT
 ## Worked examples and complete reference
 
 - [Complete data reference](DATA_REFERENCE.md): read the relevant fixture before the first query or design.
-- [Industry / career connection](INDUSTRY_CONNECTION.md): a primary-source company case with a short application; no extra submission.
+- [Industry / career connection](INDUSTRY_CONNECTION.md) includes a company case and a short application.
 - The deck’s **worked-example appendix, slides 32–34**, brings the relevant records, result, and industry connection together. Use it before the lab, then return to the existing lab instructions.
 - [Static concept diagram](illustrations/README.md): a still image with an editable Manim source and text description. The PowerPoint keeps the original embedded videos; PDF and GitHub previews show still images.

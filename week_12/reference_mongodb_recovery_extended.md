@@ -54,4 +54,4 @@ recovery.
 Run cleanup and remove any temporary Atlas network rule. Remove the printed
 runtime-IP output before submission. Keep the synthetic data and query outputs.
 
-**If assigned separately, submit:** a shared, viewable Colab notebook link in Brightspace, with outputs and your recovery recommendation. Do not submit an `.ipynb` attachment. No separate report or exported-data attachment is required.
+**If assigned separately, submit:** a shared, viewable Colab notebook link in Brightspace, with outputs and your recovery recommendation. Do not submit an `.ipynb` attachment.

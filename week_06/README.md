@@ -22,9 +22,7 @@ Use [Chapter 6: Access Should Be Useful and Limited](../Operating_Cloud_Database
 - **Before Day 2:** read the Supabase identity, row-security, secret-handling, and network-control sections. Distinguish database roles from individual application users.
 - **Before the in-class writing:** read the Chapter 5 section *Vacuum Keeps MVCC Honest* in [the textbook](../Operating_Cloud_Databases.pdf). It covers row versions, vacuum, autovacuum tuning, wraparound protection, and the Sentry case.
 
-Bring one point you want clarified. Reading supports the in-class work; it does
-not add a separate reading report. Optional textbook practice is not required
-unless the weekly lab assigns it.
+Bring one point you want clarified. Use the reading to prepare for class. The weekly lab lists the exercises to complete.
 
 ## Class Materials
 

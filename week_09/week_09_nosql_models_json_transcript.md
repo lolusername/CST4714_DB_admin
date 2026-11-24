@@ -126,7 +126,7 @@ Now read the first note. A visited set prevents repeated visits. Both Identity a
 
 Here is a useful property. When every edge costs the same, breadth-first search finds a path with the fewest edges. But look at the warning at the bottom. Measure latency along each candidate path. If edges have weights, like milliseconds, a route with more hops can still be faster. The algorithm has to match what you mean by shortest.
 
-Now flip the question. The database is having a problem; who might be affected? Follow the arrows backward. That gives Identity and API first, then Portal. But read the last line: a dependency path is not proof of an outage. Investigate the reachable candidates.
+Now flip the question. The database is having a problem; who might be affected? Follow the arrows backward. That gives Identity and API first, then Portal. Use the dependency path to decide which services to check next. Investigate the reachable candidates.
 
 [Sources]
 - Course textbook, Chapter 9, graph traversal discussion. The table derives directly from the four displayed edges.
@@ -139,7 +139,7 @@ Look at the flow across the top. Incident text goes into an embedding model, and
 
 Here is the division of labor, and it is easy to get wrong. The model makes the numbers. The database stores the vectors and retrieves nearby candidates. Creating a vector index does not train anything. And notice the word suitable. Evaluate the model with examples from the task where you plan to use it.
 
-Now the bottom line on the slide: no embedding API key or vector deployment is required this week. Over the next few slides we use tiny, invented coordinates so we can see the geometry for ourselves. They are not real embeddings of these sentences.
+Now the bottom line on the slide: no embedding API key or vector deployment is required this week. Over the next few slides we use tiny, invented coordinates so we can see the geometry for ourselves. Use these example vectors to practise the calculation.
 
 [Sources]
 - https://www.mongodb.com/docs/vector-search/
@@ -185,7 +185,7 @@ So which one is right? Both. They answer different questions. Cosine compares di
 
 Look at the last box, because there is a neat connection. If you divide each vector by its own length, every vector becomes length one. For those unit vectors, distance squared equals two minus two times cosine. So on the same normalized vectors, the biggest cosine is always the smallest distance, and the exact rankings agree, allowing for ties.
 
-The takeaway is not that cosine wins. It is that the measure has to match the representation and the question you want the search to answer.
+Choose the distance measure that suits the question and the data. It is that the measure has to match the representation and the question you want the search to answer.
 
 [Sources]
 - Course textbook, Chapter 9, worked distance comparison and normalization identity.
@@ -196,7 +196,7 @@ Comparing a query against every stored vector gets slow at scale. That is why ma
 
 Look at the box. The exact top five IDs are A, B, C, D, E. The approximate search returned A, C, E, F, G. Three of the five overlap: A, C, and E. So recall at five is three divided by five, which is 0.6. How much work you save and how many neighbors you miss depend on the data, the algorithm, and the settings. A tiny example like this proves nothing about production performance.
 
-Read the middle text carefully. Recall measures agreement with the exact retrieval target. It does not tell us whether a person found those five results helpful, or whether the incident descriptions were even accurate. People still have to judge usefulness.
+Read the middle text carefully. Recall measures agreement with the exact retrieval target. To check usefulness or accuracy, ask someone to evaluate the five results. People still have to judge usefulness.
 
 Now the bottom, which connects straight back to Week 6. Similarity does not grant permission to read a private ticket. The closest match to your query might be somebody else's ticket, and being similar does not mean the current user may read it. Access controls have to apply to vector search just like they apply to a SELECT. Read the last line: embedding choice, index settings, and access controls all affect the system. A useful vector feature needs all of them working together.
 
@@ -219,7 +219,7 @@ Read the note at the bottom. These are starting points. Products often support m
 
 ## Slide 16
 
-Let's use this vocabulary right now. Read the prompt. The support portal has two needs: a ticket page, and a report of event counts. Your job: choose a useful representation for the ticket page, then explain one consequence for the report or for changing a name. Do this on your own, in your notes. There is no separate submission.
+Let's use this vocabulary right now. Read the prompt. The support portal has two needs: a ticket page, and a report of event counts. Your job: choose a useful representation for the ticket page, then explain one consequence for the report or for changing a name. Do this on your own, in your notes.
 
 Let me show you what a good answer sounds like. Say you choose a document that holds the ticket, the requester's name, and a few recent events. Great: the page gets everything together in one read. Now add the cost. If that requester name means the current name, then when the person changes it, the copy has to change too. And if you put every event inside every ticket, the event-count report has to dig through all those nested arrays, and the documents keep growing.
 
@@ -247,7 +247,7 @@ Then the individual lab. You take a different ticket, write two designs, and exp
 
 ## Slide 18
 
-JSON stands for JavaScript Object Notation. The notation grew out of JavaScript, but JSON is not tied to JavaScript. Read the first line under the example: JavaScript, Python, and other languages can exchange the same text. A Python service can send JSON, a browser can read it, and each one turns it into its own kind of values.
+JSON stands for JavaScript Object Notation. Programs in many languages can read JSON. Read the first line under the example: JavaScript, Python, and other languages can exchange the same text. A Python service can send JSON, a browser can read it, and each one turns it into its own kind of values.
 
 Look at the timeline. In 2006, RFC 4627 documented JSON. In 2014, RFC 7159 revised the interoperability rules. In 2017, RFC 8259 became the Internet standard. Why all the revisions? Because when two different programs exchange data, they need to agree exactly on what it means. Standards are how that agreement gets written down.
 
@@ -282,7 +282,7 @@ ticket_id is the number 1004, no quotes. subject is Broken bench slat, a string,
 
 Then tags. It opens with a square bracket and closes with one, so it is an array. Inside are two strings, parks and bench, with a comma between them.
 
-Now look at the punctuation box. Curly braces enclose an object. Square brackets enclose an array. A colon connects a name to its value. A comma separates neighbors. And notice where the commas are not: there is no comma after the last member, tags. That is the mistake people make most often.
+Now look at the punctuation box. Curly braces enclose an object. Square brackets enclose an array. A colon connects a name to its value. A comma separates neighbors. Put commas between members and close the object after tags. That is the mistake people make most often.
 
 Read the note at the bottom. Names and strings use double quotes, and indentation shows containment. Indentation is for human readers. It makes it easy to see what is inside what, but the braces and brackets are what actually define the structure. We added tags to ticket 1004 for this example. In your lab, keep the required source facts first, and be clear about anything you add.
 
@@ -296,11 +296,11 @@ Here is a repair you will make yourself, probably more than once. Look at the fi
 
 Read the reasons. There are two separate errors. First, single quotes. JSON names and strings must use double quotes. Second, the comma after the final member. JSON does not allow a trailing comma. Now look at the repaired line. Double quotes, no final comma. Valid.
 
-Why point out that there are two? Because when a parser fails, it reports the first place it got stuck. Fix that one and it may stop at the next. One error message does not mean everything else is fine.
+Why point out that there are two? Because when a parser fails, it reports the first place it got stuck. Fix that one and it may stop at the next. Rerun the parser after each repair.
 
 Now the last box. Comments are not allowed in standard JSON. Neither are NaN or Infinity. A JSON number must omit leading zeroes. Write 1. If an identifier really is spelled zero one, write it as a string in quotes.
 
-Read the last line too. A permissive parser may accept extensions. Python's default json parser accepts NaN and Infinity, for example. So "my parser accepted it" does not prove the data is portable to other programs. Use standard syntax and unique names. And never use eval to read JSON text you don't trust. Parsing data and running code are very different risks.
+Read the last line too. A permissive parser may accept extensions. Python's default json parser accepts NaN and Infinity, for example. Check the document with a parser that follows standard JSON. Use standard syntax and unique names. And never use eval to read JSON text you don't trust. Parsing data and running code are very different risks.
 
 [Sources]
 - https://www.rfc-editor.org/info/rfc8259/
@@ -314,7 +314,7 @@ An empty object, just two braces, has no assignee property at all. The second on
 
 Why fuss over this? Because an application has to decide what each one means, and JSON does not decide for you. Read the first line at the bottom. One application might treat a missing assignee and a null assignee as the same thing. Another might use missing to mean "we didn't ask for that field" and null to mean "we asked, and nobody is assigned." You have to read or define that contract.
 
-The empty events array has the same problem. Read the second line. It tells you what this response contains. It does not tell you whether the ticket really has no history, whether a filter removed every event, or whether the response just left history out on purpose.
+The empty events array has the same problem. Read the second line. It tells you what this response contains. Check the API contract to learn what an empty events list means here.
 
 Zero represents a known quantity. An estimated cost of zero might be a real estimate. No estimated_cost field at all might mean nobody has made an estimate yet. These differences decide which documents match a filter and what an update changes. That is exactly where they will matter when we start writing MQL next week.
 
@@ -344,7 +344,7 @@ From users.csv: user 101 is Requester 101, and user 201 is Agent 201. From ticke
 
 Read the first line at the bottom. Both upcoming examples preserve these facts: the ticket's values, both users' IDs and names, and both events' IDs, types, and timestamps. Why so strict? Because if one design quietly dropped an event, it would look simpler just because it lost data. Keep the information in each comparison the same. Compare how each model arranges the same information.
 
-Other CSV columns are left out on purpose. A user's email address, for example, is not needed to compare two ticket-page shapes. Leaving out an out-of-scope column is a decision. Dropping a fact you promised to keep is a mistake.
+Other CSV columns are left out on purpose. Omit the user's email address from this comparison. Leaving out an out-of-scope column is a decision. Dropping a fact you promised to keep is a mistake.
 
 And the last line: the student lab uses a different ticket, 1003, with three events. I am showing you the method on 1001. You will apply it yourself to 1003, so the worked example does not do your lab for you.
 
@@ -355,7 +355,7 @@ And the last line: the student lab uses a different ticket, 1003, with three eve
 
 ## Slide 25
 
-Here is the first design: referenced. Look at the whole thing first. It is one JSON object, and inside it are three arrays: users, tickets, and events. Read the note at the bottom. One JSON object packages three arrays, and this file is not yet a MongoDB database. It is a package of text. It does not create three collections, and we are not importing it anywhere yet.
+Here is the first design: referenced. Look at the whole thing first. It is one JSON object, and inside it are three arrays: users, tickets, and events. Read the note at the bottom. The file holds three arrays as one JSON object. It is a package of text. Open each array and inspect one object.
 
 Now trace the connections. In users, there are two records: 101, Requester 101, and 201, Agent 201. In tickets, ticket 1001 has requester_id 101 and assignee_id 201. Those IDs are numbers. So to show the requester's name on the page, you go find the user whose user_id is 101. That is a lookup, just like a join.
 
@@ -418,7 +418,7 @@ Look at the example in the middle. A Markdown heading, Referenced design. Then t
 
 Now read the bottom carefully, because people get this wrong. Preview checks the Markdown display. It makes the JSON look nice in a code box. Commit changes saves the text in your repository's history. Neither step validates the JSON syntax, and neither checks that your facts match the CSV. That part is your job, so reread your quotes, commas, and brackets before you submit.
 
-Then download the file and submit it to Brightspace. A public repository is not required, and if GitHub is unavailable, any plain text editor can make the same Markdown file. Use only the synthetic course data, and never put a password or connection string in the file or in your commit history.
+Then download the file and submit it to Brightspace. Create the same Markdown file in GitHub or a plain text editor. Use only the synthetic course data, and never put a password or connection string in the file or in your commit history.
 
 [Sources]
 - https://docs.github.com/en/repositories/working-with-files/managing-files/creating-new-files
@@ -430,7 +430,7 @@ Next week we connect to MongoDB Atlas, so let's get the pieces straight today. L
 
 The Atlas account and project are how you manage the cloud deployment. The free cluster runs the actual database service, with free-tier limits. A database user is what authenticates a database connection. And the IP access list permits a source network to attempt that connection.
 
-Why separate them so carefully? Because being signed into the Atlas website does not mean your Python program is authenticated to the database. And adding your IP address does not replace a database password. Network permission and authentication are two different checks. You saw the same split in the Week 6 triage table: network unreachable is a different failure from password authentication failed.
+Why separate them so carefully? Atlas uses a database user to authenticate the Python program. And adding your IP address does not replace a database password. Network permission and authentication are two different checks. You saw the same split in the Week 6 triage table: network unreachable is a different failure from password authentication failed.
 
 Read the instructions in the middle. Choose Free, formerly called M0, and only the access your practice needs. Do not enter a payment card, and never publish your credentials. If a screen offers a paid option or a step is unclear, stop and ask me instead of paying your way around it.
 
@@ -487,7 +487,7 @@ Use the illustrations to compare data layouts. For your lab, keep all three even
 
 ## Slide 34
 
-Picture the ticket page the resident opens. It needs a name, but there are two ways to find that name. On the left, the ticket stores user ID 101 and the application follows that reference to the user record. On the right, the ticket contains an embedded requester object. It already has the display name. Both can show Requester 101 today. Now change that person’s name. A reference can fetch the authoritative current name; a copied current name needs a refresh rule. If the copy is deliberately a historical snapshot, label that meaning. The data shape alone does not tell us which meaning was intended.
+Picture the ticket page the resident opens. It needs a name, but there are two ways to find that name. On the left, the ticket stores user ID 101 and the application follows that reference to the user record. On the right, the ticket contains an embedded requester object. It already has the display name. Both can show Requester 101 today. Now change that person’s name. A reference can fetch the authoritative current name; a copied current name needs a refresh rule. If the copy is deliberately a historical snapshot, label that meaning. Check the application contract for the intended meaning.
 
 Teaching placement (not spoken): Day 2: after slides 24–27, before the JSON lab.
 
