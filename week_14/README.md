@@ -21,7 +21,7 @@ Use [Chapter 14: Multiple Databases Multiply Options and Obligations](../Operati
 - **Before Day 2:** review **Identity and Access Cross the Boundary Too**, **Backup and Restore Need an Order**, and **A One-Database Design Is Often the Stronger Decision** for the project clinic.
 
 Bring one point you want clarified. Reading supports the in-class work; it does
-not add a separate reading report. Optional textbook practice is not required
+not add a separate reading report. Optional textbook practice
 unless the weekly lab assigns it.
 
 ## Class Materials
@@ -66,7 +66,7 @@ backup/restore, verification, reliability tradeoff, or reproducibility.
 Complete the checkpoint inside your existing project package. There is no separate
 Week 14 project assignment and no alternate deliverable list.
 
-## Optional Industry Extension: When Version Checks Are Not Enough
+## Optional industry extension: Coordinating versions across writers
 
 This activity is optional, ungraded, and does not add a submission.
 
@@ -80,7 +80,7 @@ Do not claim the dictionary model implements a concurrent production consumer.
 
 Netflix's 2019 DBLog account explains propagating committed database changes and combining log processing with chunks of a table dump. Keeping downstream stores current requires controlling the interaction between past snapshot rows and newer changes. We use a small classroom model to explore transaction boundaries and version checks. A platform engineer should identify the authoritative source, replay behavior, and reconciliation evidence before calling a derived view repaired.
 
-Read the [company's own account](https://netflixtechblog.com/dblog-a-generic-change-data-capture-framework-69351fb9099b). This supports the lesson; it adds no submission. Keep the case distinct from the measured classroom outputs.
+Read the [company's own account](https://netflixtechblog.com/dblog-a-generic-change-data-capture-framework-69351fb9099b).
 
 ## Notebook route and data
 

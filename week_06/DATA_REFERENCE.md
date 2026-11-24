@@ -30,7 +30,7 @@ The PostgreSQL schema stores timestamps as `timestamptz`; CSV/JSON show ISO 8601
 | `user_id` | `integer` | No | Person identifier; primary key. |
 | `display_name` | `text` | No | Display label; identity is still the user ID. |
 | `email` | `text` | No | Fictional email; unique and required. |
-| `role` | `text` | No | Application role label; not a PostgreSQL login role. Observed: `agent`, `analyst`, `resident`, `supervisor`. |
+| `role` | `text` | No | Application role stored on the user record. Observed: `agent`, `analyst`, `resident`, `supervisor`. |
 | `neighborhood` | `text` | No | Named neighborhood. |
 | `created_at` | `timestamptz` | No | When the person record was created. |
 

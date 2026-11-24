@@ -10,7 +10,7 @@ The idea is in the two lines on the slide. A useful report can leave private fie
 
 On Day 1 we build a report reader: a role that can see exactly the open-ticket summary a dashboard needs, and nothing else, and we prove it with one test that succeeds and one test that fails. On Day 2 we take two residents reading the same table who must see different tickets. That needs a different mechanism, row-level security.
 
-Why does this matter? Most data breaches are not someone breaking encryption. They are a legitimate account being allowed to see something it should not. Permissions are the everyday security work of a database administrator, and the good news is that they are testable. That is the mindset for the week. Not "I set it up correctly," but "I ran the test as the user, and here is what they got."
+Why does this matter? An account can sign in successfully and still have access to someone else’s records. Permissions are the everyday security work of a database administrator, and the good news is that they are testable. That is the mindset for the week. Name the user you tested and show the result.
 
 ## Slide 2
 
@@ -60,7 +60,7 @@ A schema, security_demo, to keep our demo objects separate. A view, open_ticket_
 
 Read the note at the bottom. Grant the role SELECT on the view and keep the base table private. We never say GRANT SELECT ON metro_support.tickets. So the reader cannot query the tickets table directly. It cannot see priorities, requesters, timestamps, or anything else we left out of the view. The view is the window, and we decided exactly what is in the window.
 
-One practical note. Load the Metro Support fixture first, because the view points at metro_support.tickets. If the table is not there, CREATE VIEW fails with "relation does not exist," and that is a missing-object error, not a permission result.
+One practical note. Load the Metro Support fixture first, because the view points at metro_support.tickets. If CREATE VIEW reports "relation does not exist," load the fixture first and rerun the access test.
 
 [Sources]
 https://www.postgresql.org/docs/15/ddl-priv.html
@@ -374,7 +374,7 @@ The first asks every database for the age of its oldest unfrozen transaction ID.
 
 The second asks the statistics view for the tables with the most dead rows and when autovacuum last touched them. Dead rows should rise and then fall back after each vacuum. If a big table's count only ever rises and last_autovacuum is empty or days old, that is the Sentry pattern forming. Before vacuuming my tickets table I saw seven dead rows; after, zero.
 
-These are the two numbers I would put on a dashboard with an alert. Sentry's own write-up says they found the one unfinished table by querying these statistics. They could have run the same query a month earlier. In your reflection, this is what a concrete prevention step looks like: not "monitor the database," but "alert when the transaction ID age passes a number we chose."
+These are the two numbers I would put on a dashboard with an alert. Sentry's own write-up says they found the one unfinished table by querying these statistics. They could have run the same query a month earlier. In your reflection, specify what to measure and when to act. For example, set an alert when transaction ID age crosses a threshold you choose.
 
 [Sources]
 https://www.postgresql.org/docs/16/monitoring-stats.html#MONITORING-PG-STAT-ALL-TABLES-VIEW

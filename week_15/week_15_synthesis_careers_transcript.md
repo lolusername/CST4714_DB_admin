@@ -17,7 +17,7 @@ Here is the plan. Day 1 is this worked review, and then you build one individual
 
 Here is the frame for the whole review: six questions you can ask about any database system. They map onto the semester.
 
-Purpose comes first. Which user, and which decision, does this support? It comes first because the same stored facts can support different decisions. A manager handing out today's work needs a different report from someone checking for an unassigned backlog, and "the SQL ran without an error" does not tell you which one you built. Model: what does one record mean, and how do identities connect? In our example, staff and tickets are different populations. Protect: which bad states and which unauthorized actions are refused? Those are two different things. A constraint can reject a bogus status, but it does not decide who is allowed to close a ticket. Perform: which query shapes matter, and what measured work supports them? Compare the index against a specific query and workload. Recover: which failure do we tolerate, and how do we verify the restore? Reproduce: can someone else follow your setup without you handing them a password?
+Purpose comes first. Which user, and which decision, does this support? It comes first because the same stored facts can support different decisions. A manager assigning today’s work needs a different report from someone checking the unassigned backlog. Identify the records each person needs to see. Model: what does one record mean, and how do identities connect? In our example, staff and tickets are different populations. Protect: which bad states and which unauthorized actions are refused? Those are two different things. A constraint can reject a bogus status, but it does not decide who is allowed to close a ticket. Perform: which query shapes matter, and what measured work supports them? Compare the index against a specific query and workload. Recover: which failure do we tolerate, and how do we verify the restore? Reproduce: can someone else follow your setup without you handing them a password?
 
 Read the line at the bottom. One ticket report connects data meaning with operational decisions. You can use these six as a path through your final demonstration. You do not need equal time on each one. Pick the ones your project actually tests.
 
@@ -55,7 +55,7 @@ First query: which tickets are active? Read it the way the database does. FROM t
 
 The result is IDs 1, 3, and 4. Active-ticket count: 3. Ticket 2 is gone because it is resolved. Now look at ticket 3. It is still there, even with no assignee. Why? Because we never asked about assignment. The filter only looked at status.
 
-This is the relational algebra from Week 2. Read the box. WHERE selects matching rows. That is selection. SELECT chooses columns. That is projection. SQL has extra wrinkles, like duplicates and NULL, so it is not identical to the math, but the last line holds here: the result still has one row per ticket. And because we kept ticket_id in the output, we can check exactly which tickets contributed. A count with no IDs behind it is much harder to argue about.
+This is the relational algebra from Week 2. Read the box. WHERE selects matching rows. That is selection. SELECT chooses columns. That is projection. SQL handles duplicates and NULL. Here, the result has one row per ticket. And because we kept ticket_id in the output, we can check exactly which tickets contributed. A count with no IDs behind it is much harder to argue about.
 
 When you run this in Python, ticket 3's assignee prints as None. That is just Python's spelling of SQL NULL. The row was not lost. So say the population out loud: all tickets that are currently active, including unassigned ones. That sentence is what we compare against next.
 
@@ -184,7 +184,7 @@ Now the important line: there is no Agent 203 group. Why not? Because this pipel
 
 Also notice that group order is unspecified. If the order matters to the reader, add a sort stage.
 
-And read the bottom box honestly. This pipeline is a reference for a collection containing these four documents. The notebook actually runs a small Python grouping model that does the same calculation. It is not MongoDB and it is not Atlas, so it does not test any server behavior.
+And read the bottom box honestly. This pipeline is a reference for a collection containing these four documents. The notebook actually runs a small Python grouping model that does the same calculation. This example runs in Python.
 
 [Sources]
 - Notebook 09, Python grouping and MQL reference.
@@ -270,14 +270,14 @@ Read the four lines. Choose one concept and a small example. You can start from 
 
 If your guide is a worked explanation that you did not execute, label the result as predicted. That is a valid guide. Just do not word it as if you ran something you did not run. And if you adapted course material, keep its credit and license notice.
 
-Now the submission box. Submit one public or instructor-accessible URL in Brightspace, with one sentence naming the concept and the result. That is the whole submission. A separate notebook, a presentation, or a full application is not required. And if an account or accessibility barrier keeps you off GitHub, the lab allows a local Markdown or code file instead. Talk to me in class.
+Now the submission box. Submit one public or instructor-accessible URL in Brightspace, with one sentence naming the concept and the result. That is the whole submission. And if an account or accessibility barrier keeps you off GitHub, the lab allows a local Markdown or code file instead. Talk to me in class.
 
 [Sources]
 - Week 15 individual GitHub concept lab.
 
 ## Slide 21
 
-This starts the Day 2 material: final demonstrations. Use the canonical final-project assignment to check the requirements. Your demonstration slot follows the schedule in Brightspace, and demonstrations may run across our Week 15 meetings and the final exam meeting, so we are not trying to fit everyone into one class.
+This starts the Day 2 material: final demonstrations. Use the canonical final-project assignment to check the requirements. Check Brightspace for your slot during Week 15 or the final exam meeting.
 
 Read the three lines. A user problem. A model and query you can explain. An operational decision you tested. That is the arc. Start with who needs what. For a support system, maybe staff need a current queue and a manager needs a workload summary. Show just enough of the model to explain one relationship or one document boundary. Then show a query whose result matters to that user, and say what one output row or document means.
 
@@ -327,7 +327,7 @@ Why the extra R? Because reflection is where you show judgment. Anyone can descr
 
 Notice that the result is observable. Three versus two, and then explained. That is what makes the story believable. It is a small classroom experiment, and that is fine. Say so. A specific small story beats a vague big one.
 
-Read the line at the bottom. Practice your own version individually, in your notes, using one thing you completed. This is not another submission. Use the outline to start the conversation. Expect a follow-up question, which is exactly what the next slide is about.
+Read the line at the bottom. Practice your own version individually, in your notes, using one thing you completed. Use the outline to start the conversation. Expect a follow-up question, which is exactly what the next slide is about.
 
 [Sources]
 - Course textbook, Chapter 15, STAR-R framework.
@@ -369,9 +369,9 @@ This table connects work you did in this course to responsibilities you will see
 
 Correct a report and verify its population: that is application support and data analysis. Test a permission boundary: database administration and security support. Compare plans and index costs: backend development and database performance. Restore and check a separate target: database operations and recovery. Load data repeatedly without duplicate identities: data integration and engineering.
 
-Now read the box at the bottom, because it keeps you honest. These responsibilities overlap across roles. At a small company, one person might do all five. At a large one, they are split across teams. The O*NET profile for database administrators is a good reference for this vocabulary. But one course does not establish all the requirements of a job, and nobody expects it to.
+Now read the box at the bottom, because it keeps you honest. These responsibilities overlap across roles. At a small company, one person might do all five. At a large one, they are split across teams. The O*NET profile for database administrators is a good reference for this vocabulary.
 
-So here is how to use a posting. Pick one action it asks for and connect it to one specific piece of your work. If it says troubleshooting, name the incident you investigated and the query that supported your diagnosis. If it says automation, name a repeatable import or restore, not just "Python." Then separate what you have done from what you want to learn next.
+So here is how to use a posting. Pick one action it asks for and connect it to one specific piece of your work. If it says troubleshooting, name the incident you investigated and the query that supported your diagnosis. If a posting mentions automation, describe your repeatable import or restore and the part you tested yourself.
 
 Your GitHub guide helps here. It is one small example you can discuss in depth, and depth in one clearly explained workflow gives a reader something real to evaluate.
 

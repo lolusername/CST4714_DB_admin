@@ -6,4 +6,4 @@ Netflix's 2019 DBLog account explains propagating committed database changes and
 
 ## Use the case in this lesson
 
-Distinguish the company’s published situation from our classroom model. Explain one design choice and one piece of evidence you would carry into database work. This reading supports the existing activity and adds no separate submission.
+Distinguish the company’s published situation from our classroom model. Explain one design choice and one piece of evidence you would carry into database work.

@@ -110,8 +110,7 @@ Use this optional exercise for practice.
 
 Using Metro Support, answer one question twice with intentionally different SQL,
 such as a join-and-group query and a correlated subquery. Before running either
-query, predict the result grain and row count. Then compare stable identifiers,
-not only the number of rows. If the answers differ, identify whether the cause is
+query, predict the result grain and row count. Then compare row counts and stable identifiers. If the answers differ, identify whether the cause is
 `NULL`, duplicate multiplication, filter placement, or a genuinely different
 question. Finish with one sentence naming which version would be easier for a
 teammate to verify in a code review.

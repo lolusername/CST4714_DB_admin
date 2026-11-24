@@ -16,7 +16,7 @@ adaptation rights through an open license.
   Beginners*, CC BY-NC-SA 3.0 where indicated by the source package.
   <https://www.mongodb.com/academia/courses/mongodb-101-nonrelational-for-beginners>
 
-## Free External Resources That Are Not Claimed as Course OER
+## External resources and their licenses
 
 - PostgreSQL documentation: <https://www.postgresql.org/docs/current/>
 - Supabase documentation: <https://supabase.com/docs>

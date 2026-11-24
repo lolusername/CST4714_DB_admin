@@ -8,7 +8,7 @@ If we import the same dataset again, do we recognize the same records or create 
 
 ## Before the single class
 
-**Before the single meeting:** read [Chapter 13: Scale Changes the Questions a System Must Answer](../Operating_Cloud_Databases.pdf), focusing on capacity and distribution, **Inspect the Public Source Before Loading It**, the Python connection, and repeat-import explanations. Read the [textbook corrections](../COURSE_CORRECTIONS.md) with it. Reading supports the lesson; there is no separate reading report.
+**Before the single meeting:** read [Chapter 13: Scale Changes the Questions a System Must Answer](../Operating_Cloud_Databases.pdf), focusing on capacity and distribution, **Inspect the Public Source Before Loading It**, the Python connection, and repeat-import explanations. Read the [textbook corrections](../COURSE_CORRECTIONS.md) with it. Use the reading to prepare for the guided example.
 
 Prepare access to your own MongoDB Atlas **Free** cluster and a database user with `readWrite` on **cst4714_week13**. This user is separate from your Atlas website login. Keep the Drivers URI private. The notebook discovers the current Colab runtime's IPv4 address and pauses so you can add its temporary `/32` rule. No paid upgrade, backup subscription, or access-from-everywhere rule is needed. Setup time is outside the 20-minute lab.
 
@@ -39,13 +39,13 @@ The expected record counts are **0 → 75 → 75**, with the same collection on 
 
 In the 20-minute individual lab, change `GROUP_FIELD` from `"vendorProject"` to `"product"`, rerun its source comparison, and interpret one result. Write 5–7 sentences in **Submission Record** using the source limitation, one measured key comparison, the repeated import, the changed product result and its checks.
 
-Save the changed code, outputs and handoff in your own Drive copy. Give the instructor viewer access and submit **that copy's Colab sharing URL in Brightspace**, using the existing due date. Do not submit the GitHub starter link, an `.ipynb` attachment, a screenshot or a separate report. If access fails, label observed instructor evidence honestly and finish the same notebook under the course's existing technical-problem policy.
+Save the changed code, outputs and handoff in your own Drive copy. Give the instructor viewer access and submit **that copy's Colab sharing URL in Brightspace**, using the existing due date. If access fails, label observed instructor evidence honestly and finish the same notebook under the course's existing technical-problem policy.
 
 ## Scope and optional practice
 
-The retained data are the first 75 selected records from catalog version **2026.07.10**, retrieved **July 13, 2026**, with eight documented fields. Each record describes a vulnerability listed in the catalog. The source is historical and nonrandom. It cannot rank vendor security or determine a current patch deadline. Labels and calendar-day strings are preserved; `cwes` remains an array in Atlas.
+The retained data are the first 75 selected records from catalog version **2026.07.10**, retrieved **July 13, 2026**, with eight documented fields. Each record describes a vulnerability listed in the catalog. The source is historical and nonrandom. Read each count as a description of the selected entries. Labels and calendar-day strings are preserved; `cwes` remains an array in Atlas.
 
-Cell 07's four buckets illustrate range/hash placement in Python. They are not actual Atlas shards or a benchmark, and this small sample supplies no evidence that it needs sharding. SQLite, PostgreSQL, the live feed and extra date-window questions remain optional later practice. They add no submission and are not proof of an Atlas connection. Existing final-project requirements remain unchanged.
+Cell 07's four buckets illustrate range/hash placement in Python. SQLite, PostgreSQL, the live feed and extra date-window questions remain optional later practice.
 
 <!-- videos:start -->
 ## Videos
@@ -60,9 +60,9 @@ Short silent animations with captions (3 for this week). Each has a subtitle fil
 
 ## Industry/Career Connection — Discord: access patterns and hot partitions
 
-Discord's 2023 engineering account describes message-storage growth, hot partitions, a data-service layer, and migration from Cassandra to ScyllaDB. Discord studied its message-storage workload. Measure distribution and access patterns before selecting infrastructure, then verify the migrated values against the source. A data engineer should report the import key, repeat behavior, field checks, and remaining limits. Our 75-record subset provides no evidence that it needs sharding.
+Discord's 2023 engineering account describes message-storage growth, hot partitions, a data-service layer, and migration from Cassandra to ScyllaDB. Discord studied its message-storage workload. Measure distribution and access patterns before selecting infrastructure, then verify the migrated values against the source. A data engineer should report the import key, repeat behavior, field checks, and remaining limits.
 
-Read the [company's own account](https://discord.com/blog/how-discord-stores-trillions-of-messages). This supports the lesson; it adds no submission. Keep the case distinct from the measured classroom outputs.
+Read the [company's own account](https://discord.com/blog/how-discord-stores-trillions-of-messages).
 
 ## Notebook route and data
 
@@ -70,8 +70,7 @@ Read the [complete data reference](DATA_REFERENCE.md) before the first query. No
 
 ## End-of-Week Self-Check
 
-Explain why high cardinality alone does not make a good shard key and why a
-successful insert count alone does not make a trustworthy import.
+Name two properties you would check before choosing a shard key. Explain how you verified the imported values.
 
 ## Reuse
 

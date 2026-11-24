@@ -4,13 +4,13 @@
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_13/materials/notebooks/06_public_data_capacity_integration.ipynb)
 
-**Week 13 has one 100-minute Thanksgiving-week meeting.** Work individually. The lab below is **20 minutes after the instructor-guided setup and examples**. Use the same saved notebook throughout and submit one viewable Colab link. Atlas is the required database for this lesson; optional SQL paths do not replace the Atlas evidence.
+**Week 13 has one 100-minute Thanksgiving-week meeting.** Work individually. The lab below is **20 minutes after the instructor-guided setup and examples**. Use the same saved notebook throughout and submit one viewable Colab link. Use Atlas for this lesson.
 
 ## 1. Follow the guided setup and example
 
-Save your own copy of the [notebook](materials/notebooks/06_public_data_capacity_integration.ipynb) in Drive. Read the [data reference](DATA_REFERENCE.md): one historical CISA catalog entry is not one computer. Keep `USE_LIVE_FEED = False` so the supplied 75 records and measurements are reproducible.
+Save your own copy of the [notebook](materials/notebooks/06_public_data_capacity_integration.ipynb) in Drive. Use the [data reference](DATA_REFERENCE.md) to inspect the fields in one catalog entry. Keep `USE_LIVE_FEED = False` so the supplied 75 records and measurements are reproducible.
 
-Follow **Cells 01, 02a–02b and 03–07** with the instructor. Inspect the source and data checks; compare CVE-ID and date-added measurements. Cell 07 simulates range and hash placement in Python. No separate capacity report or discussion response is required.
+Follow **Cells 01, 02a–02b and 03–07** with the instructor. Inspect the source and data checks; compare CVE-ID and date-added measurements. Cell 07 simulates range and hash placement in Python.
 
 In **Cell 08**, keep `TARGET = "atlas"`. **Cell 10** prints the runtime IPv4 address, pauses for its temporary `/32` access-list rule, and then reads the hidden URI or allowed Colab secret. Use your own Free cluster and database user scoped to `cst4714_week13`. Keep credentials out of code/output. Do not enable a paid feature or access from everywhere.
 
@@ -26,6 +26,6 @@ Keep your own wording and actual outputs. Ping checks connectivity. Comparing al
 
 ## 3. Submit one saved Colab link
 
-Save the changed query, both import outputs, verification and handoff in your own Drive copy. Use Share to grant the instructor viewer access. **Submit that copy's viewable Colab URL in Brightspace**, using the existing due date. Do not submit the starter URL, an `.ipynb` attachment, a screenshot, a separate dataset report or a second assignment. Check that no credential appears in the saved notebook.
+Save the changed query, both import outputs, verification and handoff in your own Drive copy. Use Share to grant the instructor viewer access. **Submit that copy's viewable Colab URL in Brightspace**, using the existing due date. Check that no credential appears in the saved notebook.
 
-Keep cleanup disabled until your evidence is saved. Cell 16 can then remove only this run's practice collection and close the connection; remove the temporary runtime IP rule when no longer needed. SQLite (09), PostgreSQL (12–13), live-feed exploration and extra project prompts are optional and ungraded here. Existing final-project deliverables remain unchanged. If setup takes longer, continue in the same notebook under the course's technical-problem policy; no extra hand-in is added.
+Keep cleanup disabled until your evidence is saved. Cell 16 can then remove only this run's practice collection and close the connection; remove the temporary runtime IP rule when no longer needed. SQLite (09), PostgreSQL (12–13), live-feed exploration and extra project prompts are optional and ungraded here. If setup takes longer, continue in the same notebook under the course's technical-problem policy.

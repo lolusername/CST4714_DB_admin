@@ -69,9 +69,9 @@ event_id, evt-1008-17, answers: which recorded change? Preserve the event ID acr
 
 source_version, 17, answers: where does this change sit in this ticket's order? Read the box at the bottom. Version 18 of ticket 1008 follows version 17 of that ticket. It says nothing about any other ticket, and nothing about wall-clock time.
 
-A quick note on the numbers. Tickets 1008, 1009, and 1010 in this week's notebook are synthetic. They look like the Metro Support tickets you have used all semester, but they are not those rows, so do not expect the statuses to match.
+A quick note on the numbers. Tickets 1008, 1009, and 1010 in this week's notebook are synthetic. These examples use their own Metro Support fixture. Read the status in the example before predicting the outcome.
 
-We also assume one authoritative version sequence per ticket. If several writers assign versions independently, the simple comparison we are about to use is not enough.
+We also assume one authoritative version sequence per ticket. Coordinate versions among writers so the consumer can compare them reliably.
 
 [Sources]
 - CST4714 textbook, Chapter 14, and Notebook 08 synthetic ticket fixture.
@@ -116,7 +116,7 @@ We start right after setup. Ticket 1008 is open, version 16. The line with sourc
 
 Watch where the exception goes. It leaves the with block first, and that is the moment the pending transaction rolls back. Only after that does the except block catch it and print the message.
 
-Now look at the result line at the bottom. After fresh setup, ticket 1008 is open, version 16. Outbox rows: 0. The UPDATE statement ran, but it did not commit. That is why a log line saying the application reached a certain line of code does not tell you what got stored.
+Now look at the result line at the bottom. After fresh setup, ticket 1008 is open, version 16. Outbox rows: 0. The UPDATE statement ran, but it did not commit. Read back the record to learn what the database stored.
 
 The placement of the try matters. If you catch and swallow the error inside the with block, the block exits normally and commits whatever ran so far. Here the exception crosses the transaction boundary before we catch it.
 
@@ -134,7 +134,7 @@ Look at the WHERE clause. It says ticket_id equals 1008 and source_version equal
 
 Next line: if changed dot rowcount equals 1. The row count tells us whether the transition actually matched a row. If it did, we insert the outbox event: evt-1008-17, ticket 1008, resolved, version 17. When the with block exits normally, the ticket change and its event commit together.
 
-Read the small print at the bottom. A failed event insert rolls back this transaction's ticket update. The outbox also has a unique ticket-and-version pair, so two different event IDs cannot claim the same version. And if the event insert fails for any reason, the ticket update rolls back with it. We never get a new status without its event. But having the event does not mean it has been published or applied anywhere.
+Read the small print at the bottom. A failed event insert rolls back this transaction's ticket update. The outbox also has a unique ticket-and-version pair, so two different event IDs cannot claim the same version. And if the event insert fails for any reason, the ticket update rolls back with it. We never get a new status without its event. Check whether the relay published the event and the consumer applied it.
 
 What if I run this cell again? On a retry, the version check finds zero matching rows and the notebook reports the result. In a real system, find out why. The row might be missing, or another accepted update might have moved it forward.
 
@@ -217,7 +217,7 @@ In the delivery cell, move the whole version 16 event to the end of the deliveri
 
 Then change it to False and rerun. Same events, same payloads. The only thing that changed is whether the consumer refuses a stale version. Look at the final status and version. This is the broken run, and you are watching the late event win.
 
-Then restore True and rerun. That is your repaired run. Because the cell resets the projection each time, these runs are comparable. You are not relying on leftover state from the run before.
+Then restore True and rerun. That is your repaired run. Because the cell resets the projection each time, these runs are comparable. Each run starts from the same sample.
 
 Now read the bottom box. Write down the final status and version from the broken run and from the repaired run. Those observed values go into your Brightspace incident update. Record what you observed.
 
@@ -263,7 +263,7 @@ And notice there is no upsert option on this command. That is on purpose, and th
 
 ## Slide 18
 
-Suppose the command from the last slide comes back with a matched count of zero. What does that mean? Nothing matched the filter. It does not tell you why. Look at the three rows.
+Suppose the command from the last slide comes back with a matched count of zero. What does that mean? Nothing matched the filter. Inspect the operation and the error to find the cause. Look at the three rows.
 
 First row: the document is already at version 18 or newer. The less-than-18 filter fails. That is the normal, healthy case. A duplicate or stale event has nothing newer to apply, so ignoring it is correct.
 
@@ -289,7 +289,7 @@ So where did progress stop? After receipt. The consumer got the event. It could 
 
 Notice what each piece of evidence proves. The published mark at 14:03:13 would not, on its own, prove the consumer received anything. We have the received log for that. The timeout alone would not prove the write failed. The later read at version 16 is what proves this projection is behind.
 
-Read the box at the bottom. The record does not establish the state of every other ticket. A paused worker probably has a backlog, so do not assume only this ticket is affected, and do not assume everything is broken either. And keep this incident's version 17 separate from the notebook's version 18.
+Read the box at the bottom. Check the other affected tickets before closing the incident. A paused worker probably has a backlog, so do not assume only this ticket is affected, and do not assume everything is broken either. And keep this incident's version 17 separate from the notebook's version 18.
 
 [Sources]
 - CST4714 Week 14 lab, supplied incident record.
@@ -359,13 +359,13 @@ Here is what you hand in. One Brightspace text response, and it is short.
 
 Read the first box. Explain the user impact: what does the resident see, and why does it matter? Say where progress stopped in the supplied incident. Propose a repair that respects which system owns ticket status. Then include the final status and version you observed in your broken run and your repaired run. Record the values from your own notebook.
 
-Then name one broader check before closing the incident, such as other queued tickets or the consumer's lag, and say why that check follows from a paused worker. Do not just add a random metric.
+Then name one broader check before closing the incident, such as other queued tickets or the consumer's lag, and say why that check follows from a paused worker. Choose a metric that helps explain the decision.
 
 Write it for a colleague who needs to know what is affected and what happens next. A list of product names does not help them. A sentence like "the source accepted a newer status, and the consumer cannot advance the resident copy" does.
 
 Be precise about what kind of claim each sentence makes. The supplied record supports your diagnosis. Your notebook supplies the broken and repaired results. Describe the proposed credential repair. Label your observations and proposals separately.
 
-Read the bottom box. Work individually. No notebook attachment, no separate timeline, and no five-check matrix. One clear incident update.
+Read the bottom box. Work individually. Submit your viewable Colab link. One clear incident update.
 
 [Sources]
 - CST4714 Week 14 lab submission instructions.
@@ -408,7 +408,7 @@ Read the bottom box. Use disposable project data, and keep passwords, connection
 
 Next, indexes. Read the top line: an index decision begins with one query. Our example workload is finding a resident's recent open tickets. The filter fields and the sort order tell you what the database has to find and how it has to order it. An index name alone does not explain why the index helps.
 
-Look at the two columns. On the left is what you keep fixed: the filter, the sort, the dataset, the returned rows, the exact parameters, and the environment and how you measured. If any of those change between before and after, you are not comparing anything.
+Look at the two columns. On the left is what you keep fixed: the filter, the sort, the dataset, the returned rows, the exact parameters, and the environment and how you measured. Keep these conditions the same for both measurements.
 
 On the right is what you compare: the selected plan, how much work was examined, which index fields support the filter and the order, and any timing, with its limits. In PostgreSQL, tell the planner's estimates apart from the actual execution numbers. In MongoDB, tell documents returned apart from documents and keys examined.
 
@@ -423,7 +423,7 @@ Also record the cost. Every index takes storage and adds work to every write. In
 
 ## Slide 28
 
-Recovery next. Read the title: a restore test answers more than a backup command. A backup command tells you a file was created. It does not tell you what is in it, or whether you can get a working database back from it.
+Recovery next. Read the title: a restore test answers more than a backup command. A backup command tells you a file was created. Restore the file into an empty target and check its contents.
 
 Look at the table. Inspect each row in an isolated restore target. First, expected IDs and selected field values. That checks the data survived in the expected form. Remember slide 21: matching counts alone can hide missing and wrong records. Second, a familiar query returns its expected answer. That checks the restored data actually supports something the application does.
 
@@ -484,7 +484,7 @@ For example: a query that returns the wrong unit of analysis after a join. An in
 
 Then complete and check that item in the same notebook, code, or guide. If you hit a dependency, say you need correct seed data before the query can be evaluated, fix the dependency first. Record the actual result and the remaining limitation in the guide you already have.
 
-Read the bottom box. Possible work includes a query correction, a permission test, an index comparison, or a separate restore check. A one-platform project remains a valid choice. And there is no separate Week 14 project submission.
+Read the bottom box. Possible work includes a query correction, a permission test, an index comparison, or a separate restore check. A one-platform project remains a valid choice.
 
 This is individual work. By the end of class, make one concrete improvement to your project and state the next step.
 
@@ -499,7 +499,7 @@ It starts with the setting: in a class experiment. That is honest, and honest is
 
 That pattern works for anything. A concrete problem, the mechanism you built, the result you observed, and the boundary of what you showed.
 
-Read the bottom box. Describe the work you actually ran. The local notebook does not establish experience operating a distributed production service. You did not run a production queue, coordinate concurrent workers, or do a live cutover. But you can still explain why a production MongoDB update needs the version check inside the atomic operation, and why independently owned data changes the recovery plan. Interviewers value that kind of precision.
+Read the bottom box. Describe the work you actually ran. Describe your experience running the local notebook. You did not run a production queue, coordinate concurrent workers, or do a live cutover. But you can still explain why a production MongoDB update needs the version check inside the atomic operation, and why independently owned data changes the recovery plan. Interviewers value that kind of precision.
 
 Use the same pattern for your final project. Pick examples you can explain down to the code and the data.
 

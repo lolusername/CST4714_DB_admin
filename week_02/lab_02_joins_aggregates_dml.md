@@ -55,8 +55,7 @@ ORDER BY ticket_id;
 
 Keep that CTE. Replace its final SELECT with a query that starts from
 `metro_support.users`, left-joins `active`, and returns one row per staff member
-with their name and active-ticket count. Use `count(active.ticket_id)`, not
-`count(*)`, so a staff member with no matching ticket gets zero.
+with their name and active-ticket count. Use `count(active.ticket_id)` so a staff member with no matching ticket gets zero.
 
 Check Agent 201's count by listing her active ticket IDs directly. Explain why
 the two unassigned active tickets are not counted as anybody's workload.

@@ -21,7 +21,7 @@ Use [Chapter 15: Professional Communication Makes Technical Skill Visible](../Op
 - **Before Day 2:** read the demonstration and interview sections. Choose an explanation that accurately describes your own completed work.
 
 Bring one point you want clarified. Reading supports the in-class work; it does
-not add a separate reading report. Optional textbook practice is not required
+not add a separate reading report. Optional textbook practice
 unless the weekly lab assigns it.
 
 ## Class Materials
@@ -63,7 +63,7 @@ Complete [Final lab: Teach one database concept in GitHub](lab_01_github_concept
 
 Use one example from the review or another course concept. A single README with
 code examples is enough. Submit only its public or instructor-accessible URL and
-the lab's one-sentence description. The notebook itself is not another submission.
+the lab's one-sentence description.
 
 ## Demonstration Slots and Career Translation
 
@@ -98,7 +98,7 @@ actually establishes them.
 
 Cloudflare's published account of its July 2019 outage separates observed impact, the deployed rule, its expensive behavior, mitigation, and corrective work. The case concerns a web-security incident. Use its evidence structure when explaining your own query or restore investigation: show the input, observation, action, and limit. In a portfolio or interview, describe only work you actually performed; a four-ticket classroom result is useful evidence without being called production-scale experience.
 
-Read the [company's own account](https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019/). This supports the lesson; it adds no submission. Keep the case distinct from the measured classroom outputs.
+Read the [company's own account](https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019/).
 
 ## Notebook route and data
 

@@ -8,7 +8,7 @@ Start with a simple situation. A repair request says Broken bench slat. Someone 
 
 ## Slide 2
 
-MongoDB is the database software. Atlas is the service hosting it. Colab is a different computer, provided through your browser, that runs our Python code. PyMongo is the Python driver: it sends the requests from that runtime to MongoDB. A database groups collections. Our database is cst4714_week12, and a collection is a group of documents. One document represents one request. The Atlas website is where we configure access and inspect data; it is not where this Python cell executes. A saved Colab notebook stores your code and outputs, while the database lives in Atlas and the exported file initially lives only in the temporary runtime.
+MongoDB is the database software. Atlas is the service hosting it. Colab is a different computer, provided through your browser, that runs our Python code. PyMongo is the Python driver: it sends the requests from that runtime to MongoDB. A database groups collections. Our database is cst4714_week12, and a collection is a group of documents. One document represents one request. Configure access and inspect data on the Atlas website. Run the Python cell in Colab. A saved Colab notebook stores your code and outputs, while the database lives in Atlas and the exported file initially lives only in the temporary runtime.
 
 ## Slide 3
 
@@ -18,7 +18,7 @@ Start on the left. The client writes ticket 1099. A is the primary, and the prim
 
 B and C are secondaries. They fetch entries from that history and apply them to their own copies. Why does that matter? Because they do not do it at the exact same instant as A. Look at C: may temporarily lag. During that gap, C's data is older. That delay is called replication lag. It means you need to know which member answered your read.
 
-Two more things. The oplog is bounded, so a secondary that falls too far behind can need more than a quick replay of recent entries. And if A fails, an election can pick a new primary, but noticing the failure, holding the election, and reconnecting the client all take time. That is the bottom line of the slide: the oplog carries changes, copies can lag, and failover is not instant.
+Two more things. The oplog is bounded, so a secondary that falls too far behind can need more than a quick replay of recent entries. And if A fails, an election can pick a new primary, but noticing the failure, holding the election, and reconnecting the client all take time. The oplog carries changes from the primary to other members. Reads can see older values while a member catches up.
 
 Sources: https://www.mongodb.com/docs/manual/replication/ ; https://www.mongodb.com/docs/manual/core/replica-set-oplog/ . Native source diagram retained and relabeled for the course A/B/C case.
 
@@ -42,7 +42,7 @@ Sources: https://www.mongodb.com/docs/manual/reference/write-concern/ . The tabl
 
 This slide changes the category of failure completely. Nothing is broken. Every member is healthy. Somebody with permission deletes the five tickets.
 
-Look at the first row. Before the deletion, A, B, and C each have 5 tickets, and an earlier export holds 5 saved tickets. Second row: after the deletion replicates, A, B, and C all have 0 tickets. Read the first line of the box. Replication correctly carries out the destructive operation. It did its job perfectly. It copies a delete just as faithfully as an insert. That is the key idea of the week: replication is not backup.
+Look at the first row. Before the deletion, A, B, and C each have 5 tickets, and an earlier export holds 5 saved tickets. Second row: after the deletion replicates, A, B, and C all have 0 tickets. Read the first line of the box. Replication correctly carries out the destructive operation. It did its job perfectly. It copies a delete just as faithfully as an insert. A separate backup preserves historical data after a deletion spreads to the replicas.
 
 The only place the old tickets still exist is the last column. Still 5 saved tickets. A separate artifact, outside the live collection, made earlier. That is what recovery needs. Replicas protect the service when a machine fails. A retained artifact protects history when the data itself goes wrong.
 
@@ -56,7 +56,7 @@ Sources: Authored five-ticket deletion example; https://www.mongodb.com/docs/man
 
 Two recovery numbers this week, and they measure different things. First, recovery point objective, RPO. That is how much work you can afford to lose.
 
-Read the case at the top. A complete artifact represents 16:10. The deletion happens at 16:22. And there is no later export or replayable event log. Now look at the timeline: the saved state at 16:10, the deletion at 16:22. The equation underneath does the math. 16:22 minus 16:10 is a 12-minute recovery-point gap. Anything that happened in those twelve minutes is not in the artifact.
+Read the case at the top. A complete artifact represents 16:10. The deletion happens at 16:22. And there is no later export or replayable event log. Now look at the timeline: the saved state at 16:10, the deletion at 16:22. The equation underneath does the math. 16:22 minus 16:10 is a 12-minute recovery-point gap. The artifact captures the data as of the start of that twelve-minute interval.
 
 Now the target. The objective allows at most five minutes of lost work. Twelve is more than five, so this artifact does not meet it. And here is the important part: restoring it faster does not help. A lightning-fast restore of a 16:10 file still gives you 16:10 data.
 
@@ -68,7 +68,7 @@ Sources: Original course recovery timeline and Chapter 8/12 recovery-objective d
 
 ## Slide 7
 
-The second number is recovery time objective, RTO. Not how much data you lose, but how long the service is down.
+The second number is recovery time objective, RTO. Measure the time between the interruption and service recovery.
 
 First, when does the clock start? Not when someone finally types the restore command. It starts at the incident. While people are noticing the problem, finding the artifact, and getting permission to use it, the service is already broken.
 
@@ -116,7 +116,7 @@ Why does that matter? Because the plain parser did not fail. No error, no warnin
 
 The BSON-aware parser understands the marker convention and rebuilds a real datetime. The notebook's options also keep the times UTC-aware, consistent from the source, through the file, into the restored database.
 
-Read the scope line at the bottom. Run this excerpt after the notebook defines JSON_OPTIONS and loads json and json_util. In the notebook we use the BSON-aware result before inserting, and then we check the restored values. We do not just trust the parser's name. Inspect the actual field type. That habit is the lesson of this slide.
+Read the scope line at the bottom. Run this excerpt after the notebook defines JSON_OPTIONS and loads json and json_util. In the notebook we use the BSON-aware result before inserting, and then we check the restored values. Check the reconstructed BSON types. Inspect the actual field type. That habit is the lesson of this slide.
 
 Sources: Original course parser comparison using the exact ticket 1001 instant; https://pymongo.readthedocs.io/en/stable/api/bson/json_util.html .
 
@@ -144,11 +144,11 @@ A successful run proves that your current client could connect, write, read, and
 
 ## Slide 18
 
-Keep everything together in your own Drive copy. Your explanation should name what you observed, why a count missed the problem, how the saved artifact supplied the earlier value, and a limit such as a missing collection rule. If your Atlas setup was blocked and you observed my real demonstration, label that honestly; do not claim your connection succeeded. There is no second reliability response this week. Do not attach an ipynb file or submit the starter URL. Check sharing and save the outputs before closing. Cell 10 closes the client and does not delete the Atlas data. Your existing final-project package stays the sole project requirements document.
+Keep everything together in your own Drive copy. Your explanation should name what you observed, why a count missed the problem, how the saved artifact supplied the earlier value, and a limit such as a missing collection rule. If your Atlas setup was blocked and you observed my real demonstration, label that honestly; do not claim your connection succeeded. Do not attach an ipynb file or submit the starter URL. Check sharing and save the outputs before closing. Cell 10 closes the client and does not delete the Atlas data. Your existing final-project package stays the sole project requirements document.
 
 ## Slide 19
 
-These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Replica sets: oplog, lag, and elections (1:24); Write concern, read preference, and read concern (1:39); Replication is not backup: logical recovery (1:31). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 12 README. The diagrams illustrate the design.
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Replica sets: oplog, lag, and elections (1:24); Write concern, read preference, and read concern (1:39); Recovering deleted records from an export (1:31). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 12 README. The diagrams illustrate the design.
 
 ## License
 

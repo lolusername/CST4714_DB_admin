@@ -8,7 +8,7 @@ Welcome to Week 13, Tuesday November 24, 2026. Thanksgiving closes the Thursday 
 
 A public dataset becomes a database. The next import arrives tomorrow. Suppose a colleague runs the same import again: will the records double, or will the program recognize the records already there? Today we will answer that with evidence from real MongoDB Atlas.
 
-Start before the terminology. A document is one record with named fields. Our records describe vulnerabilities in CISA's historical Known Exploited Vulnerabilities catalog. We are not downloading vulnerable software or testing any system. Colab runs Python on a remote computer, PyMongo carries requests, and Atlas stores documents. A collection holds the documents in a database.
+Start before the terminology. A document is one record with named fields. Our records describe vulnerabilities in CISA's historical Known Exploited Vulnerabilities catalog. Colab runs Python on a remote computer, PyMongo carries requests, and Atlas stores documents. A collection holds the documents in a database.
 
 Open Notebook 06 and save your own Drive copy. Use Cells 01, 02a with USE_LIVE_FEED False, 02b, and 03–08; then 10, 11 twice, 14, and 15. Skip the optional SQLite and PostgreSQL cells. Setup comes before the twenty-minute individual lab. In that lab you change the grouped question and write a five-to-seven-sentence handoff. Submit one viewable Colab link in Brightspace. No paid tier, sharded deployment, or second assignment is required.
 
@@ -83,7 +83,7 @@ Then Shard A and Shard B. Each holds a portion of the data, and each one is a re
 
 Read the line at the bottom, because it ties this to the rest of the day. The shard key decides distribution, and it decides whether a query can be sent to a limited set of shards. An exact lookup that includes the shard key value can be targeted. A query without that information may need work on several shards, and the application still sees one result.
 
-We are not deploying any of this. Atlas Free does not give us a sharded cluster for this exercise. Our Python experiment models a small piece of placement instead, so we can reason about it without paying for anything.
+In Cell 07, Python models how each key distributes our sample across four buckets.
 
 Sources:
 https://www.mongodb.com/docs/manual/sharding/
@@ -93,7 +93,7 @@ https://www.mongodb.com/docs/atlas/reference/free-shared-limitations/
 
 Now our actual data. This is the CISA Known Exploited Vulnerabilities catalog. Our classroom fixture has seventy-five records selected from the catalog version dated July 10, 2026, and we retrieved it on July 13, 2026. Notice those are two different dates. One is when the source says its version was published. The other is when we got our copy. Keep both, because they answer different questions.
 
-Look at the record on the left. The cveID, CVE-2026-56291, is a stable identifier. That is what will let us recognize the same record the next time we import. Vendor and product, Balbooa and Forms, are descriptive labels. And dateAdded is the date this record entered the catalog. It is not when someone discovered the weakness, exploited it, or installed the software. Field names can tempt you into claims the data does not support.
+Look at the record on the left. The cveID, CVE-2026-56291, is a stable identifier. That is what will let us recognize the same record the next time we import. Vendor and product, Balbooa and Forms, are descriptive labels. And dateAdded is the date this record entered the catalog.
 
 The cwes field is a list, in square brackets. One vulnerability can carry more than one weakness identifier, and a list holds that without inventing a comma convention inside a string. We will keep it a list in every database.
 
@@ -143,7 +143,7 @@ So do we just pick whichever has the most distinct values? No. More distinct com
 
 One practical note for the lab. Your notebook prints the distinct count, a ratio, and the largest value share. The largest value count column is on this slide to make the percentages concrete, so do not go looking for it in your output.
 
-And read the note at the bottom. These numbers describe this selected dataset. They are not traffic or latency, and nothing here shows a bottleneck.
+And read the note at the bottom. These numbers describe this selected dataset.
 
 Sources:
 course/datasets/cisa_kev_sample/kev_sample.json
@@ -190,7 +190,7 @@ So why did the previous slide spread out? Read the last line on the slide. The n
 
 This is how you evaluate a proposed fix. If the problem is one heavily repeated value, putting the word hashed in front of the design does nothing to it. A different key, or a justified compound key, changes the granularity, but it also changes which queries can be targeted.
 
-One last thing. We are using the hash only as a placement function, a deterministic mapping from an identifier to a bucket. It is not encryption, it does not hide the vendor name, and it does not authenticate anything.
+One last thing. We are using the hash only as a placement function, a deterministic mapping from an identifier to a bucket.
 
 ## Slide 14
 
@@ -200,11 +200,11 @@ Exact cveID equality. Yes. The filter carries the key value, so the router can t
 
 Only vendorProject equals Microsoft. The filter does not contain the shard key, so the router cannot narrow it down. The same goes for only a dateAdded window. The database can still answer both, but the work may have to go to several shards.
 
-Count every record by vendor. This query needs data from every shard. It is just what the question costs. Not every multi-shard operation is a design failure.
+Count every record by vendor. This query needs data from every shard.
 
-Read the first line under the table, because it trips people up. A local index on vendor can reduce the work inside each shard. It does not tell the router which shards to skip. Indexing and targeting solve related but different problems.
+Read the first line under the table, because it trips people up. A local index on vendor can reduce the work inside each shard. The router uses the shard key to choose which shards to contact. Indexing and targeting solve related but different problems.
 
-So the design question is not which key has the biggest number. It is how our frequent operations match the key. A key that is excellent for exact-ID lookups can be weak for date ranges. In your lab recommendation, name that tradeoff.
+Choose a key that suits the queries people run most often. A key that is excellent for exact-ID lookups can be weak for date ranges. In your lab recommendation, name that tradeoff.
 
 Sources:
 https://www.mongodb.com/docs/manual/core/sharding-choose-a-shard-key/
@@ -226,7 +226,7 @@ For a real plan, you would measure actual record and index sizes, set the retent
 
 ## Slide 16
 
-Discord's 2023 engineering account describes message-storage growth, hot partitions, a data-service layer, and migration from Cassandra to ScyllaDB. Discord studied its message-storage workload. Measure distribution and access patterns before selecting infrastructure, then verify the migrated values against the source. A data engineer should report the import key, repeat behavior, field checks, and remaining limits. Our 75-record subset provides no evidence that it needs sharding.
+Discord's 2023 engineering account describes message-storage growth, hot partitions, a data-service layer, and migration from Cassandra to ScyllaDB. Discord studied its message-storage workload. Measure distribution and access patterns before selecting infrastructure, then verify the migrated values against the source. A data engineer should report the import key, repeat behavior, field checks, and remaining limits.
 
 For this class, connect the case to the experiment already on the screen. Use this case to interpret your own measurements. Keep classroom results separate from the company’s production system.
 
@@ -246,11 +246,11 @@ We now move from measuring the source to importing it. Continue with the next pa
 
 We match each record by its stable cveID. If that value already exists, replace its source fields; if it does not, insert it. Repeating the unchanged source should leave the same logical records and values. That property is idempotency: repeating an operation has the same final effect as doing it once, for the stated input and conditions.
 
-Our required path uses real Atlas. A successful connection is not proof that the data was imported. A matching count is not proof of correct values. We will import twice into the same collection, compare all seventy-five documents and their field types with the source, and check the grouped result independently. SQLite and PostgreSQL remain available for later practice.
+Our required path uses real Atlas. We will import twice into the same collection, compare all seventy-five documents and their field types with the source, and check the grouped result independently. SQLite and PostgreSQL remain available for later practice.
 
 ## Slide 19
 
-Cell 08 sets TARGET to atlas for today's required lesson. Python runs in Colab; MongoDB runs in Atlas; PyMongo is the driver that sends the requests between them. SQLite and PostgreSQL remain optional reference paths in this notebook. We do not run them during this class.
+Cell 08 sets TARGET to atlas for today's required lesson. Python runs in Colab; MongoDB runs in Atlas; PyMongo is the driver that sends the requests between them. SQLite and PostgreSQL remain optional reference paths in this notebook.
 
 Run Cell 08 once. It chooses the database cst4714_week13 and a collection name beginning kev_ followed by twelve random hexadecimal characters. The database is fixed so your database user only needs readWrite on that teaching database. The collection name isolates your run. Choosing names does not connect or import anything.
 
@@ -274,7 +274,7 @@ Then the last lines. When we verify, we convert back. A PostgreSQL date object a
 
 Run Cell 10 after Cell 08. Atlas checks the address of the computer making the request. Colab's Python runs on a remote computer. Its network address can therefore be different.
 
-Cell 10 prints that runtime's public IPv4 address with slash thirty-two. That means one address. Add this temporary entry to Atlas Network Access, choose a short expiration when available, wait for it to become active, and return to the notebook's confirmation prompt. Add Current IP can use the browser's address; it is not proof that the Colab runtime is allowed. A new runtime may need a new entry.
+Cell 10 prints that runtime's public IPv4 address with slash thirty-two. That means one address. Add this temporary entry to Atlas Network Access, choose a short expiration when available, wait for it to become active, and return to the notebook's confirmation prompt. Use the /32 address printed by Colab to allow this runtime. A new runtime may need a new entry.
 
 Get the Python Drivers URI from your own Free cluster. Use a database user with readWrite on cst4714_week13. Put the completed URI in a Colab Secret named MONGODB_URI or the hidden prompt. Never paste it into a saved code cell, screenshot, or notebook output.
 
@@ -288,7 +288,7 @@ This is an excerpt of Cell 10, after the hidden URI input. MongoClient creates t
 
 The stable API setting requests version one. The two ten-thousand-millisecond settings bound server selection and client operations to about ten seconds each; they do not guarantee the whole interactive cell finishes in ten seconds. Network lookup, package setup, and the pause for your input are separate steps.
 
-Creating a client is not evidence of a successful connection. Ping sends a real request. After ping, the full cell selects the fixed teaching database and this run's collection, checks that it is empty, and creates a unique cveID index. Ping alone does not prove write permission, and neither step imports the records. Cell 11 does that.
+ Ping sends a real request. After ping, the full cell selects the fixed teaching database and this run's collection, checks that it is empty, and creates a unique cveID index. Cell 11 writes the records. Cell 11 does that.
 
 The collection requests majority writes and majority reads from the primary. Those settings do not mean every replica has acknowledged a write or that a timed-out write certainly failed. If a write times out, inspect and verify the collection before deciding what happened; the stable-key import can be retried.
 
@@ -445,7 +445,7 @@ Read one row as a sentence. Windows appears in four entries in the selected cata
 
 Write five to seven sentences in Submission Record. Include the historical source and your question, the CVE-ID and date measurements, the same-collection repeat result, one changed product row, independent verification, and a limitation. Write the handoff using the evidence saved in your notebook.
 
-Save your own Drive copy with code, outputs, and the handoff. Give the instructor viewer access and submit that viewable Colab sharing link in Brightspace. The starter link, a screenshot, and an ipynb attachment are not substitutes. There is no second report, matrix, repository, or new assignment. If you only observed the instructor's real Atlas demonstration, label that honestly and finish the same notebook under the existing deadline.
+Save your own Drive copy with code, outputs, and the handoff. Give the instructor viewer access and submit that viewable Colab sharing link in Brightspace. If you only observed the instructor's real Atlas demonstration, label that honestly and finish the same notebook under the existing deadline.
 
 Retain evidence before any optional cleanup. The final cleanup cell defaults to off so it cannot erase the collection while you are still querying it.
 
@@ -455,7 +455,7 @@ Cleanup is optional after both grouped queries, verification, and the saved hand
 
 If you deliberately set it True, the Atlas branch removes only the named kev_ collection created by this run from cst4714_week13, then closes the client. It does not drop the whole database or any unrelated collection. The temporary runtime slash-thirty-two rule is separate; remove it in Atlas when no longer needed or let its intended expiration end it.
 
-The other table rows describe optional SQLite and PostgreSQL paths. SQLite closes its in-memory database. PostgreSQL removes its practice table and only removes the schema if it is empty; no CASCADE is used. Those paths are not required today.
+The other table rows describe optional SQLite and PostgreSQL paths. SQLite closes its in-memory database. PostgreSQL removes its practice table and only removes the schema if it is empty; no CASCADE is used.
 
 Deleting practice data, closing a driver, revoking network access, and stopping hosted infrastructure are different actions. Closing a client does not pause the service or remove a network rule. Save your notebook outputs first and remove only objects you can identify as belonging to your own run.
 
@@ -465,7 +465,7 @@ Here is a precise way to describe the work: I imported a documented historical s
 
 Make the claim match what you actually did. If you only observed the instructor's Atlas run, say so. The four-bucket Python simulation shows how the two keys distribute incoming records. Seventy-five records do not establish that this workload needs sharding.
 
-For the existing final project, discuss one source, one important query, and evidence that would justify a capacity change. Keep the requirements and deadlines on the existing project page. This class adds no separate project submission.
+For the existing final project, discuss one source, one important query, and evidence that would justify a capacity change. Keep the requirements and deadlines on the existing project page.
 
 The next week examines applications with more than one data store. Stable identifiers, repeat behavior, and verification will help us explain why stored copies disagree. Today ends with one saved, viewable Colab link.
 

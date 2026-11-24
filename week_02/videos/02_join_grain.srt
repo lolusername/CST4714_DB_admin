@@ -24,7 +24,7 @@ Leave out the condition and all 96 pairs come back. Joins use the condition you 
 
 7
 00:00:23,200 --> 00:00:25,200
-This is the meaning. PostgreSQL does not have to build all 96 pairs to compute it.
+This is the meaning. PostgreSQL chooses a plan for finding the matches.
 
 8
 00:00:29,900 --> 00:00:34,600
@@ -60,9 +60,9 @@ Counting distinct ticket IDs answers a different question: 12 tickets.
 
 16
 00:01:01,100 --> 00:01:03,600
-Decide what one row means first. DISTINCT does not repair a wrong grain.
+Decide what one row means first. Set the report's grain before deciding whether rows repeat.
 
 17
 00:01:06,200 --> 00:01:16,200
-Before you count, ask what one row means: A join is a filtered product: the ON condition decides which pairs survive. INNER JOIN drops tickets whose assignee is NULL: 10 rows, not 12. LEFT JOIN keeps every ticket and fills the missing side with NULL. Joining events makes one row per ticket-event pair: 21 rows. Repeated IDs are not automatically a bug. Check the grain first.
+Before you count, ask what one row means: A join is a filtered product: the ON condition decides which pairs survive. INNER JOIN returns the 10 assigned tickets. LEFT JOIN keeps every ticket and fills the missing side with NULL. Joining events makes one row per ticket-event pair: 21 rows. Check what each row represents when IDs repeat.
 

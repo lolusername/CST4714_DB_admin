@@ -1,6 +1,6 @@
 1
 00:00:02,100 --> 00:00:03,600
-NULL: why = NULL finds nothing. Missing is not zero, not blank, and not equal to anything.
+NULL: why = NULL finds nothing. Working with missing values in SQL
 
 2
 00:00:07,000 --> 00:00:09,000
@@ -8,7 +8,7 @@ Metro Support baseline: 12 tickets. 1004 and 1009 have no assignee yet.
 
 3
 00:00:09,500 --> 00:00:12,900
-NULL means missing. It is not zero, not empty text, not a staff member.
+NULL means missing. In this column NULL marks an unassigned ticket.
 
 4
 00:00:13,400 --> 00:00:15,700
@@ -24,7 +24,7 @@ No row is TRUE, so no row is kept. The query runs fine and returns nothing.
 
 7
 00:00:23,700 --> 00:00:28,400
-An empty result here does not mean every ticket is assigned.
+Check for unassigned tickets with IS NULL.
 
 8
 00:00:28,900 --> 00:00:32,700
@@ -68,5 +68,5 @@ It returns all six non-assignees, residents and the analyst included.
 
 18
 00:01:09,700 --> 00:01:19,700
-Remember: NULL means missing or inapplicable, not zero or empty text. Any ordinary comparison with NULL is UNKNOWN, even NULL = NULL. WHERE keeps only TRUE rows: FALSE and UNKNOWN are both dropped. Use IS NULL / IS NOT NULL; count(column) skips NULLs. NOT IN over a list with NULL can return nothing; prefer NOT EXISTS.
+Remember: NULL represents a missing or inapplicable value. Any ordinary comparison with NULL is UNKNOWN, even NULL = NULL. WHERE keeps only TRUE rows: FALSE and UNKNOWN are both dropped. Use IS NULL / IS NOT NULL; count(column) skips NULLs. NOT IN over a list with NULL can return nothing; prefer NOT EXISTS.
 

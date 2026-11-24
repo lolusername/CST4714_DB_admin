@@ -383,7 +383,7 @@ Now the middle box. Your comparison adds the commit case. B still finishes, but 
 
 So say why you could not choose blindly in a real application. You would want to know whether that priority change was valid, who owned the transaction, and whether other work belonged to it. You might contact the owner or follow an established procedure rather than decide from a process list.
 
-This is also how you talk about it in an interview. Not "I know PostgreSQL locks," but the test you ran, the function you used, the outcomes you verified, and the limits of your conclusion.
+This is also how you talk about it in an interview. Describe the test you ran, the function you used, and the outcome you verified.
 
 [Sources]
 - Course writing guide, Write an Incident Update.
