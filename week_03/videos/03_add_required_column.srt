@@ -20,7 +20,7 @@ ADD COLUMN takes a strong lock. Even a plain read in another session waits until
 
 6
 00:00:23,300 --> 00:00:27,500
-Backfill 'unknown', not 'web'. Ticket 1001's note mentions a mobile form, but one clue can't label every row.
+Backfill 'unknown' for the historical rows. Ticket 1001's note mentions a mobile form, but one clue can't label every row.
 
 7
 00:00:28,000 --> 00:00:30,700
@@ -56,7 +56,7 @@ Omitting a column and sending NULL are different. NOT NULL refuses the NULL.
 
 15
 00:00:56,500 --> 00:00:59,200
-'mobile' is allowed. We roll it back rather than invent 1004's history.
+'mobile' is allowed. Roll back the temporary change to ticket 1004.
 
 16
 00:00:59,700 --> 00:01:01,500

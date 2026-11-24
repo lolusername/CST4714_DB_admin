@@ -1,6 +1,6 @@
 1
 00:00:02,100 --> 00:00:03,600
-A view stores a query, not rows. Every read runs the definition against the current data
+An ordinary view stores a query definition. Every read runs the definition against the current data
 
 2
 00:00:07,900 --> 00:00:12,500
@@ -24,11 +24,11 @@ Seven active tickets. The LEFT JOIN keeps 1004 and 1009 with a NULL assignee_nam
 
 7
 00:00:28,600 --> 00:00:30,600
-An inner join would silently drop them. Check the IDs, not just the count.
+An inner join would silently drop them. Check which ticket IDs appear.
 
 8
 00:00:31,100 --> 00:00:36,300
-A view is not automatically faster: the whole statement is planned and run each time.
+PostgreSQL plans and runs a view's defining query each time it is read.
 
 9
 00:00:36,800 --> 00:00:43,400
@@ -56,5 +56,5 @@ Using one needs a refresh policy and an acceptable staleness limit.
 
 15
 00:01:04,300 --> 00:01:14,300
-Remember: An ordinary view stores a SELECT definition under a name. Each read runs it on current data: no copy to keep in sync. LEFT JOIN keeps unassigned tickets; their assignee_name is NULL. Not automatically faster, not a backup, not a security policy. A materialized view stores rows: only as fresh as its last REFRESH.
+Remember: An ordinary view stores a SELECT definition under a name. Each read runs it on current data: no copy to keep in sync. LEFT JOIN keeps unassigned tickets; their assignee_name is NULL. Check the query plan and the permissions for this view. A materialized view stores rows: only as fresh as its last REFRESH.
 

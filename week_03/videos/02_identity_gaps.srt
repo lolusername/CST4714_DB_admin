@@ -28,7 +28,7 @@ The three inserts returned 1, 2, and 3.
 
 8
 00:00:33,200 --> 00:00:35,200
-Two rows, largest ID 3. The largest ID is not a row count.
+Two rows, largest ID 3. Use COUNT(*) to count rows.
 
 9
 00:00:35,700 --> 00:00:43,533
@@ -64,5 +64,5 @@ That failed insert still used up 6. After an import, check and adjust the sequen
 
 17
 00:01:14,333 --> 00:01:24,333
-Remember: An identity column takes values from a sequence. ROLLBACK removes the row, not the sequence allocation. Gaps are normal: rollbacks, failed inserts, caching. Use count(*) to count rows; use keys to identify them. Explicit IDs don't advance the sequence: check it after imports.
+Remember: An identity column takes values from a sequence. ROLLBACK removes the inserted row. Its sequence value stays allocated. Gaps are normal: rollbacks, failed inserts, caching. Use count(*) to count rows; use keys to identify them. Explicit IDs don't advance the sequence: check it after imports.
 

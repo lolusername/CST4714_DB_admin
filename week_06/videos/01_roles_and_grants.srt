@@ -16,7 +16,7 @@ Then session_user is still your login; current_user is metro_analyst.
 
 5
 00:00:20,800 --> 00:00:25,000
-The analyst needs ticket summaries. Not emails, not notes, no edits.
+The analyst needs ticket summaries. The view exposes only the approved columns for reading.
 
 6
 00:00:25,500 --> 00:00:29,700
@@ -28,7 +28,7 @@ SELECT on the view, and nothing on the base tables.
 
 8
 00:00:37,200 --> 00:00:40,200
-Allowed. The view reads tickets using its OWNER's privileges, not the analyst's.
+Access granted. PostgreSQL checks the view owner's privileges on tickets.
 
 9
 00:00:40,700 --> 00:00:47,700
@@ -52,7 +52,7 @@ Suppose SELECT on tickets had also been granted to PUBLIC.
 
 14
 00:01:09,700 --> 00:01:12,900
-Revoking the direct grant leaves the PUBLIC path. Trust the test result, not the REVOKE.
+Revoking the direct grant leaves the PUBLIC path. Test the role's access after REVOKE.
 
 15
 00:01:14,500 --> 00:01:24,500

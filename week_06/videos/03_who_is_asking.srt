@@ -24,7 +24,7 @@ auth.uid() returns the user ID from the verified token: A sees 1001 and 1005.
 
 7
 00:00:44,866 --> 00:00:47,866
-Same role, same SQL, different token: B sees 1007. The role is not the person.
+Same role, same SQL, different token: B sees 1007. A role groups database privileges.
 
 8
 00:00:48,366 --> 00:00:57,666
@@ -44,7 +44,7 @@ Week 2's three-valued logic, now doing security work.
 
 12
 00:01:11,866 --> 00:01:14,866
-These roles bypass RLS and see every row. RLS is not a defense against an unrestricted admin.
+These roles bypass RLS and see every row. Superusers can bypass RLS.
 
 13
 00:01:15,366 --> 00:01:18,366

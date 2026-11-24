@@ -28,7 +28,7 @@ Same SQL, different actor, different rows. Nothing was deleted.
 
 8
 00:00:47,400 --> 00:00:58,300
-Row 2 exists, but not for Maya. The answer is empty, not 'permission denied'.
+Row 2 exists, but not for Maya. The query succeeds and returns zero rows.
 
 9
 00:00:58,800 --> 00:01:04,100
