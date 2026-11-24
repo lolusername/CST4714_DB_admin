@@ -4,7 +4,7 @@ Triage a cross-database incident. Where did progress stop, and which way does th
 
 2
 00:00:06,500 --> 00:00:09,200
-A resident complains. First, recall the design, not the symptom.
+A resident reports a problem. Identify where the authoritative status lives.
 
 3
 00:00:09,700 --> 00:00:15,800
@@ -12,7 +12,7 @@ The owner is known before the incident: PostgreSQL. So trace from there.
 
 4
 00:00:16,300 --> 00:00:18,366
-published proves the relay sent it, not that anyone received it
+published records when the relay sent the event
 
 5
 00:00:18,866 --> 00:00:20,933
@@ -20,7 +20,7 @@ received: the event reached the consumer
 
 6
 00:00:21,433 --> 00:00:24,366
-a timeout alone is ambiguous: the write may or may not have happened
+check the request ID to learn whether the write succeeded
 
 7
 00:00:24,866 --> 00:00:26,933
@@ -32,11 +32,11 @@ this later read establishes that the projection is behind
 
 9
 00:00:30,933 --> 00:00:36,333
-Committed, recorded, published, received... but not applied.
+The event was committed, published, and received. The applied version still trails the owner.
 
 10
 00:00:36,833 --> 00:00:43,233
-Agreement from the wrong direction is not a repair.
+Use the owner's state to repair the stale copy.
 
 11
 00:00:43,733 --> 00:00:45,733
@@ -68,5 +68,5 @@ Label the repair as proposed until you have checked it.
 
 18
 00:01:14,100 --> 00:01:24,100
-Remember: Start from the owner: PostgreSQL holds the accepted status. Follow one event ID: committed, recorded, published, received, applied. A timeout is ambiguous. A later read is evidence. Repair the stuck path; never revert the owner to match a stale copy. Equal counts prove little: compare IDs and owned values.
+Remember: Start from the owner: PostgreSQL holds the accepted status. Follow one event ID: committed, recorded, published, received, applied. A timeout is ambiguous. A later read is evidence. Fix the interrupted delivery path and refresh the copy from its owner. Equal counts prove little: compare IDs and owned values.
 

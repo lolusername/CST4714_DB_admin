@@ -12,15 +12,15 @@ Step 2: update MongoDB... and the call times out.
 
 4
 00:00:13,000 --> 00:00:15,500
-The error does not undo the commit. The two stores now disagree.
+The PostgreSQL commit already succeeded. The copy now shows an older value.
 
 5
 00:00:16,000 --> 00:00:18,500
-Swap the order? Then MongoDB can change while PostgreSQL never does.
+Reversing the order leaves a different gap if the PostgreSQL write fails.
 
 6
 00:00:19,000 --> 00:00:23,400
-A PostgreSQL transaction covers PostgreSQL statements, not a network call.
+A PostgreSQL transaction groups the changes inside PostgreSQL.
 
 7
 00:00:23,900 --> 00:00:27,900
@@ -48,11 +48,11 @@ A relay publishes unsent events. A consumer applies them to MongoDB.
 
 13
 00:00:45,700 --> 00:00:49,500
-These are responsibilities, not products: one small process can do both jobs.
+A single process can handle both responsibilities.
 
 14
 00:00:50,000 --> 00:00:55,500
-Every arrow after the commit can fail. The outbox is not exactly-once delivery.
+Delivery can fail after the commit. The relay retries, so consumers must handle duplicate events.
 
 15
 00:00:56,000 --> 00:00:57,500
@@ -92,5 +92,5 @@ Delta events need a different policy: ordered replay, gap detection, or rebuild.
 
 24
 00:01:32,300 --> 00:01:42,300
-Remember: A dual write can commit in one store and fail in the other. Outbox: the change and its event commit together, or neither does. Delivery after commit can repeat or arrive late. Apply a complete-state event only if its version is newer. Repeat-safe is not the same as correctly ordered.
+Remember: A dual write can commit in one store and fail in the other. Outbox: the change and its event commit together, or neither does. Delivery after commit can repeat or arrive late. Apply a complete-state event only if its version is newer. Guard against both duplicates and events that arrive out of order.
 

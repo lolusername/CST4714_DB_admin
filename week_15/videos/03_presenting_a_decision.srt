@@ -20,7 +20,7 @@ Tradeoff: what it costs and what you will watch.
 
 6
 00:00:19,800 --> 00:00:23,200
-Describe the observed plan change. Do not invent "3x faster" from one run.
+Describe the plan you observed and how you measured it.
 
 7
 00:00:23,700 --> 00:00:34,200
@@ -28,7 +28,7 @@ There is no single correct database. The reasoning is what gets evaluated.
 
 8
 00:00:34,700 --> 00:00:37,200
-Choosing PostgreSQL does not by itself stop overlapping appointments. Test the rule.
+Test whether the appointment rule rejects an overlap in PostgreSQL.
 
 9
 00:00:37,700 --> 00:00:43,100
@@ -40,7 +40,7 @@ Who needs what, one relationship, one query result, one decision you tested.
 
 11
 00:00:49,600 --> 00:00:53,100
-Never depend on one live request. Keep a static fallback and label it.
+Keep a saved, labeled example available during a live demonstration.
 
 12
 00:00:53,600 --> 00:00:59,000
@@ -56,5 +56,5 @@ Honest scope plus concrete reasoning beats inflated certainty.
 
 15
 00:01:09,000 --> 00:01:19,000
-Remember: Decision → result → tradeoff, tied to one query and workload. Report what you observed; never invent a speedup. Design questions: ask, assume, choose simpler, name a test. Demo from prepared, redacted output with a non-live fallback. State scope: what the check covered and what it did not.
+Remember: Decision → result → tradeoff, tied to one query and workload. Report the result you observed and how you measured it. Design questions: ask, assume, choose simpler, name a test. Demo from prepared, redacted output with a non-live fallback. Name the records, conditions, and behavior your check covered.
 

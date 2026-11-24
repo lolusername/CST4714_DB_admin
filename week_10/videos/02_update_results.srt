@@ -28,7 +28,7 @@ Ticket 1001 is no longer "open", so nothing matches: 0 and 0.
 
 8
 00:00:31,300 --> 00:00:37,300
-No duplicate 5099. That's the expected-state filter working, not a connection failure.
+Ticket 5099 appears once. On retry the expected-state filter no longer matches.
 
 9
 00:00:37,800 --> 00:00:40,300

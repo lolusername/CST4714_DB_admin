@@ -44,5 +44,5 @@ Reflection shows judgment: the limit and the next design change.
 
 12
 00:01:01,300 --> 00:01:11,300
-Remember: Start from completed work, not a list of tools. Collect the query, the result, the experiment, the environment. Each phrase must survive "tell me about that." No invented percentages; name the real environment. Same evidence → resume bullet, STAR-R story, README.
+Remember: Start with something you built, tested, or repaired. Collect the query, the result, the experiment, the environment. Each phrase must survive "tell me about that." No invented percentages; name the real environment. Same evidence → resume bullet, STAR-R story, README.
 

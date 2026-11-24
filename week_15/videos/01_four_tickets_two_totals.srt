@@ -40,7 +40,7 @@ count(t.ticket_id) skips that NULL, so 203 gets a real zero.
 
 11
 00:00:44,900 --> 00:00:48,400
-Ticket 3 matches nobody: NULL equals no staff ID. Left join keeps staff, not tickets.
+Ticket 3 has a NULL assignee. It matches no staff ID. The LEFT JOIN keeps each staff row.
 
 12
 00:00:48,900 --> 00:00:50,900
@@ -48,15 +48,15 @@ Neither query is wrong. They count different populations.
 
 13
 00:00:51,400 --> 00:00:56,700
-The dashboard needs a labeled "unassigned" queue, not a fake assignee.
+Show these tickets under a separate “unassigned” label.
 
 14
 00:00:57,200 --> 00:00:59,200
-count(*) counts 203's placeholder row: a ticket that does not exist.
+count(*) includes the placeholder row for staff member 203.
 
 15
 00:00:59,700 --> 00:01:05,200
-Its total matches the backlog by accident. Check row 203, not just the total.
+Inspect the row for staff member 203 to explain this total.
 
 16
 00:01:05,700 --> 00:01:08,200
@@ -76,5 +76,5 @@ Define each population, then explain the gap with actual record IDs.
 
 20
 00:01:22,000 --> 00:01:32,000
-Remember: When two totals disagree, define each population first. A LEFT JOIN preserves the left side, not the right. count(column) skips NULLs; count(*) counts placeholder rows. On an outer join, a test in ON and a test in WHERE differ. Explain the gap with record IDs, not totals.
+Remember: When two totals disagree, define each population first. A LEFT JOIN preserves every row from the left table. count(column) skips NULLs; count(*) counts placeholder rows. On an outer join, a test in ON and a test in WHERE differ. Identify the records that account for the gap.
 

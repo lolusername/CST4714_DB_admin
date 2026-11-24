@@ -16,7 +16,7 @@ Before fixing anything, ask: which copy IS the fact?
 
 5
 00:00:18,500 --> 00:00:22,000
-Each store is chosen for a specific responsibility, not to look advanced.
+Assign each store a responsibility.
 
 6
 00:00:22,500 --> 00:00:24,500
@@ -56,7 +56,7 @@ The projection follows after some lag. If it silently stopped, it would be wrong
 
 15
 00:01:03,100 --> 00:01:08,500
-The snapshot keeps 'open' on purpose. Old is not the same as wrong.
+The snapshot preserves the status at the time of the event: open.
 
 16
 00:01:09,000 --> 00:01:11,500
@@ -72,5 +72,5 @@ Use two when the benefit is concrete, ownership is explicit, and you can run bot
 
 19
 00:01:19,600 --> 00:01:29,600
-Remember: Polyglot = different stores for different responsibilities. Each duplicated fact needs ONE authoritative owner. Copies are projections or snapshots: name how and when they refresh. Repairs flow from the owner to the copy, never the reverse. A second database must earn its operating cost.
+Remember: Polyglot = different stores for different responsibilities. Each duplicated fact needs ONE authoritative owner. Copies are projections or snapshots: name how and when they refresh. Repair the copy from its authoritative source. A second database must earn its operating cost.
 

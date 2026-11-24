@@ -52,5 +52,5 @@ It comes back with both stored events. Shaping the array is a separate projectio
 
 14
 00:01:02,000 --> 00:01:12,000
-Remember: "requester.user_id" reaches into a nested document. { tags: "safety" } matches if the array CONTAINS "safety". Separate dotted conditions may be met by different elements. $elemMatch: all conditions must hold in ONE element. $elemMatch in a filter picks documents; it does not trim the array.
+Remember: "requester.user_id" reaches into a nested document. { tags: "safety" } matches if the array CONTAINS "safety". Separate dotted conditions may be met by different elements. $elemMatch: all conditions must hold in ONE element. A filter with $elemMatch returns each qualifying document with its full array.
 
