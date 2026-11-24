@@ -13,15 +13,15 @@ The lab creates a separate `security_lab.resident_tickets` table. `ticket_id` is
 | 3 | resident_102_lab | Missed pickup |
 | 4 | resident_102_lab | Leaking hydrant |
 
-The two role names are PostgreSQL `NOLOGIN` roles used to test permissions on one connection. They are not rows in the full Metro Support `users` table, and they are not Supabase Auth accounts. The policy compares `owner_role` to `current_user`. It filters existing rows for a SELECT. A policy permitting a read does not itself grant SELECT and does not define an INSERT policy.
+The two role names are PostgreSQL `NOLOGIN` roles used to test permissions on one connection. These accounts belong to this exercise's fixture. The policy compares `owner_role` to `current_user`. It filters existing rows for a SELECT. A policy permitting a read does not itself grant SELECT and does not define an INSERT policy.
 
 The lab later adds ticket 5 for `resident_102_lab`. Keep that addition separate from the four-row baseline. The real Supabase application example uses `auth.uid()` and an authenticated token rather than creating one PostgreSQL role for every person.
 
 ## The complete Metro Support fixture
 
-The CSVs contain **8 users, 12 tickets, and 21 events**. They are fictional teaching data. A user can request many tickets; a ticket has one requester, an optional assignee, and several events. Each event belongs to one ticket and names its actor. IDs connect records; a display name is not a key.
+The CSVs contain **8 users, 12 tickets, and 21 events**. They are fictional teaching data. A user can request many tickets; a ticket has one requester, an optional assignee, and several events. Each event belongs to one ticket and names its actor. Join records using IDs.
 
-The PostgreSQL schema stores timestamps as `timestamptz`; CSV/JSON show ISO 8601 strings with `Z` for UTC. In these CSVs, an empty field represents SQL `NULL`, not an empty string. SQL columns always exist even if their value is null. A missing JSON member is a different representation. These IDs are supplied, not generated.
+The PostgreSQL schema stores timestamps as `timestamptz`; CSV/JSON show ISO 8601 strings with `Z` for UTC. In these CSVs, an empty field represents SQL `NULL`. SQL columns always exist even if their value is null. A missing JSON member is a different representation. The fixture supplies these IDs.
 
 ### users: field dictionary
 
@@ -131,4 +131,4 @@ event_id,ticket_id,actor_id,event_type,old_status,new_status,note,event_at
 
 ### Rules versus examples
 
-The SQL enforces primary keys, foreign keys, required fields, unique emails, and `closed_at IS NULL OR closed_at >= opened_at`. The labels listed above are **observed values**, not enum constraints in this fixture. A data dictionary does not silently add a CHECK rule. The Week 8 small recovery fixture has a separate status CHECK; do not confuse the two schemas.
+The SQL enforces primary keys, foreign keys, required fields, unique emails, and `closed_at IS NULL OR closed_at >= opened_at`. These are the values observed in the fixture. A data dictionary does not silently add a CHECK rule. The Week 8 small recovery fixture has a separate status CHECK; do not confuse the two schemas.

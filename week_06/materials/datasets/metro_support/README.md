@@ -19,7 +19,7 @@ document modeling, aggregation, and recovery.
 Week 2 used DuckDB to practice SQL without a server. Weeks 3 and 4 use PostgreSQL
 because we are studying its stored definitions, constraints, views, and identity
 columns. Use **one** of the following environments, then follow the shared
-loading instructions below. This setup is part of the lab, not another submission.
+loading instructions below. Run this setup before the lab.
 
 ### Supabase SQL Editor
 
@@ -61,7 +61,7 @@ This option supports our Weeks 3 and 4 exercises. Its database is stored in this
 browser's local storage, not in a Supabase project. Return using the same browser
 profile and keep your SQL file outside the page. Clearing site data, using a
 different profile, or choosing **Clear Playground Database** can remove your
-practice state. Browser storage is not a backup or a submission.
+practice state. Export your SQL and keep a saved copy.
 
 Later work with independent server sessions, Supabase Auth, cloud connections,
 and recovery has its own environment instructions. Do not substitute this
@@ -70,7 +70,7 @@ of its browser PostgreSQL implementation.
 
 ### Load the Course Tables Once
 
-**The setup file is a reset, not a connection command.** Its opening
+**The setup file resets the database.** Its opening
 `DROP SCHEMA ... CASCADE` removes the existing `metro_support` schema and objects
 that depend on it, potentially including objects in other schemas. Use a
 dedicated practice environment with no work you need to keep. Do not rerun it

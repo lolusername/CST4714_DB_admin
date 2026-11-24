@@ -17,7 +17,7 @@ Here is the plan. Day 1 is this worked review, and then you build one individual
 
 Here is the frame for the whole review: six questions you can ask about any database system. They map onto the semester.
 
-Purpose comes first. Which user, and which decision, does this support? It comes first because the same stored facts can support different decisions. A manager handing out today's work needs a different report from someone checking for an unassigned backlog, and "the SQL ran without an error" does not tell you which one you built. Model: what does one record mean, and how do identities connect? In our example, staff and tickets are different populations. Protect: which bad states and which unauthorized actions are refused? Those are two different things. A constraint can reject a bogus status, but it does not decide who is allowed to close a ticket. Perform: which query shapes matter, and what measured work supports them? An index decision needs a workload and a comparison, not just an index that exists. Recover: which failure do we tolerate, and how do we verify the restore? Reproduce: can someone else follow your setup without you handing them a password?
+Purpose comes first. Which user, and which decision, does this support? It comes first because the same stored facts can support different decisions. A manager handing out today's work needs a different report from someone checking for an unassigned backlog, and "the SQL ran without an error" does not tell you which one you built. Model: what does one record mean, and how do identities connect? In our example, staff and tickets are different populations. Protect: which bad states and which unauthorized actions are refused? Those are two different things. A constraint can reject a bogus status, but it does not decide who is allowed to close a ticket. Perform: which query shapes matter, and what measured work supports them? Compare the index against a specific query and workload. Recover: which failure do we tolerate, and how do we verify the restore? Reproduce: can someone else follow your setup without you handing them a password?
 
 Read the line at the bottom. One ticket report connects data meaning with operational decisions. You can use these six as a path through your final demonstration. You do not need equal time on each one. Pick the ones your project actually tests.
 
@@ -30,9 +30,9 @@ This is our tool for Day 1, Notebook 09, Four Tickets, Two Different Totals. Cho
 
 Look at the table. First row: SQLite runs inside Python, so this is real SQL with real constraints, a real rollback, and an isolated restore. But the database lives in memory, inside the notebook, completely separate from your Supabase project and your Atlas cluster. Why do it this way? Because today I want you changing things freely, and nothing you do here can damage a cloud project.
 
-Second row: later cells turn the same ticket facts into Python dictionaries and JSON. Third row: the MongoDB pipeline you will see is a reference printed on the page. It is a comparable grouping, not a live Atlas connection. The notebook never sends it anywhere.
+Second row: later cells turn the same ticket facts into Python dictionaries and JSON. Third row: the MongoDB pipeline you will see is a reference printed on the page. The example models the grouping in Python. The notebook never sends it anywhere.
 
-Let's be honest about the boundary. SQLite does not have PostgreSQL's roles, its lock behavior between sessions, or Supabase's request path, and it is not a replica set. We use it for query meaning, a constraint failure, rollback, and a small restore. Run it once in order, then go back to the assignment cell and change one input. There is no notebook submission.
+Let's be honest about the boundary. Use PostgreSQL or Supabase to test permissions, concurrent sessions, and application access. We use it for query meaning, a constraint failure, rollback, and a small restore. Run it once in order, then go back to the assignment cell and change one input. There is no notebook submission.
 
 [Sources]
 - Notebook 09, setup and execution boundaries.
@@ -44,7 +44,7 @@ Here is the entire dataset. Look at the left table first: three staff members, A
 
 Read the definition at the bottom, because everything today depends on it. Active means new, open, or in_progress. So before we run a single query, we can predict the answer: tickets 1, 3, and 4 are active. That is three. Two of them have an assignee. Agent 203 is a real staff member with no tickets at all. Ticket 3 is a real ticket with no staff member at all. Both are legitimate. Nothing here is broken data.
 
-Why does that NULL matter so much? Because it is the schema's way of saying "no assignment yet." It does not mean staff ID zero, it does not mean an empty name, and it is definitely not a reason to throw the ticket away. The notebook also turns on SQLite's foreign-key checking and adds a CHECK constraint on status. Those two choices let it tell an allowed unassigned ticket apart from a reference to a staff member who does not exist. Keep these two tables in your head. Every number today comes from them.
+Why does that NULL matter so much? The schema uses this value for a ticket that is awaiting assignment. The notebook also turns on SQLite's foreign-key checking and adds a CHECK constraint on status. Those two choices let it tell an allowed unassigned ticket apart from a reference to a staff member who does not exist. Keep these two tables in your head. Every number today comes from them.
 
 [Sources]
 - Notebook 09, original synthetic staff and ticket fixture.
@@ -69,9 +69,9 @@ Before we count anything, I want you to see the rows a left join actually produc
 
 First row: Agent 201 matches ticket 1, open. Ticket 2 also belongs to 201, but it is resolved, so it fails the active part and does not match. Second row: Agent 202 matches ticket 4. The third row is the interesting one. Agent 203 has no matching active ticket, but because staff is on the left, the join keeps that staff row anyway and fills the ticket columns with NULL.
 
-That NULL row is a joined result row. It is not a ticket. Nobody inserted anything, and ticket 3 has not been assigned to Agent 203.
+That NULL row is a joined result row. Nobody inserted anything, and ticket 3 has not been assigned to Agent 203.
 
-So where is ticket 3? Read the second line in the box. Its assignee is NULL, and NULL does not equal any staff ID, so it matches nobody. A left join promises to keep every row from the left side. It makes no promise about the right side. That is why I want you to look at which side is preserved and what the match rule is, instead of just remembering the words "left join."
+So where is ticket 3? Read the second line in the box. Its assignee is NULL, and NULL does not equal any staff ID, so it matches nobody. A left join promises to keep every row from the left side. It makes no promise about the right side. Inspect the preserved side and the match rule to explain the result.
 
 Now predict: if Agent 201 had two active tickets, you would get two rows for that agent before grouping. Which brings us to the real question. Which column do we count?
 
@@ -101,7 +101,7 @@ And here is the result. Agent 201, one. Agent 202, one. Agent 203, zero. Add the
 
 Neither one. Look at the line across the middle: assigned active, 2. Unassigned active, 1. All active, 3. Two plus one is three. The difference is ticket 3, the unassigned one. The staff report did exactly what the join and the count asked for. It counts tickets that belong to staff, and ticket 3 belongs to nobody.
 
-So the real problem is not the SQL. It is whether the dashboard says what it is showing. If a manager looks at this staff table and treats it as the whole backlog, ticket 3 is invisible to them. That is an application design problem, even though every query is valid. Read the bottom line: a staff workload report needs a separate unassigned category to describe the full backlog. You could show an unassigned queue next to the staff counts, or add a clearly labeled unassigned row. What you must not do is assign the ticket to a made-up person just to make the sum match.
+Check which population the report includes. It is whether the dashboard says what it is showing. If a manager looks at this staff table and treats it as the whole backlog, ticket 3 is invisible to them. That is an application design problem, even though every query is valid. Read the bottom line: a staff workload report needs a separate unassigned category to describe the full backlog. You could show an unassigned queue next to the staff counts, or add a clearly labeled unassigned row. What you must not do is assign the ticket to a made-up person just to make the sum match.
 
 Here is the habit I want you to keep. When two totals disagree, define each population, then explain the gap with actual record IDs. It works the same way for event counts, document groups, restores, and synchronized copies.
 
@@ -110,7 +110,7 @@ Here is the habit I want you to keep. When two totals disagree, define each popu
 
 ## Slide 9
 
-Run Cells 02 and 03 and compare the identities, not just the totals. Active ticket IDs are one, three, and four. The assigned ones are one and four. Ticket three is unassigned, so it is outside the matched staff workload. The left join keeps Agent 203 even though there is no matching active request, and counting ticket_id gives that agent zero. Nothing is contradictory about three active tickets and only two assigned active tickets. Cell 05 temporarily assigns ticket three to an existing agent, then rolls the change back. Use that controlled comparison when explaining the join in the concept guide.
+Run Cells 02 and 03 and compare the returned IDs and totals. Active ticket IDs are one, three, and four. The assigned ones are one and four. Ticket three is unassigned, so it is outside the matched staff workload. The left join keeps Agent 203 even though there is no matching active request, and counting ticket_id gives that agent zero. Nothing is contradictory about three active tickets and only two assigned active tickets. Cell 05 temporarily assigns ticket three to an existing agent, then rolls the change back. Use that controlled comparison when explaining the join in the concept guide.
 
 ## Slide 10
 
@@ -154,7 +154,7 @@ So we have two mechanisms doing two jobs. The constraint decides whether a value
 
 Now read the box at the bottom carefully, because this is easy to get wrong. It was our explicit rollback that undid the assignment. In SQLite, the failed statement by itself does not establish that the earlier statement was undone. PostgreSQL handles an error inside a transaction in its own way, which we studied earlier, so do not generalize one engine's behavior from this tiny example.
 
-And name what you tested accurately. This was a constraint test with a rollback. It was not a permission test. Nobody switched users.
+And name what you tested accurately. This was a constraint test with a rollback. Test permissions separately with the intended user. Nobody switched users.
 
 [Sources]
 - Notebook 09, expected constraint failure and rollback.
@@ -164,9 +164,9 @@ And name what you tested accurately. This was a constraint test with a rollback.
 
 Here is the same ticket 3, now as JSON. Look at the three fields. _id is 3. assignee_id is null. status is new. The notebook does this for all four tickets.
 
-Notice how the spelling changes as we move between languages. In SQL it was NULL. When Python fetched the row, it became None. Now in JSON it is null, lowercase, with no quotes, because it is a value, not the text "null." Three spellings, one fact: there is no assignment. The notebook uses a JSON serializer for this instead of gluing strings together, which is how you avoid broken quotes.
+Notice how the spelling changes as we move between languages. In SQL it was NULL. When Python fetched the row, it became None. JSON writes the unassigned value as lowercase null without quotes. Use the JSON serializer to quote and escape text correctly.
 
-Now read the box. Each document still means one ticket. assignee_id remains a reference to a staff member, not an embedded staff profile. And the last line is the one I care about most: changing the representation does not assign ticket 3 to a staff member. Moving from a row to a document does not create relationships, does not enforce them, and does not decide which records a report includes. Those are still your design decisions.
+Now read the box. Each document still means one ticket. assignee_id refers to a staff member. And the last line is the one I care about most: changing the representation does not assign ticket 3 to a staff member. Moving from a row to a document does not create relationships, does not enforce them, and does not decide which records a report includes. Those are still your design decisions.
 
 We talked about embedding versus referencing when we did document modeling, and that reasoning still applies. Today we keep the same facts and the same IDs on purpose, so the only thing that changes is the representation. That isolates the reporting question. And to be clear, this JSON lives in memory. Nothing is sent to Atlas.
 
@@ -192,7 +192,7 @@ And read the bottom box honestly. This pipeline is a reference for a collection 
 
 ## Slide 15
 
-This slide is about why a row count is not a restore check. The notebook exports the SQLite database as SQL statements, builds a separate in-memory database, and runs those statements there. The first comparison says everything matches. Then the notebook does something deliberate: it changes ticket 1 only in the restored copy, from open to resolved.
+Check the restored records and their values. The notebook exports the SQLite database as SQL statements, builds a separate in-memory database, and runs those statements there. The first comparison says everything matches. Then the notebook does something deliberate: it changes ticket 1 only in the restored copy, from open to resolved.
 
 Read the table. Number of tickets: 4 in the source, 4 in the copy. Ticket 3's assignment: NULL and NULL. So a count check passes. But look at the middle row. Ticket 1 is open in the source and resolved in the copy. If you only counted rows, you would call this restore good, and a manager would see a closed ticket that is actually still open.
 
@@ -200,7 +200,7 @@ What catches it? Comparing the ordered IDs and their values. That is the second 
 
 This connects back to our recovery work in PostgreSQL and MongoDB. A successful restore command and the right number of rows are useful signals, but you also need known records, relationships, and rules. Permissions and service settings may need their own rebuild.
 
-Now read the last line. The SQL dump lives in memory, in a Python variable. It demonstrates the mechanism, but it is not a durable off-machine backup. If the notebook process dies, the dump dies with it.
+Now read the last line. The SQL dump lives in memory, in a Python variable. Retain the export outside the runtime for a durable recovery copy. If the notebook process dies, the dump dies with it.
 
 [Sources]
 - Notebook 09, isolated SQLite restore and deliberate wrong-value comparison.
@@ -210,7 +210,7 @@ Now read the last line. The SQL dump lives in memory, in a Python variable. It d
 
 Our notebook covers a lot, but some claims need the real platform. This table points each concern back to the kind of test you already ran in your completed course work.
 
-Access: read as the intended user, then attempt a forbidden action. Why both? Because an administrator's successful read tells you nothing about what the application user can do. And remember that a CHECK constraint is not an access policy. They answer different questions.
+Access: read as the intended user, then attempt a forbidden action. Why both? Because an administrator's successful read tells you nothing about what the application user can do. A CHECK constraint validates values. An access policy determines who can change them. They answer different questions.
 
 Performance: compare the same query and the same returned records before and after an index. Keep the query, the parameters, and the data fixed, or the comparison means nothing. An index also costs storage and write work. A four-row example can show query meaning, but it cannot support a claim about speed, so use your measured lab for that.
 
@@ -226,9 +226,9 @@ Now read the box. SQLite here does not reproduce Supabase row-level security, Po
 
 ## Slide 17
 
-Cloudflare's published account of its July 2019 outage separates observed impact, the deployed rule, its expensive behavior, mitigation, and corrective work. It is a web-security incident, not a database benchmark. Use its evidence structure when explaining your own query or restore investigation: show the input, observation, action, and limit. In a portfolio or interview, describe only work you actually performed; a four-ticket classroom result is useful evidence without being called production-scale experience.
+Cloudflare's published account of its July 2019 outage separates observed impact, the deployed rule, its expensive behavior, mitigation, and corrective work. The case concerns a web-security incident. Use its evidence structure when explaining your own query or restore investigation: show the input, observation, action, and limit. In a portfolio or interview, describe only work you actually performed; a four-ticket classroom result is useful evidence without being called production-scale experience.
 
-For this class, connect the case to the experiment already on the screen. It is context for your technical reasoning, not another assignment. Keep classroom results separate from the company’s production system.
+For this class, connect the case to the experiment already on the screen. Use this case to interpret your own measurements. Keep classroom results separate from the company’s production system.
 
 Source: https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019/
 
@@ -238,7 +238,7 @@ Now we shift to your Day 1 lab, the concept guide. This is what one looks like, 
 
 Look at the title: "Why an active ticket is absent from a staff report." It is a question, and a concrete one. That is much better than a title like "SQL Joins," because it tells the reader exactly which puzzle they are about to understand. Under it, one sentence saying the example uses a left join and one unassigned ticket. Then a section called Example and result, with the small setup, the query, and the output. Then Explanation, where you explain the preserved population and the example you changed.
 
-Read the box at the bottom. This is README structure, not a completed submission, so please do not just copy it. Your contribution is the explanation of a small change you understand. You could assign the unassigned ticket to someone else, add another staff member with no tickets, or compare the two COUNT expressions. Or pick a different concept from the course entirely.
+Read the box at the bottom. Use this outline to document your own project. Your contribution is the explanation of a small change you understand. You could assign the unassigned ticket to someone else, add another staff member with no tickets, or compare the two COUNT expressions. Or pick a different concept from the course entirely.
 
 The second line of the box lists what else a reader needs: the tool, the run order, cleanup, one limit, and source credit. If your example uses this notebook, say that it runs with Python and SQLite. Each of those can be one sentence. You do not need separate files for setup, evidence, and reflection.
 
@@ -266,18 +266,18 @@ If the repository is public, open the link while signed out to make sure it work
 
 Here is the lab itself. It is individual work, and we do it in class.
 
-Read the four lines. Choose one concept and a small example. You can start from the review notebook, or use another course exercise you completed. Change one input or query, predict what will happen, then explain the result in your own words. Why predict first? Because explaining a result you predicted shows you understand the mechanism, not just that you ran a cell. Put the example and the explanation in one README. Then review the files before you share them: no credentials, no real personal data, and any cleanup touches only your example's disposable data.
+Read the four lines. Choose one concept and a small example. You can start from the review notebook, or use another course exercise you completed. Change one input or query, predict what will happen, then explain the result in your own words. Why predict first? Explain how a step produced the result you predicted. Put the example and the explanation in one README. Then review the files before you share them: no credentials, no real personal data, and any cleanup touches only your example's disposable data.
 
 If your guide is a worked explanation that you did not execute, label the result as predicted. That is a valid guide. Just do not word it as if you ran something you did not run. And if you adapted course material, keep its credit and license notice.
 
-Now the submission box. Submit one public or instructor-accessible URL in Brightspace, with one sentence naming the concept and the result. That is the whole submission. A separate notebook, a presentation, or a full application is not required. And if an account or accessibility barrier keeps you off GitHub, the lab allows a local Markdown or code file instead. Talk to me in class rather than inventing another assignment.
+Now the submission box. Submit one public or instructor-accessible URL in Brightspace, with one sentence naming the concept and the result. That is the whole submission. A separate notebook, a presentation, or a full application is not required. And if an account or accessibility barrier keeps you off GitHub, the lab allows a local Markdown or code file instead. Talk to me in class.
 
 [Sources]
 - Week 15 individual GitHub concept lab.
 
 ## Slide 21
 
-This starts the Day 2 material: final demonstrations. Your requirements come from the canonical final-project assignment, not from this slide. Your demonstration slot follows the schedule in Brightspace, and demonstrations may run across our Week 15 meetings and the final exam meeting, so we are not trying to fit everyone into one class.
+This starts the Day 2 material: final demonstrations. Use the canonical final-project assignment to check the requirements. Your demonstration slot follows the schedule in Brightspace, and demonstrations may run across our Week 15 meetings and the final exam meeting, so we are not trying to fit everyone into one class.
 
 Read the three lines. A user problem. A model and query you can explain. An operational decision you tested. That is the arc. Start with who needs what. For a support system, maybe staff need a current queue and a manager needs a workload summary. Show just enough of the model to explain one relationship or one document boundary. Then show a query whose result matters to that user, and say what one output row or document means.
 
@@ -293,7 +293,7 @@ Look at the second box. Present from your notebook, code, or prepared results. A
 
 Here is what a complete query explanation sounds like, using our review example. Read it with me.
 
-"The support manager needs to see staff workload, including zero." That is the user need. "I kept staff on the left and counted matching ticket IDs." That is the query decision, and notice it is really two decisions, not one. "The result was Agent 201 1, Agent 202 1, Agent 203 0." That is a concrete result, with names and numbers. "Ticket 3 was still active but unassigned, so I identified it as a separate part of the backlog." That is the implication for the report.
+"The support manager needs to see staff workload, including zero." That is the user need. "I kept staff on the left and counted matching ticket IDs." Explain how each choice affected the result. "The result was Agent 201 1, Agent 202 1, Agent 203 0." That is a concrete result, with names and numbers. "Ticket 3 was still active but unassigned, so I identified it as a separate part of the backlog." That is the implication for the report.
 
 Notice the sequence: need, decision, result, implication. It is short, and it invites good follow-up questions. What if a staff member has two tickets? What if ticket 3 gets reassigned? What if the status test moves into WHERE? You can answer every one of those by following the same four tickets and testing one change. That is the payoff of choosing a small example you fully understand.
 
@@ -327,7 +327,7 @@ Why the extra R? Because reflection is where you show judgment. Anyone can descr
 
 Notice that the result is observable. Three versus two, and then explained. That is what makes the story believable. It is a small classroom experiment, and that is fine. Say so. A specific small story beats a vague big one.
 
-Read the line at the bottom. Practice your own version individually, in your notes, using one thing you completed. This is not another submission. And remember that the outline is the start of a conversation, not a speech that ends it. Expect a follow-up question, which is exactly what the next slide is about.
+Read the line at the bottom. Practice your own version individually, in your notes, using one thing you completed. This is not another submission. Use the outline to start the conversation. Expect a follow-up question, which is exactly what the next slide is about.
 
 [Sources]
 - Course textbook, Chapter 15, STAR-R framework.
@@ -381,7 +381,7 @@ Your GitHub guide helps here. It is one small example you can discuss in depth, 
 
 ## Slide 28
 
-Last slide. What do you learn next? My advice is to choose one gap in a role that interests you, not a list of product names.
+Last slide. What do you learn next? Choose one skill gap in a role that interests you.
 
 Read the three lines. Choose one gap. Build one small experiment that addresses it. Describe the result and the next question it raises.
 
@@ -389,7 +389,7 @@ Look at the example. If a role asks for operational scripting, you could automat
 
 Keep the explanation next to the code: the environment, the input, the observed result, and the limit. If it fails, write down what failed and your next question. That record is an interview story.
 
-Read the last line. Keep expanding a workflow you can explain rather than adding tool names. That has been the whole course: define what the data means, choose a mechanism, predict, and check the actual result. Syntax and platforms will change. That habit transfers. Thank you for a great semester.
+Read the last line. Expand a workflow you can demonstrate. That has been the whole course: define what the data means, choose a mechanism, predict, and check the actual result. Syntax and platforms will change. That habit transfers. Thank you for a great semester.
 
 [Sources]
 - Course textbook, Chapter 15, next-skill planning.
@@ -397,7 +397,7 @@ Read the last line. Keep expanding a workflow you can explain rather than adding
 
 ## Slide 29
 
-These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Four tickets, two totals: the course in one report (1:32); From lab evidence to a portfolio bullet (1:11); Presenting a technical decision (1:19). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 15 README. The diagrams are schematic illustrations, not benchmarks.
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Four tickets, two totals: the course in one report (1:32); From lab evidence to a portfolio bullet (1:11); Presenting a technical decision (1:19). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 15 README. The diagrams illustrate the design.
 
 ## License
 

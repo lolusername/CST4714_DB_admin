@@ -33,7 +33,7 @@ why its rows answer a different question. A matching grand total is insufficient
 ## 2. Explain the Aggregation Result
 
 Complete the notebook's one explanation cell: your streetlight result and its
-source IDs, plus why unwound rows count events rather than tickets. Explain why
+source IDs and how each unwound row corresponds to an event. Explain why
 the matching totals do not prove the reports counted the same things. Run cleanup
 when finished. No validator change, date tests, or validation explanation is
 needed for this lab.
@@ -60,7 +60,7 @@ reference. The supplied rule allows optional fields but requires a valid ticket 
 status, and subject. The later example adds a required BSON `opened_at` date and
 compares an allowed date, an invalid status, a date stored as text, and a missing
 date. Atlas can enforce the rule; local mode provides an explicitly labeled
-trace to interpret. That trace is not a live server test.
+trace to interpret. The supplied trace shows a recorded server result.
 
 Leave this material as optional reference. It is not part of this lab's submission.
 

@@ -1,6 +1,6 @@
 # Week 15 videos
 
-Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. Diagrams are schematic illustrations, not benchmarks.
+Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams illustrate the design.
 
 ## [Four tickets, two totals: the course in one report](01_four_tickets_two_totals.mp4) (1:32)
 

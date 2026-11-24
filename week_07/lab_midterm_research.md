@@ -2,7 +2,7 @@
 
 Spend about 50 minutes preparing Part 4 of the Metro Support midterm, the index test. Inspect the supplied data in Colab, read two short documentation sections, and write a plan for the test you will run later in PostgreSQL. Work individually.
 
-**This notebook is classwork, not the midterm.** The midterm itself is described on one page: [midterm instructions](../week_08/materials/assignments/midterm_project.md).
+**This notebook is today’s classwork.** The midterm itself is described on one page: [midterm instructions](../week_08/materials/assignments/midterm_project.md).
 
 ## Open the notebook
 
@@ -45,7 +45,7 @@ Today you study the data this query reads and what the documentation says such a
 
 ## Submit
 
-Submit **one Colab link** in today's classwork assignment in Brightspace. Run every cell, then choose **File > Save** so your outputs and writing are stored in your Drive copy, Lastname_Week07_Research. Choose **Share**, give the instructor viewer access, and copy the link. Submit your saved copy's link, not the starter notebook's GitHub or Colab link. No file upload, separate report, or screenshots.
+Submit **one Colab link** in today's classwork assignment in Brightspace. Run every cell, then choose **File > Save** so your outputs and writing are stored in your Drive copy, Lastname_Week07_Research. Choose **Share**, give the instructor viewer access, and copy the link. Submit the sharing link to your saved copy. No file upload, separate report, or screenshots.
 
 I will look for accurate observations, a connection between the two sources and this dataset, a test that compares the same query and results, and a clear distinction between what you observed and what you predict. You can revise and reuse the writing in your final midterm README. The final midterm still uses midterm.sql and README.md.
 

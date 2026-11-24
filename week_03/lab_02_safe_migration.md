@@ -15,8 +15,7 @@ individually in class. Submit one SQL file in Brightspace.
 
 Use the personal database and `active_ticket_queue` view from
 [Lab 1](lab_01_views_identity.md). Do not rerun the dataset reset between these
-labs. If needed, complete Lab 1's view section first; the identity experiment is
-not a prerequisite for this lab.
+labs. If needed, complete Lab 1's view section first; you can then start this lab.
 
 In Colab, use the same saved notebook and its Day 2 section. If the runtime has
 expired, create a fresh disposable database and rerun your saved Day 1 view SQL

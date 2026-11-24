@@ -45,7 +45,7 @@ Short silent animations with captions (3 for this week). Each has a subtitle fil
 ## Free External Resources
 
 - [Getting Started with MongoDB Atlas](https://learn.mongodb.com/courses/getting-started-with-mongodb-atlas): orientation, especially the Atlas overview, deployment, and interface lessons. No completion screenshot is required this week.
-- [MongoDB and the Document Model](https://learn.mongodb.com/courses/overview-of-mongodb-and-the-document-model): optional reinforcement of documents, types, and relationships. The full unit includes database operations that we begin in Week 10; completing the entire unit is not a Week 9 requirement.
+- [MongoDB and the Document Model](https://learn.mongodb.com/courses/overview-of-mongodb-and-the-document-model): optional reinforcement of documents, types, and relationships. Begin the database operations in Week 10.
 - [Atlas Free cluster setup](https://www.mongodb.com/docs/atlas/tutorial/deploy-free-tier-cluster/): the official setup reference. Use Free / M0 only; no payment card is needed for the course path.
 - [GitHub online file editor documentation](https://docs.github.com/repositories/working-with-files/managing-files/editing-files)
 

@@ -21,7 +21,7 @@ and a text editor, or work on paper during the class discussion.
 
 Short silent animations with captions (3 for this week). Each has a subtitle file; see [all Week 1 videos](videos/README.md).
 
-- [Following one request](videos/01_request_path.mp4) (1:24): A new ticket travels from the browser through the API, identity checks, and the DBMS to a committed row. A lost reply is not a lost write, and the dashboard is a separate read.
+- [Following one request](videos/01_request_path.mp4) (1:24): A new ticket travels from the browser through the API, identity checks, and the DBMS to a committed row. A server can commit the ticket before its reply reaches the browser. The dashboard reads the saved data separately.
 - [Selection and projection](videos/02_selection_projection.mp4) (1:34): Selection keeps the rows that satisfy a condition; projection keeps the columns you name. Neither changes the stored table, and a valid condition can still encode the wrong business rule.
 - [Where did the requests go?](videos/03_missing_requests.mp4) (1:18): The dashboard keeps active tickets, then keeps only those with a matching agent. NULL assignees match nothing, so two stored requests never reach the screen.
 
@@ -42,7 +42,7 @@ Use [Chapter 1: How Database-Backed Applications Work](../Operating_Cloud_Databa
 For another explanation, PostgreSQL's free
 [Architectural Fundamentals](https://www.postgresql.org/docs/current/tutorial-arch.html)
 and [Relational Concepts](https://www.postgresql.org/docs/current/tutorial-concepts.html)
-are alternatives, not additional required reading.
+provide optional reading.
 
 No reading response is submitted this week. In class, you will use the ideas to
 explain the lab's missing requests.
@@ -104,7 +104,7 @@ Create new file**, name the file `week_01/notes.md`, and enter a heading beginni
 with `#`. Use **Preview** to inspect the formatting, then **Commit changes** to
 save a version. You can return to the file and use its edit button to revise it.
 
-This is a tool demonstration, not an extra assignment. Work in your own repository
+Watch the tool demonstration. Work in your own repository
 rather than proposing changes to the class repository. GitHub's
 [creating-files guide](https://docs.github.com/en/repositories/working-with-files/managing-files/creating-new-files)
 provides the complete interface instructions.

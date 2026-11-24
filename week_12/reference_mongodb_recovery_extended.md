@@ -47,7 +47,7 @@ separate reconstruction step. Explain one difference from
 the PostgreSQL archive you used in Week 8. Read the supplied tool-comparison
 table, but do not write a second table or five-check report.
 
-A JSON file is useful logical data recovery, not a complete Atlas project backup.
+Use the JSON file to restore the documents. Rebuild indexes and rules separately.
 The notebook links the official `mongodump`/`mongorestore` guidance for database-level
 recovery.
 

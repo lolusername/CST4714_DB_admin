@@ -89,7 +89,7 @@ database stays a **proposed plan**.
 Keep the output, run the final cleanup cell, and save your copy in Drive.
 Use **Share** to give the instructor viewer access, then submit **your saved
 copy’s Colab sharing link** in Brightspace. Do not upload an `.ipynb` file or
-submit the starter link. The backup file is not a submission. The cleanup leaves your
+submit the starter link. Keep the backup file for your restore test. The cleanup leaves your
 Supabase project as it is.
 
 **Before working:** use the [complete data reference](DATA_REFERENCE.md) for this week’s fixture and exact field names.

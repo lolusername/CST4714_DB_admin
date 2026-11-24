@@ -6,7 +6,7 @@ This transcript follows the current presentation order. Source references marked
 
 Welcome to Week 14. Look at the two lines in the middle of the slide. The staff dashboard says resolved. The resident page says open. Both screens are working. Both databases answer their own queries just fine. And they disagree. That is our problem for the week.
 
-Our case has two stores. PostgreSQL holds the real ticket, the one staff update. MongoDB holds a copy of it arranged for the resident page. Using different databases for different jobs has a name, polyglot persistence. I want to be clear up front: that does not mean every project should use several databases. We are studying this two-store design because it makes partial failure easy to see, not because more products make a small system better.
+Our case has two stores. PostgreSQL holds the real ticket, the one staff update. MongoDB holds a copy of it arranged for the resident page. Using different databases for different jobs has a name, polyglot persistence. Start by identifying what the project needs to store. This two-store design makes partial failure easy to see.
 
 Here is the plan. On Day 1 we trace one change from the staff click to the resident page, we look at the transaction that records it, and we experiment with events that arrive twice or arrive late. The notebook gives us a real local SQLite transaction and a small Python model of the copy, so we can see the mechanism without a message broker or another cloud account.
 
@@ -19,11 +19,11 @@ On Day 2 we take the same reasoning to your own final project. You pick one oper
 
 Three terms on this table, and the whole week leans on them.
 
-The authoritative ticket is the record whose accepted update establishes the fact. When staff resolve a ticket, that update lands in PostgreSQL, so the PostgreSQL row is the authority for status. Now read the box at the bottom. This is a design choice. It is not a rule that relational databases outrank document databases. We decided it, and we wrote it down.
+The authoritative ticket is the record whose accepted update establishes the fact. When staff resolve a ticket, that update lands in PostgreSQL, so the PostgreSQL row is the authority for status. Now read the box at the bottom. This is a design choice. Choose a model that fits the access pattern. We decided it, and we wrote it down.
 
 The resident projection is a derived copy, shaped for one particular read. The resident page wants one compact document with the ticket details and the latest status. That makes the read simple. The price is that somebody has to keep the copy up to date. And here is why that matters: a copy that silently stops updating does not look broken. It looks current. That is exactly what our resident is seeing.
 
-The source version is the third row. It identifies the accepted order of updates for one ticket. Version 17 follows version 16. It is not the time a message happened to arrive, because messages can arrive out of order.
+The source version is the third row. It identifies the accepted order of updates for one ticket. Version 17 follows version 16. Use the ticket version because messages can arrive out of order.
 
 Why name an owner for each fact? Because during a repair you need to know which way to copy. If you copy in the wrong direction, the stale display value quietly becomes the new truth.
 
@@ -65,7 +65,7 @@ Three fields, three different questions. Look at the Example column.
 
 ticket_id, 1008, answers the question: which business ticket? The same 1008 should appear in the source row, the event, the consumer log, and the resident document. That shared ID is what lets us line the records up. But matching IDs only tell you the records are about the same ticket. They do not tell you the records agree.
 
-event_id, evt-1008-17, answers: which recorded change? When something retries, it should keep that same event ID rather than invent a new one. That is how we connect three delivery attempts to the one piece of work they represent.
+event_id, evt-1008-17, answers: which recorded change? Preserve the event ID across retries. That is how we connect three delivery attempts to the one piece of work they represent.
 
 source_version, 17, answers: where does this change sit in this ticket's order? Read the box at the bottom. Version 18 of ticket 1008 follows version 17 of that ticket. It says nothing about any other ticket, and nothing about wall-clock time.
 
@@ -102,7 +102,7 @@ The delivery experiment uses one Python dictionary as a model of the resident co
 
 The reconciliation part compares source IDs and field values against a slightly bigger projection. That is where we will see why matching counts can hide problems.
 
-Now read the bottom box. Choose Open in Colab on the weekly page and run the cells in order. No package installation, no cloud database account, no database password. Colab does need a Google sign-in. I will run the first part with you as a demonstration, and the delivery experiment is your individual work. You submit one Brightspace text incident update. The notebook is your working material, not a second file to hand in.
+Now read the bottom box. Choose Open in Colab on the weekly page and run the cells in order. No package installation, no cloud database account, no database password. Colab does need a Google sign-in. I will run the first part with you as a demonstration, and the delivery experiment is your individual work. You submit one Brightspace text incident update. Use the notebook to work through the exercise.
 
 [Sources]
 - CST4714 Notebook 08 and Week 14 lab.
@@ -120,7 +120,7 @@ Now look at the result line at the bottom. After fresh setup, ticket 1008 is ope
 
 The placement of the try matters. If you catch and swallow the error inside the with block, the block exits normally and commits whatever ran so far. Here the exception crosses the transaction boundary before we catch it.
 
-One reminder: this is SQLite in a notebook, not a PostgreSQL server, though the transaction idea is the same.
+This notebook uses SQLite to demonstrate the transaction.
 
 [Sources]
 - CST4714 Notebook 08, rollback cell.
@@ -136,7 +136,7 @@ Next line: if changed dot rowcount equals 1. The row count tells us whether the 
 
 Read the small print at the bottom. A failed event insert rolls back this transaction's ticket update. The outbox also has a unique ticket-and-version pair, so two different event IDs cannot claim the same version. And if the event insert fails for any reason, the ticket update rolls back with it. We never get a new status without its event. But having the event does not mean it has been published or applied anywhere.
 
-What if I run this cell again? It no longer matches version 16, so zero rows change, and the complete notebook reports that zero match instead of adding another event. In a real system, find out why. The row might be missing, or another accepted update might have moved it forward.
+What if I run this cell again? On a retry, the version check finds zero matching rows and the notebook reports the result. In a real system, find out why. The row might be missing, or another accepted update might have moved it forward.
 
 [Sources]
 - CST4714 Notebook 08, successful transaction cell and schema.
@@ -150,7 +150,7 @@ Fresh setup: open, version 16, zero outbox rows. Failure and rollback: open, ver
 
 Read the box at the bottom. The paper incident you will analyze observes version 17. Version 18 only happens later, in the experiment. The incident stops at 17, and the experiment continues the story. Keep those two apart when you write.
 
-The second line of the box is the key point. These local cells do not run a relay or a consumer. Two outbox rows means two pieces of outgoing work exist. It does not mean any resident page changed.
+The second line of the box is the key point. These local cells do not run a relay or a consumer. Two outbox rows means two pieces of outgoing work exist. Verify the resident page separately.
 
 So there are three different milestones: recorded, published, and applied. Each kind of evidence supports a different one. An outbox count tells you work is waiting to leave. A consumer checkpoint tells you what was received or processed. A read of the resident document tells you what is actually being served. When something is stuck, ask which milestone your evidence actually proves.
 
@@ -161,13 +161,13 @@ So there are three different milestones: recorded, published, and applied. Each 
 
 Two words people use as if they mean the same thing. They do not. Look at the table.
 
-Idempotency means doing an operation twice has the same final effect as doing it once. First row: set status to resolved, twice. You still have resolved. That is idempotent. Second row: add one to a counter, twice. You get two increments instead of one. Not idempotent. That is why retries are dangerous for some operations and harmless for others.
+Idempotency means doing an operation twice has the same final effect as doing it once. First row: set status to resolved, twice. You still have resolved. That is idempotent. Second row: add one to a counter, twice. Delivering the same increment twice increases the counter twice. Not idempotent. That is why retries are dangerous for some operations and harmless for others.
 
-Now the third row, which is the trap. Set an older status after a newer one. Say the ticket is closed, and then an old event arrives that says set it to open. Setting open is perfectly repeat-safe. Do it ten times and you still have open. But it replaced a newer accepted state with an older one. The resident's ticket just went backwards. So idempotent is not the same as correct.
+Now the third row, which is the trap. Set an older status after a newer one. Say the ticket is closed, and then an old event arrives that says set it to open. Setting open is perfectly repeat-safe. Do it ten times and you still have open. But it replaced a newer accepted state with an older one. The resident's ticket just went backwards. Check the final state as well as its stability on reruns.
 
 That is why the box says a retry-safe state assignment still needs an ordering rule. Our events are complete-state events. Each one carries the full status at a version assigned by the source, and the consumer only accepts a version newer than the one it holds. Duplicates and old events become no-ops.
 
-That rule rests on assumptions: one ticket, one authoritative version sequence, and payloads that carry the whole status. It is not a promise about every event-driven system.
+That rule rests on assumptions: one ticket, one authoritative version sequence, and payloads that carry the whole status. Report the evidence from this system.
 
 [Sources]
 - CST4714 textbook, Chapter 14, and Notebook 08 delivery experiment.
@@ -180,11 +180,11 @@ For each event in the deliveries list: if ENFORCE_VERSION is on, and the incomin
 
 Notice that it says less than or equal. Equal catches the duplicate. Less than catches the late old event. Both get ignored for the same reason: they carry nothing newer.
 
-The last_event_id field records which event supplied the current state. A duplicate does not change it, and this projection holds only the latest state, not a history.
+The last_event_id field records which event supplied the current state. Repeating the event leaves the latest projected state unchanged.
 
-Read the note under the code. Each cell run resets the projection to open, version 16. That is deliberate. When you flip a flag and rerun, you start from the same place, so you are comparing like with like instead of inheriting leftovers from your last run.
+Read the note under the code. Each cell run resets the projection to open, version 16. That is deliberate. Each rerun starts from the same initial state so the results are comparable.
 
-And the second line: the dictionary loop models one consumer. It is not a concurrent database write. The check and the assignment are two separate Python steps, and two real workers could both read version 16 before either one writes. In a few slides we will see the MongoDB command that does the check and the write as one atomic operation.
+And the second line: the dictionary loop models one consumer. The notebook runs this example one step at a time. The check and the assignment are two separate Python steps, and two real workers could both read version 16 before either one writes. In a few slides we will see the MongoDB command that does the check and the write as one atomic operation.
 
 [Sources]
 - CST4714 Notebook 08, Section 2.
@@ -196,7 +196,7 @@ Let's run the default list and read the trace from top to bottom. We start at op
 
 First delivery: version 17. It is newer than 16, so it applies. Stored state: resolved, 17. Second delivery: 17 again, the same event redelivered. 17 is not newer than 17, so the guard ignores the duplicate. Still resolved, 17. Third: version 16, arriving late. It carries the old open status, but 16 is older than 17, so it is ignored. Still resolved, 17. Fourth: version 18, closed. Newer, so it applies. Closed, 18.
 
-Look at the right-hand column. It shows the stored state after each delivery, not the event's payload. That is why a line about an old event is followed by the newer state. The handler decided to leave things alone.
+Look at the right-hand column. Each row shows the stored state after one delivery. That is why a line about an old event is followed by the newer state. The handler decided to leave things alone.
 
 Now here is a subtle trap. Suppose the guard were off. With this order, the late 16 would knock the ticket back to open for a moment, and then 18 would arrive last and set it to closed. The final line would look perfect. The ending value hides the mistake in the middle. A resident who loaded the page at the wrong second would have seen open.
 
@@ -207,7 +207,7 @@ That is why your experiment moves the old event to the very end. A correct final
 
 ## Slide 14
 
-Cell 05 models a single ticket, not a live concurrent consumer. Move version sixteen to the end of the list. The order is now seventeen, seventeen again, eighteen, sixteen. With the version guard enabled, the second seventeen and the late sixteen do not replace newer state, so the projection ends closed at version eighteen. With the guard disabled, the last delivery wins and incorrectly puts the projection back to open at sixteen. These events carry complete state; a sequence of increments would need different handling. Use this experiment as evidence in the incident update. It does not create a second notebook submission.
+Cell 05 models the delivery sequence for one ticket. Move version sixteen to the end of the list. The order is now seventeen, seventeen again, eighteen, sixteen. With the version guard enabled, the second seventeen and the late sixteen do not replace newer state, so the projection ends closed at version eighteen. With the guard disabled, the last delivery wins and incorrectly puts the projection back to open at sixteen. These events carry complete state; a sequence of increments would need different handling. Use this experiment as evidence in the incident update. It does not create a second notebook submission.
 
 ## Slide 15
 
@@ -219,7 +219,7 @@ Then change it to False and rerun. Same events, same payloads. The only thing th
 
 Then restore True and rerun. That is your repaired run. Because the cell resets the projection each time, these runs are comparable. You are not relying on leftover state from the run before.
 
-Now read the bottom box. Write down the final status and version from the broken run and from the repaired run. Those observed values go into your Brightspace incident update. Use what you actually saw, not what you expected to see.
+Now read the bottom box. Write down the final status and version from the broken run and from the repaired run. Those observed values go into your Brightspace incident update. Record what you observed.
 
 If Python gives you a syntax error after the move, it is almost always a missing comma between dictionary entries or the closing square bracket of the list. You do not need to touch the loop or write a new function. The small edit is enough to expose the ordering problem. When you are done, continue to the reconciliation section.
 
@@ -232,7 +232,7 @@ This slide marks the edge of the technique, and it is worth understanding, becau
 
 Look at the first row. The event means: the current total is 3. That is a complete state. If version 18 arrives before 17, that is fine. 18 says the total is 3, it is authoritative and complete, so it can replace the older state, and ignoring 17 afterward loses nothing.
 
-Second row. The event means: add 2, after an earlier add 1. That is a delta, a change rather than a state. Now suppose 18, add 2, arrives first, and then we ignore 17, add 1, because it is older. We just lost the 1. The total is wrong, and no version number can bring back an effect we chose not to apply.
+Second row. The event means: add 2, after an earlier add 1. A delta describes a change to the current state. Now suppose 18, add 2, arrives first, and then we ignore 17, add 1, because it is older. We just lost the 1. The total is wrong, and no version number can bring back an effect we chose not to apply.
 
 So delta events need a different policy. You might replay a complete ordered history, or notice a missing version and wait for it, or rebuild from an authoritative total. Which one is right depends on the operation.
 
@@ -300,7 +300,7 @@ So how do we fix it? Read the steps on the slide in order.
 
 First, restore the consumer's approved access. The thing that cannot make progress is the retry worker with the expired credential, so that is what we fix, through the proper operational process, with only the narrow access this consumer needs. Then resume the recorded work through the normal version-checked handler. Then compare the resulting projection with the current source.
 
-Now read the bottom box, because this is the mistake people make under pressure. Keep PostgreSQL's accepted status. You could make both screens agree instantly by setting the PostgreSQL ticket back to open. Agreement achieved. And you would have thrown away a staff member's valid, committed update. Agreement is not the goal if it comes from the wrong direction. The authority stays the authority.
+Now read the bottom box, because this is the mistake people make under pressure. Keep PostgreSQL's accepted status. You could make both screens agree instantly by setting the PostgreSQL ticket back to open. Agreement achieved. And you would have thrown away a staff member's valid, committed update. Repair the projection from its authoritative source. The authority stays the authority.
 
 Also, when you compare after the repair, the correct answer might be newer than 17. If another accepted update came in while the worker was paused, version 17 is no longer the target. Do not force the record back to the number in the incident report.
 
@@ -323,7 +323,7 @@ Ticket 1010 is the nasty one. Both sides say version 7, but the source says reso
 
 So the second line of the box is the method. Compare the union of IDs from both sides, and compare the source-owned fields, status and version, for each one.
 
-The notebook reports three findings with the guard restored. If you leave the guard off with version 16 last, 1008 becomes a fourth. We do not compare last_event_id, because that is processing metadata, not a business fact.
+The notebook reports three findings with the guard restored. If you leave the guard off with version 16 last, 1008 becomes a fourth. Compare the projected business fields. Keep last_event_id for tracking event processing.
 
 [Sources]
 - CST4714 Notebook 08, reconciliation fixture and comparison loop.
@@ -347,9 +347,9 @@ And ticket 9999, the extra record? Investigate it before you delete it. It might
 
 ## Slide 23
 
-Netflix's 2019 DBLog account explains propagating committed database changes and combining log processing with chunks of a table dump. Keeping downstream stores current requires controlling the interaction between past snapshot rows and newer changes. Our transaction/outbox and version-guard example is a smaller teaching model, not Netflix's implementation. A platform engineer should identify the authoritative source, replay behavior, and reconciliation evidence before calling a derived view repaired.
+Netflix's 2019 DBLog account explains propagating committed database changes and combining log processing with chunks of a table dump. Keeping downstream stores current requires controlling the interaction between past snapshot rows and newer changes. We use a small classroom model to explore transaction boundaries and version checks. A platform engineer should identify the authoritative source, replay behavior, and reconciliation evidence before calling a derived view repaired.
 
-For this class, connect the case to the experiment already on the screen. It is context for your technical reasoning, not another assignment. Keep classroom results separate from the company’s production system.
+For this class, connect the case to the experiment already on the screen. Use this case to interpret your own measurements. Keep classroom results separate from the company’s production system.
 
 Source: https://netflixtechblog.com/dblog-a-generic-change-data-capture-framework-69351fb9099b
 
@@ -357,13 +357,13 @@ Source: https://netflixtechblog.com/dblog-a-generic-change-data-capture-framewor
 
 Here is what you hand in. One Brightspace text response, and it is short.
 
-Read the first box. Explain the user impact: what does the resident see, and why does it matter? Say where progress stopped in the supplied incident. Propose a repair that respects which system owns ticket status. Then include the final status and version you observed in your broken run and your repaired run. Those come from your own notebook, not from my slides.
+Read the first box. Explain the user impact: what does the resident see, and why does it matter? Say where progress stopped in the supplied incident. Propose a repair that respects which system owns ticket status. Then include the final status and version you observed in your broken run and your repaired run. Record the values from your own notebook.
 
 Then name one broader check before closing the incident, such as other queued tickets or the consumer's lag, and say why that check follows from a paused worker. Do not just add a random metric.
 
 Write it for a colleague who needs to know what is affected and what happens next. A list of product names does not help them. A sentence like "the source accepted a newer status, and the consumer cannot advance the resident copy" does.
 
-Be precise about what kind of claim each sentence makes. The supplied record supports your diagnosis. Your notebook supplies the broken and repaired results. The credential repair is a proposal, not something you did in production. Keeping those straight makes the update more credible, not less.
+Be precise about what kind of claim each sentence makes. The supplied record supports your diagnosis. Your notebook supplies the broken and repaired results. Describe the proposed credential repair. Label your observations and proposals separately.
 
 Read the bottom box. Work individually. No notebook attachment, no separate timeline, and no five-check matrix. One clear incident update.
 
@@ -395,7 +395,7 @@ Second row: the intended reader reads an allowed record. Now you have shown the 
 
 The fourth row is a different thing. An invalid value fails a constraint. That is an integrity rule rejecting bad data. It says nothing about who may access the table. Both protections matter, but do not describe one as the other.
 
-Two platform notes. In Supabase, the admin SQL editor is not the same as an authenticated user going through row-level security. In Atlas, the account that manages the project is not automatically the database user in your connection string.
+Two platform notes. Test row-level security using an authenticated application user. In Atlas, the account that manages the project is not automatically the database user in your connection string.
 
 Read the bottom box. Use disposable project data, and keep passwords, connection strings, and privileged service keys out of the demo. Name the role, the action, and the result. Never the secret.
 
@@ -412,7 +412,7 @@ Look at the two columns. On the left is what you keep fixed: the filter, the sor
 
 On the right is what you compare: the selected plan, how much work was examined, which index fields support the filter and the order, and any timing, with its limits. In PostgreSQL, tell the planner's estimates apart from the actual execution numbers. In MongoDB, tell documents returned apart from documents and keys examined.
 
-Read the bottom box. A small collection can legitimately use a scan. That is not a failure. It is an observation to explain, and it is better than inventing a speedup. A single faster run is weak evidence, because caching changes timings.
+Read the bottom box. A small collection can legitimately use a scan. It is an observation to explain, and it is better than inventing a speedup. A single faster run is weak evidence, because caching changes timings.
 
 Also record the cost. Every index takes storage and adds work to every write. In the clinic, an easy improvement is adding the exact query, the observed plan, and one limitation to an index explanation you already have.
 
@@ -425,11 +425,11 @@ Also record the cost. Every index takes storage and adds work to every write. In
 
 Recovery next. Read the title: a restore test answers more than a backup command. A backup command tells you a file was created. It does not tell you what is in it, or whether you can get a working database back from it.
 
-Look at the table. Each row is something you observe in an isolated restore target, a separate place, not your original project. First, expected IDs and selected field values. That checks the data survived in the expected form. Remember slide 21: matching counts alone can hide missing and wrong records. Second, a familiar query returns its expected answer. That checks the restored data actually supports something the application does.
+Look at the table. Inspect each row in an isolated restore target. First, expected IDs and selected field values. That checks the data survived in the expected form. Remember slide 21: matching counts alone can hide missing and wrong records. Second, a familiar query returns its expected answer. That checks the restored data actually supports something the application does.
 
 Third, inspect indexes, constraints, and access. Read the bottom box: a CSV or JSON export alone does not recreate every database object. You do not get the indexes, validators, roles, or policies. If something needs a separate step to recreate, write that step in your project guide.
 
-Fourth, record the restore command and the elapsed time. That describes one run under those conditions. It is not a promise about recovery time under a bigger workload during a real incident.
+Fourth, record the restore command and the elapsed time. That describes one run under those conditions. Measure recovery time again under the intended workload.
 
 Keep the restore isolated so the original data stays available while you inspect it. Use the recovery approach that fits your platform and artifact. And be honest about which steps you actually ran and which are still a plan. Today is a good day to turn one recovery claim into a checked result.
 
@@ -459,17 +459,17 @@ The skill here is knowing which data can be rebuilt, which must be preserved ind
 
 Now the demonstration. The question is whether another person can follow it. Look at the table, Show on the left, Explain on the right.
 
-First, show one query with its input and result, and explain the question, what a returned row or document means, and the expected answer for your data. That lets the audience judge correctness instead of just watching a command finish.
+First, show one query with its input and result, and explain the question, what a returned row or document means, and the expected answer for your data. Show the before-and-after result so the audience can judge correctness.
 
 Second, one operational decision. That could be an index comparison, an expected permission denial, or a separate restore check. Explain what you tested and what changed.
 
-Third, a failure or limitation, and how you detected it. Put the limitation where it affects the conclusion, not in a vague disclaimer at the very end.
+Third, a failure or limitation, and how you detected it. State the limitation alongside the conclusion it affects.
 
 Fourth, a saved result in case the cloud connection fails. Label when and where it ran. If the live connection breaks during your demo, you can show that result and say plainly that it is a prior run. It does not become a live result just because it sits next to the command.
 
 Read the bottom box. The notebook or script can be the presentation. A second slide deck is optional in the final-project assignment. Keep credentials off the screen and out of saved output.
 
-And a smooth demo is not the same as a good one. If something breaks and you can diagnose it, show a previous checked result, and say what you would test next, that shows real command of your system.
+Show how you checked the result. If something breaks and you can diagnose it, show a previous checked result, and say what you would test next, that shows real command of your system.
 
 [Sources]
 - CST4714 final-project presentation requirement and Week 14 clinic.
@@ -486,7 +486,7 @@ Then complete and check that item in the same notebook, code, or guide. If you h
 
 Read the bottom box. Possible work includes a query correction, a permission test, an index comparison, or a separate restore check. A one-platform project remains a valid choice. And there is no separate Week 14 project submission.
 
-This is individual work. By the end of class, you want one concrete improvement to your project and a clear sentence about what comes next, not a new pile of overlapping documents.
+This is individual work. By the end of class, make one concrete improvement to your project and state the next step.
 
 [Sources]
 - CST4714 final-project assignment and Week 14 README.
@@ -510,7 +510,7 @@ Next week is course review, final demonstrations, and career explanations. The g
 
 ## Slide 33
 
-These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Polyglot persistence: one owner per fact (1:30); Keeping two databases consistent: outbox and version guard (1:42); Triage a cross-database incident (1:24). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 14 README. The diagrams are schematic illustrations, not benchmarks.
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Polyglot persistence: one owner per fact (1:30); Keeping two databases consistent: outbox and version guard (1:42); Triage a cross-database incident (1:24). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 14 README. The diagrams illustrate the design.
 
 ## License
 

@@ -1,6 +1,6 @@
 # Week 8 videos
 
-Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. Diagrams are schematic illustrations, not benchmarks.
+Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams illustrate the design.
 
 ## [RPO and RTO on the clock](01_rpo_rto_clock.mp4) (1:29)
 

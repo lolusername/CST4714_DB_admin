@@ -84,7 +84,7 @@ Run the query again as the administrative table owner. Explain why seeing all
 four rows in that context does not show that the resident policy failed.
 
 Now test a direct lookup: as `resident_101_lab`, add `WHERE ticket_id = 3` to
-the SELECT before `ORDER BY`. Expect **zero rows**, not a permission error.
+the SELECT before `ORDER BY`. Expect the query to succeed and return **zero rows**.
 The query can read the table, but the policy hides the other resident's row.
 
 Make one change as the administrative user: write an `INSERT` for ticket **5**,

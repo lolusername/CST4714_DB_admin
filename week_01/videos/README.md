@@ -1,12 +1,12 @@
 # Week 1 videos
 
-Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. Diagrams are schematic illustrations, not benchmarks.
+Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams trace the steps in each example.
 
 ## [Following one request](01_request_path.mp4) (1:24)
 
 [![Following one request](01_request_path.png)](01_request_path.mp4)
 
-A new ticket travels from the browser through the API, identity checks, and the DBMS to a committed row. A lost reply is not a lost write, and the dashboard is a separate read.
+A new ticket travels from the browser through the API, identity checks, and the DBMS to a committed row. A server can commit the ticket before its reply reaches the browser. The dashboard reads the saved data separately.
 
 [Watch](01_request_path.mp4) · [Subtitles](01_request_path.srt)
 

@@ -1,6 +1,6 @@
 # Week 12 videos
 
-Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. Diagrams are schematic illustrations, not benchmarks.
+Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams illustrate the design.
 
 ## [Replica sets: oplog, lag, and elections](01_replica_set_election.mp4) (1:24)
 

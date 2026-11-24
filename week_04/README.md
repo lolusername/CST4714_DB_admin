@@ -29,21 +29,20 @@ Reading prepares the examples; no separate reading report is required.
 
 The Colab notebook runs a disposable PostgreSQL database without a cloud account.
 Supabase SQL Editor or PGlite can run the same SQL. Use one route. Save your SQL
-outside the temporary runtime; the labs each require one SQL file, not another
-notebook submission.
+outside the temporary runtime; submit one SQL file for each lab.
 
 <!-- videos:start -->
 ## Videos
 
 Short silent animations with captions (3 for this week). Each has a subtitle file; see [all Week 4 videos](videos/README.md).
 
-- [Count requests, not ticket-event pairs](videos/04_count_at_grain.mp4) (1:30): A category report that joins raw events counts water as 5 requests: ticket 1003 three times and 1008 twice. Summarizing events per ticket in a CTE first gives 12 requests and 21 events, and a second query checks the water row.
+- [Count each request once](videos/04_count_at_grain.mp4) (1:30): A category report that joins raw events counts water as 5 requests: ticket 1003 three times and 1008 twice. Summarizing events per ticket in a CTE first gives 12 requests and 21 events, and a second query checks the water row.
 - [Conditional counts without losing tickets](videos/05_conditional_counts.mp4) (1:19): count(*) FILTER (WHERE ...) computes 12 total, 7 active, and 2 high-or-urgent active tickets in one pass. Per category, FILTER keeps parks and transportation with a zero, while a top-level WHERE removes them before any count.
 - [One latest event per ticket](videos/06_latest_event.mp4) (1:41): ROW_NUMBER numbers each ticket's events newest first, with event_id breaking timestamp ties, and an outer query keeps rn = 1. A LEFT JOIN from tickets keeps all 12 requests, including unassigned 1004 and 1009.
 
 <!-- videos:end -->
 
-## Day 1: Count Requests, Not Ticket-Event Pairs
+## Day 1: Count requests by category
 
 Use **slides 1-12** and the notebook's Day 1 sections. Introduce the data before
 the first query: **8 users, 12 tickets, 21 events**. Ticket 1003 has three history
@@ -71,7 +70,7 @@ Never reset a project just to start a new week if it contains work you need.
 
 PostgreSQL's [window-function tutorial](https://www.postgresql.org/docs/current/tutorial-window.html)
 and [CTE documentation](https://www.postgresql.org/docs/current/queries-with.html)
-provide further explanation. These are references, not additional assignments.
+provide further explanation. Use these references for further reading.
 
 See [licenses](materials/LICENSE.md) and [attributions](materials/ATTRIBUTIONS.md).
 

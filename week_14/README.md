@@ -17,7 +17,7 @@ trace propagation, repair safely, and verify more than one record?
 
 Use [Chapter 14: Multiple Databases Multiply Options and Obligations](../Operating_Cloud_Databases.pdf).
 
-- **Before Day 1:** read through the worked incident, including the outbox, version-guard, and reconciliation explanations. The lab uses a supplied incident and a small Python model, not a new distributed deployment.
+- **Before Day 1:** read through the worked incident, including the outbox, version-guard, and reconciliation explanations. The lab uses a supplied incident and a small Python model.
 - **Before Day 2:** review **Identity and Access Cross the Boundary Too**, **Backup and Restore Need an Order**, and **A One-Database Design Is Often the Stronger Decision** for the project clinic.
 
 Bring one point you want clarified. Reading supports the in-class work; it does
@@ -78,7 +78,7 @@ Do not claim the dictionary model implements a concurrent production consumer.
 
 ## Industry/Career Connection — Netflix: changes and snapshots must agree
 
-Netflix's 2019 DBLog account explains propagating committed database changes and combining log processing with chunks of a table dump. Keeping downstream stores current requires controlling the interaction between past snapshot rows and newer changes. Our transaction/outbox and version-guard example is a smaller teaching model, not Netflix's implementation. A platform engineer should identify the authoritative source, replay behavior, and reconciliation evidence before calling a derived view repaired.
+Netflix's 2019 DBLog account explains propagating committed database changes and combining log processing with chunks of a table dump. Keeping downstream stores current requires controlling the interaction between past snapshot rows and newer changes. We use a small classroom model to explore transaction boundaries and version checks. A platform engineer should identify the authoritative source, replay behavior, and reconciliation evidence before calling a derived view repaired.
 
 Read the [company's own account](https://netflixtechblog.com/dblog-a-generic-change-data-capture-framework-69351fb9099b). This supports the lesson; it adds no submission. Keep the case distinct from the measured classroom outputs.
 

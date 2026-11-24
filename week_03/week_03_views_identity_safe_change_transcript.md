@@ -4,11 +4,11 @@ This transcript follows the current presentation order. Source references marked
 
 ## Slide 1
 
-Welcome to Week 3. Last week was the SQL review. You wrote selects, joins, and aggregates against the Metro Support tickets. This week we stop only reading the database and start changing it, carefully. The idea that runs through both days is simple: a command can succeed and the application can still get the wrong answer. A green "success" message is not the finish line.
+Welcome to Week 3. Last week was the SQL review. You wrote selects, joins, and aggregates against the Metro Support tickets. This week we stop only reading the database and start changing it, carefully. The idea that runs through both days is simple: a command can succeed and the application can still get the wrong answer. Inspect the saved result after the command succeeds.
 
 On Day 1 we give a useful query a stable name. The support staff need a list of active tickets, and every screen should not have to reinvent what "active" means. So we build an ordinary view, read from it, and then change its columns on purpose. We also build a small table whose IDs come from a sequence, and we cancel one insert to see why an ID and a row count are different things.
 
-On Day 2 the organization wants to record whether each request came in through the web, a phone call, or the mobile app. That sounds like one new column. But the old tickets never recorded it, and older application code does not send it yet. We will handle both problems instead of pretending ALTER TABLE makes them go away.
+On Day 2 the organization wants to record whether each request came in through the web, a phone call, or the mobile app. That sounds like one new column. But the old tickets never recorded it, and older application code does not send it yet. After ALTER TABLE succeeds, test the applications that use the table.
 
 You work individually in your own database. Each day you submit one SQL file: week_03_views_identity.sql and week_03_safe_migration.sql. Your comments in that file say what your change means, including what the data cannot tell us.
 
@@ -16,9 +16,9 @@ You work individually in your own database. Each day you submit one SQL file: we
 
 Before we write a view, we need a shared picture of what it reads. Metro Support is a fictional public-service help desk. A resident reports a broken streetlight or a missed collection, someone on staff may get assigned to it, and the system keeps a history. None of these people are real. The data is small and synthetic on purpose, so you can check any answer by looking at the actual rows.
 
-Look at the middle column of the table, "one row represents." That is the most important column on the slide. The users table has eight rows, and each row is one person, a resident or a staff member, so a user is not automatically an agent. The tickets table has twelve rows, and each one is one support request. Not one update, not one person. The ticket_events table has twenty-one rows, and each one is one event in a request's history.
+Look at the middle column of the table, "one row represents." That is the most important column on the slide. The users table holds eight people. Each user's role identifies a resident or a staff member. The tickets table has twelve rows, and each one is one support request. Each row is one ticket. The ticket_events table has twenty-one rows, and each one is one event in a request's history.
 
-That is why the counts differ. Twenty-one events does not mean twenty-one requests. Several events belong to the same ticket.
+That is why the counts differ. The 21 events belong to 12 requests. Several events belong to the same ticket.
 
 Now the line at the bottom. We define the active queue using the current status in tickets: new, open, or in_progress. In the starting data, seven tickets are active. Keep that seven in your head, because we will check it again and again this week. Knowing what a row means always comes before choosing the SQL.
 
@@ -28,7 +28,7 @@ Now the line at the bottom. We define the active queue using the current status 
 
 Here is a distinction that will decide which join you write in the lab. Look at the first row. Ticket 1001, the streetlight. Its requester_id is 101, which points to Requester 101 in the users table. Its assignee_id is 201, which points to Agent 201, in that same users table. Same kind of number, same table, but two completely different relationships. Requester 101 reported the problem. Agent 201 is handling it. So a join has to say which relationship you mean.
 
-Now the second row. Ticket 1004, the broken bench. Requester 104 reported it. The assignee is NULL, because nobody has been assigned yet. NULL is not some other staff ID, and it is not a zero you can match to a user. It means the assignment is missing.
+Now the second row. Ticket 1004, the broken bench. Requester 104 reported it. The assignee is NULL, because nobody has been assigned yet. An unassigned ticket stores NULL in assignee_id. It means the assignment is missing.
 
 Read the note at the bottom. Both columns refer to users.user_id, but only the assignment is optional. The schema requires a requester. It allows a missing assignee.
 
@@ -38,9 +38,9 @@ Why does that matter? Today's demonstration joins tickets to their requester, an
 
 You have three ways to run this week's PostgreSQL, and you only need one.
 
-The first row is the Colab notebook. It starts a throwaway PostgreSQL database inside the notebook runtime. It does not connect to Supabase and it needs no cloud password. It walks you through setup, loads the full dataset, and gives you marked workspaces for your SQL. One warning: a Colab runtime does not last between class days. Save a copy of the notebook in your Drive so your edits are kept, and save your SQL as you go.
+The first row is the Colab notebook. It starts a temporary PostgreSQL database in your notebook session. It walks you through setup, loads the full dataset, and gives you marked workspaces for your SQL. One warning: a Colab runtime does not last between class days. Save a copy of the notebook in your Drive so your edits are kept, and save your SQL as you go.
 
-The second row is your personal Supabase project. Use the SQL Editor, not the Table Editor. The third is the PGlite playground, which runs PostgreSQL in your browser and keeps its data in that browser profile. Do not use last week's DuckDB notebook. This lesson needs PostgreSQL's identity columns and catalog.
+The second row is your personal Supabase project. Use the SQL Editor. The third is the PGlite playground, which runs PostgreSQL in your browser and keeps its data in that browser profile. Do not use last week's DuckDB notebook. This lesson needs PostgreSQL's identity columns and catalog.
 
 In Supabase or PGlite you load the data with postgres_setup.sql. That is a reset script. Its very first command drops the old practice schema, so never run it over work you want to keep.
 
@@ -50,9 +50,9 @@ After setup, run the query on the slide, SELECT current_database, current_user. 
 
 Before we build anything, let's make sure everybody has the same data. Two queries.
 
-The first one stacks three counts with UNION ALL, one row per table, each with a name so you know which count is which. You should get eight users, twelve tickets, and twenty-one events. Those are counts of stored rows, not columns and not active work. If your numbers are different, stop. Fix your setup first. Otherwise you will spend an hour debugging a query that was never wrong.
+The first one stacks three counts with UNION ALL, one row per table, each with a name so you know which count is which. You should get eight users, twelve tickets, and twenty-one events. These are counts of stored rows. If your numbers are different, stop. Fix your setup first. Otherwise you will spend an hour debugging a query that was never wrong.
 
-The second query reads one ticket, 1004. We picked it because its missing assignee matters in the lab. Look at the expected line at the bottom: requester 104, assignee NULL, status new. You can open tickets.csv and find the same values. Having a second, independent look at the source data is what lets you say why a later result is right or wrong, instead of just hoping.
+The second query reads one ticket, 1004. We picked it because its missing assignee matters in the lab. Look at the expected line at the bottom: requester 104, assignee NULL, status new. You can open tickets.csv and find the same values. Compare the query result with an independent check of the source records.
 
 If you are in the Supabase SQL Editor, it only shows the result of the last statement in a run. So run each of these SELECTs on its own if you want to see both.
 
@@ -64,7 +64,7 @@ Three kinds of object on this slide, and the middle column is the one to read: w
 
 The first row is the base table. Our tickets table keeps the actual ticket rows. A SELECT asks PostgreSQL to produce a result from them, and your columns and your filter decide what comes back.
 
-The second row is an ordinary view. It keeps a SELECT definition under a name. That is all. When someone queries the view, PostgreSQL uses that definition to build the result from whatever data is visible right now. Why is that useful for us? Because the definition of "active" lives in one place. We do not copy the same WHERE clause into five reports and then watch them drift apart.
+The second row is an ordinary view. It keeps a SELECT definition under a name. That is all. When someone queries the view, PostgreSQL uses that definition to build the result from whatever data is visible right now. Why is that useful for us? Because the definition of "active" lives in one place. Each report can share the WHERE clause in the view.
 
 Read the line at the bottom. Suppose ticket 1001 gets resolved, and that change is committed. The next query against our active view simply stops returning 1001. Nobody deletes it from the view. The filter just evaluates differently against the current data.
 
@@ -78,23 +78,23 @@ Here is a complete view definition. Let's read it top to bottom.
 
 CREATE OR REPLACE VIEW gives the object its name, metro_support.active_ticket_summary. Everything after AS is the SELECT that defines the result. If the view does not exist yet, PostgreSQL creates it. Replacing an existing one has some rules, and we will get to those in two slides.
 
-Read the SELECT list first. Ticket ID, subject, priority, and the requester's display name. The letters t and u are aliases for tickets and users, so every column says where it comes from. And AS requester_name gives the output column a name that says which person this is. Not just "name." The requester's name.
+Read the SELECT list first. Ticket ID, subject, priority, and the requester's display name. The letters t and u are aliases for tickets and users, so every column says where it comes from. And AS requester_name gives the output column a name that says which person this is. Read the requester's name.
 
 Now the join, on requester_id. Look at the box on the right. Every ticket has one required requester, and user_id is the primary key of users, so the join finds exactly one person per ticket and never multiplies a ticket into two rows. The WHERE clause keeps our three active statuses.
 
-Now the box at the bottom. Running CREATE saves the definition. It does not print seven tickets. You read the results with a separate SELECT, and that is the next slide.
+Now the box at the bottom. Running CREATE saves the definition. Run the view's SELECT to display the seven tickets. You read the results with a separate SELECT, and that is the next slide.
 
 And the middle box is your warning for the lab. The lab joins the assigned agent instead, and assignment is optional. An inner join on assignee_id would quietly drop the unassigned tickets. That relationship needs a LEFT JOIN. The meaning of the relationship picks the join.
 
 ## Slide 8
 
-Now we read through the name we just created. Look at the FROM line. It says active_ticket_summary. We do not repeat the tickets-to-users join, and we do not repeat the status filter. That is the whole point of the view. And notice we only ask for two of its four columns. A view defines an interface, and the caller can still pick a narrower result from it.
+Now we read through the name we just created. Look at the FROM line. It says active_ticket_summary. Query the view to reuse its join and status filter. That is the whole point of the view. And notice we only ask for two of its four columns. A view defines an interface, and the caller can still pick a narrower result from it.
 
 Here is the result. Seven rows: 1001, 1002, 1004, 1006, 1007, 1009, and 1011. Seven, the same number we saw on the data slide. Now look down the requester column. Requester 101 shows up twice, on 1001 and 1009. Requester 102 is on 1002 and 1006. Requester 103 is on 1007 and 1011. Those are not duplicate rows. Each row is a ticket, and one person can open more than one ticket. The ticket ID is what tells those requests apart.
 
-Read the note at the bottom right. ORDER BY ticket_id is in the reading query because we want a predictable order. If a query happened to come back in some order last time, that is not a promise about next time. If you need an order, ask for it.
+Read the note at the bottom right. ORDER BY ticket_id is in the reading query because we want a predictable order. Use ORDER BY to request a particular order. If you need an order, ask for it.
 
-One last habit for your own view. Check the IDs, not just the count. A count of seven cannot tell you that the right seven survived the join. In the lab, the two unassigned IDs, 1004 and 1009, are the ones to look for.
+One last habit for your own view. Check which ticket IDs appear. Check which seven ticket IDs survived the join. In the lab, the two unassigned IDs, 1004 and 1009, are the ones to look for.
 
 ## Slide 9
 
@@ -117,7 +117,7 @@ current_database tells you which PostgreSQL database you are connected to. curre
 
 Look at the first box on the right. current_user is a database role, an actor that gets privileges. It has nothing to do with the identity column we build on the next slide. That one is a generated number that tells one row from another. Same everyday word, "identity," two completely different mechanisms. I want you to keep them apart.
 
-Your results will not match mine. Your hosted project has different names and roles, and that is fine. The useful question is not "do my values match the slide." It is "am I in the practice database I meant to be in."
+Your results will not match mine. Your hosted project has different names and roles, and that is fine. Check that you are connected to the intended practice database.
 
 That is also why we write metro_support.tickets. The part before the dot is the schema, the part after it is the table. We never rely on an editor tab's search path to guess.
 
@@ -133,13 +133,13 @@ PRIMARY KEY is a separate clause with a separate job. It makes the ID unique and
 
 change_name is required text. created_at is a timestamp with time zone, and its default fills in now. So an insert can name only change_name and let the database fill in the rest.
 
-Look at the bottom of the slide. Create this table once. If it already exists from an earlier run, the numbers will not start at one again. That is a different starting state, not a bug.
+Look at the bottom of the slide. Create this table once. If it already exists from an earlier run, the numbers will not start at one again. The starting data differs for this exercise.
 
 ## Slide 12
 
 This batch is three separate transactions, and each one ends with a decision we make on purpose.
 
-The first one inserts "Initial view" and commits. RETURNING note_id asks PostgreSQL to show us the number that insert received, so we do not have to guess. The second inserts "Cancelled change." It also gets a number. Then we roll it back, so the row is gone. The third inserts "Approved revision" and commits.
+The first one inserts "Initial view" and commits. RETURNING note_id displays the number assigned to this insert. The second inserts "Cancelled change." It also gets a number. Then we roll it back, so the row is gone. The third inserts "Approved revision" and commits.
 
 Look at the line at the bottom. On a freshly created table, those three RETURNING results are one, two, and three. Hold on to that, because the next slide is about what is left in the table.
 
@@ -155,7 +155,7 @@ This table separates two things: getting a number, and keeping a row. Look at th
 
 Where did two go? Nowhere mysterious. We know exactly why it is missing: we rolled back that insert. The row was undone, but the sequence did not take its number back. Sequences work that way on purpose. If they had to wait to see whether each transaction commits before handing out the next number, every insert would have to wait in line behind every other one.
 
-Now read the line at the bottom. Final row count, two. Largest ID, three. So the largest ID is not a row count. Deletes make the difference even bigger. If you need to count, use count. If you need to identify a record, use its key.
+Now read the line at the bottom. Final row count, two. Largest ID, three. Count the stored rows with COUNT(*). Deletes make the difference even bigger. If you need to count, use count. If you need to identify a record, use its key.
 
 And no sequence promises an unbroken series of committed numbers. If a business genuinely needs gapless numbers, like some invoice rules, that has to be designed as its own process.
 
@@ -168,7 +168,7 @@ Gaps can also come from other causes in real systems, so a gap alone does not te
 
 You now have both worked examples you need for Lab 1. It is individual work, in your own course database, and it starts from the full Metro Support data.
 
-Step one, on the slide. The lab gives you a five-column active queue. Your change is to add the assigned agent's display name as the last column, called assignee_name. Use my requester view to see the join syntax, but think about the relationship. A ticket can exist before anyone is assigned, so this one needs a LEFT JOIN. Then check that tickets 1004 and 1009 are still in the result. Their assignee names will be NULL, and that is correct. A missing name is information, not a reason to drop the ticket.
+Step one, on the slide. The lab gives you a five-column active queue. Your change is to add the assigned agent's display name as the last column, called assignee_name. Use my requester view to see the join syntax, but think about the relationship. A ticket can exist before anyone is assigned, so this one needs a LEFT JOIN. Then check that tickets 1004 and 1009 are still in the result. Their assignee names will be NULL, and that is correct. A missing name marks a ticket awaiting assignment.
 
 Step two. Create the disposable change_notes table, run the committed and rolled-back inserts, look at the final rows, and explain the gap in the IDs. The lab also gives you two metadata queries that show how PostgreSQL describes the view and the identity column you built.
 
@@ -210,7 +210,7 @@ Before we change anything, we write down the starting state with ordinary querie
 
 The first query reads information_schema.columns, which describes the columns PostgreSQL shows to your role. We narrow it to the tickets table, in metro_support, and to one name, source_channel. Look at the expected results on the right. Zero column rows. That means no such column exists yet. And notice that zero rows is different from one row that contains a zero. The next two queries are counts, so they each return one row: twelve tickets, and seven tickets in the active queue.
 
-Those numbers are expectations for the unchanged classroom data plus your Day 1 view. They are not universal truths about every support database.
+Those numbers are expectations for the unchanged classroom data plus your Day 1 view. Each support service chooses the rules that fit its workflow.
 
 Read the box at the bottom. If the column already exists, do not just add it again. You will get an error, and worse, you may not know what state you are in. Look at your earlier attempt and figure out whether you already committed the migration. If the queue count is not seven, check the view definition and the data before you go further.
 
@@ -250,7 +250,7 @@ One honest limit. This rehearsal shows that this particular PostgreSQL change ca
 
 ## Slide 20
 
-This is a saved screenshot of the Supabase SQL Editor from August 25, 2026. I am showing it so you can see that the same transaction language works in a hosted browser editor. But be clear about what it shows. It is a tiny temporary-table check, not the tickets migration.
+This is a saved screenshot of the Supabase SQL Editor from August 25, 2026. I am showing it so you can see that the same transaction language works in a hosted browser editor. But be clear about what it shows. This example checks rollback on a temporary table.
 
 Here is what was run. BEGIN. Create a temporary table called oer_validation with one integer column. ROLLBACK. Then one visible SELECT, the one in the results pane, asking whether PostgreSQL can still find that table. The function to_regclass returns an identifier when it finds the named object, and NULL when it cannot. Comparing that to IS NULL gives true, and that is the rollback_verified column you see. True means the table is gone, because it was created inside a transaction that rolled back.
 
@@ -297,9 +297,9 @@ First row, before COMMIT. We can roll back the rehearsal, and the original rows 
 
 Second row. Now suppose the migration has committed and new requests are coming in. A new request from the mobile app correctly records mobile. If someone panics and drops the whole column, they destroy a real fact the old database never had. So writing the "opposite" command is not automatically a recovery plan. Often the right move is a forward repair: fix the view, or fix the writer, and keep the new channel data. Look at the last column. Newly collected channel values have to survive.
 
-Now the box about the default. Be precise here. An older writer that leaves the column out gets unknown. A writer that explicitly sends NULL gets a NOT NULL error. Leaving a column out of an INSERT and sending a missing value for it are two different operations. And a newer writer should send the real channel when it knows it, not lean on the default.
+Now the box about the default. Be precise here. An older writer that leaves the column out gets unknown. A writer that explicitly sends NULL gets a NOT NULL error. Leaving a column out of an INSERT and sending a missing value for it are two different operations. A newer writer should send the actual channel whenever it knows it.
 
-The last box. A transaction can hold locks for as long as it stays open. "Transactional" does not mean nobody else has to wait. Keep the practice batch together and finish it.
+The last box. A transaction can hold locks for as long as it stays open. Other sessions may wait while this transaction holds a lock. Keep the practice batch together and finish it.
 
 In your lab write-up, say which state can be recovered and which facts must survive.
 
@@ -307,7 +307,7 @@ In your lab write-up, say which state can be recovered and which facts must surv
 
 Lab 2 continues in the same database and the same queue from Day 1. It is individual work, and it starts with the supplied precheck. If you have not finished Lab 1's view yet, do that first. The identity experiment is useful background, but you do not need it to change the tickets table.
 
-Step one on the slide: confirm the starting state, then complete the three rules. The starter gives you the transaction, the new column, the backfill, and the grouped check. You add the named CHECK, NOT NULL, and the default. Use the worked slide and the textbook. The point is to connect each rule to its job and check that it behaves, not to recite keywords from memory.
+Step one on the slide: confirm the starting state, then complete the three rules. The starter gives you the transaction, the new column, the backfill, and the grouped check. You add the named CHECK, NOT NULL, and the default. Use the worked slide and the textbook. Connect each rule to its purpose and test its behavior.
 
 Step two: rehearse, confirm that rollback removes the column, then apply it with COMMIT. Then append source_channel to your existing view, keeping every earlier column and the LEFT JOIN.
 
@@ -321,36 +321,36 @@ If your result does not match, investigate the definition and the specific ticke
 
 Let's finish with what we can now claim. Read the title: a change is ready when its callers still work. Not when the command succeeded.
 
-Look at the three lines on the slide. First, the queue still includes unassigned work. A queue can look perfectly fine while quietly losing unassigned requests, which is why we checked specific IDs, 1004 and 1009, and not just a count of seven.
+Look at the three lines on the slide. First, the queue still includes unassigned work. Check that the view includes the two unassigned requests, 1004 and 1009.
 
 Second, generated IDs distinguish records without counting them. A gap can be the normal result of a rolled-back insert. The key tells one record from another. It does not tell you how many committed. We could explain the actual result because we followed the transaction boundaries.
 
 Third, the new channel rule accepts known values without inventing old facts. We added a useful field without making up history. We kept older writers working by letting them leave the field out. We kept the view's columns and appended the new one. And we tested one value that should pass and one that should fail.
 
-This is something you can describe in a technical interview. You changed a PostgreSQL interface, rehearsed the migration in a transaction, checked old and new behavior, and identified the point where a later repair must preserve new data. Be honest that it was a classroom database, not a production service.
+This is something you can describe in a technical interview. You changed a PostgreSQL interface, rehearsed the migration in a transaction, checked old and new behavior, and identified the point where a later repair must preserve new data. Describe the classroom database used in this experiment.
 
 Next week, Week 4, is Reliable SQL Reports. We count the right records, pick the latest event without losing requests, and test a report before anyone depends on it.
 
 ## Slide 26
 
-These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: A view stores a query, not rows (1:14); Why identity values have gaps (1:24); Adding a required field without inventing history (1:27). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 3 README. The diagrams are schematic illustrations, not benchmarks.
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: How a view stores a query (1:14); Why identity values have gaps (1:24); Adding a required field without inventing history (1:27). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 3 README. The diagrams illustrate the steps.
 
 ## Slide 27
 
-We want new tickets to record where they came from. That does not mean we suddenly know the channel of an old ticket. First add a field that existing rows can tolerate. Then label the twelve old rows unknown. That is an honest value, not a guessed web submission. Only after the data fits do we require an allowed value and add the default for future inserts. The order matters. Rehearse the complete change inside one transaction and roll it back, inspect the result, then run the approved committed change. The normal view is still a query interface; changing a table does not automatically decide which columns the view exposes.
+We want new tickets to record where they came from. The historical channel remains unknown. First add a field that existing rows can tolerate. Then label the twelve old rows unknown. The value records the uncertainty in the source. Only after the data fits do we require an allowed value and add the default for future inserts. The order matters. Rehearse the complete change inside one transaction and roll it back, inspect the result, then run the approved committed change. The normal view is still a query interface; changing a table does not automatically decide which columns the view exposes.
 
 Image description: A source_channel field is first nullable, twelve historical rows receive unknown, and allowed values, NOT NULL, and a future default establish the new contract. Rehearsal happens inside BEGIN and ROLLBACK.
 
-Editable static Manim source is provided in illustrations/teaching_stills.py. This diagram supplements the worked examples; it is not a new assignment.
+Editable static Manim source is provided in illustrations/teaching_stills.py. Use the diagram alongside the worked examples.
 
 ## Slide 28
 
-A database in use keeps receiving writes while its structure needs to change. GitHub built gh-ost for that production problem in MySQL. Their article explains copying into a changed table, following ongoing changes, and giving operators controls over progress and cutover. Our class is not running gh-ost, and PostgreSQL is not MySQL. What transfers is the engineering question: how do I know the change is safe, and where can I stop if the evidence is wrong? Our rehearsal and verification queries are a small, explicit answer to that question.
+A database in use keeps receiving writes while its structure needs to change. GitHub built gh-ost for that production problem in MySQL. Their article explains copying into a changed table, following ongoing changes, and giving operators controls over progress and cutover. GitHub used gh-ost for MySQL. Our migration uses PostgreSQL. What transfers is the engineering question: how do I know the change is safe, and where can I stop if the evidence is wrong? Our rehearsal and verification queries are a small, explicit answer to that question.
 
 Source: GitHub engineering · August 1, 2016
 https://github.blog/news-insights/company-news/gh-ost-github-s-online-migration-tool-for-mysql/
 
-The career connection is a teaching interpretation. The case is not evidence that the company used our synthetic data or exact classroom SQL.
+The career connection is a teaching interpretation. Apply the case's diagnostic method to the course dataset.
 
 ## License
 

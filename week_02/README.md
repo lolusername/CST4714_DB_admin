@@ -39,8 +39,7 @@ For another explanation, the free PostgreSQL tutorial covers
 [joins](https://www.postgresql.org/docs/current/tutorial-join.html),
 [aggregates](https://www.postgresql.org/docs/current/tutorial-agg.html), and
 [transactions](https://www.postgresql.org/docs/current/tutorial-transactions.html).
-Those are alternatives, not another reading assignment; their weather tables
-differ from our Metro Support fixture.
+These optional tutorials use weather records.
 
 Bring one point you want clarified. Reading supports the in-class work; it does
 not add a separate reading report. Exercises on the linked documentation pages
@@ -71,8 +70,7 @@ Both paths support the same lab questions.
 
 Use the notebook to run your queries. In each submitted `.sql` file, include
 the SQL statements and `--` comments, leaving out Python wrappers such as
-`con.sql(...).show()`. The notebook itself is practice material, not an extra
-submission.
+`con.sql(...).show()`. Use the notebook for practice.
 
 <!-- videos:start -->
 ## Videos
@@ -110,7 +108,7 @@ The only submission is `week_02_relational_sql_studio.sql`.
 
 ## Optional Industry Extension: Equivalent-Query Detective
 
-This activity is optional, ungraded, and does not add a submission.
+Use this optional exercise for practice.
 
 Using Metro Support, answer one question twice with intentionally different SQL,
 such as a join-and-group query and a correlated subquery. Before running either

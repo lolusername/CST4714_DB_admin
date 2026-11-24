@@ -25,7 +25,7 @@ the same query returning the newest 20 open tickets:
 | B: compatible index scan and fetch | 20 | 20 | 20 | no |
 
 Explain why B does less search/sort work and one cost of keeping its index.
-These numbers are a teaching case, not your measured runtime. Put that short
+The numbers come from the teaching case. Put that short
 comparison in place of the completion image and label the fallback.
 
 ## 2. Explain an Inventory Design Decision
@@ -64,7 +64,7 @@ fast stock lookups and a history of changes it can investigate.
 Use the same four-part, 200-300-word response. For the specific example, cite a
 fact from this written case instead of a video timestamp. Explain one benefit
 and one operational risk of the design; distinguish a proposed improvement from
-what the case already specifies. This replaces the video response, not adds to it.
+what the case already specifies. Use the written case for your response.
 
 **Submit:** in one Brightspace text submission, paste the redacted lab completion image and
 the response. Do not create or upload a Markdown file.

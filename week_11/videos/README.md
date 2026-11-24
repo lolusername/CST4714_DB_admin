@@ -1,6 +1,6 @@
 # Week 11 videos
 
-Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. Diagrams are schematic illustrations, not benchmarks.
+Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams illustrate the design.
 
 ## [Follow the documents through a pipeline](01_pipeline_grain.mp4) (1:11)
 

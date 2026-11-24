@@ -1,6 +1,6 @@
 # Week 10 videos
 
-Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. Diagrams are schematic illustrations, not benchmarks.
+Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams illustrate the design.
 
 All three videos are embedded in the Week 10 PowerPoint on slide 36 and have inline players in the Colab notebook. The notebook fetches them from this repository; no upload is needed. Four separate [static Manim diagrams](../illustrations/README.md) appear in the main lesson slides and notebook.
 

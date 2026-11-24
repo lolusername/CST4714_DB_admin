@@ -6,13 +6,13 @@ This transcript follows the current presentation order. Source references marked
 
 Welcome, everyone. This is our only meeting this week, and it has two halves. For the first forty-five minutes, I am going to take you through the midterm project one part at a time. For each part, you will see what the starter file already does for you, the small piece you add, the result you should expect, and where that result goes in your README. Then you will have about fifty minutes to work in a Colab notebook that prepares you for the index part of the midterm. In the last five minutes, you will save that notebook, share it with me, and submit its link in Brightspace.
 
-If you have a laptop open, open the Week 7 README on GitHub. It links the midterm instructions, the SQL starter, the README template, and a step-by-step midterm guide. The guide explains every part with the results you should expect, and it does not add any requirements. If anything I say today sounds different from the written assignment, the written assignment is the rule, and I want you to ask me about it.
+If you have a laptop open, open the Week 7 README on GitHub. It links the midterm instructions, the SQL starter, the README template, and a step-by-step midterm guide. The guide explains the expected results for each part. If anything I say today sounds different from the written assignment, the written assignment is the rule, and I want you to ask me about it.
 
 ## Slide 2
 
 Here is the whole midterm in one sentence. You will run a small PostgreSQL database safely, prove what happened with real query results, and explain those results in your own words.
 
-The database is Metro Support, the ticket system we have used all semester, with users, tickets, and ticket events. You do not build an application, find a new dataset, or give a presentation.
+The database is Metro Support, the ticket system we have used all semester, with users, tickets, and ticket events. Use the supplied Metro Support records for the project.
 
 The project has five parts. In Part 1, you check that the data loaded correctly, and you explain three rules that protect it. In Part 2, you change one ticket inside a transaction and roll that change back, and then you make a different change and commit it. In Part 3, you explain a blocking incident from our Week 5 lab. In Part 4, you test one improvement, and the recommended improvement is an index. In Part 5, after next week's lesson on backups, you write a plan for recovering this database.
 
@@ -28,7 +28,7 @@ Now read down the right column. In SQL, you write two small things. The first is
 
 Everything else you add goes into your README. You record the results you actually saw, and you explain them. You explain three integrity rules, the blocking incident, and what the index did or did not change. After Week 8, you add the recovery plan.
 
-So most of your grade comes from careful observation and clear explanation, not from writing a lot of code. A small project with accurate results and clear writing can earn full credit.
+Your grade emphasizes careful observation and a clear explanation. A small project with accurate results and clear writing can earn full credit.
 
 ## Slide 4
 
@@ -96,7 +96,7 @@ Then record the six things listed on the left: the diagnostic SQL, which is the 
 
 The box on the right shows how to read the diagnostic output. The blocked session is the one waiting, so its wait_event_type is Lock. Its blocking_pids column lists the PID of the session it is waiting for, and that session is the blocker. Finish by explaining the final row: which change survived, which change did not, and why.
 
-One warning. The Week 5 notebook uses a table called lock_lab, and its ticket 1004 starts at medium and open, not low and new. Take your values from the notebook, not from the midterm database.
+One warning. The Week 5 lock_lab ticket 1004 starts at medium and open. Take your values from the research notebook.
 
 ## Slide 10
 
@@ -110,7 +110,7 @@ In Section 4C, run the same SELECT and the same EXPLAIN again, and then run the 
 
 The table shows what I measured on PostgreSQL 16. The IDs are 1011, 1007, and 1001, both before and after. The plan says Seq Scan on tickets both times. The index is 16384 bytes, which is 16 kilobytes. Your timings and cost numbers will be different, and that is expected.
 
-One detail confuses many people. After you create the index, the cost numbers in the plan may drop, even though the plan still says Seq Scan. Building the index also updated PostgreSQL's estimate of how many rows the table holds. A different estimate is not a different plan. Compare the scan type, such as Seq Scan, Index Scan, or Bitmap Heap Scan.
+One detail confuses many people. After you create the index, the cost numbers in the plan may drop, even though the plan still says Seq Scan. Building the index also updated PostgreSQL's estimate of how many rows the table holds. Check the plan's operations as well as its estimate. Compare the scan type, such as Seq Scan, Index Scan, or Bitmap Heap Scan.
 
 ## Slide 11
 
@@ -152,7 +152,7 @@ An observed result is something you saw in your own output. Write it as a plain 
 
 A prediction, or a proposal, is something you expect but did not run. Label it clearly, like the example on the right: I predict that a restored copy will contain twelve tickets; I have not run this restore. That sentence is completely acceptable in a recovery plan marked proposed plan.
 
-Three situations come up often. First, if you used the supplied blocking trace, those PIDs came from the notebook, not from your run, so say so. Second, if a step failed, write what failed and what you tried. A clear account of a failure is worth far more than a result you did not actually see. Third, copy values directly from your own output, not from these slides or the guide. Your timings and cost numbers will not match mine, and they should not.
+Three situations come up often. Label the PIDs from the supplied blocking trace as example values. Second, if a step failed, write what failed and what you tried. A clear account of a failure is worth far more than a result you did not actually see. Copy the values directly from your own output. Your timings and cost numbers will not match mine, and they should not.
 
 Today's Colab notebook asks for the same distinction, so you will practice it in the second half of class.
 
@@ -164,7 +164,7 @@ Twenty-five points are for a reproducible schema and data integrity. The evidenc
 
 Twenty-five points are for transactions and blocking. The evidence is the six observed values with an explanation, and a blocking record that matches its evidence and is labeled honestly.
 
-Twenty points are for one improvement. The evidence is a reason for the change, relevant before and after checks, and one tradeoff. On the index route, that means the ordered IDs, the plan lines, the index size, and one cost. A faster time or an index scan is not required.
+Twenty points are for one improvement. The evidence is a reason for the change, relevant before and after checks, and one tradeoff. On the index route, that means the ordered IDs, the plan lines, the index size, and one cost. Explain the plan PostgreSQL actually chooses.
 
 Fifteen points are for recovery readiness. The evidence is a plan with a separate destination and at least three meaningful checks with expected results.
 
@@ -182,7 +182,7 @@ Splitting a transaction across separate runs. Keep BEGIN and its COMMIT or ROLLB
 
 Recording only the last result the editor showed. If you see only the final value, use the Colab helper from the guide or psql to see the value inside the transaction.
 
-Copying the expected values instead of your own output. The expected values are there so you can check your work, not replace it.
+Copying the expected values instead of your own output. Use the expected values to check your own output.
 
 Calling the supplied trace a live run. Label it supplied trace analysis.
 
@@ -220,7 +220,7 @@ The next cell lists tickets with one status, newest first. Run it with the statu
 
 Then inspect one ticket. Ticket 1004 is already filled in, and you may switch to another ID you saw. Record its status and its requester.
 
-Two details trip people up. A blank assignee means nobody has been assigned yet; every ticket still has a requester. And MAX_ROWS is a ceiling of twenty, not a promise that twenty tickets match.
+Two details trip people up. A blank assignee means nobody has been assigned yet; every ticket still has a requester. MAX_ROWS limits the output to twenty matching tickets.
 
 ## Slide 20
 
@@ -258,29 +258,29 @@ We have five minutes left, so it is time to save and submit.
 
 First, run every cell one more time, and then choose File, Save, so your outputs and your writing are stored in your Drive copy. Second, click Share and give me viewer access. Third, copy the link. Fourth, paste that link into today's classwork assignment in Brightspace.
 
-Make sure you submit the link to your own saved copy, Lastname_Week07_Research. The link to the starter notebook on GitHub or in Colab does not contain your work. You do not need to upload a file or take screenshots.
+Make sure you submit the link to your own saved copy, Lastname_Week07_Research. The link to the starter notebook on GitHub or in Colab does not contain your work. Submit the link to your saved work.
 
 Before you go, keep the two submissions separate in your mind. Today's notebook is classwork, and you submit its link now. The midterm is midterm.sql and README.md in one ZIP, due on the date in Brightspace. Next week, we cover backup and restore, and then we hold the midterm clinic. Bring one question and one working part of your project. Thank you, everyone, and I will see you next week.
 
 ## Slide 24
 
-These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: When does an index help? (1:44); Reading a query plan (0:55); Selectivity: why a Seq Scan can beat an index (1:07); How a B-tree index finds rows (0:58); Composite indexes: column order matters (1:08); Testing an index hypothesis (1:03). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 7 README. The diagrams are schematic illustrations, not benchmarks.
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: When does an index help? (1:44); Reading a query plan (0:55); Selectivity: why a Seq Scan can beat an index (1:07); How a B-tree index finds rows (0:58); Composite indexes: column order matters (1:08); Testing an index hypothesis (1:03). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 7 README. The diagrams illustrate the steps.
 
 ## Slide 25
 
-First solve the question without an index. Open is the exact status label, not a synonym for every unfinished ticket. These are all three open tickets in our supplied fixture. Sorting their opening dates from newest to oldest gives 1011, 1007, and 1001. Ticket 1009 is not included because its status is new. LIMIT 20 is a maximum; it cannot create twenty matching rows when only three exist. Today the notebook calculates this from CSV records. That tells us the answer to preserve when we later run the SQL. It does not tell us which PostgreSQL plan will be chosen.
+First solve the question without an index. Open is one of the unfinished status labels. These are all three open tickets in our supplied fixture. Sorting their opening dates from newest to oldest gives 1011, 1007, and 1001. Ticket 1009 is not included because its status is new. LIMIT 20 is a maximum; it cannot create twenty matching rows when only three exist. Today the notebook calculates this from CSV records. That tells us the answer to preserve when we later run the SQL. It does not tell us which PostgreSQL plan will be chosen.
 
 Teaching placement (not spoken): At minutes 40–45, before opening the research notebook.
 
 ## Slide 26
 
-Before asking whether the index made the query faster, check that the question and answer stayed the same. If a rewrite drops a needed row, a short run time is not a successful improvement. After correctness, inspect the work: the scan, any sort, rows, and buffers when we measure them. Also record the space and maintenance cost of the index. A twelve-row table is small enough that reading it directly may be cheaper. That is a result to explain, not a reason to force a preferred plan.
+Before asking whether the index made the query faster, check that the question and answer stayed the same. If a rewrite drops a needed row, a short run time is not a successful improvement. After correctness, inspect the work: the scan, any sort, rows, and buffers when we measure them. Also record the space and maintenance cost of the index. A twelve-row table is small enough that reading it directly may be cheaper. Explain why PostgreSQL chose that plan.
 
 Teaching placement (not spoken): Immediately after appendix slide 25; remain within the 45-minute explanation.
 
 ## Slide 27
 
-Mattermost gives us a real engineering example of looking inside a slow query instead of guessing from its SQL length. We are borrowing the method, not promising the same speedup. Our research notebook asks for an observation and a proposed PostgreSQL test. Keep those separate in your writing: these are the rows I observed, this is the work I expect an index to change, and this is the evidence I will collect. The company’s full account is linked for optional reading; your two assigned PostgreSQL readings remain the required sources.
+Mattermost used a query plan to investigate a slow query. Apply their measurement method to the lab query. Our research notebook asks for an observation and a proposed PostgreSQL test. Keep those separate in your writing: these are the rows I observed, this is the work I expect an index to change, and this is the evidence I will collect. The company’s full account is linked for optional reading; your two assigned PostgreSQL readings remain the required sources.
 
 Primary source: https://mattermost.com/blog/making-a-postgres-query-1000-times-faster/
 

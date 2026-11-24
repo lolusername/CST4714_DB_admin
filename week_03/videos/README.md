@@ -1,10 +1,10 @@
 # Week 3 videos
 
-Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. Diagrams are schematic illustrations, not benchmarks.
+Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams trace the steps in each example.
 
-## [A view stores a query, not rows](01_view_stored_query.mp4) (1:14)
+## [How a view stores a query](01_view_stored_query.mp4) (1:14)
 
-[![A view stores a query, not rows](01_view_stored_query.png)](01_view_stored_query.mp4)
+[![How a view stores a query](01_view_stored_query.png)](01_view_stored_query.mp4)
 
 The active-queue view saves a SELECT definition and runs it against current data each time, so a resolved ticket simply stops appearing. A materialized view stores rows instead and stays stale until it is refreshed.
 

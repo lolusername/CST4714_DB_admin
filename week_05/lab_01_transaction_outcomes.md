@@ -84,8 +84,7 @@ SELECT ticket_id, assignee_id, status
 FROM transaction_lab.tickets WHERE ticket_id = 1004;
 ```
 
-Expect ticket 1004 to be unassigned and `new`. CREATE TABLE AS copies query
-results, not all source constraints; the two primary keys above are explicit.
+Expect ticket 1004 to be unassigned and `new`. CREATE TABLE AS copies the rows returned by the query. The two PRIMARY KEY declarations above add the keys to the new tables.
 These disposable tables are separate from the source data.
 
 ## 2. Rehearse One Assignment
@@ -223,4 +222,4 @@ will be rejected and the transaction must be rolled back. A production retry
 policy needs more care; we return to idempotency later in the course.
 
 
-**Optional Day 1 workspace:** [Transaction outcomes notebook](01_transaction_outcomes.ipynb), or [open it in Colab](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_05/01_transaction_outcomes.ipynb). It runs real PostgreSQL inside the Colab runtime without a cloud account and mirrors the five lab experiments. Its setup already loads the fixture into a unique disposable database. Keep each entire transaction in one cell. Use this route or the existing cloud helper above; you do not need both. The required Day 1 hand-in remains `week_05_transaction_outcomes.sql`, with the lab’s comments and observations. The notebook itself is not a second submission.
+**Optional Day 1 workspace:** [Transaction outcomes notebook](01_transaction_outcomes.ipynb), or [open it in Colab](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_05/01_transaction_outcomes.ipynb). It runs real PostgreSQL inside the Colab runtime without a cloud account and mirrors the five lab experiments. Its setup already loads the fixture into a unique disposable database. Keep each entire transaction in one cell. Use this route or the existing cloud helper above; you do not need both. The required Day 1 hand-in remains `week_05_transaction_outcomes.sql`, with the lab’s comments and observations. Use the notebook to run the experiment.

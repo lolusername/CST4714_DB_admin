@@ -1,6 +1,6 @@
 # Week 7 videos
 
-Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. Diagrams are schematic illustrations, not benchmarks.
+Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams trace the steps in each example.
 
 ## [When does an index help?](01_index_usefulness.mp4) (1:44)
 

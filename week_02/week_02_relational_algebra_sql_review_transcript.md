@@ -4,7 +4,7 @@ This transcript follows the current presentation order. Source references marked
 
 ## Slide 1
 
-Welcome to Week 2. This week is a SQL review. I am not assuming you remember SQL from an earlier course, so we will rebuild the syntax as we go.
+Welcome to Week 2. This week is a SQL review. We will build the SQL syntax as we go.
 
 SQL stands for Structured Query Language. The useful thing about it is that you describe the result you want, and the database works out how to find it. That separation is why the same SQL keeps working across different database systems.
 
@@ -20,7 +20,7 @@ Each lab is one SQL file, and your explanations go right next to the query, as S
 
 ## Slide 2
 
-Let's start the way real work starts: with a question in plain English. A staff member asks, which high-priority requests are still active? Before I type a single SQL keyword, I need to know exactly what those words mean, because the database cannot guess.
+Let's start the way real work starts: with a question in plain English. A staff member asks, which high-priority requests are still active? Begin with the repair desk's definition of an active ticket.
 
 Take high priority first. In this dataset priority is a stored value: low, medium, high, or urgent. High and urgent are different values. If the staff member really meant high or urgent, that is a different query, so we ask. Now take active. A request can be high priority and already resolved. If I filter on priority alone, finished work sneaks into the list. So for this week, active means status is new, open, or in_progress.
 
@@ -38,7 +38,7 @@ That last idea has a name, and it is the most useful word this week: grain. Resu
 
 On the left, one row per ticket. A row containing ticket 1003 describes one request, the low water pressure one. Keeping ticket_id in the output is how you tell which request each row is.
 
-In the middle, one row per event. Ticket 1003 has three event records. When we join the ticket to its events, we get three rows, each pairing the same ticket with a different event. You will see 1003 three times. That does not mean three people reported low water pressure. It means one request has a history with three entries.
+In the middle, one row per event. Ticket 1003 has three event records. When we join the ticket to its events, we get three rows, each pairing the same ticket with a different event. You will see 1003 three times. These entries trace one low water pressure request. It means one request has a history with three entries.
 
 On the right, one row per status. If we group tickets by status, we get one row for open, one for resolved, and so on, each with a count. Now a row is a group of requests, and no single subject describes it anymore.
 
@@ -54,9 +54,9 @@ Here is the vocabulary underneath SQL: relational algebra. A relation is a set o
 
 Read the table row by row. Selection, the Greek letter sigma, keeps rows where a condition is true. In SQL that is WHERE. Look at the last column: unknown does not pass WHERE. Hold on to that, because it comes back with NULL in two slides. Projection, pi, chooses columns. That is your SELECT list. But here is a difference: a mathematical relation is a set, so duplicates disappear. SQL keeps repeated rows unless you ask it to remove them.
 
-Join forms matching pairs of rows, and one source row can have many matches. Remember the ticket with three events. Grouping, gamma, summarizes rows into groups. Strictly speaking it is an extension of the basic algebra, not one of the classic operators. Difference keeps rows in A that are absent from B. SQL calls that EXCEPT, and both sides need the same number of columns with compatible types.
+Join forms matching pairs of rows, and one source row can have many matches. Remember the ticket with three events. Grouping, gamma, summarizes rows into groups. This operator extends basic relational algebra. Difference keeps rows in A that are absent from B. SQL calls that EXCEPT, and both sides need the same number of columns with compatible types.
 
-You do not need to memorize the symbols today. What I want is the connection between what an operation means and the SQL that expresses it. And notice why it is never a mechanical translation: SQL adds duplicates and NULL, and you have to reason about both.
+Refer back to the symbols as you read. What I want is the connection between what an operation means and the SQL that expresses it. And notice why it is never a mechanical translation: SQL adds duplicates and NULL, and you have to reason about both.
 
 [Sources]
 - Course textbook, Chapter 2, relational notation and SQL semantics.
@@ -66,9 +66,9 @@ You do not need to memorize the symbols today. What I want is the connection bet
 
 Let's write the first real query. Read it from the FROM line. metro_support.tickets means the tickets table inside the metro_support schema. A schema is a named namespace inside the database. Why bother with the prefix? Because a new editor tab may have a different default search path, and without the prefix your query might not find the table at all.
 
-WHERE priority = 'high' keeps rows whose priority is the text value high. Text in SQL goes in single quotes. The SELECT list chooses three columns: ticket_id, subject, and priority. ORDER BY ticket_id sorts the result. Look at the note on the right: ORDER BY changes order, not membership. Sorting never adds or removes a ticket.
+WHERE priority = 'high' keeps rows whose priority is the text value high. Text in SQL goes in single quotes. The SELECT list chooses three columns: ticket_id, subject, and priority. ORDER BY ticket_id sorts the result. ORDER BY sorts the rows that passed the filter. Sorting never adds or removes a ticket.
 
-The result is four tickets: 1001, 1005, 1008, and 1011. Now look closer. 1005 and 1008 are resolved. Is the query wrong? No. It answers exactly what it asks, all high-priority tickets. It just is not the question from slide 2 yet. To get there we would add a condition on status.
+The result is four tickets: 1001, 1005, 1008, and 1011. Now look closer. 1005 and 1008 are resolved. Is the query wrong? No. It answers exactly what it asks, all high-priority tickets. Now add the remaining condition from slide 2. To get there we would add a condition on status.
 
 One more thing about grain. This result has one row per ticket because we kept ticket_id. If I selected only the priority column, I would get four rows that all say high. SELECT DISTINCT priority would give one row. Choosing a column and removing duplicates are two different decisions, and SQL makes you say which one you want.
 
@@ -79,13 +79,13 @@ One more thing about grain. This result has one row per ticket because we kept t
 
 ## Slide 6
 
-Two tickets in our dataset have nobody assigned yet. Their assignee_id is NULL. NULL means the information is missing. It is not zero, it is not an empty string, and it is not some imaginary staff member.
+Two tickets in our dataset have nobody assigned yet. Their assignee_id is NULL. NULL means the information is missing. Here NULL marks a ticket awaiting assignment.
 
-Look at the three predicates on the slide. The first is the one everybody writes: assignee_id = NULL. Result: no rows. Why? Comparing a value to missing information does not give true or false. It gives unknown. Even NULL compared to NULL is unknown, because two missing values are not known to be equal. And WHERE keeps only rows where the condition is true. Unknown is not true, so every row is dropped. The query runs fine, returns nothing, and looks like it is telling you every ticket is assigned. It is not.
+Look at the three predicates on the slide. The first is the one everybody writes: assignee_id = NULL. Result: no rows. Why? Comparing a value to NULL returns unknown. It gives unknown. Even NULL compared to NULL is unknown, because two missing values are not known to be equal. And WHERE keeps only rows where the condition is true. Unknown is not true, so every row is dropped. The query runs fine, returns nothing, and looks like it is telling you every ticket is assigned. It is not.
 
 The second predicate, IS NULL, is built for exactly this. It returns tickets 1004 and 1009. The third, IS NOT NULL, returns the other ten. Ten plus two is twelve, so together they account for every ticket.
 
-One subtlety. Unknown and false both fail WHERE, but they are not the same thing. NOT applied to unknown is still unknown, which is why negative conditions can surprise you. The chapter has a short truth table if you want to follow that further.
+One subtlety. WHERE keeps true and drops both false and unknown. NOT applied to unknown is still unknown, which is why negative conditions can surprise you. The chapter has a short truth table if you want to follow that further.
 
 For the lab, the skill is simple: recognize a missing value, use IS NULL, and be able to say which field is missing and whether the report must still include that row.
 
@@ -101,9 +101,9 @@ WHERE status IN new, open, in_progress. IN means the status must equal one of th
 
 ORDER BY opened_at DESC. DESC means descending, so the latest timestamps come first. Then a second sort key, ticket_id descending. Why? If two requests opened at exactly the same time, the database could put them in either order. The second key breaks the tie, so you get the same answer every time. Then LIMIT 3 keeps the first three rows of the sorted result.
 
-The answer, in order, is 1011, 1009, and 1007. Two things to notice. Ticket 1012 is newer than all of them, but it is resolved, so the filter removed it before the sort ever mattered. And 1009 has no assignee, but that does not exclude it, because nothing in this query asks for an assignee.
+The answer, in order, is 1011, 1009, and 1007. Two things to notice. Ticket 1012 is newer than all of them, but it is resolved, so the filter removed it before the sort ever mattered. Ticket 1009 meets the filter even while it awaits assignment.
 
-Here is the trap. Without ORDER BY, LIMIT 3 still returns three rows, and they might even look right today. But the order rows happen to come out in is not a promise. As data and indexes change, the database may read them differently. So the filter defines who is eligible, the sort defines who comes first, and the limit defines how many you keep.
+Here is the trap. Without ORDER BY, LIMIT 3 still returns three rows, and they might even look right today. Specify ORDER BY when the output needs a particular sequence. As data and indexes change, the database may read them differently. So the filter defines who is eligible, the sort defines who comes first, and the limit defines how many you keep.
 
 [Sources]
 - Course textbook, Chapter 2.
@@ -114,9 +114,9 @@ Here is the trap. Without ORDER BY, LIMIT 3 still returns three rows, and they m
 
 Now we connect two tables. This diagram shows three tickets from the full dataset. On the left, two users, 101 and 102. On the right, tickets. Tickets 1001 and 1005 were requested by Requester 101. Ticket 1002 was requested by Requester 102. Each line connects a ticket's requester_id to a user's user_id.
 
-That matching ID is a relationship, and I want you to think about what it means before you write any join. Two columns that both contain numbers is not a reason to join them. A requester ID identifies the person who reported a problem. An assignee ID identifies the staff member handling it. Both point at the users table, and they answer completely different questions. Join on the wrong one and your query runs perfectly and reports nonsense.
+That matching ID is a relationship, and I want you to think about what it means before you write any join. Use the foreign key relationship to choose the join columns. A requester ID identifies the person who reported a problem. An assignee ID identifies the staff member handling it. Both point at the users table, and they answer completely different questions. Join on the wrong one and your query runs perfectly and reports nonsense.
 
-An inner join keeps matching pairs. Look at Requester 101: that user shows up in two pairs, because two different tickets point to the same person. That repetition is expected. It does not mean the users table has two copies of Requester 101.
+An inner join keeps matching pairs. Look at Requester 101: that user shows up in two pairs, because two different tickets point to the same person. That repetition is expected. Requester 101 has one stored user record.
 
 Keep in mind this is only an excerpt. The full dataset has other tickets for these residents too. Because every ticket must have a requester who actually exists, the requester join keeps exactly one row per ticket. Other relationships behave differently. A ticket can have no assignee at all, or many events, and we will see both cases. Reading the relationship first is what stops you from joining columns that only look alike.
 
@@ -126,7 +126,7 @@ Keep in mind this is only an excerpt. The full dataset has other tickets for the
 
 ## Slide 9
 
-Here is that requester relationship written in SQL. I want you to read it in the order shown on the right, not top to bottom.
+Here is that requester relationship written in SQL. Read it in the order shown on the right.
 
 First, the sources. FROM metro_support.tickets AS t, JOIN metro_support.users AS u. The letters t and u are aliases, short names that exist only inside this statement. They make it obvious which table each column comes from.
 
@@ -136,7 +136,7 @@ Third, the filter and the grain. WHERE t.status = 'open'. Notice that open is on
 
 The result is tickets 1001, 1007, and 1011. Requester 101 reported 1001. Requester 103 reported both 1007 and 1011, so that name appears twice, for two different requests.
 
-How would you check this without trusting the query? Open tickets.csv, find the open tickets, read their requester IDs, and look those up in users.csv. That is a second path to the same answer. In Lab 1 you will adapt this into a neighborhood question. Neighborhood lives on the users table, so you need the requester relationship, not the assignee.
+How would you check this without trusting the query? Open tickets.csv, find the open tickets, read their requester IDs, and look those up in users.csv. That is a second path to the same answer. In Lab 1 you will adapt this into a neighborhood question. Join each ticket to its requester to read the neighborhood.
 
 [Sources]
 - Course textbook, Chapter 2.
@@ -152,7 +152,7 @@ Write three queries. First, active requests with high or urgent priority, newest
 
 Then investigate the colleague's query that compares assignee_id to NULL with an equals sign, and explain why its empty result does not mean every ticket is assigned. And check your Harbor query against the CSV files: name one ticket that belongs and one that does not, with the reason for each.
 
-Submit week_02_sql_review.sql in Brightspace, with your explanations as SQL comments. Copy in the SQL itself, not the Python wrapper around it. No screenshot, no separate report, no GitHub repository. If you finish early, the extension is optional and ungraded.
+Submit week_02_sql_review.sql in Brightspace, with your explanations as SQL comments. Copy the SQL statement from the Python wrapper. No screenshot, no separate report, no GitHub repository. If you finish early, the extension is optional and ungraded.
 
 [Sources]
 - Course Week 2, Lab 1: Find the Requests That Need Attention.
@@ -168,7 +168,7 @@ Now apply the condition at the bottom of the slide: tickets.assignee_id equals u
 
 For the assignee relationship, ten pairs survive. Each assigned ticket matches one user. And the two unassigned tickets? Their assignee_id is NULL, NULL compared with anything is unknown, so they produce no pair at all. That is exactly how an inner-join dashboard loses requests even though the tickets table still has them.
 
-One caution. Ninety-six pairs is the logical meaning. PostgreSQL does not physically build all ninety-six and then filter. The optimizer may use an index lookup or a hash join, as long as the result is the same. Today we use the meaning to explain missing rows. Later, when we read query plans, we will look at how the work is actually done.
+One caution. Ninety-six pairs is the logical meaning. PostgreSQL chooses a plan for finding the matching pairs. The optimizer may use an index lookup or a hash join, as long as the result is the same. Today we use the meaning to explain missing rows. Later, when we read query plans, we will look at how the work is actually done.
 
 [Sources]
 - Course textbook, Chapter 2, relational join figure.
@@ -179,7 +179,7 @@ One caution. Ninety-six pairs is the logical meaning. PostgreSQL does not physic
 
 So here is the reporting question that exposes the problem. We want every ticket, with the assignee's name when there is one. The inner join on the left cannot do that. It keeps only matching pairs, so it omits 1004 and 1009, the two tickets with a NULL assignee_id. The table holds twelve tickets, and the dashboard quietly shows ten.
 
-The left join on the right fixes this. With tickets on the left side, a LEFT JOIN keeps every ticket, even when no user matches on the right. For an unmatched ticket, the user columns come back NULL, while the ticket's own ID and subject stay. Run it on the full fixture and you get all twelve. We did not invent a fake user called Unassigned, and we did not touch the stored data. The fix is in the query.
+The left join on the right fixes this. With tickets on the left side, a LEFT JOIN keeps every ticket, even when no user matches on the right. For an unmatched ticket, the user columns come back NULL, while the ticket's own ID and subject stay. Run it on the full fixture and you get all twelve. The label Unassigned appears in the query output. The fix is in the query.
 
 There is one catch. A later WHERE clause can still remove rows. Say you add WHERE the user's role is agent. For an unassigned ticket the role is NULL, the condition is unknown, and the row disappears. You are back to an inner join without realizing it. If a condition decides which right-side rows are allowed to match, put it in ON, or filter the right side first.
 
@@ -199,7 +199,7 @@ So let's be precise about counting. COUNT star counts result rows, and after thi
 
 A third option is EXISTS. It asks whether at least one matching event exists, without adding every event row to the result. That fits a question like which tickets have any events. The chapter shows the syntax.
 
-The general lesson is that repeated values are not automatically a defect. Follow the stable IDs on both sides, and you can tell a real one-to-many relationship from a join that went wrong.
+A repeated ID can identify several events for the same ticket. Follow the stable IDs on both sides, and you can tell a real one-to-many relationship from a join that went wrong.
 
 [Sources]
 - Course textbook, Chapter 2, row multiplication and EXISTS.
@@ -211,7 +211,7 @@ Now summaries. Read this query in the order shown on the right, because each cla
 
 WHERE opened_at is on or after February first, 2026. WHERE filters individual ticket rows, before any grouping happens. In this fixture every ticket meets that date, so it removes nothing, but it shows you where row filtering lives.
 
-GROUP BY status collects tickets with the same status into one group. COUNT star counts the rows in each group, and AS ticket_count gives that column a readable name. The grain has changed: one row per status, not one row per ticket.
+GROUP BY status collects tickets with the same status into one group. COUNT star counts the rows in each group, and AS ticket_count gives that column a readable name. Each output row now summarizes one status.
 
 HAVING count star at least two filters groups. It looks at each group's count and keeps the groups with two or more. ORDER BY puts bigger counts first and uses status to order equal counts, so the order is stable.
 
@@ -231,7 +231,7 @@ Here are two ways to ask the same question: which tickets are assigned to users 
 
 The left version is a nested query, a SELECT inside parentheses. Read it inside out. The inner query returns the user IDs of agents. Then the outer query uses IN to ask: is this ticket's assignee_id in that list? It is a membership question, and you can run the inner part by itself first.
 
-The right version starts with WITH agents AS. That is a common table expression, a CTE. It gives the result in the parentheses a name, agents, and then the final SELECT joins tickets to that named result. Look at the note at the bottom: the name exists for this statement only. It does not create an agents table, and it does not change the users table.
+The right version starts with WITH agents AS. That is a common table expression, a CTE. It gives the result in the parentheses a name, agents, and then the final SELECT joins tickets to that named result. Look at the note at the bottom: the name exists for this statement only. The alias names the users table within this query.
 
 Why use a CTE? Readability. You give an intermediate result a meaningful name, and the main query reads almost like a sentence. Do not assume it makes anything faster, though. Depending on the query, the database may fold a CTE into the surrounding query or compute it separately.
 
@@ -261,11 +261,11 @@ Now the key part, in the box on the right. Agent 203 has no match, but the left 
 
 ## Slide 17
 
-Set operators combine the results of two queries. The rule is that the results must be compatible: same number of columns, and matching columns with compatible types. They compare whole result rows, not primary keys, unless the key is one of the columns you selected.
+Set operators combine the results of two queries. The rule is that the results must be compatible: same number of columns, and matching columns with compatible types. Set operations compare the columns in each result row, including any selected key.
 
 Look at the table. A contains 1 and 2. B contains 2 and 3. UNION gives rows from either side and removes repeats: 1, 2, 3. UNION ALL keeps everything, so 2 shows up twice: 1, 2, 2, 3. INTERSECT keeps what is in both, just 2. EXCEPT keeps what is in A but not in B, just 1.
 
-Read the caveat at the bottom. We listed those values in sorted order so you can compare them easily. SQL does not promise that order. UNION ALL does not even promise that all of A arrives before all of B. If you need an order, put ORDER BY on the combined query.
+Read the caveat at the bottom. We listed those values in sorted order so you can compare them easily. Use ORDER BY to specify the sequence. UNION ALL does not even promise that all of A arrives before all of B. If you need an order, put ORDER BY on the combined query.
 
 So how do you choose between UNION and UNION ALL? That is a decision about meaning. If two event sources each record a real event with the same selected values, removing one throws away information, so UNION ALL is right. If you want a list of distinct people, removing repeats is right. Pick the operator that says what you mean.
 
@@ -283,11 +283,11 @@ First a SELECT that previews the target. Ticket 1002 is medium in the starting d
 
 BEGIN starts a transaction, a boundary around related actions so they succeed together or get undone together. UPDATE sets priority to high, WHERE ticket_id = 1002. That WHERE is the whole safety of the statement. Leave it off and every ticket becomes high. RETURNING shows the row the update actually changed: 1002, high. The next SELECT shows high again, because a transaction can see its own changes.
 
-Then ROLLBACK throws the change away, and the final SELECT shows medium again. Do not skip that last query. It is how you prove the rollback worked instead of assuming it did.
+Then ROLLBACK throws the change away, and the final SELECT shows medium again. Do not skip that last query. Read back the row to verify the rollback.
 
 A practical warning. Run the whole block together, on one connection. If the pieces land on different connections, the transaction boundary breaks. And the Supabase SQL Editor shows only the last statement's result, which here is the final medium, so you would never see the high rows. That is why we watch this in the notebook: it keeps one connection and shows every result.
 
-The lab uses ticket 1006, which also starts at medium. A different ID on purpose, so you read the target instead of copying. And remember, a transaction protects you before commit, not after.
+The lab uses ticket 1006, which also starts at medium. Use the ID shown in your target data. Before commit, you can still roll back the transaction.
 
 [Sources]
 - Course textbook, Chapter 2, Review Safe Data Changes.
@@ -298,11 +298,11 @@ The lab uses ticket 1006, which also starts at medium. A different ID on purpose
 
 How do you know a report is right? Not by running the same query twice. A useful check comes at the answer from a different direction.
 
-One: list the ticket IDs behind a single staff count. If the summary says someone has two resolved tickets, pull that person's resolved tickets straight from the tickets table. The list should explain the number, not just repeat it.
+One: list the ticket IDs behind a single staff count. If the summary says someone has two resolved tickets, pull that person's resolved tickets straight from the tickets table. Use the list of ticket IDs to explain the count.
 
 Two: keep a staff member with zero matches. Agent 203 is our boundary case, a staff member with no assigned tickets. If the report leaves that user out, an inner join or a filter is removing zero-workload staff. If it says one, COUNT star is counting the placeholder row from the left join. Two different symptoms, two different repairs.
 
-Three: check that tickets 1004 and 1009 still appear on an all-ticket dashboard. Both are real requests with no assignee. And check the IDs, not just the total. If one ticket goes missing and a bad join repeats another, the count can still look right. Only the identifiers reveal it.
+Three: check that tickets 1004 and 1009 still appear on an all-ticket dashboard. Both are real requests with no assignee. Check the returned IDs. If one ticket goes missing and a bad join repeats another, the count can still look right. Only the identifiers reveal it.
 
 Four: a correct answer on this small fixture says nothing about speed on a million tickets, safety when people change data at the same time, or surviving a server failure. Those are later weeks.
 
@@ -332,7 +332,7 @@ Submit week_02_relational_sql_studio.sql in Brightspace, with short comments nex
 
 Let's pull the week together. Read the first line on the slide: filters choose rows, joins form pairs, and grouping changes what one result row represents. Every query we wrote this week was some combination of those three, and the question we kept asking was the same: what does one row mean?
 
-The service desk made each idea concrete. A missing assignee must not remove a ticket from an all-ticket report. That is the left join keeping 1004 and 1009. COUNT of the ticket ID gives zero when a left join finds no match. That is Agent 203 getting zero instead of one. And a ticket can legitimately repeat when it has several events, which is fine for a history and wrong for a count.
+The service desk made each idea concrete. Include unassigned tickets in an all-ticket report. That is the left join keeping 1004 and 1009. COUNT of the ticket ID gives zero when a left join finds no match. That is Agent 203 getting zero instead of one. And a ticket can legitimately repeat when it has several events, which is fine for a history and wrong for a count.
 
 The last line is the habit I most want you to keep: a targeted change can be inspected before ROLLBACK discards it. Preview the target, change it inside a transaction, look at the new value, roll back, and check the original again. Your SQL file records the operation and the reasoning together.
 
@@ -344,24 +344,24 @@ These are foundation skills for the rest of the course. Next week we use these s
 
 ## Slide 22
 
-These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: NULL: why = NULL finds nothing (1:20); What does one row mean after a join? (1:16); Counting workload, including zero (1:28). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 2 README. The diagrams are schematic illustrations, not benchmarks.
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: NULL: why = NULL finds nothing (1:20); What does one row mean after a join? (1:16); Counting workload, including zero (1:28). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 2 README. The diagrams illustrate the steps.
 
 ## Slide 23
 
-Ticket 1003 is one request for low water pressure. Its history has three separate events. The event IDs distinguish those events; the second column here is each event’s resulting status. When we join the ticket to its history, the ticket’s fields appear once for each matching event. Count star now counts three pairs. It does not tell us there are three separate requests. Before writing an aggregate, finish the sentence: one input row means what? In this join it means one ticket paired with one event.
+Ticket 1003 is one request for low water pressure. Its history has three separate events. The event IDs distinguish those events; the second column here is each event’s resulting status. When we join the ticket to its history, the ticket’s fields appear once for each matching event. Count star now counts three pairs. These rows describe events on the same request. Before writing an aggregate, finish the sentence: one input row means what? In this join it means one ticket paired with one event.
 
 Image description: Ticket 1003 joins to events 5005, 5006, and 5007, with new statuses open, in_progress, and resolved. Three joined rows represent three ticket-event pairs but only one distinct ticket.
 
-Editable static Manim source is provided in illustrations/teaching_stills.py. This diagram supplements the worked examples; it is not a new assignment.
+Editable static Manim source is provided in illustrations/teaching_stills.py. Use the diagram alongside the worked examples.
 
 ## Slide 24
 
-Cloudflare’s engineering article includes a real reporting query. It filters to an account, a device, and a time range, then groups device-state records by hour and status. You can recognize the same SQL ideas we are learning: choose rows, group them, and count the resulting groups. Their storage and traffic are much larger than our fixture. We are not reproducing their performance test. The useful connection is that a report’s filters and grouping have a meaning before they have a speed. A data engineer needs both a correct count and an explanation of what it counts.
+Cloudflare’s engineering article includes a real reporting query. It filters to an account, a device, and a time range, then groups device-state records by hour and status. You can recognize the same SQL ideas we are learning: choose rows, group them, and count the resulting groups. Their storage and traffic are much larger than our fixture. Apply the company's measurement method to the classroom query. The useful connection is that a report’s filters and grouping have a meaning before they have a speed. A data engineer needs both a correct count and an explanation of what it counts.
 
 Source: Cloudflare engineering · July 8, 2025
 https://blog.cloudflare.com/timescaledb-art/
 
-The career connection is a teaching interpretation. The case is not evidence that the company used our synthetic data or exact classroom SQL.
+The career connection is a teaching interpretation. Apply the case's diagnostic method to the course dataset.
 
 ## License
 

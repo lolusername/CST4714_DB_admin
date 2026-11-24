@@ -4,13 +4,13 @@
 
 ## What the organization reported
 
-GitHub reported that authorization checks succeeded, but a later routing query could return another repository’s path during concurrent database responses. Some requests therefore received content from the wrong repository. This was not a PostgreSQL RLS incident.
+GitHub reported that authorization checks succeeded, but a later routing query could return another repository’s path during concurrent database responses. Some requests therefore received content from the wrong repository. The case illustrates the access problem we will investigate in PostgreSQL.
 
 ## Connection to this lesson
 
 A permission test must check both the acting identity and the resource actually returned. A successful login or an allowed query alone cannot establish isolation.
 
-The connection above is our instructional interpretation of the source, not a claim that the company used our Metro Support design.
+Use the case to examine how the permission would work in Metro Support.
 
 ## A short application
 

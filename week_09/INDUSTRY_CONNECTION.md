@@ -10,7 +10,7 @@ Discord describes partitioning messages by channel and time bucket, handling hot
 
 Begin with the application’s read and growth patterns. A ticket page and years of history may need different access paths; embedding all future events in one document is not automatically the right design.
 
-The connection above is our instructional interpretation of the source, not a claim that the company used our Metro Support design.
+We apply the company's example to the Metro Support design below.
 
 ## A short application
 

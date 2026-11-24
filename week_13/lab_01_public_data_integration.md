@@ -10,7 +10,7 @@
 
 Save your own copy of the [notebook](materials/notebooks/06_public_data_capacity_integration.ipynb) in Drive. Read the [data reference](DATA_REFERENCE.md): one historical CISA catalog entry is not one computer. Keep `USE_LIVE_FEED = False` so the supplied 75 records and measurements are reproducible.
 
-Follow **Cells 01, 02a–02b and 03–07** with the instructor. Inspect the source and data checks; compare CVE-ID and date-added measurements. The range/hash calculation is a Python illustration, not a real sharded cluster. No separate capacity report or discussion response is required.
+Follow **Cells 01, 02a–02b and 03–07** with the instructor. Inspect the source and data checks; compare CVE-ID and date-added measurements. Cell 07 simulates range and hash placement in Python. No separate capacity report or discussion response is required.
 
 In **Cell 08**, keep `TARGET = "atlas"`. **Cell 10** prints the runtime IPv4 address, pauses for its temporary `/32` access-list rule, and then reads the hidden URI or allowed Colab secret. Use your own Free cluster and database user scoped to `cst4714_week13`. Keep credentials out of code/output. Do not enable a paid feature or access from everywhere.
 
@@ -22,7 +22,7 @@ After successful setup, run **Cell 11 twice into the same collection**. Expect *
 2. Rerun that cell. Check that its database output matches the independent source calculation. Read what one product row counts.
 3. Write **5–7 sentences** in the notebook's **Submission Record**. Identify the historical source; use one measured comparison of CVE ID and date added; explain both imports into the same collection; interpret one changed product row; name a value/group verification and one remaining limit.
 
-Keep your own wording and actual outputs. A successful ping alone is not a completed import; 75 records alone do not prove correct values. A product group counts selected catalog entries, not affected machines or vendor security quality. If you only observed an instructor demonstration, identify it as observed evidence rather than claiming your own Atlas connection succeeded.
+Keep your own wording and actual outputs. Ping checks connectivity. Comparing all 75 records with the source checks the import. Each product group counts the selected catalog entries for that product. If you watched the instructor's demonstration, identify which results you observed.
 
 ## 3. Submit one saved Colab link
 

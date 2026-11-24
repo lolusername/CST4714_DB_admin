@@ -1,6 +1,6 @@
 # Week 9 videos
 
-Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. Diagrams are schematic illustrations, not benchmarks.
+Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams illustrate the design.
 
 ## [Same facts, two shapes](01_rows_to_documents.mp4) (1:16)
 

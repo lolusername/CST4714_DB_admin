@@ -4,8 +4,7 @@
 
 [Open in GitHub](https://github.com/lolusername/CST4714_DB_admin/blob/main/week_04/lab_01_category_report.md)
 
-An operations manager needs one row per request category, not one row per history
-event. Build a report that counts all requests, active requests, and active
+An operations manager needs one row per request category. Build a report that counts all requests, active requests, and active
 requests that have high or urgent priority. Work individually in class.
 
 ## 1. Read the Data and the Worked Example

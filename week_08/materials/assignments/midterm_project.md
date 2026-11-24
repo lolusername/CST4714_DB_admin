@@ -6,7 +6,7 @@ CST4714 Database Administration · Individual project · 30% of the course grade
 
 ## The midterm at a glance
 
-- **What it is:** a project you complete on your own time. It is not an in-class exam.
+- **What it is:** a project you complete on your own time. Complete the project using the schedule in Brightspace.
 - **What you do:** run a small PostgreSQL database we give you, add two short pieces of SQL, and record and explain what happened.
 - **What you submit:** two files, **midterm.sql** and **README.md**, together in one ZIP in Brightspace.
 - **When it is due:** **Tuesday, November 3, 2026**. We walk through it in class on Thursday, October 22. Submit the ZIP in Brightspace. We introduce the project in Week 7 and teach the recovery part in Week 8.
@@ -110,7 +110,7 @@ Use your Week 5 results, or run the controlled example again in the [Week 5 bloc
 - **Blocked and blocking session IDs:** the blocked session waits with `wait_event_type` Lock, and its `blocking_pids` value lists the session it is waiting for.
 - **The row involved, the action that released the block, and the final row values.**
 
-The notebook uses a table called **lock_lab**. Its ticket 1004 starts at medium and open, not low and new, so read its values carefully. Include the notebook only if you changed its code. Screenshots are optional and earn no extra credit.
+The notebook uses a table called **lock_lab**. Read ticket 1004 from the supplied data. It starts at medium priority with status open. Include the notebook only if you changed its code. Screenshots are optional and earn no extra credit.
 
 ## Part 4: Test one improvement
 
@@ -141,7 +141,7 @@ With only 12 tickets, PostgreSQL may keep a sequential scan and timings may bare
 
 Your recommendation may be **keep** or **drop** if you support it with your results. For this practice submission, leave the index in the database and in midterm.sql so your recovery plan can check that it returns. Keeping it for that check does not change your recommendation about whether this tiny workload needs it.
 
-**Other routes:** instead of the index, you may choose one alternative covered in class: a least-privilege grant, an RLS policy test, or a safe schema change. Show the relevant before and after checks and explain a tradeoff. Complete **one** improvement only. If you already chose an alternative in Week 7, keep that choice. Replace the index-specific prompts in the README with checks for your chosen change; you do not also owe an index experiment. The 100,000-row classroom demonstration is optional practice, not a second midterm database.
+**Other routes:** instead of the index, you may choose one alternative covered in class: a least-privilege grant, an RLS policy test, or a safe schema change. Show the relevant before and after checks and explain a tradeoff. Complete **one** improvement only. If you already chose an alternative in Week 7, keep that choice. Replace the index-specific prompts in the README with checks for your chosen change; you do not also owe an index experiment. The 100,000-row classroom demonstration is optional practice.
 
 ## Part 5: Write a recovery plan, after Week 8
 

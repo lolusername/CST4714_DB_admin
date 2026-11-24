@@ -6,7 +6,7 @@
 
 ## Before the repair
 
-Save a copy of the required Atlas notebook in Drive. Use the notebook's actual Free-cluster connection steps; a website login is not a database credential, and Colab's IP is not necessarily your laptop's IP. Keep credentials in the hidden input or Colab Secrets. Do not purchase anything or use an unrestricted IP rule.
+Save a copy of the required Atlas notebook in Drive. Use a database user to authenticate Python and the runtime's IP address to allow the network connection. Keep credentials in the hidden input or Colab Secrets. Do not purchase anything or use an unrestricted IP rule.
 
 The [data reference](DATA_REFERENCE.md) lists all five records. In Cell 04, confirm that Atlas has the five source tickets, including 1004 with subject **Broken bench slat**. Cell 05 saves a BSON-aware Extended JSON artifact; Cell 05b retains it outside the temporary runtime. Cell 06 restores elsewhere and intentionally changes only target ticket 1004. Count, IDs, and date types still pass, while the complete-values check fails.
 
@@ -18,8 +18,8 @@ In **Cell 07**, replace `None` with the lookup for ticket 1004 in `saved_by_id`.
 
 In Section 09, write 3–4 sentences covering the real connection/write-read evidence, the error missed by counts, recovery from the saved artifact, and why replicated copies alone do not supply an earlier value. Name one thing the document file does not reconstruct, such as an index, validator, or application configuration.
 
-**Validation is not required for this lab.** No server election, index reconstruction, or paid backup exercise is required. The older Lab 1 policy response is optional practice, not a second assignment.
+**Validation is not required for this lab.** No server election, index reconstruction, or paid backup exercise is required. The older Lab 1 policy response provides optional practice.
 
 ## Submit your saved Colab link
 
-Save outputs and your explanation. Give the instructor viewer access through **Share**, then paste your own saved Colab notebook URL into Brightspace. Check that the instructor can open it. **Do not submit an `.ipynb` attachment, the starter URL, a separate response, exported JSON, or screenshots.** If setup was blocked and you observed the instructor's live demonstration, identify that clearly instead of claiming you ran the cloud connection.
+Save outputs and your explanation. Give the instructor viewer access through **Share**, then paste your own saved Colab notebook URL into Brightspace. Check that the instructor can open it. **Submit your saved Colab link.** If you observed the instructor's demonstration, label the results as observations.

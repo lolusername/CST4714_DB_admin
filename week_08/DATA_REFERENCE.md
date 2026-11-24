@@ -4,7 +4,7 @@ Day 1 uses the small recovery fixture below. Day 2 uses the full Metro Support f
 
 ## Day 1 recovery fixture: 3 / 3 / 5
 
-This is a smaller, separate schema named `metro_support` in the notebook's uniquely named source and restore databases. It is not the full midterm fixture. Read every record below before comparing source and restore.
+This is a smaller, separate schema named `metro_support` in the notebook's uniquely named source and restore databases. The midterm uses the full fixture. Read every record below before comparing source and restore.
 
 | Table / field | Type and rule | Meaning |
 |---|---|---|
@@ -44,9 +44,9 @@ These rows describe the supplied source state. Count equality can miss changed v
 
 ## The complete Metro Support fixture
 
-The CSVs contain **8 users, 12 tickets, and 21 events**. They are fictional teaching data. A user can request many tickets; a ticket has one requester, an optional assignee, and several events. Each event belongs to one ticket and names its actor. IDs connect records; a display name is not a key.
+The CSVs contain **8 users, 12 tickets, and 21 events**. They are fictional teaching data. A user can request many tickets; a ticket has one requester, an optional assignee, and several events. Each event belongs to one ticket and names its actor. Join on the IDs and display the names.
 
-The PostgreSQL schema stores timestamps as `timestamptz`; CSV/JSON show ISO 8601 strings with `Z` for UTC. In these CSVs, an empty field represents SQL `NULL`, not an empty string. SQL columns always exist even if their value is null. A missing JSON member is a different representation. These IDs are supplied, not generated.
+The PostgreSQL schema stores timestamps as `timestamptz`; CSV/JSON show ISO 8601 strings with `Z` for UTC. In these CSVs, an empty field represents SQL `NULL`. SQL columns always exist even if their value is null. A missing JSON member is a different representation. The fixture supplies these IDs.
 
 ### users: field dictionary
 
@@ -55,7 +55,7 @@ The PostgreSQL schema stores timestamps as `timestamptz`; CSV/JSON show ISO 8601
 | `user_id` | `integer` | No | Person identifier; primary key. |
 | `display_name` | `text` | No | Display label; identity is still the user ID. |
 | `email` | `text` | No | Fictional email; unique and required. |
-| `role` | `text` | No | Application role label; not a PostgreSQL login role. Observed: `agent`, `analyst`, `resident`, `supervisor`. |
+| `role` | `text` | No | Application role label. Observed: `agent`, `analyst`, `resident`, `supervisor`. |
 | `neighborhood` | `text` | No | Named neighborhood. |
 | `created_at` | `timestamptz` | No | When the person record was created. |
 
@@ -156,4 +156,4 @@ event_id,ticket_id,actor_id,event_type,old_status,new_status,note,event_at
 
 ### Rules versus examples
 
-The SQL enforces primary keys, foreign keys, required fields, unique emails, and `closed_at IS NULL OR closed_at >= opened_at`. The labels listed above are **observed values**, not enum constraints in this fixture. A data dictionary does not silently add a CHECK rule. The Week 8 small recovery fixture has a separate status CHECK; do not confuse the two schemas.
+The SQL enforces primary keys, foreign keys, required fields, unique emails, and `closed_at IS NULL OR closed_at >= opened_at`. The table lists values observed in this fixture. A data dictionary does not silently add a CHECK rule. The Week 8 small recovery fixture has a separate status CHECK; do not confuse the two schemas.

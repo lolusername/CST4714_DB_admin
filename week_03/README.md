@@ -35,7 +35,7 @@ unless the weekly lab assigns it.
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_03/03_views_identity_migration.ipynb)
 
-- [Guided PostgreSQL notebook](03_views_identity_migration.ipynb): dataset introduction, worked examples, and SQL workspaces. It uses a disposable PostgreSQL database in Colab, not a Supabase project.
+- [Guided PostgreSQL notebook](03_views_identity_migration.ipynb): dataset introduction, worked examples, and SQL workspaces. It runs a disposable PostgreSQL database in Colab.
 - [PostgreSQL setup and editor help](materials/datasets/metro_support/README.md#first-postgresql-session)
 - [Week 3 student deck](week_03_views_identity_safe_change.pptx)
 - [Week 3 PDF handout](week_03_views_identity_safe_change.pdf)
@@ -46,7 +46,7 @@ unless the weekly lab assigns it.
 
 Short silent animations with captions (3 for this week). Each has a subtitle file; see [all Week 3 videos](videos/README.md).
 
-- [A view stores a query, not rows](videos/01_view_stored_query.mp4) (1:14): The active-queue view saves a SELECT definition and runs it against current data each time, so a resolved ticket simply stops appearing. A materialized view stores rows instead and stays stale until it is refreshed.
+- [How a view stores a query](videos/01_view_stored_query.mp4) (1:14): The active-queue view saves a SELECT definition and runs it against current data each time, so a resolved ticket simply stops appearing. A materialized view stores rows instead and stays stale until it is refreshed.
 - [Why identity values have gaps](videos/02_identity_gaps.mp4) (1:24): Three inserts receive IDs 1, 2, and 3, but the rolled-back one leaves only rows 1 and 3, because sequence allocations are not undone. An explicitly supplied ID does not advance the sequence and can collide with a later generated value.
 - [Adding a required field without inventing history](videos/03_add_required_column.mp4) (1:27): The source_channel rehearsal adds a column, backfills unknown, adds a CHECK, default, and NOT NULL, verifies, and rolls back. An older client that omits the column gets the default, and an open ALTER TABLE makes other sessions wait.
 
@@ -68,7 +68,7 @@ Choose the linked Colab notebook, your existing Supabase practice database, or
 PGlite. Do not use the Week 2 DuckDB notebook for these PostgreSQL-specific
 exercises. Keep the Day 1 view for Day 2. A Colab runtime can expire; save your
 SQL and use the notebook's restart instructions rather than relying on temporary
-database state. Your saved SQL file is the submission, not an additional notebook.
+database state. Submit your saved SQL file.
 
 Submit only `week_03_views_identity.sql`.
 
@@ -84,7 +84,7 @@ Submit only `week_03_safe_migration.sql`.
 
 ## Optional Industry Extension: Zero-Downtime Change Note
 
-This activity is optional, ungraded, and does not add a submission.
+Use this optional exercise for practice.
 
 Write a seven-sentence change note for replacing a legacy `priority_text` field
 with a constrained `priority_code` while an older client still reads the original

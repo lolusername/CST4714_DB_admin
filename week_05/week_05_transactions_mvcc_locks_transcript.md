@@ -26,7 +26,7 @@ Now the second row. Event 5998 does not exist yet. When we create it, it records
 
 Here is the problem. Imagine the ticket update succeeds, and then the connection drops before the event is inserted. A staff member sees Agent 202 on the ticket. Someone reviewing the history finds no assignment at all. Each table, on its own, looks perfectly valid. The action is still only half done.
 
-Read the line at the bottom. Two successful SQL statements are not automatically one transaction. PostgreSQL has no idea that these two commands belong together. We have to say so. That is what a transaction is for: drawing a boundary around changes that mean one thing to the application. In your lab the agent and the event number are different, and the tables are disposable copies, but the relationship between current state and history is exactly the same.
+Read the line at the bottom. Wrap related SQL statements in a transaction. PostgreSQL has no idea that these two commands belong together. We have to say so. That is what a transaction is for: drawing a boundary around changes that mean one thing to the application. In your lab the agent and the event number are different, and the tables are disposable copies, but the relationship between current state and history is exactly the same.
 
 [Sources]
 - Course Metro Support fixture and Chapter 5 assignment example.
@@ -36,9 +36,9 @@ Read the line at the bottom. Two successful SQL statements are not automatically
 
 This diagram is about endings. BEGIN opens a transaction. Then we do the work, the UPDATE and the INSERT, and we can inspect that work from our own connection. Then there are two ways out. COMMIT keeps the changes. ROLLBACK discards them.
 
-Notice that they are alternatives, not two steps in a checklist. You pick one. And look at the line at the bottom: a later ROLLBACK does not reverse a completed COMMIT. Once you commit, the change is real, and other people may already be reading it. If it was a mistake, fixing it means writing another change based on what you know now. That is the same distinction we made when we rehearsed a migration earlier in the course. Rehearsing a change is cheap. Repairing a live system after it has collected new data is not.
+Choose the command that matches your decision. You pick one. And look at the line at the bottom: a later ROLLBACK does not reverse a completed COMMIT. Once you commit, the change is real, and other people may already be reading it. If it was a mistake, fixing it means writing another change based on what you know now. That is the same distinction we made when we rehearsed a migration earlier in the course. Rehearsing a change is cheap. Repairing a live system after it has collected new data is not.
 
-One more thing. Closing a browser tab is not a transaction command. A client can keep a connection alive in the background, and an open transaction keeps holding resources even when nobody seems to be working. End your transactions on purpose.
+One more thing. Use COMMIT or ROLLBACK to end the transaction explicitly. A client can keep a connection alive in the background, and an open transaction keeps holding resources even when nobody seems to be working. End your transactions on purpose.
 
 In my demonstration I run the whole block and end with ROLLBACK, so the shared fixture stays unchanged. In your lab you work on a copy and actually COMMIT the approved assignment. Whenever you write down an observation, say where in this diagram you made it. A value you see while the transaction is open is a different fact from what a fresh query shows after it ends.
 
@@ -168,13 +168,13 @@ The notebook handles the connections and the concurrency. You do not need to lea
 
 ## Slide 11
 
-Let's be precise about what a session is. A database session is the server-side context for one connection. Its transaction state belongs to that connection alone. So even if the same person opens two connections with the same database role, they are independent. A's open transaction is A's business, not B's.
+Let's be precise about what a session is. A database session is the server-side context for one connection. Its transaction state belongs to that connection alone. So even if the same person opens two connections with the same database role, they are independent. A controls its own transaction.
 
 Look at the three boxes. Session A changes the priority and leaves it uncommitted. Session B changes the status and waits for the same row. The diagnostic connection reads activity and blocking relationships. Why a third one? Because a connection stuck waiting for its own command cannot also be used to look around. You need a free observer.
 
-Now read the line under the boxes. A browser tab is not necessarily a persistent database session. That is why we do not do this with two editor tabs. The notebook opens and labels three connections through Supabase's Session pooler. Session mode keeps each connection tied to one database session. A transaction pooler hands connections around between transactions, which would break exactly the things we are trying to observe.
+Now read the line under the boxes. Run the exercise in two persistent database sessions. That is why we do not do this with two editor tabs. The notebook opens and labels three connections through Supabase's Session pooler. Session mode keeps each connection tied to one database session. A transaction pooler hands connections around between transactions, which would break exactly the things we are trying to observe.
 
-The fixture is separate too. Look at the bottom: lock_lab.tickets, row 1004, medium and open. That is not the Metro Support ticket from Day 1, and that is on purpose. One priority change and one status change, nothing else. Use the starting row the notebook prints, not values from memory.
+The fixture is separate too. Look at the bottom: lock_lab.tickets, row 1004, medium and open. Day 2 uses a separate starting row. One priority change and one status change, nothing else. Use the starting row printed by the notebook.
 
 Run this only in your own practice project. Setup recreates the disposable schema, and cleanup removes it.
 
@@ -190,7 +190,7 @@ Look at the two boxes on top. The committed version of 1004 is medium and open. 
 
 The notebook runs that reader before B even starts, so you can compare both observations directly. B's update waiting for the row is a separate behavior, which we get to in two slides.
 
-Two things MVCC is not. It is not two tickets. These are internal versions of one logical row. And read the line at the bottom: old versions are not a permanent event archive. Database maintenance reclaims versions that nobody can see anymore. If you need a lasting record of what changed, you store it on purpose, like the events table from Day 1.
+Two things MVCC is not. These versions belong to one ticket. These are internal versions of one logical row. PostgreSQL eventually reclaims obsolete versions. Save long-term history in an event table. Database maintenance reclaims versions that nobody can see anymore. If you need a lasting record of what changed, you store it on purpose, like the events table from Day 1.
 
 Also, a long-running transaction can keep old versions relevant and get in the way of that cleanup. One more reason to finish transactions promptly.
 
@@ -206,7 +206,7 @@ First row, Read Committed, which is PostgreSQL's default. Each statement starts 
 
 Second row, Repeatable Read. A's snapshot was established by its first data statement, so the second read still shows low. B's high value did not vanish. Look at the note at the bottom: a fresh transaction would see it. A is simply still reading from its earlier snapshot.
 
-Third row, Serializable. You also get a stable view, but the stronger point is that PostgreSQL may reject combinations of decisions that could not have happened in some one-at-a-time order. When it does, the application has to retry the whole transaction. Stronger isolation does not mean nothing ever fails.
+Third row, Serializable. You also get a stable view, but the stronger point is that PostgreSQL may reject combinations of decisions that could not have happened in some one-at-a-time order. When it does, the application has to retry the whole transaction. Some conflicts require a retry even at stronger isolation levels.
 
 For today's lab, use the notebook's ordinary default. You do not have to implement all three levels. What you should be able to explain is why a later read might differ from an earlier one, and why a stable snapshot alone does not guarantee every business rule. Chapter 5's on-call example explores that last point.
 
@@ -222,7 +222,7 @@ Notice that they change different columns. That does not matter. They change the
 
 Now look at B's SET LOCAL statement_timeout line. That is a safety limit for the exercise, so B cannot wait forever. It is not a fix. Read the note at the bottom: a timeout in B would not end A's transaction. If B times out, A is still holding its uncommitted change.
 
-The notebook's code differs from the slide in small details. It sets B's fifteen-second timeout for the whole session, it adds RETURNING so you can see the row, and it gives A its own idle-in-transaction timeout as a second safety net. The mechanism is the same. It runs the sequence in one cell: B waits in a small background worker, while the main code captures the activity, ends A's transaction, and waits for B to finish. Use the notebook rather than pasting these blocks into browser tabs.
+The notebook's code differs from the slide in small details. It sets B's fifteen-second timeout for the whole session, it adds RETURNING so you can see the row, and it gives A its own idle-in-transaction timeout as a second safety net. The mechanism is the same. It runs the sequence in one cell: B waits in a small background worker, while the main code captures the activity, ends A's transaction, and waits for B to finish. Use the notebook's persistent connections for these blocks.
 
 [Sources]
 - Notebook 02 controlled concurrency code.
@@ -234,11 +234,11 @@ So B is stuck. How do we see that? We ask PostgreSQL. pg_stat_activity is a view
 
 Read the SELECT list. pid, application_name, and state. Then wait_event_type and wait_event, which say what kind of thing it is waiting for. Then the important one, pg_blocking_pids of pid, which returns the process IDs preventing this session from continuing. And transaction_age, the clock time now minus the moment the transaction started.
 
-Read the note on the right. A PID is a process identifier on the database server. It is not a ticket ID and not a user ID. You should never take a number from a slide and use it as the target of a command.
+Read the note on the right. A PID is a process identifier on the database server. It identifies the server process handling the connection. You should never take a number from a slide and use it as the target of a command.
 
 The WHERE clause here filters by the application names the notebook gave its connections. The notebook goes one step further, as the bottom note says. It narrows the query to the two exact PIDs it just opened, so another practice session with a similar name cannot get mixed in, and it passes those values as parameters instead of gluing text into the SQL.
 
-Transaction age helps you tell a brief, normal overlap from something old and forgotten. But age alone does not tell you whether to commit or discard. You still need the owner, the purpose, and the data consequences. And what you can see depends on permissions. Hidden details are not a reason to grant broad access.
+Transaction age helps you tell a brief, normal overlap from something old and forgotten. But age alone does not tell you whether to commit or discard. You still need the owner, the purpose, and the data consequences. And what you can see depends on permissions. Inspect the session using your assigned permissions.
 
 [Sources]
 - Notebook 02 diagnostic query.
@@ -247,11 +247,11 @@ Transaction age helps you tell a brief, normal overlap from something old and fo
 
 ## Slide 16
 
-Here is what that query returns. These PIDs are illustrative. They match the supplied teaching trace, not your server. Start with the second row, B, PID 7332. State: active. Wait: Lock, transactionid. Active means the backend is in the middle of a command. It does not mean the command is making progress. B is active and stuck at the same time.
+Here is what that query returns. These PIDs are illustrative. These values come from the supplied teaching trace. Start with the second row, B, PID 7332. State: active. Wait: Lock, transactionid. Active means the backend is in the middle of a command. It does not mean the command is making progress. B is active and stuck at the same time.
 
-Now look at B's last column. Blocking PIDs: 7310. That points to A. Look at A's row, PID 7310. State: idle in transaction. A is waiting for its client to send the next command, but its transaction is still open. So "idle" does not mean harmless here. The idle one is the one holding everybody up.
+Now look at B's last column. Blocking PIDs: 7310. That points to A. Look at A's row, PID 7310. State: idle in transaction. A is waiting for its client to send the next command, but its transaction is still open. An idle transaction can still hold a lock. The idle one is the one holding everybody up.
 
-A's blocking list is empty. That only says this observation does not show A waiting on anyone. It does not say A holds no locks. In fact A's uncommitted change is exactly what B is waiting for. Direction matters: B waits for A, not the other way around.
+A's blocking list is empty. That only says this observation does not show A waiting on anyone. It does not say A holds no locks. In fact A's uncommitted change is exactly what B is waiting for. B is waiting for A.
 
 Compare the two wait descriptions. A's ClientRead means it is waiting for input from its client. B's lock wait means it is waiting for another transaction to end. So a session can be waiting in one sense and blocking in another.
 
@@ -281,7 +281,7 @@ One caution. These outcomes hold for this starting row and this SQL. They are no
 
 People call both of these situations "a slow query," and they need completely different checks. Look at the table.
 
-First row: a lock wait with a blocker. The query is not slow because it is doing a lot of work. It cannot proceed, because another transaction has not let go. So the useful next check is about that transaction: its owner, its state, its age, and the operation that is waiting. But look at the last column. None of that establishes that the blocker should be killed.
+First row: a lock wait with a blocker. The query is waiting for the row lock. It cannot proceed, because another transaction has not let go. So the useful next check is about that transaction: its owner, its state, its age, and the operation that is waiting. But look at the last column. None of that establishes that the blocker should be killed.
 
 Second row: a long-running query that is not in this lock wait. Now you look at the plan, the work performed, and I/O and other waits. And the last column says that no lock wait does not prove the query is using CPU efficiently. We learn to read plans and choose indexes in Week 7.
 
@@ -301,7 +301,7 @@ Follow the boxes. A already holds ticket 1001 and now requests ticket 1002. B al
 
 So PostgreSQL detects the cycle and aborts one of the transactions, which lets the other proceed. The application has to catch that error and, when it makes sense, retry the complete transaction with fresh data. Look at the last line: retries must restart the transaction. Retrying only the final statement loses the earlier decisions that belonged with it.
 
-How do you prevent this particular pattern? Consistent lock order. If every operation that needs both tickets takes them in the same order, this opposite-order cycle cannot form. That is not a promise that no deadlock can ever happen in a large system, but it is a concrete rule you can tie to this picture.
+How do you prevent this particular pattern? Consistent lock order. If every operation that needs both tickets takes them in the same order, this opposite-order cycle cannot form. Using a consistent lock order reduces the risk of deadlock.
 
 This is the optional Deadlock Detective activity in the README. Draw the wait-for graph and explain it on paper. It is ungraded and adds no submission, and you should not create a real deadlock in a shared database.
 
@@ -327,7 +327,7 @@ The notebook's First-Time Setup section near the top walks through all of this b
 
 Now the connection string. In your Supabase course project, click Connect, choose Session pooler, and copy the PostgreSQL URI. It begins with postgresql, colon, slash, slash. The project's HTTPS API URL and its API keys belong to a different interface, and they will not work here.
 
-Keep the host, port, and username exactly as you copied them. Replace the literal text YOUR-PASSWORD, in square brackets, with the database password for that project. That is not the password you use to sign into the Supabase website. If you do not know your database password, stop and sort that out first.
+Keep the host, port, and username exactly as you copied them. Replace the literal text YOUR-PASSWORD, in square brackets, with the database password for that project. Use the database password associated with your connection string. If you do not know your database password, stop and sort that out first.
 
 Look at the box on URL encoding. Some characters mean something special inside a URL. If your password has an at sign, write %40. A hash becomes %23, and a percent sign becomes %25. Encode only the password, and only once. A malformed URL can fail before PostgreSQL even checks your password.
 
@@ -343,7 +343,7 @@ And the bottom line: paste the finished URL only into Colab's hidden connection 
 
 ## Slide 22
 
-Back in your Colab copy, find the configuration cell near the top and look at the two flags on the slide. Set USE_CLOUD to True. Leave KEEP_A_CHANGE as False for the first run. That is the rollback case. The notebook ships with USE_CLOUD set to False, which skips every connection and shows an offline trace. Seeing that trace does not mean you connected.
+Back in your Colab copy, find the configuration cell near the top and look at the two flags on the slide. Set USE_CLOUD to True. Leave KEEP_A_CHANGE as False for the first run. That is the rollback case. The notebook ships with USE_CLOUD set to False, which skips every connection and shows an offline trace. Identify the supplied trace as the source of these observations.
 
 Run the code cells one at a time from the top: the install cell, the configuration cell, then the connection cell in Section 1. It says Paste the temporary PostgreSQL connection URL. Paste your URL into that hidden box and press Enter.
 
@@ -364,7 +364,7 @@ Before the second run, write down your prediction. What will the row look like i
 
 Then, in the final Markdown cell, complete the comparison table and write a short update to the developer whose status update looked stuck. Use one run's actual PIDs to explain the wait, and use your comparison to explain what the transaction choice did to the data. No incident form and no screenshots.
 
-If you cannot get a connection, the notebook includes a supplied trace. Label the rollback result as a supplied trace and the commit result as an unexecuted prediction, and tell me, so we can arrange a connection demonstration. A trace is practice, not proof of a live session.
+If you cannot get a connection, the notebook includes a supplied trace. Label the rollback result as a supplied trace and the commit result as an unexecuted prediction, and tell me, so we can arrange a connection demonstration. Identify whether the evidence came from the supplied trace or your live session.
 
 To submit, save your copy in Colab, use Share to give me viewer access, and put that sharing link in Brightspace. Run cleanup after each experiment, and make sure no credential was saved in the notebook.
 
@@ -407,7 +407,7 @@ Next week, as the bottom of the slide says, roles and permissions determine who 
 
 ## Slide 26
 
-These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: One assignment, one transaction (1:28); Row versions and snapshots (1:22); Who is waiting on whom? (1:28). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 5 README. The diagrams are schematic illustrations, not benchmarks.
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: One assignment, one transaction (1:28); Row versions and snapshots (1:22); Who is waiting on whom? (1:28). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 5 README. The diagrams illustrate the steps.
 
 ## Slide 27
 
@@ -415,16 +415,16 @@ This is lock_lab ticket 1004, whose starting values are medium and open. It is d
 
 Image description: Session A changes ticket 1004 to high/open without committing and holds its row lock. An ordinary reader sees committed medium/open. Session B waits to set in_progress. A rollback leaves medium/in_progress; A commit leaves high/in_progress.
 
-Editable static Manim source is provided in illustrations/teaching_stills.py. This diagram supplements the worked examples; it is not a new assignment.
+Editable static Manim source is provided in illustrations/teaching_stills.py. Use the diagram alongside the worked examples.
 
 ## Slide 28
 
-GitLab investigated timeouts that were not explained by a simple slow-query story. Their article connects long-running transactions, subtransactions created by savepoints, and internal lightweight-lock waits. They changed their savepoint use after understanding that mechanism. That is not the same lock as our two writers waiting for one row. The connection is how they reasoned: collect wait evidence and transaction context, then change the cause. In our lab, application names, backend PIDs, blocking PIDs, and the final row let us make a smaller but similarly evidence-based explanation.
+GitLab investigated timeouts that were not explained by a simple slow-query story. Their article connects long-running transactions, subtransactions created by savepoints, and internal lightweight-lock waits. They changed their savepoint use after understanding that mechanism. Compare GitHub's lock with the row lock in the classroom exercise. The connection is how they reasoned: collect wait evidence and transaction context, then change the cause. In our lab, application names, backend PIDs, blocking PIDs, and the final row let us make a smaller but similarly evidence-based explanation.
 
 Source: GitLab engineering · September 29, 2021
 https://about.gitlab.com/blog/why-we-spent-the-last-month-eliminating-postgresql-subtransactions/
 
-The career connection is a teaching interpretation. The case is not evidence that the company used our synthetic data or exact classroom SQL.
+The career connection is a teaching interpretation. Apply the case's diagnostic method to the course dataset.
 
 ## License
 

@@ -6,7 +6,7 @@ affected, explain what happened, and recommend what should change. Use particula
 rows, rules, or operations to support your explanation. The relevant technical
 terms are introduced below and in the assigned chapter.
 
-The response below is **part of the linked lab, not an additional assignment**. Use the submission format specified in the lab: a Brightspace text
+Complete this response **in the linked lab**. Use the submission format specified in the lab: a Brightspace text
 entry, a SQL comment, a notebook Markdown cell, or the final concept guide. Write
 in class after the relevant demonstration and experiment. There is no separate
 reading report or minimum word count unless the lab explicitly states one.
@@ -14,7 +14,7 @@ reading report or minimum word count unless the lab explicitly states one.
 ## From a Result to an Explanation
 
 Explain what you recommend, point to something that supports it, and state an
-important limitation. Those are thinking moves, not required section headings.
+important limitation. Use those questions to organize your reasoning.
 
 For example, suppose a practice table contained five orders before an update and
 still contains five afterward. "The update worked because there are five rows"
@@ -36,8 +36,7 @@ Incident Communication."
 
 Explain to the developer which update waited and which session held the resource
 it needed. Compare the final data when that session rolls back with the data when
-it commits. Explain why both choices let the waiter finish but are not the same
-business decision. Use the notebook's actual results, or label its supplied
+it commits. Explain how each choice releases the lock and what gets stored in each case. Use the notebook's actual results, or label its supplied
 rollback trace and your unexecuted commit prediction if you used that path.
 
 The **blocked** session is waiting; the **blocking** session holds something it

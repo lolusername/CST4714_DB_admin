@@ -4,13 +4,13 @@
 
 ## What the organization reported
 
-Mattermost investigated a slow PostgreSQL query used in large message-indexing jobs. Its engineers compared plans and changed how the query expressed a boundary condition. The published speedup describes that workload, not a guarantee for other datasets.
+Mattermost investigated a slow PostgreSQL query used in large message-indexing jobs. Its engineers compared plans and changed how the query expressed a boundary condition. The company measured the speedup on its workload.
 
 ## Connection to this lesson
 
 A performance claim needs the same intended answer, measured work, and a stated environment. Our CSV inspection predicts results; PostgreSQL EXPLAIN supplies plan evidence later.
 
-The connection above is our instructional interpretation of the source, not a claim that the company used our Metro Support design.
+Use the case to examine how the permission would work in Metro Support.
 
 ## A short application
 

@@ -36,7 +36,7 @@ mode used for truncation.
 ## Four terms to use
 
 - **Transaction ID (XID):** an identifier used with commit status and snapshots to decide row visibility. Its 32-bit space has roughly four billion values; comparisons divide that circle into about two billion past and two billion future IDs.
-- **MVCC:** multi-version concurrency control. Readers can use an earlier row version while a writer changes it; this avoids many reader-writer conflicts, not every possible lock.
+- **MVCC:** multi-version concurrency control. Readers can use an earlier row version while a writer changes it. Other operations can still require locks.
 - **Vacuum / autovacuum:** maintenance that reclaims obsolete versions and freezes old insertions as safely committed in the past. Frozen rows can still be updated or deleted. Autovacuum schedules this work automatically.
 - **Wraparound protection:** PostgreSQL refuses new XID allocation before ID comparisons become unsafe. Read-only work can start and transactions already in progress may continue. Ordinary writes needing a new XID fail; recovery uses an administrative procedure.
 
@@ -52,7 +52,7 @@ Write a reflection of **250 to 350 words**. It must cover all four points.
 Requirements:
 
 - Use at least **three** of the four terms above correctly.
-- Write full sentences in organized paragraphs. Make an argument, not a summary.
+- Write full sentences in organized paragraphs. State an argument and support it with evidence.
 - Ground claims about Sentry in the article, including its correction. Use the class background for PostgreSQL concepts. Clearly label your proposed prevention steps as recommendations; do not invent incident details.
 - Distinguish **availability** (is the service up) from **correctness** (is the data right). The whole incident is about trading one for the other.
 

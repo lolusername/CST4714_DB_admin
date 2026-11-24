@@ -200,7 +200,7 @@ Reference (not spoken): MongoDB Manual, Atomicity and Transactions, https://www.
 
 The diagram places the stored state beside the update's required state. The saved ticket is in_progress. The write requires new. The mismatch prevents the requested change to resolved.
 
-The ticket still exists. A conditional update can match zero documents because one of its conditions no longer holds. That makes a zero match useful application evidence rather than enough information to diagnose a connection problem.
+The ticket still exists. A conditional update can match zero documents because one of its conditions no longer holds. A zero match tells the application that the expected state was absent.
 
 The appropriate response depends on the application. It may reload the record and let the person decide based on its current state.
 
@@ -336,7 +336,7 @@ Part A is the required submission. Paste it into one Brightspace text entry befo
 
 The required submission is the Part A lab record. It identifies the workspace reached, describes an insert and read-back, and explains what happened when a filter changed.
 
-A useful record connects a command to the result actually observed. If a command failed, the record should identify the last successful result rather than inventing output.
+A useful record connects a command to the result actually observed. If a command failed, record the last successful result and the error.
 
 Submit that record as one Brightspace text entry. The Chapter 10 response in Part B is optional and can go underneath Part A in the same entry.
 
@@ -386,7 +386,7 @@ Teaching placement (not spoken): Day 1: after the repeated-update example, befor
 
 ## Slide 42
 
-The Forbes story is a vendor-published customer account, so treat it as an account of one use of document storage rather than an independent benchmark. The useful connection is that changing content can benefit from a flexible representation. Flexibility does not remove the need to know what fields mean or to verify a write. Our ticket example gives us a small version of that operational discipline: choose the intended document, change only the intended values, inspect the counts, and read the result back. The source does not publish the hypothetical schema we might sketch in class.
+MongoDB published Forbes's account of how its team used document storage. The useful connection is that changing content can benefit from a flexible representation. Flexibility does not remove the need to know what fields mean or to verify a write. Our ticket example gives us a small version of that operational discipline: choose the intended document, change only the intended values, inspect the counts, and read the result back. The source does not publish the hypothetical schema we might sketch in class.
 
 Primary source: https://www.mongodb.com/company/blog/innovation/forbes-cloud-migration-helps-worlds-biggest-media-brand-continue-standard-digital-innovation
 

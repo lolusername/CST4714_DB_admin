@@ -12,8 +12,7 @@ do not run this setup in somebody else's or a shared project.
 If your cloud connection is unavailable, use the
 [disposable PostgreSQL setup](README.md#postgresql-without-a-cloud-database-account).
 It runs this same lab without a Supabase account. Clean up the role below before
-removing that notebook's practice database; roles belong to the server, not just
-one database.
+removing that notebook's practice database; roles apply across databases on the same PostgreSQL cluster.
 
 ## 1. Set Up a Limited Role and View
 
@@ -83,7 +82,7 @@ UPDATE metro_support.tickets SET priority = 'high' WHERE ticket_id = 1004;
 
 It must also fail. The surrounding rollback protects the practice data even if
 you discover an overly broad grant. Leave expected-failure batches commented in
-your submitted file and record the short error, not an entire screen.
+your submitted file and record the short error message.
 
 ### Visible Results in Colab
 
@@ -118,14 +117,11 @@ with psycopg.connect(getpass("Session-pooler URI (hidden): "),
             print(role, "SQLSTATE", error.sqlstate, str(error).splitlines()[0])
 ```
 
-Expect 12 rows, then two permission errors with SQLSTATE `42501`. An authentication
-or network error is a setup problem, not a successful denial test. `sslmode=require`
+Expect 12 rows, then two permission errors with SQLSTATE `42501`. If the connection fails, fix it and run the permission test again. `sslmode=require`
 encrypts this classroom connection; production server-identity verification uses
 `verify-full` and the provider's CA configuration.
 
-The Python cell only displays your SQL tests. Put the observed result and short
-errors in your submitted SQL comments; this display notebook is not an additional
-deliverable. The connection closes automatically when the `with` block exits.
+The Python cell only displays your SQL tests. Record the observed result and any short error messages in the SQL file you submit. The connection closes automatically when the `with` block exits.
 
 ## 3. Explain and Clean Up
 

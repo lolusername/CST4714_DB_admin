@@ -6,13 +6,12 @@ may request many tickets; a ticket may have one assignee or no assignee; a ticke
 may have many history events. Requester, assignee, and actor refer to different
 roles and all point to `users.user_id`.
 
-These are the fixture's observed values, not all database-enforced rules. The
+The fixture contains the values shown here. The
 baseline SQL declares keys, required fields, unique email, and the date-order
-check. It does **not** yet declare allowed-value CHECK constraints for status,
-priority, category, or role. The integrity lab adds some of those rules.
+check. In the integrity lab, you add CHECK constraints for some of the allowed values in status, priority, category, and role.
 
 Every row has the declared columns. SQL NULL is a value marker for missing or
-inapplicable information, not an absent column, zero, or the text 'NULL'. Empty
+inapplicable information. Empty
 CSV fields in this fixture load as SQL NULL. The SQL uses explicit integer IDs;
 the identity experiment later creates a separate generated `note_id`.
 
@@ -23,7 +22,7 @@ One row represents one person.
 | Field | Type and rule | Meaning |
 |---|---|---|
 | `user_id` | integer; primary key | Unique person identifier; supplied explicitly in this fixture |
-| `display_name` | text; required | Synthetic display label; it is not a stable join key |
+| `display_name` | text; required | Synthetic display label; join on the user ID |
 | `email` | text; required and unique | Synthetic contact address ending in example.test |
 | `role` | text; required | Observed: resident, agent, supervisor, analyst |
 | `neighborhood` | text; required | Observed: Harbor, Northside, Central |
@@ -56,7 +55,7 @@ One row represents one request.
 | `status` | text; required | Observed: new, open, in_progress, resolved, closed |
 | `subject` | text; required | Short description of the request |
 | `opened_at` | timestamp with time zone; required | When the request was recorded |
-| `closed_at` | timestamp with time zone; nullable | Closure time if recorded; NULL is not a date |
+| `closed_at` | timestamp with time zone; nullable | Closure time when recorded |
 
 One complete example record (JSON notation for readability; SQL uses typed columns):
 

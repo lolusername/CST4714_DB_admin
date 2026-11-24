@@ -52,7 +52,7 @@ not your assigned ticket.
 
 Use double quotes for strings and field names, balanced braces/brackets, no
 comments inside JSON, and no trailing commas. Formatting and indentation should
-make the nesting readable. A GitHub commit saves text; it does not prove valid JSON.
+make the nesting readable. Validate the JSON before committing it to GitHub.
 
 ## 2. Explain One Tradeoff
 
@@ -71,7 +71,7 @@ a new workload: a page that displays only its latest two events while retaining
 all history and updating contact details in one place.
 
 **Submit:** `week_09_json_models.md` with two JSON examples and your paragraph.
-This is one file, not an Atlas configuration task or a second written assignment.
+Submit the JSON file for this exercise.
 
 **Using GitHub's editor:** in your own repository, choose **Add file > Create new
 file**, enter the filename, write the Markdown and JSON blocks, use **Preview**,

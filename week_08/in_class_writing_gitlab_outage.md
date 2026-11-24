@@ -73,7 +73,7 @@ Write **150 to 250 words**. Answer all three questions.
 Requirements:
 
 - Use at least **three** of the terms above correctly.
-- Write full sentences. Make an argument, not a summary of the video.
+- Write full sentences. Support your argument with evidence from the video.
 - Base claims about GitLab on the facts above or the postmortem. Label your own
   ideas as recommendations, and do not invent details.
 

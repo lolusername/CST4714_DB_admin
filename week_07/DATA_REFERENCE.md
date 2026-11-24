@@ -4,9 +4,9 @@ Today reads CSV data in Python, without a PostgreSQL connection. Python results 
 
 ## The complete Metro Support fixture
 
-The CSVs contain **8 users, 12 tickets, and 21 events**. They are fictional teaching data. A user can request many tickets; a ticket has one requester, an optional assignee, and several events. Each event belongs to one ticket and names its actor. IDs connect records; a display name is not a key.
+The CSVs contain **8 users, 12 tickets, and 21 events**. They are fictional teaching data. A user can request many tickets; a ticket has one requester, an optional assignee, and several events. Each event belongs to one ticket and names its actor. Join records using IDs.
 
-The PostgreSQL schema stores timestamps as `timestamptz`; CSV/JSON show ISO 8601 strings with `Z` for UTC. In these CSVs, an empty field represents SQL `NULL`, not an empty string. SQL columns always exist even if their value is null. A missing JSON member is a different representation. These IDs are supplied, not generated.
+The PostgreSQL schema stores timestamps as `timestamptz`; CSV/JSON show ISO 8601 strings with `Z` for UTC. In these CSVs, an empty field represents SQL `NULL`. SQL columns always exist even if their value is null. A missing JSON member is a different representation. The fixture supplies these IDs.
 
 ### users: field dictionary
 
@@ -116,11 +116,11 @@ event_id,ticket_id,actor_id,event_type,old_status,new_status,note,event_at
 
 ### Rules versus examples
 
-The SQL enforces primary keys, foreign keys, required fields, unique emails, and `closed_at IS NULL OR closed_at >= opened_at`. The labels listed above are **observed values**, not enum constraints in this fixture. A data dictionary does not silently add a CHECK rule. The Week 8 small recovery fixture has a separate status CHECK; do not confuse the two schemas.
+The SQL enforces primary keys, foreign keys, required fields, unique emails, and `closed_at IS NULL OR closed_at >= opened_at`. These are the values observed in the fixture. A data dictionary does not silently add a CHECK rule. The Week 8 small recovery fixture has a separate status CHECK; do not confuse the two schemas.
 
 ## Optional larger index experiment: separate generated fixture
 
-The optional `performance_lab_setup.sql` creates **100,000 synthetic tickets**, not the required research notebook’s twelve-ticket CSV. It creates only `performance_lab.tickets`; there are no users or event tables and no foreign key on assignee_id. The supplied generator is the complete specification of every record. Do not run it as part of today’s required research notebook.
+The optional `performance_lab_setup.sql` creates **100,000 synthetic tickets**. The required research notebook uses twelve tickets. It creates only `performance_lab.tickets`; there are no users or event tables and no foreign key on assignee_id. The supplied generator is the complete specification of every record. Do not run it as part of today’s required research notebook.
 
 | Field | Type / nullability | Exact generation rule |
 |---|---|---|
@@ -132,7 +132,7 @@ The optional `performance_lab_setup.sql` creates **100,000 synthetic tickets**, 
 | subject | required text | Synthetic ticket followed by n |
 | opened_at | required timestamptz | 2025-01-01 00:00:00+00 plus n times 2 minutes |
 
-The `%` operator gives the remainder after division; SQL array positions here start at 1. Timestamps are unique. These labels are generated values, not CHECK-enforced enums. All 100,000 complete records can be regenerated exactly from the small [SQL source](performance_lab_setup.sql). Selected complete records illustrate the boundary and null behavior:
+The `%` operator gives the remainder after division; SQL array positions here start at 1. Timestamps are unique. These labels are generated sample values. All 100,000 complete records can be regenerated exactly from the small [SQL source](performance_lab_setup.sql). Selected complete records illustrate the boundary and null behavior:
 
 ```text
 ticket_id | assignee_id | category    | priority | status | subject                 | opened_at UTC

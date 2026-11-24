@@ -10,7 +10,7 @@ Picture it. You open the support application, you can connect, queries run, the 
 
 So far this semester we have worked on keeping the database correct while it runs: relational ideas, constraints that reject bad states, transactions, permissions, and query plans. This week adds a new question. If the current state becomes unusable, which earlier state can we rebuild, and how do we prove the rebuilt copy actually works?
 
-On Day 1 we follow one small PostgreSQL database through a logical export and a restore into a different database. Three tables and a handful of rows, small enough that we can check the actual values instead of trusting a big output. The tools are the real PostgreSQL tools. On Day 2 we connect this to the midterm: when do you roll back, when do you repair, and when do you restore. You will not need a paid backup plan, and you will not risk your Supabase project, to practice any of it.
+On Day 1 we follow one small PostgreSQL database through a logical export and a restore into a different database. With three tables and a handful of rows we can check the actual values. The tools are the real PostgreSQL tools. On Day 2 we connect this to the midterm: when do you roll back, when do you repair, and when do you restore. You will not need a paid backup plan, and you will not risk your Supabase project, to practice any of it.
 
 [Sources]
 - Course textbook, Chapter 8.
@@ -18,9 +18,9 @@ On Day 1 we follow one small PostgreSQL database through a logical export and a 
 
 ## Slide 2
 
-Here is the kind of incident that makes recovery real. Read the SQL on the slide. BEGIN, DELETE FROM metro_support.ticket_events, COMMIT. This is an illustration, not something to run against your project. The operator meant to remove one test event. But there is no WHERE clause, so the DELETE hits every row in the table, and then the transaction commits.
+Here is the kind of incident that makes recovery real. Read the SQL on the slide. BEGIN, DELETE FROM metro_support.ticket_events, COMMIT. Read the example and trace its operations. The operator meant to remove one test event. But there is no WHERE clause, so the DELETE hits every row in the table, and then the transaction commits.
 
-Now notice what did not happen. The server did not crash. The network did not fail. PostgreSQL keeps answering queries correctly, based on the data it now has. So restarting the server brings nothing back. Durability, the property that protects our committed work, protects a committed mistake just as faithfully. If a replica follows this primary, the deletion may be copied there too. Replication keeps a service running when a machine dies. It is not a separate history you can rewind.
+Now notice what did not happen. The server did not crash. The network did not fail. PostgreSQL keeps answering queries correctly, based on the data it now has. So restarting the server brings nothing back. Durability, the property that protects our committed work, protects a committed mistake just as faithfully. If a replica follows this primary, the deletion may be copied there too. Replication keeps a service running when a machine dies. Recovery to an earlier state requires retained history.
 
 Why does the word committed matter so much? If this were still inside an open transaction we controlled, ROLLBACK would discard it. After COMMIT, a new ROLLBACK cannot reach back into a finished transaction. That is the last line on the slide: recovery needs an earlier usable state, or a reviewed correction.
 
@@ -38,11 +38,11 @@ High availability keeps the service running after some component fails. A standb
 
 A backup is a retained state we can recover later. Its limit is that it must stay accessible and restorable. A backup on the same temporary machine as the source disappears with that machine. A backup locked behind a password nobody can find during the incident is just as useless.
 
-A restore is the operation that rebuilds objects and data in a target. Finishing it does not mean the application can use the result. The roles might be missing, or the app might still point at the damaged source. So it needs verification.
+A restore is the operation that rebuilds objects and data in a target. Test that the application can use the restored data. The roles might be missing, or the app might still point at the damaged source. So it needs verification.
 
 Disaster recovery is the whole tested procedure: people, access, systems, and dependencies.
 
-These work together. A service might use a standby for machine failures and backups for destructive mistakes. Read the line at the bottom: the failure you plan for determines what you keep and test. Today's drill tests a logical restore and some database behavior. It does not prove regional disaster recovery for a production application.
+These work together. A service might use a standby for machine failures and backups for destructive mistakes. Read the line at the bottom: the failure you plan for determines what you keep and test. Today's drill tests a logical restore and some database behavior. A production regional recovery drill needs a separate test.
 
 [Sources]
 - Course textbook, Chapter 8, Four Mechanisms Solve Different Problems.
@@ -71,11 +71,11 @@ Here is that comparison with numbers. This is an illustrative scenario, but foll
 
 Four times in the table. At fourteen hundred, the newest usable export represents the database. At fourteen seventeen, the harmful deletion commits. At fourteen twenty-one, the operator notices. At fourteen twenty-nine, restore and verification are done and service is acceptable.
 
-The data gap runs from fourteen hundred to fourteen seventeen. That is seventeen minutes of changes this export cannot give back. The recovery duration runs from the failure at fourteen seventeen to fourteen twenty-nine. That is twelve minutes. Notice I start the clock at the failure, not when someone noticed. Start at fourteen twenty-one and you get eight minutes, and you have quietly hidden four minutes of detection delay. Users were affected during those four minutes too.
+The data gap runs from fourteen hundred to fourteen seventeen. That is seventeen minutes of changes this export cannot give back. The recovery duration runs from the failure at fourteen seventeen to fourteen twenty-nine. That is twelve minutes. Start the clock when the failure occurs. Start at fourteen twenty-one and you get eight minutes, and you have quietly hidden four minutes of detection delay. Users were affected during those four minutes too.
 
 Now the bottom of the slide. An RPO of five minutes: seventeen is more than five, missed. An RTO of ten minutes: twelve is more than ten, missed again. We did recover. We did not keep the promise. Those are different outcomes.
 
-Two limits. Seventeen minutes does not tell you how many rows were lost; a quiet afternoon and a busy one look the same on a clock. And an export represents its snapshot moment, not the time the file finished writing. For a large, slow export those can differ a lot, so record which state your artifact represents.
+Two limits. Seventeen minutes does not tell you how many rows were lost; a quiet afternoon and a busy one look the same on a clock. An export represents the data visible at the snapshot moment. For a large, slow export those can differ a lot, so record which state your artifact represents.
 
 [Sources]
 - Course textbook, Chapter 8, Work Through the Clock Times. All times are an authored illustrative scenario.
@@ -87,7 +87,7 @@ There are two broad ways to back up a database, and you need to know which one a
 
 Look at the first row. A logical export describes objects and rows as database commands. pg_dump can write out a table's definition, its rows, and the instructions to recreate related objects. The output can be plain SQL or an archive that pg_restore reads. It depends on compatible tools, on including the dependencies, and it takes time to replay.
 
-The second row is physical. Instead of commands, you keep the database's storage plus a continuous, retained sequence of write-ahead log records. With a compatible base backup and an unbroken chain of logs, a supported setup can recover to a chosen point in time. But if a required log segment is missing, the chain breaks.
+The second row is physical. A physical backup keeps database storage and a continuous sequence of write-ahead log records. With a compatible base backup and an unbroken chain of logs, a supported setup can recover to a chosen point in time. But if a required log segment is missing, the chain breaks.
 
 We are not building that infrastructure today. As the box at the bottom says, we use pg_dump and pg_restore for one course schema.
 
@@ -122,7 +122,7 @@ Here is the database we will recover. It is a smaller cousin of Metro Support: t
 
 Look at the three boxes. In users, user_id is the primary key. In tickets, ticket_id is the primary key, and requester_id is a foreign key pointing at a user. In ticket_events, event_id is the primary key, and ticket_id points at the parent ticket. Read the line underneath: one user can request many tickets, and one ticket can have many events.
 
-Why do the foreign keys matter for recovery? Because they are rules, not just matching column names. If a restore copied the rows but lost the rules, later writes could create states the original database would have rejected. So we test behavior, not only data. There is also a named status check on tickets. It allows values like open and in_progress and rejects a value like almost_done. We will use that in a controlled failure test.
+Why do the foreign keys matter for recovery? The database enforces these rules. If a restore copied the rows but lost the rules, later writes could create states the original database would have rejected. So we test behavior, not only data. There is also a named status check on tickets. It allows values like open and in_progress and rejects a value like almost_done. We will use that in a controlled failure test.
 
 Now the note at the bottom, which trips people up. The notebook fixture is three, three, and five. The full Metro Support dataset from earlier weeks is eight users, twelve tickets, and twenty-one events, and some ticket details differ between the two. Neither is right for everything. Always compare against the actual source that produced your archive.
 
@@ -138,7 +138,7 @@ The outer layer is Python. subprocess.run takes a list of arguments and launches
 
 SOURCE_DB is just a variable holding the unique name of the practice database the notebook created earlier. It tells psql which database receives the SQL.
 
-Now the options at the bottom. check equals True means that if psql exits with an error, the cell stops instead of quietly carrying on. text equals True gives readable strings. capture_output equals True keeps the output, so a later cell can compare it with the restored result. Why care? Because launching a program successfully proves nothing about whether the query worked. We check the result.
+Now the options at the bottom. With check set to True, an error from psql stops the cell. text equals True gives readable strings. capture_output equals True keeps the output, so a later cell can compare it with the restored result. Why care? Because launching a program successfully proves nothing about whether the query worked. We check the result.
 
 And the last line: in Colab, PG_PREFIX runs the command as the postgres operating-system user, which owns the local server and the temporary archive folder. That is separate from the database name.
 
@@ -153,13 +153,13 @@ You do not need to write code like this from scratch. Follow which database gets
 
 Here is the shell form of the dump the notebook runs. In the notebook, Python passes the same arguments as a list. Let's read it one option at a time.
 
-format equals custom makes a custom archive, meant to be read by pg_restore. schema equals metro_support limits the export to our one schema. file names the output, metro_support.dump. dbname says which database to export from. And SOURCE_DB is just a database name, not a URL with a password inside. Keep passwords out of anything you might paste into a notebook or share.
+format equals custom makes a custom archive, meant to be read by pg_restore. schema equals metro_support limits the export to our one schema. file names the output, metro_support.dump. dbname says which database to export from. SOURCE_DB holds the database name. Keep passwords out of anything you might paste into a notebook or share.
 
 no-privileges leaves out the GRANT commands. That keeps our classroom restore simple, but it also means this archive cannot show that application permissions were recovered. We have to say that in our results.
 
 Look at the line at the bottom. For a custom archive, pg_dump ignores no-owner. If you want ownership left out, you ask pg_restore, and you will see that option on the restore slide.
 
-Versions matter too. We use client tools that match the server's major version. An older pg_dump cannot export a newer major server, and restoring into an older major version is not generally promised to work. Matching keeps this a recovery exercise instead of a migration puzzle.
+Versions matter too. We use client tools that match the server's major version. An older pg_dump cannot export a newer major server, and restoring into an older major version is not generally promised to work. Matching versions lets us concentrate on the restore.
 
 Finally, the schema is the scope. Server roles, other databases, and cloud project settings are not in this file. A real recovery plan lists the dependencies the selection leaves out.
 
@@ -173,7 +173,7 @@ Before we trust the archive, we look inside it. pg_restore dash dash list reads 
 
 Now read the table row by row, and focus on the last column. An inventory shows the expected objects appear. It does not show the restore will succeed; a dependency could be missing, or a command could fail. File size shows bytes exist. It says nothing about whether they are the right database or the complete scope.
 
-The third row is SHA-256, a cryptographic hash of the archive's bytes. Compare it with a trusted hash recorded earlier, and a mismatch tells you the file changed. But a hash of a bad original is still a hash of a bad original. It identifies bytes, not whether the content was trustworthy.
+The third row is SHA-256, a cryptographic hash of the archive's bytes. Compare it with a trusted hash recorded earlier, and a mismatch tells you the file changed. But a hash of a bad original is still a hash of a bad original. It identifies the bytes in the file. Check the restored records separately.
 
 And the warning at the bottom is serious. Restoring a dump can run SQL chosen by whoever controlled the source. An unfamiliar dump is not passive data. In this lab, use only the archive you created from the notebook's own fixture.
 
@@ -206,7 +206,7 @@ Why so many different checks? Because each catches a different kind of mistake. 
 
 Read the note at the bottom. The notebook compares complete result lines, including table names. That is a programming detail with a general lesson. If you only searched for the text users equals three, it would also match users equals thirty. A test has to compare the property it claims to compare.
 
-And here is the gap. Change a ticket's subject, and nothing on this slide moves. Swap one valid requester for another, and the foreign key is still satisfied, but the record now means something different. So these checks are useful together, and still not everything. The next slide adds a known-ticket comparison. In your write-up, say which checks you ran and what each could detect, not that a few checks prove everything.
+And here is the gap. Change a ticket's subject, and nothing on this slide moves. Swap one valid requester for another, and the foreign key is still satisfied, but the record now means something different. So these checks are useful together, and still not everything. The next slide adds a known-ticket comparison. In your write-up, identify each check and what it could detect.
 
 [Sources]
 - Course recovery notebook, source_check_sql and expected_baseline.
@@ -222,7 +222,7 @@ Now imagine the restored subject was changed to Incorrect subject. Still three t
 
 There is one more comparison. Source equals restore only proves agreement. If the source was already wrong before the export, a perfect restore reproduces the wrong data faithfully. So we also compare against the intended record, the original INSERT.
 
-In your lab, you adapt this query to ticket 1002 or 1003. Read that ticket's INSERT in the notebook itself, not the full Metro Support files from earlier weeks, because this small fixture has its own details and some of them differ. Then explain what your selected values add to the earlier checks. It is a small code change, but a real change in the question you are asking.
+In your lab, you adapt this query to ticket 1002 or 1003. Read your ticket's INSERT in this notebook. Its fixture has its own starting values. Then explain what your selected values add to the earlier checks. It is a small code change, but a real change in the question you are asking.
 
 [Sources]
 - Course recovery notebook, setup_sql and Your Check: Compare One Known Ticket.
@@ -234,7 +234,7 @@ A database can have all the right rows and still be missing a rule. This test as
 
 Read the SQL. BEGIN, then an INSERT of ticket 1099 for user 101 with the status almost_done, which is deliberately outside the allowed list, then ROLLBACK. When I run it, the INSERT should be refused with SQLSTATE 23514, a check-constraint violation, and the error should name tickets_status_allowed. That exact code and that exact name are the pass condition.
 
-Why be that picky? Because many unrelated problems also produce errors. A missing table errors. A syntax mistake errors. A dropped connection errors. None of them test the status rule. That is the line at the bottom: those are different failures. Celebrating any error is not a test.
+Why be that picky? Because many unrelated problems also produce errors. A missing table errors. A syntax mistake errors. A dropped connection errors. None of them test the status rule. That is the line at the bottom: those are different failures. Match the error code to the rule you tested.
 
 Now the transaction. If the constraint rejects the insert, the transaction fails and cannot commit. If the constraint was lost and the insert sneaks through, the ROLLBACK still throws it away. Either way the practice data is safe, and the notebook then checks that ticket 1099 is not in the table.
 
@@ -255,7 +255,7 @@ In the section called Your Check: Compare One Known Ticket, first run the suppli
 
 Then write your short recovery account right in the notebook, using the results already there. Say where you restored, what the checks showed, one thing still untested, and which connection would change if the source were Supabase. No second report.
 
-Keep the output, then run the final cleanup cell. It removes the practice databases and artifact folder and stops the Colab service. Submit your saved Colab sharing link individually through Brightspace. The dump is not a submission.
+Keep the output, then run the final cleanup cell. It removes the practice databases and artifact folder and stops the Colab service. Submit your saved Colab sharing link individually through Brightspace. Keep the dump for the restore.
 
 [Sources]
 - Week 8 lab_01_backup_restore.md.
@@ -288,7 +288,7 @@ Then ROLLBACK. Run the same catalog query again and you get no rows. The column 
 
 Now the boundary line at the bottom. Do not take this to mean every schema change is harmless, or that every database system treats DDL this way. Even a transactional ALTER TABLE takes locks, and a transaction left open can block other work for as long as it stays open. A production migration also needs a plan for old and new application code running at the same time.
 
-This is an example for the safe-change improvement, not a requirement to add follow_up to your midterm. The real question is what your application needs, and how you would show the old required behavior still works afterward. And once a change commits and turns out harmful, this simple rollback is no longer available.
+This example illustrates the safe-change improvement. The real question is what your application needs, and how you would show the old required behavior still works afterward. And once a change commits and turns out harmful, this simple rollback is no longer available.
 
 [Sources]
 - Course textbook, Chapters 4 and 8.
@@ -305,9 +305,9 @@ Row two: the mistake has committed, but it is small and we know the correct fix.
 
 Row three: the needed state is gone and we need an earlier copy. Restore into a separate target, inspect it, then decide how to recover the content. Before the application uses it, reconcile the valid changes made since, and check permissions and behavior.
 
-These are candidates, not automatic rules triggered by one word in an incident report. Losing one table, a whole database, or your access credentials may each need a different procedure.
+Use the incident evidence to choose among these candidates. Losing one table, a whole database, or your access credentials may each need a different procedure.
 
-Now the line at the bottom. Having a backup does not make every incident a restore incident. For the midterm, explain why your response fits the actual problem. A waiting connection, for example, may be solved by dealing with an open transaction, not by bringing back old data.
+Now the line at the bottom. Having a backup does not make every incident a restore incident. For the midterm, explain why your response fits the actual problem. Check whether an open transaction is blocking the waiting connection.
 
 [Sources]
 - Course textbook, Chapter 8, Safe Migrations and Recovery Are Connected.
@@ -319,13 +319,13 @@ Here is that last point in practice. This table recalls the blocking exercise fr
 
 Why a separate connection? Because B is stuck waiting. You cannot ask a stuck session to diagnose itself.
 
-The key lesson is that something that looks slow may be waiting, not working. An index does not necessarily fix a lock wait. And as the bottom line says, restoring yesterday's database is not the response here at all.
+A query can appear slow while it waits for a lock. An index does not necessarily fix a lock wait. Here, release the blocking transaction.
 
-pg_blocking_pids gives you backend process identifiers. A number on its own is not an explanation. You connect it to the transactions you deliberately started, and ask which operation it belongs to and why it still holds the lock.
+pg_blocking_pids gives you backend process identifiers. Explain what the number measures. You connect it to the transactions you deliberately started, and ask which operation it belongs to and why it still holds the lock.
 
 Then the owner resolves A, either by committing the intended work or rolling back the unwanted work, and B can finish. Look at the middle line: verify the final row and close the practice connections. That check matters, because releasing a lock and reaching the intended data are related but different outcomes.
 
-For your midterm, use a blocking path the assignment allows, and label it honestly. If you analyzed the supplied trace instead of running live sessions, call it trace analysis. Never write that you observed live blocking if you did not. And close your practice transactions and connections when you are done.
+For your midterm, use a blocking path the assignment allows, and label it honestly. Label results from the supplied trace as trace analysis. Never write that you observed live blocking if you did not. And close your practice transactions and connections when you are done.
 
 [Sources]
 - Course Week 5 blocking notebook and canonical midterm assignment.
@@ -340,11 +340,11 @@ First row: a reader can write data. The improvement is a least-privilege role, a
 
 Second row: a user can see another user's rows. The improvement is a row-level access policy, and the comparison needs two identities with different visible rows. If you run everything as the database owner, you can bypass the very boundary you are trying to test.
 
-Third row: a small queue query needs a broad scan. An index may help. Compare the same result IDs before and after, read the plan work, and account for the index's storage and its write costs. A faster query that returns different tickets is not an optimization of the original question.
+Third row: a small queue query needs a broad scan. An index may help. Compare the same result IDs before and after, read the plan work, and account for the index's storage and its write costs. Compare the returned ticket IDs before and after changing the query plan.
 
 Fourth row: the application needs another field. A safe schema change, where the comparison is that old behavior still works afterward, plus how you would reverse or repair it.
 
-Now the line at the bottom. These are alternatives, not four tasks. Pick the one that fits your case and that you can explain with actual results. Quality comes from connecting a problem, a change, and a relevant test, not from stacking up mechanisms you cannot explain.
+Now the line at the bottom. Choose one of the four alternatives. Pick the one that fits your case and that you can explain with actual results. Connect a specific problem to your change and show how you tested it.
 
 [Sources]
 - Course assignments/midterm_project.md, Evaluate One Improvement.
@@ -370,16 +370,16 @@ Read this paragraph as if a teammate just handed it to you. It is a worked examp
 
 It starts with scope: the three-table practice archive, restored into a separate database. Then the observations. The counts and the grouped status report matched the source. Ticket 1001 kept its subject and requester. The restored status rule rejected the invalid test value. Each sentence is a check someone could repeat.
 
-Then the last sentence names what was not done. Application roles were not restored, and reconnection was not tested, so this drill does not show the service is ready for traffic. That limit is part of the technical result. It is not an apology. It tells the next person exactly what is left.
+Then the last sentence names what was not done. Application roles were not restored, and reconnection was not tested, so this drill does not show the service is ready for traffic. That limit is part of the technical result. It tells the next person exactly what is left.
 
 Compare that with the sentence "everything worked." It tells the reader nothing: which database, which properties, what is still unsafe to assume. A precise handoff can be short and still let someone decide the next action.
 
 This is a professional habit. You will write summaries like this in tickets, handoff notes, and incident reviews, for readers who will never see your terminal output.
 
-Now the line underneath. Use your own results and limitations. If you picked ticket 1002, describe ticket 1002, not 1001 from this slide. If a check failed, report the failure and your next step. And for the midterm, keep a recovery plan clearly separate from any restore you actually ran.
+Now the line underneath. Use your own results and limitations. If you picked ticket 1002, report that ticket's fields. If a check failed, report the failure and your next step. And for the midterm, keep a recovery plan clearly separate from any restore you actually ran.
 
 [Sources]
-- Worked course example based on the recovery notebook's operations, not a production incident.
+- Worked example based on the recovery notebook.
 - Course textbook, Chapter 8, verification and runbook discussions.
 
 ## Slide 24
@@ -388,7 +388,7 @@ For the rest of today you work on your own midterm, in your own Supabase project
 
 Step 0 connects Colab to your project and loads the midterm starter. You should see eight users, twelve tickets, and twenty-one ticket events. Step 1 is Part 1: you fill in the requester join and you test two integrity rules with writes that should fail. Step 2 is Part 2: the rollback, then your commit. Step 3 is Part 4, the index experiment. Step 4 is Part 5, and it is new: you back up your Supabase schema and restore the copy somewhere else. Part 3, blocking, stays with the Week 5 notebook.
 
-Now the box at the bottom. This notebook is classwork, not the midterm. You submit the sharing link to your saved Colab copy today, with instructor viewer access. The midterm is still midterm dot sql and README dot md, due November 3. As each step finishes, copy the SQL into midterm dot sql and the results into your README. If you do that, you leave today with most of your midterm written.
+Now the box at the bottom. Complete this notebook during class. You submit the sharing link to your saved Colab copy today, with instructor viewer access. The midterm is still midterm dot sql and README dot md, due November 3. As each step finishes, copy the SQL into midterm dot sql and the results into your README. If you do that, you leave today with most of your midterm written.
 
 The next few slides explain the one new idea in this lab: how Colab reaches your Supabase database.
 
@@ -484,7 +484,7 @@ Here is where to look for the rest of your midterm work. The first box: Chapter 
 
 The middle box is for any time left after Lab 2. Pick one incomplete part of your own case, repair it, rerun it, and update the explanation beside the result. Start from an actual failure or uncertainty. Maybe the setup does not run from a clean state. Maybe a join duplicates tickets. Maybe a transaction demonstration leaves the wrong final value, or your improvement has no meaningful comparison. Fix it and rerun the test before you rewrite the words, because the explanation should describe the result you actually have.
 
-When you ask me for help, show me the exact command or query, the actual output, and what you expected. Then I can diagnose the operation instead of guessing from "it doesn't work." Never put a password or a private connection URL on screen.
+When you ask me for help, show me the exact command or query, the actual output, and what you expected. Tell me the operation and the error it returned. Keep passwords and private connection URLs off screen.
 
 This clinic adds no separate report. Everything stays in the midterm files the assignment describes.
 
@@ -496,23 +496,23 @@ Next week we start NoSQL models and JSON. We will compare them with the relation
 
 ## Slide 31
 
-These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: RPO and RTO on the clock (1:29); Dump, restore, verify (1:35); Point-in-time recovery with WAL (1:20). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 8 README. The diagrams are schematic illustrations, not benchmarks.
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: RPO and RTO on the clock (1:29); Dump, restore, verify (1:35); Point-in-time recovery with WAL (1:20). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 8 README. The diagrams illustrate the design.
 
 ## Slide 32
 
-Imagine that the restore reports three tickets, just like the source. Is that enough? Look at this known ticket. It belongs to requester 102, has status in_progress, and describes a missed recycling pickup. If its requester were accidentally changed to 101, the row count would remain three. That is why we run the same value query on the source and the separate restore. We compare the fields, not just the fact that a row appeared. The supplied notebook demonstrates this with ticket 1001; your check uses another ticket. The midterm uses a larger fixture, so carry over the method rather than copying these counts.
+Imagine that the restore reports three tickets, just like the source. Is that enough? Look at this known ticket. It belongs to requester 102, has status in_progress, and describes a missed recycling pickup. If its requester were accidentally changed to 101, the row count would remain three. That is why we run the same value query on the source and the separate restore. Compare the returned fields with the expected values. The supplied notebook demonstrates this with ticket 1001; your check uses another ticket. Repeat this method with the larger midterm fixture and record its counts.
 
 Teaching placement (not spoken): Day 1: after slide 15, before slide 16 and the recovery lab.
 
 ## Slide 33
 
-The source is a running database. The dump is an artifact containing a recoverable description. The restored target is a different running database. Keeping those three objects separate protects the source and makes the rehearsal meaningful. We check structure, relationships, known values, and behavior. In this small fixture, an invalid status should be rejected with the CHECK-violation code. A missing-table error is a failure, but it does not prove the status rule survived. Record the particular result that supports each claim.
+The source is a running database. The dump is an artifact containing a recoverable description. The restored target is a different running database. Keeping those three objects separate protects the source and makes the rehearsal meaningful. We check structure, relationships, known values, and behavior. In this small fixture, an invalid status should be rejected with the CHECK-violation code. To confirm the status rule survived, check for the constraint violation code. Record the particular result that supports each claim.
 
 Teaching placement (not spoken): Day 1: after appendix slide 32, before the notebook.
 
 ## Slide 34
 
-GitLab’s incident makes the gap between scheduling a backup and recovering from it concrete. For our practice, successful pg_dump output is one checkpoint, not the finish. We still inspect the archive, restore it into a separate database, and test the recovered state. A production recovery also includes access, application dependencies, and people who know the procedure. Our notebook rehearses the database portion and asks you to state what remains untested. That limitation belongs in a useful runbook.
+GitLab’s incident makes the gap between scheduling a backup and recovering from it concrete. After pg_dump succeeds, restore the dump and check the result. We still inspect the archive, restore it into a separate database, and test the recovered state. A production recovery also includes access, application dependencies, and people who know the procedure. Our notebook rehearses the database portion and asks you to state what remains untested. That limitation belongs in a useful runbook.
 
 Primary source: https://about.gitlab.com/blog/postmortem-of-database-outage-of-january-31/
 

@@ -81,7 +81,7 @@ Then practice turning one project decision into a resume bullet and an interview
 story. Keep it in your own notes or the concept artifact if useful. There is no
 additional reflection submission.
 
-For support with the lab's explanation, use [Writing About Database Decisions](materials/assessments/critical_writing.md). It develops the response already included in your lab, not an additional assignment.
+For support with the lab's explanation, use [Writing About Database Decisions](materials/assessments/critical_writing.md). Use the example to develop the response in your lab.
 
 ## Optional Industry Extension: Sixty-Second Interview Recording
 
@@ -96,7 +96,7 @@ actually establishes them.
 
 ## Industry/Career Connection — Cloudflare: explain an incident with evidence
 
-Cloudflare's published account of its July 2019 outage separates observed impact, the deployed rule, its expensive behavior, mitigation, and corrective work. It is a web-security incident, not a database benchmark. Use its evidence structure when explaining your own query or restore investigation: show the input, observation, action, and limit. In a portfolio or interview, describe only work you actually performed; a four-ticket classroom result is useful evidence without being called production-scale experience.
+Cloudflare's published account of its July 2019 outage separates observed impact, the deployed rule, its expensive behavior, mitigation, and corrective work. The case concerns a web-security incident. Use its evidence structure when explaining your own query or restore investigation: show the input, observation, action, and limit. In a portfolio or interview, describe only work you actually performed; a four-ticket classroom result is useful evidence without being called production-scale experience.
 
 Read the [company's own account](https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019/). This supports the lesson; it adds no submission. Keep the case distinct from the measured classroom outputs.
 

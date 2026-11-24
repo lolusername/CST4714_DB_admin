@@ -63,7 +63,7 @@ Explain why B can finish in both runs while the final priority differs.
 If a connection is unavailable, interpret the notebook's supplied rollback trace
 and predict the commit case. Label them **supplied trace** and **unexecuted
 prediction**, respectively. Tell the instructor so a connection demonstration can
-be arranged. This fallback practices interpretation, not live administration.
+be arranged. Interpret the supplied trace for this fallback.
 
 ## 3. Explain the Result to the Developer
 
@@ -74,6 +74,6 @@ Use one run's actual PIDs and blocking result, or label your supplied trace.
 
 **Submit:** the sharing link to your completed Colab notebook, including the
 comparison and short update. Use **Share** to give the instructor viewer access;
-submit your saved copy's link, not the starter notebook's GitHub/Colab link. No screenshots, separate incident form, or additional report.
+submit the sharing link for your saved copy. No screenshots, separate incident form, or additional report.
 Confirm the connections are closed and `lock_lab` was removed. Remove any
 accidentally saved credentials before submission.

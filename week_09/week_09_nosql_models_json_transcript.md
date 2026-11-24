@@ -40,7 +40,7 @@ Second row. An earlier use of the name NoSQL, by Carlo Strozzi, was for a relati
 
 Then two research papers. In 2006, Google described Bigtable, a sparse distributed map for very large structured datasets. In 2007, Amazon described Dynamo, a key-value store designed around staying available. Each one answered a specific workload at a specific scale. Neither one said that every small application should stop using relations.
 
-The later NoSQL movement put many of these alternatives under one label. Today features overlap: a relational database can store JSON, and a document database can support transactions. So when you compare systems, name the actual model and operation, not the label. And read the note at the bottom: Dynamo the research system is not the same thing as today's DynamoDB cloud service.
+The later NoSQL movement put many of these alternatives under one label. Today features overlap: a relational database can store JSON, and a document database can support transactions. In a design discussion, name the model and operation. The paper describes the Dynamo research system.
 
 [Sources]
 - https://research.google/pubs/bigtable-a-distributed-storage-system-for-structured-data/
@@ -52,11 +52,11 @@ The later NoSQL movement put many of these alternatives under one label. Today f
 
 Here is the most important phrase for the whole week: access pattern. Read the definition at the top. An access pattern is the data an application repeatedly reads or changes. That is much more specific than saying the app needs to be fast.
 
-Look at the two examples. Opening ticket 1001 and its latest events is one pattern. It starts from one ticket and pulls in related information. Counting every event by type is another pattern. It starts from the whole population of events, across every ticket. A shape that makes the ticket page easy can make that report harder. That is not a contradiction. It just means we have two different access patterns.
+Look at the two examples. Opening ticket 1001 and its latest events is one pattern. It starts from one ticket and pulls in related information. Counting every event by type is another pattern. It starts from the whole population of events, across every ticket. A shape that makes the ticket page easy can make that report harder. It just means we have two different access patterns.
 
 Now the diagram. It starts with the workload question and branches to five families. Key-value is exact-key lookup. Wide-column is sparse rows organized by an access key. Document is a bounded, nested aggregate. Graph is relationship paths. Vector search finds semantic neighbors. Each family makes a different operation natural.
 
-Treat this as a starting map, not a buying guide. We also need to know how often the data changes, how fast it grows, which rules matter, and what the team can actually run. And notice the last line: one application may benefit from more than one representation. But every extra store is one more system to secure, monitor, synchronize, and recover. The benefit has to pay for that work.
+Use this map to choose which model to investigate. We also need to know how often the data changes, how fast it grows, which rules matter, and what the team can actually run. And notice the last line: one application may benefit from more than one representation. But every extra store is one more system to secure, monitor, synchronize, and recover. The benefit has to pay for that work.
 
 [Sources]
 - Course textbook, Chapter 9. Course-created model map.
@@ -67,7 +67,7 @@ Let's take the families one at a time, starting with the simplest: key-value.
 
 Look at the left box: session colon 8f21. That is the key. A browser shows up with a session token, so the application already knows the exact key. It asks for the value, and the value says user_id 101, expires_at October 20th at 19:30 UTC. That is a perfect key-value operation, because the lookup starts with a known identifier. One key in, one value out.
 
-The note at the bottom says the value is conceptual notation. It is not a command and it is not JSON. We learn real JSON syntax on Day 2.
+The note at the bottom says the value is conceptual notation. Read it as a sketch of the data. We learn real JSON syntax on Day 2.
 
 Now read the middle text. The request changes. An administrator wants every session belonging to user 101. We know the user ID, but we do not know that user's session keys. The arrangement that made the first lookup fast does nothing for this one. We would need a separate mapping from user IDs to session keys, an index the product supports, or a scan that could be expensive.
 
@@ -83,9 +83,9 @@ Next, wide-column, in the style of Bigtable. Look at the row keys in the left co
 
 Now look at the right column. The rows are sparse. The first device07 reading has only temperature, 21.4. The next one has temperature 21.6 and battery 78. device12 reports humidity, 61. Nobody had to fill in empty cells for every measurement that could exist.
 
-Read the first line under the table. If our common question is "give me device07's readings for this hour," this key is a great starting point. It is a range over one prefix. But a cross-device battery report starts from a different attribute, battery, not device. Same data, different access pattern, and this key does not serve it directly.
+Read the first line under the table. If our common question is "give me device07's readings for this hour," this key is a great starting point. It is a range over one prefix. The cross-device battery report groups readings by battery level. Same data, different access pattern, and this key does not serve it directly.
 
-Two cautions. This is an illustration, not a deployment recipe. Real key design has to think about how writes spread out and whether some keys get unusually busy. We come back to distribution and hot keys later in the course. And read the last line: wide-column storage is not the same idea as analytical columnar storage, even though both use the word column.
+Two cautions. Trace how the example distributes the data. Real key design has to think about how writes spread out and whether some keys get unusually busy. We come back to distribution and hot keys later in the course. Wide-column storage groups related data by key. Analytical columnar storage organizes values by column for scans.
 
 [Sources]
 - https://research.google/pubs/bigtable-a-distributed-storage-system-for-structured-data/
@@ -99,7 +99,7 @@ Why would we do this? If the ticket page always needs the ticket plus this small
 
 Read the middle text. The nested requester is still a relationship. It points at user 101. And now there is a copy of the requester's name inside the ticket. So we have a question to answer: does that copy mean the current name, or the name when the ticket was opened? Those two meanings need different update rules, and we spend real time on that on Day 2.
 
-Last thing. Read the bottom line. The tags are an added field, not a column copied from the CSV. Adding fields is fine, but always be clear which facts came from the source and which ones you introduced.
+Last thing. Read the bottom line. We added tags for this example. Adding fields is fine, but always be clear which facts came from the source and which ones you introduced.
 
 [Sources]
 - https://www.mongodb.com/docs/manual/data-modeling/
@@ -113,7 +113,7 @@ Read the note at the bottom. Each arrow means depends on. Portal depends on Iden
 
 Two more words. Portal has an out-degree of two, because two edges leave it. Database has an in-degree of two, because two edges arrive at it. And Portal can reach Database two ways: through Identity or through API. Each route is two edges long. A connected sequence like that is called a path.
 
-Why would anyone want a graph database? Because some questions are all about paths: which services depend on this one, which accounts share a device, what is three hops away. A graph model makes those paths an explicit part of the data. That does not mean a relational database cannot store edges; it can, with recursive queries. We are comparing convenience. And remember, this diagram shows dependencies, not a full failure model. Caches and redundancy can keep Portal running anyway.
+Why would anyone want a graph database? Because some questions are all about paths: which services depend on this one, which accounts share a device, what is three hops away. A graph model makes those paths an explicit part of the data. A relational database can follow edges with recursive queries. We are comparing convenience. The diagram shows the dependencies. Caches and redundancy can keep Portal running anyway.
 
 [Sources]
 - Course textbook, Chapter 9, Graph Database and the dependency example. This is a course-created directed graph.
@@ -124,9 +124,9 @@ How do we actually walk that graph? The standard method is breadth-first search.
 
 Now read the first note. A visited set prevents repeated visits. Both Identity and API lead to Database, but Database is one vertex, so we count it once. Why does that matter? In a bigger graph with a cycle, where A depends on B and B depends on A, a search without a visited set would go around forever.
 
-Here is a useful property. When every edge costs the same, breadth-first search finds a path with the fewest edges. But look at the warning at the bottom. Fewest edges is not the same as least latency. If edges have weights, like milliseconds, a route with more hops can still be faster. The algorithm has to match what you mean by shortest.
+Here is a useful property. When every edge costs the same, breadth-first search finds a path with the fewest edges. But look at the warning at the bottom. Measure latency along each candidate path. If edges have weights, like milliseconds, a route with more hops can still be faster. The algorithm has to match what you mean by shortest.
 
-Now flip the question. The database is having a problem; who might be affected? Follow the arrows backward. That gives Identity and API first, then Portal. But read the last line: a dependency path is not proof of an outage. Reachability gives you a list of candidates to investigate, not a verdict.
+Now flip the question. The database is having a problem; who might be affected? Follow the arrows backward. That gives Identity and API first, then Portal. But read the last line: a dependency path is not proof of an outage. Investigate the reachable candidates.
 
 [Sources]
 - Course textbook, Chapter 9, graph traversal discussion. The table derives directly from the four displayed edges.
@@ -137,7 +137,7 @@ The last family is vectors, and this is where a lot of the current excitement is
 
 Look at the flow across the top. Incident text goes into an embedding model, and a numeric vector comes out. Now read the two sentences in the middle. "Lamp outside the library is flickering." "Streetlight repeatedly turns off and on." Almost no words in common, but they describe related problems. A suitable model can place those two descriptions near each other. Then a new report could pull up similar past incidents, even when people used different words.
 
-Here is the division of labor, and it is easy to get wrong. The model makes the numbers. The database stores the vectors and retrieves nearby candidates. Creating a vector index does not train anything. And notice the word suitable. A model that works well on one kind of text may do worse on another, so we judge the results against the task instead of trusting numeric closeness blindly.
+Here is the division of labor, and it is easy to get wrong. The model makes the numbers. The database stores the vectors and retrieves nearby candidates. Creating a vector index does not train anything. And notice the word suitable. Evaluate the model with examples from the task where you plan to use it.
 
 Now the bottom line on the slide: no embedding API key or vector deployment is required this week. Over the next few slides we use tiny, invented coordinates so we can see the geometry for ourselves. They are not real embeddings of these sentences.
 
@@ -147,13 +147,13 @@ Now the bottom line on the slide: no embedding API key or vector deployment is r
 
 ## Slide 11
 
-Before we calculate, let's look at the picture. Both vectors start at the origin, the point zero zero at the bottom left. The green one is u. The orange one is v. They point in different directions and they have different lengths. Theta is the angle between u and v. It is not the angle to the horizontal axis.
+Before we calculate, let's look at the picture. Both vectors start at the origin, the point zero zero at the bottom left. The green one is u. The orange one is v. They point in different directions and they have different lengths. Theta is the angle between u and v. Measure the angle between the two vectors.
 
 Now the box on the right. Cosine of theta is u dot v, divided by the length of u times the length of v. Don't memorize it yet. On the next slide we compute every piece by hand. For now, focus on what it means. Look at the three lines underneath. Same direction gives cosine one. Perpendicular gives zero. Opposite directions give negative one. So cosine is a measure of direction.
 
 Read the caption at the bottom. If you scale a vector by a positive factor, you change its length but preserve its direction. Double u, and it still points the same way. Why does that matter? Because cosine ignores length. A doubled u has exactly the same cosine with v as the original. The word positive matters: multiply by a negative number and the vector flips around, so the direction changes.
 
-Two cautions. A negative cosine is not a negative probability, and a value near one does not prove two documents say the same thing. Also, a zero vector has no direction at all, so the formula breaks down.
+Two cautions. Cosine measures the angle between vectors. Review the documents to judge whether they discuss the same thing. Also, a zero vector has no direction at all, so the formula breaks down.
 
 [Sources]
 - Course textbook, Chapter 9. Course-created vector geometry figure and elementary vector derivation.
@@ -173,7 +173,7 @@ Why is a perfect? Look at it. a points along exactly the same line as q. It is j
 Last line on the slide: if a vector had zero length, the denominator would be zero, and cosine would be undefined.
 
 [Sources]
-- Course textbook, Chapter 9, Calculate a Small Example. Values are an original worked mathematical example, not measured embeddings.
+- Course textbook, Chapter 9, Calculate a Small Example. The values are constructed for this mathematical example.
 
 ## Slide 13
 
@@ -264,11 +264,11 @@ Now read the bottom line, because it is the boundary for the whole week. JSON de
 
 JSON has six kinds of values, and that is all. Look at the table, one row at a time.
 
-An object holds named members, like status colon open, inside curly braces. An array holds an ordered list of values, like streetlight and safety, inside square brackets. A string is quoted text, like open in double quotes. A number is a numeric value, like 1001, with no quotes. A Boolean is true or false. Notice the table says two literals in one value kind. True and false are two spellings of the same kind, so we count six kinds, not seven. That matches the textbook. And null is its own explicit value.
+An object holds named members, like status colon open, inside curly braces. An array holds an ordered list of values, like streetlight and safety, inside square brackets. A string is quoted text, like open in double quotes. A number is a numeric value, like 1001, with no quotes. A Boolean is true or false. Notice the table says two literals in one value kind. True and false are the two Boolean values. Count Boolean as one of the six kinds. That matches the textbook. And null is its own explicit value.
 
 A few rules worth knowing. Inside an object, every name must be a string. Don't rely on the order of members in an object to mean anything. If order matters, like an event history you want shown in sequence, use an array, because an array keeps its order. An array can technically mix kinds, but an application will usually want every element to have the same structure.
 
-Now read the line at the bottom. Any JSON value can be the top level. A single number is a complete JSON text. But our lab deliberately uses one object at the top of each design, because that makes the two designs easy to package and compare. That is an assignment choice, not a JSON rule.
+Now read the line at the bottom. Any JSON value can be the top level. A single number is a complete JSON text. But our lab deliberately uses one object at the top of each design, because that makes the two designs easy to package and compare. The assignment specifies that format.
 
 [Sources]
 - https://www.rfc-editor.org/info/rfc8259/
@@ -278,13 +278,13 @@ Now read the line at the bottom. Any JSON value can be the top level. A single n
 
 Let's read a real example, piece by piece. The outer curly braces make one object. Each line inside is a name, a colon, and a value.
 
-ticket_id is the number 1004, no quotes. subject is Broken bench slat, a string, so it is in double quotes. status is new, also a string. Now look at assignee_id. Its value is null, with no quotes. That matters. If I wrote null inside quotes, it would be a string of four letters, not an explicit null.
+ticket_id is the number 1004, no quotes. subject is Broken bench slat, a string, so it is in double quotes. status is new, also a string. Now look at assignee_id. Its value is null, with no quotes. That matters. Quotation marks turn null into the string "null". Write null without quotes for the JSON null value.
 
 Then tags. It opens with a square bracket and closes with one, so it is an array. Inside are two strings, parks and bench, with a comma between them.
 
 Now look at the punctuation box. Curly braces enclose an object. Square brackets enclose an array. A colon connects a name to its value. A comma separates neighbors. And notice where the commas are not: there is no comma after the last member, tags. That is the mistake people make most often.
 
-Read the note at the bottom. Names and strings use double quotes, and indentation shows containment. Indentation is for human readers. It makes it easy to see what is inside what, but the braces and brackets are what actually define the structure. And the tags are an illustrative addition to ticket 1004, not a column from the CSV. In your lab, keep the required source facts first, and be clear about anything you add.
+Read the note at the bottom. Names and strings use double quotes, and indentation shows containment. Indentation is for human readers. It makes it easy to see what is inside what, but the braces and brackets are what actually define the structure. We added tags to ticket 1004 for this example. In your lab, keep the required source facts first, and be clear about anything you add.
 
 [Sources]
 - https://www.rfc-editor.org/info/rfc8259/
@@ -298,7 +298,7 @@ Read the reasons. There are two separate errors. First, single quotes. JSON name
 
 Why point out that there are two? Because when a parser fails, it reports the first place it got stuck. Fix that one and it may stop at the next. One error message does not mean everything else is fine.
 
-Now the last box. Comments are not allowed in standard JSON. Neither are NaN or Infinity. And the number 01, with a leading zero, is not a valid number. If an identifier really is spelled zero one, write it as a string in quotes.
+Now the last box. Comments are not allowed in standard JSON. Neither are NaN or Infinity. A JSON number must omit leading zeroes. Write 1. If an identifier really is spelled zero one, write it as a string in quotes.
 
 Read the last line too. A permissive parser may accept extensions. Python's default json parser accepts NaN and Infinity, for example. So "my parser accepted it" does not prove the data is portable to other programs. Use standard syntax and unique names. And never use eval to read JSON text you don't trust. Parsing data and running code are very different risks.
 
@@ -316,7 +316,7 @@ Why fuss over this? Because an application has to decide what each one means, an
 
 The empty events array has the same problem. Read the second line. It tells you what this response contains. It does not tell you whether the ticket really has no history, whether a filter removed every event, or whether the response just left history out on purpose.
 
-And zero is a number, not a missing amount. An estimated cost of zero might be a real estimate. No estimated_cost field at all might mean nobody has made an estimate yet. These differences decide which documents match a filter and what an update changes. That is exactly where they will matter when we start writing MQL next week.
+Zero represents a known quantity. An estimated cost of zero might be a real estimate. No estimated_cost field at all might mean nobody has made an estimate yet. These differences decide which documents match a filter and what an update changes. That is exactly where they will matter when we start writing MQL next week.
 
 [Sources]
 - Course textbook, Chapter 9, Missing, Null, Empty, and Zero Are Different.
@@ -342,7 +342,7 @@ Now the worked example. Everything for the next few slides comes from these rows
 
 From users.csv: user 101 is Requester 101, and user 201 is Agent 201. From tickets.csv: ticket 1001, Streetlight dark near bus stop, status open, requester 101, assignee 201. From ticket_events.csv, two events for this ticket: 5001, created, February 1st at 23:10 UTC, and 5002, assigned, February 2nd at 14:05 UTC.
 
-Read the first line at the bottom. Both upcoming examples preserve these facts: the ticket's values, both users' IDs and names, and both events' IDs, types, and timestamps. Why so strict? Because if one design quietly dropped an event, it would look simpler just because it lost data. That is not a fair comparison. We want to compare the arrangement, not the amount of information.
+Read the first line at the bottom. Both upcoming examples preserve these facts: the ticket's values, both users' IDs and names, and both events' IDs, types, and timestamps. Why so strict? Because if one design quietly dropped an event, it would look simpler just because it lost data. Keep the information in each comparison the same. Compare how each model arranges the same information.
 
 Other CSV columns are left out on purpose. A user's email address, for example, is not needed to compare two ticket-page shapes. Leaving out an out-of-scope column is a decision. Dropping a fact you promised to keep is a mistake.
 
@@ -357,7 +357,7 @@ And the last line: the student lab uses a different ticket, 1003, with three eve
 
 Here is the first design: referenced. Look at the whole thing first. It is one JSON object, and inside it are three arrays: users, tickets, and events. Read the note at the bottom. One JSON object packages three arrays, and this file is not yet a MongoDB database. It is a package of text. It does not create three collections, and we are not importing it anywhere yet.
 
-Now trace the connections. In users, there are two records: 101, Requester 101, and 201, Agent 201. In tickets, ticket 1001 has requester_id 101 and assignee_id 201. Those are numbers, not names. So to show the requester's name on the page, you go find the user whose user_id is 101. That is a lookup, just like a join.
+Now trace the connections. In users, there are two records: 101, Requester 101, and 201, Agent 201. In tickets, ticket 1001 has requester_id 101 and assignee_id 201. Those IDs are numbers. So to show the requester's name on the page, you go find the user whose user_id is 101. That is a lookup, just like a join.
 
 Now the events. Each one carries ticket_id 1001. That field is what ties the event to its ticket. Event 5001 is created, event 5002 is assigned, and both timestamps are there. Nothing is replaced with dots. Both promised events are present.
 
@@ -400,7 +400,7 @@ Now read the two lines at the bottom. A stale current name is an inconsistency. 
 
 What about a ticket that piles up years of history? Here is a hybrid design. Look at the two boxes. On the left, the ticket document holds the ticket ID and status, plus at most five recent events, for a fast ticket-page preview. On the right, separate event records, each linked by ticket_id, hold all retained events. That separate history can grow on its own and feed reports.
 
-Why five? It is a deliberate application rule. It keeps the page small. But careful: the limit is for the preview, not for the history. When the sixth event arrives, the preview drops its oldest entry, and the separate history still keeps that event according to the retention rules. The bound must never turn into an accidental deletion policy.
+Why five? It is a deliberate application rule. It keeps the page small. The limit applies to the preview. The full history remains available. When the sixth event arrives, the preview drops its oldest entry, and the separate history still keeps that event according to the retention rules. The bound must never turn into an accidental deletion policy.
 
 Now read the bottom note, because convenience is never free. A copied recent-event list needs a refresh rule. What should a reader see when a new event has been written but the preview has not caught up yet? A version or a timestamp can make that visible.
 
@@ -467,7 +467,7 @@ Notice the wording, too. It says I considered, and I would keep. It does not say
 Read the bottom of the slide. The lab practices this reasoning with concrete JSON: two examples holding the same facts. Next week we use MQL, MongoDB's query language, to retrieve and change documents. Because you already know the shape and meaning of every field, those commands will be much easier to read and to check.
 
 [Sources]
-- Course-created example of technical design writing. It describes a proposal, not a measured deployment.
+- Course-created example of technical design writing. It describes a proposed design.
 
 ## Slide 33
 
@@ -479,7 +479,7 @@ For Strict JSON, from the punctuation up, watch the braces, brackets, quotes, an
 
 For What embedding costs over time, predict what happens when a person changes their name. An embedded current name needs to be refreshed; an intentionally historical name has a different meaning. Then watch the events grow. A bounded preview can make the ticket page convenient, but the complete history still needs a home and the preview needs a refresh rule.
 
-These are illustrations, not timing tests. For your lab, keep all three events for ticket 1003 in both designs. Use the videos to check your reasoning, then explain the read and the update consequences in your own paragraph.
+Use the illustrations to compare data layouts. For your lab, keep all three events for ticket 1003 in both designs. Use the videos to check your reasoning, then explain the read and the update consequences in your own paragraph.
 
 [Sources]
 - Course-created Week 9 videos and captions in videos/README.md.
@@ -493,13 +493,13 @@ Teaching placement (not spoken): Day 2: after slides 24–27, before the JSON la
 
 ## Slide 35
 
-This picture is a possible later design, not an extra requirement for today’s JSON lab. The complete history has three events for ticket 1003. The page preview shows only the newest two, while the event store retains all three. The requester’s current name has one authoritative home. A preview copy needs a rule for refreshing it and for indicating when it is stale. In the assigned lab, keep all three events in each of your two designs first. Then explain what would become difficult if the history kept growing for years.
+This picture shows one possible later design. The complete history has three events for ticket 1003. The page preview shows only the newest two, while the event store retains all three. The requester’s current name has one authoritative home. A preview copy needs a rule for refreshing it and for indicating when it is stale. In the assigned lab, keep all three events in each of your two designs first. Then explain what would become difficult if the history kept growing for years.
 
-Teaching placement (not spoken): Day 2: after appendix slide 34; later-design discussion, not a replacement for the assigned JSON.
+Teaching placement (not spoken): Day 2, after appendix slide 34. Use during the later-design discussion.
 
 ## Slide 36
 
-Discord’s engineering account starts from the way messages are read and how that workload grows. That is the habit to carry into our design, rather than copying a product choice. A ticket page, an event-count report, and a current-name lookup ask different questions. Tell me where the facts live, how the application gets them, and what has to change when a name or history changes. The source is optional context for that reasoning. Our two small JSON examples are enough to practice it without opening Atlas.
+Discord’s engineering account starts from the way messages are read and how that workload grows. Apply the same reasoning to your design. A ticket page, an event-count report, and a current-name lookup ask different questions. Tell me where the facts live, how the application gets them, and what has to change when a name or history changes. The source is optional context for that reasoning. Our two small JSON examples are enough to practice it without opening Atlas.
 
 Primary source: https://discord.com/blog/how-discord-stores-trillions-of-messages
 

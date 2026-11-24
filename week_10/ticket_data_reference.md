@@ -104,14 +104,14 @@ The six original tickets do **not** have that field; an absent field is not an
 explicit `False` value. The reset creates 1099 with `status: "new"` and
 `events: []`. It initially omits `assignee_id` and `tags`; `$set` later adds
 `assignee_id: 202`. Its event 5999 has the same four event fields listed above.
-This is a disposable practice record, not a seventh original case ticket.
+This is a disposable practice record.
 
 ### Field Names Used in Different Course Examples
 
 This notebook adapts selected columns from the Week 9 case. In its event objects,
 `event_type` becomes **`type`** and `event_at` becomes **`at`**. Use those shorter
 names in Day 1 queries. Day 2's separate-history examples use `event_type` and
-`event_at` again. The fixture is not a lossless copy of every CSV field.
+`event_at` again. The fixture uses selected fields from the CSV.
 Empty `events` arrays on 1005 and 1006 mean their history is omitted here; they do
 not establish that the original tickets never had events.
 
@@ -137,7 +137,7 @@ work by category and status, then display priority as part of the result.
 Every field supplied by the loader is shown below. Only the generated `_id` is
 omitted because it is assigned at runtime. Dates use **MongoDB Extended JSON**:
 `{"$date": "...Z"}` represents a BSON date, rather than an ordinary date-looking
-string. These blocks are a readable data reference, not Python cells to run.
+string. Use these blocks as a data reference.
 The actual loader constructs Python `datetime` values.
 
 #### Ticket 1001

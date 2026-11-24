@@ -32,7 +32,7 @@ When something goes wrong this week, your first question is always "which of the
 
 ## Slide 4
 
-Least privilege is a phrase everyone uses and many people get backwards. It does not mean "give nobody anything." It means: start from the work the role actually has to do, give it enough to do that work, and then test that everything else stays unavailable.
+Least privilege is a phrase everyone uses and many people get backwards. Start with the role's job, grant the privileges that job requires, and test the boundaries.
 
 Look at the two rows. The report reader has a real job: read open ticket IDs, categories, and statuses, for a dashboard. What is outside that job? Reading residents' email addresses, or changing tickets. The lab analyst, which is your Day 1 lab, has the same shape: read ticket summaries and count them by status, and never read the private source tables or edit anything.
 
@@ -58,7 +58,7 @@ Here is the complete interface, and I want you to see how small it is.
 
 A schema, security_demo, to keep our demo objects separate. A view, open_ticket_report, which is just a saved query: ticket id, category, status, only where status is open. Three columns, filtered. Then two grants. USAGE on the two schemas, which only lets the role look up objects inside them. And SELECT on the view. That is it.
 
-Read the note at the bottom. The role gets access to the view, not to the tickets table underneath it. We never say GRANT SELECT ON metro_support.tickets. So the reader cannot query the tickets table directly. It cannot see priorities, requesters, timestamps, or anything else we left out of the view. The view is the window, and we decided exactly what is in the window.
+Read the note at the bottom. Grant the role SELECT on the view and keep the base table private. We never say GRANT SELECT ON metro_support.tickets. So the reader cannot query the tickets table directly. It cannot see priorities, requesters, timestamps, or anything else we left out of the view. The view is the window, and we decided exactly what is in the window.
 
 One practical note. Load the Metro Support fixture first, because the view points at metro_support.tickets. If the table is not there, CREATE VIEW fails with "relation does not exist," and that is a missing-object error, not a permission result.
 
@@ -70,7 +70,7 @@ https://www.postgresql.org/docs/15/sql-createview.html
 
 Now the positive test. Watch its shape, because it is the same every time. BEGIN. SET LOCAL ROLE to the reader. A SELECT that includes current_user, which is deliberate: the first column of the result proves who ran it. ROLLBACK.
 
-The result: three rows, tickets 1001, 1007, and 1011, all open, and the role column says report_reader_demo. So the reader can do its job. That is half the test. Notice we do not just say "it returned some rows." We name the IDs. Named results are what you can check against the data later.
+The result: three rows, tickets 1001, 1007, and 1011, all open, and the role column says report_reader_demo. So the reader can do its job. That is half the test. List the IDs returned by the query. Named results are what you can check against the data later.
 
 One warning that will save you time in the lab. Run the whole batch on one connection, all four statements together. Web editors like Supabase's may hand each separate Run to a different connection, so a role switch from one run does not carry into the next. And the Supabase editor shows only the last statement's result, which here is the ROLLBACK, so your rows are hidden. That is why the lab gives you a small Colab cell that runs these tests and prints every result.
 
@@ -86,7 +86,7 @@ Here is the clever part of wrapping the test in a transaction. Suppose I got the
 
 Something subtle happened on slide 7 that is worth stopping on. The reader has no permission on the tickets table. Yet it read three tickets. How?
 
-Because a normal view runs with its owner's permissions on the tables underneath. I own the view. I can read tickets. So when the reader selects from my view, PostgreSQL checks my access to tickets, not the reader's. That is exactly what makes a view a good reporting interface: the reader gets three columns of three rows and never touches the source table.
+Because a normal view runs with its owner's permissions on the tables underneath. I own the view. I can read tickets. When the reader selects from this view, PostgreSQL checks the owner's access to tickets. That is exactly what makes a view a good reporting interface: the reader gets three columns of three rows and never touches the source table.
 
 But it is also a warning. If the owner is powerful, the view is powerful. On Day 2 we add row-level security to a table, and a view owned by an administrator would happily show every row regardless, because the owner bypasses those rules. So a view is not automatically a safe window for a resident.
 
@@ -124,7 +124,7 @@ Two residents both need to read the tickets table. Same table, same permission, 
 
 Here is how we will test it today. First, we run the same SELECT as each resident and check that they get different rows. Second, we have a resident ask for someone else's ticket by number, like editing the ID in a URL, and watch what happens. Third, we add a brand new ticket and check that the rule still works without us touching it.
 
-One thing to keep in mind all day: each resident is a database role today, which makes the rule easy to see. In a real app, people are not database roles. We will get to how that maps at the end.
+One thing to keep in mind all day: each resident is a database role today, which makes the rule easy to see. An application can serve many users through one database role. We will get to how that maps at the end.
 
 ## Slide 13
 
@@ -157,7 +157,7 @@ Now the test. This query is deliberately boring: current_user, ticket id, subjec
 
 We wrap it in BEGIN, SET LOCAL ROLE, the query, and ROLLBACK, all together as one batch. SET LOCAL ROLE makes me act as resident A until the transaction ends, and ROLLBACK ends it, so afterward I am myself again. I run it as A: two rows, 1 and 2, and current_user says resident_a_demo. Now I change exactly one word, the role, to resident_b_demo, and run the identical query: two rows, 3 and 4. Same SQL, different answer, because the actor changed. The table still has all four rows. Nobody deleted anything.
 
-Two things to notice. First, we compare the actual IDs, not the counts. Both residents got "two rows." If the policy were wrong you could still get two rows and never know. Second, why all four lines go together. In the Supabase SQL editor, every time you press Run you may land on a different connection. If you SET ROLE in one run and SELECT in the next, the role switch is gone. You are querying as yourself, the administrator, you see all four rows, and you conclude the policy is broken. It is not. Paste the whole batch every time, and read the current_user column before you read the ticket numbers.
+Two things to notice. Compare the actual IDs. Both residents got "two rows." If the policy were wrong you could still get two rows and never know. Second, why all four lines go together. In the Supabase SQL editor, every time you press Run you may land on a different connection. If you SET ROLE in one run and SELECT in the next, the role switch is gone. You are querying as yourself, the administrator, you see all four rows, and you conclude the policy is broken. It is not. Paste the whole batch every time, and read the current_user column before you read the ticket numbers.
 
 ## Slide 16
 
@@ -165,7 +165,7 @@ This is the slide 2 scenario, the edited URL. Resident A asks for ticket 3 by nu
 
 Think about why. The grant says A may read this table, so PostgreSQL does not refuse the query. Then it applies the policy: keep rows where owner_role is resident_a_demo. Ticket 3 belongs to B, so it is filtered out. A asked a legitimate question and got an honest empty answer.
 
-This matters because people expect security failures to look like errors. A lot of the time they do not. A restricted read usually works by leaving rows out, not by shouting at you. So in the lab, when you get zero rows here, that is the correct result. Write "zero rows, no error" in your comments, not "permission denied."
+This matters because people expect security failures to look like errors. A lot of the time they do not. A restricted read returns only the rows allowed by the policy. So in the lab, when you get zero rows here, that is the correct result. Record "zero rows, no error" in your comments.
 
 One caveat we only get because we built the data ourselves: we know ticket 3 exists. In a real application, an empty result could also mean the ticket does not exist at all. A security test needs that knowledge, which is why we use a tiny fixture we understand completely.
 
@@ -175,15 +175,15 @@ Here is the test that catches lazy rules. Before I run anything, predict. I am g
 
 The insert runs as me, the administrator, because the residents have no insert permission, and that is deliberate. Now I rerun A: 1, 2, and 5. I rerun B: still 3 and 4. I did not edit the policy. It compared the new row's owner_role to the current role, the same as every other row.
 
-Compare that to a rule someone might write in a hurry: "A can see tickets 1 and 2." That rule passes every test we ran before this slide, and it fails the moment a new ticket arrives. A good rule describes the relationship between the row and the actor, not a list of numbers.
+Compare that to a rule someone might write in a hurry: "A can see tickets 1 and 2." That rule passes every test we ran before this slide, and it fails the moment a new ticket arrives. Describe the relationship between the user and each row the policy allows.
 
-In your lab you will insert ticket 5 for resident 102, not 101, and rerun both residents. If you accidentally run the insert twice you get a duplicate key error on ticket 5. That just means it already worked. Look at the row instead of inserting again.
+Insert ticket 5 for resident 102, then rerun both resident queries. If you accidentally run the insert twice you get a duplicate key error on ticket 5. That just means it already worked. Read back the row you inserted.
 
 ## Slide 18
 
 Now watch me run the same SELECT with no role switch at all, just as myself. Five rows. Every one of them. Did the policy fail? No. I own this table, and in PostgreSQL the table owner is not subject to row security by default. Superusers are not either, and neither is any role with the BYPASSRLS attribute.
 
-Here is why that matters to you specifically. The Supabase SQL editor runs as a role called postgres, which has BYPASSRLS. So when you test a policy in the SQL editor and see every row, you have learned nothing about what a real user sees. It is not evidence the policy is broken, and it is not evidence that it works. You have to test as the role the application actually uses. That is the whole reason our tests switch roles.
+Here is why that matters to you specifically. The Supabase SQL editor runs as a role called postgres, which has BYPASSRLS. So when you test a policy in the SQL editor and see every row, you have learned nothing about what a real user sees. Connect successfully before testing the policy. You have to test as the role the application actually uses. That is the whole reason our tests switch roles.
 
 There is a setting called FORCE ROW LEVEL SECURITY that makes a plain table owner obey the policies too, but it does nothing to superusers or BYPASSRLS roles.
 
@@ -202,7 +202,7 @@ So how does the policy tell people apart? Through the token. A function called a
 
 Two things to be careful about. One, the browser cannot become someone else by sending a different user ID in the request body. The ID has to come from a token the server verified. Two, a signed token is usually readable. You can decode it and see the claims inside. It is still a credential. If someone copies it, they are you until it expires. Do not paste tokens into shared notebooks.
 
-And to be honest about what we did today: switching roles with SET ROLE is a database test. It is not a test of the login flow.
+And to be honest about what we did today: switching roles with SET ROLE is a database test. Test login behavior separately.
 
 [Sources]
 https://supabase.com/docs/guides/database/postgres/row-level-security
@@ -212,9 +212,9 @@ https://supabase.com/docs/guides/getting-started/api-keys
 
 This is what our policy looks like translated for a real app. Instead of comparing owner_role to current_user, it compares a column called requester_auth_id to auth.uid. The role is authenticated, the shared one from the previous slide. The nested SELECT around auth.uid is just the form Supabase recommends. It lets PostgreSQL evaluate the function once instead of once per row.
 
-I want to be clear: this is an illustration, not something to paste into our Metro Support table. Our tickets have integer requester IDs. Supabase Auth identifies people with UUIDs, those long hexadecimal strings. A UUID is an identifier, not a secret, and you cannot just rename a column to switch from one to the other. You would have to actually map every existing ticket to a real signed-in user.
+The example illustrates how a UUID-based application identifies its users. Our tickets have integer requester IDs. Supabase Auth identifies people with UUIDs, those long hexadecimal strings. A UUID identifies a record. Migrating from integer IDs to UUIDs requires updating keys and references. You would have to actually map every existing ticket to a real signed-in user.
 
-Here is a nice connection to Week 2. If there is no signed-in user, auth.uid returns NULL. What is NULL compared to anything? Not true, not false. Unknown. And a row is only kept when the condition is true. So an anonymous request matches no rows. The same three-valued logic that bit you in your WHERE clauses is now quietly doing security work.
+Here is a nice connection to Week 2. If there is no signed-in user, auth.uid returns NULL. What is NULL compared to anything? The result is unknown. Unknown. And a row is only kept when the condition is true. So an anonymous request matches no rows. The same three-valued logic that bit you in your WHERE clauses is now quietly doing security work.
 
 [Sources]
 https://supabase.com/docs/guides/database/postgres/row-level-security
@@ -226,7 +226,7 @@ Reading rows and writing rows are two different decisions, and policies have two
 
 Picture resident A submitting a ticket. The app must not let A set the owner to B just by editing a field in the form. An INSERT policy with WITH CHECK compares the proposed owner to the authenticated user and rejects the row if they do not match. And unlike a filtered read, a rejected write does produce an error, because there is no row to quietly leave out.
 
-Two reminders. A policy is not a grant. To insert, a role still needs INSERT permission on the table. And today's residents only have SELECT. If one of you tries an insert as a resident, you get "permission denied for table," and that is the grant stopping you, before any policy is even consulted.
+Two reminders. Use a grant to permit the operation and a policy to select its rows. To insert, a role still needs INSERT permission on the table. And today's residents only have SELECT. If one of you tries an insert as a resident, you get "permission denied for table," and that is the grant stopping you, before any policy is even consulted.
 
 When you write up your lab, say that you tested reads only. Do not claim you tested writes you did not test.
 
@@ -243,7 +243,7 @@ The user's access token is the person. That is what makes auth.uid work. Keep it
 
 The secret key, or the legacy service-role key, is for a trusted server, and it bypasses row security entirely. It never goes into browser code or a shared notebook.
 
-And the database password or connection URI is a fourth thing. It logs into PostgreSQL directly as a database user. It has nothing to do with app users. That is why the lab's Colab cell asks for the URI through a hidden prompt instead of putting it in a cell.
+And the database password or connection URI is a fourth thing. It logs into PostgreSQL directly as a database user. It has nothing to do with app users. Enter the connection URI at the notebook's hidden prompt.
 
 Last thing. If a secret ends up in Git, deleting the line does nothing. It is still in the history, and anyone who saw it still has it. Rotate the secret first, then clean up.
 
@@ -283,7 +283,7 @@ I ran this on a fresh PostgreSQL 16 this afternoon. Before the update, ticket 10
 
 Once no snapshot can see that old version any more, it is dead. Not deleted. Dead. It takes up space in the table and in every index that points at it, and nothing in an ordinary UPDATE or DELETE ever removes it. Something else has to come along and do that. That something is vacuum, and it is the next three slides.
 
-One correction to a common mental picture: this is not two tickets. It is one logical row with two physical versions. Your count query says twelve either way.
+Both versions describe the same ticket. It is one logical row with two physical versions. Your count query says twelve either way.
 
 [Sources]
 https://www.postgresql.org/docs/16/ddl-system-columns.html
@@ -291,7 +291,7 @@ https://www.postgresql.org/docs/16/mvcc-intro.html
 
 ## Slide 26
 
-Here is the number at the center of the incident. A transaction ID is a 32-bit integer. That gives about four billion values, and PostgreSQL treats them as a circle, not a line. From wherever the counter currently is, about two billion IDs count as the past and about two billion count as the future. Visibility is a comparison: a row version created by a past transaction that committed is visible; one created by a future transaction is not.
+Here is the number at the center of the incident. A transaction ID is a 32-bit integer. PostgreSQL compares about four billion transaction ID values in circular order. From wherever the counter currently is, about two billion IDs count as the past and about two billion count as the future. Visibility is a comparison: a row version created by a past transaction that committed is visible; one created by a future transaction is not.
 
 Now imagine the counter keeps going and laps itself. A row that was created two billion transactions ago now has an ID that looks like it is in the future. From PostgreSQL's point of view that row has not been created yet, so it disappears. A delete from two billion transactions ago looks like it has not happened yet, so the deleted row comes back. Nothing on disk changed. The arithmetic just stopped meaning what it meant. The documentation calls this catastrophic data loss, and that is fair.
 
@@ -306,7 +306,7 @@ So what is vacuum? It is the routine maintenance that keeps MVCC honest, and it 
 
 Two things people get wrong. Plain VACUUM does not give space back to the operating system; it makes the space available for reuse inside the table. It runs alongside ordinary SELECT, INSERT, UPDATE, and DELETE. VACUUM FULL is a different command: it rewrites the whole table into a new file with no dead space, needs that much extra disk, and takes an ACCESS EXCLUSIVE lock, so nothing else can touch the table while it runs. You almost never want FULL on a production table during the day.
 
-And the point Chapter 5 makes bears repeating: seeing vacuum in your logs is normal. It is the system doing its job. The failure we are about to look at is vacuum not running enough, not vacuum running at all.
+And the point Chapter 5 makes bears repeating: seeing vacuum in your logs is normal. It is the system doing its job. The case examines what happens when vacuum falls behind.
 
 I ran it on my twelve-ticket table after seven updates. Before: seven dead rows in pg_stat_user_tables. After VACUUM VERBOSE: seven removed, twelve remain, zero dead. That is the whole operation at small scale.
 
@@ -386,7 +386,7 @@ Here is the writing task. First, read the original incident report by David Cram
 
 Then write two hundred fifty to three hundred fifty words in the Brightspace assignment. Four things it must cover. One: what PostgreSQL was protecting when it stopped accepting writes, and why stopping was the right thing for the database to do. Two: what let the maintenance fall behind at Sentry, and why vacuuming is a correctness problem and not only a performance problem. Three: the recovery decision. They deleted an entire table to get back in minutes instead of hours. What made that an acceptable risk for them, and would you have made the same call? Say why. Four: two concrete things a team should do so this never happens to them, and which one matters most.
 
-Use at least three of the four terms on the slide, and use them correctly. Write an argument in paragraphs, not a summary in bullets. And keep two words apart the whole way through: availability, is the service up, and correctness, is the data right. The entire incident is PostgreSQL trading the first for the second, and then Sentry trading the other way.
+Use at least three of the four terms on the slide, and use them correctly. Write an argument in paragraphs. And keep two words apart the whole way through: availability, is the service up, and correctness, is the data right. The entire incident is PostgreSQL trading the first for the second, and then Sentry trading the other way.
 
 It is submitted as text in Brightspace. No SQL, no screenshots. If you finish early, go back to Lab 2.
 
@@ -406,11 +406,11 @@ Run your cleanup before you leave. Keep the SQL and your observations in your fi
 
 ## Slide 35
 
-These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Least privilege: roles and grants (1:24); Row-level security: USING and WITH CHECK (1:30); Who is asking? Gates, roles, and tokens (1:33). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 6 README. The diagrams are schematic illustrations, not benchmarks.
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Least privilege: roles and grants (1:24); Row-level security: USING and WITH CHECK (1:30); Who is asking? Gates, roles, and tokens (1:33). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 6 README. The diagrams illustrate the steps.
 
 ## Slide 36
 
-Here are all four rows needed for this example. Resident 101 owns tickets 1 and 2. Resident 102 owns 3 and 4. Now follow the query on the right. SET LOCAL ROLE chooses the actor for this transaction. The query asks for ticket 3, but the row policy compares its owner with the current role. They do not match, so the result has zero rows. That does not delete ticket 3, and it does not mean the table is empty. The role can read the table; this particular row is outside its visibility. ROLLBACK ends the transaction and resets the local role. Keep those statements together when you run the lab.
+Here are all four rows needed for this example. Resident 101 owns tickets 1 and 2. Resident 102 owns 3 and 4. Now follow the query on the right. SET LOCAL ROLE chooses the actor for this transaction. The query asks for ticket 3, but the row policy compares its owner with the current role. They do not match, so the result has zero rows. Ticket 3 remains stored and is visible to roles that qualify. The role can read the table; this particular row is outside its visibility. ROLLBACK ends the transaction and resets the local role. Keep those statements together when you run the lab.
 
 Teaching placement (not spoken): Day 2: before slide 23 and the RLS lab.
 
@@ -422,7 +422,7 @@ Teaching placement (not spoken): Day 2: immediately after appendix slide 36.
 
 ## Slide 38
 
-GitHub’s incident is useful because it reminds us to follow the request all the way to the content returned. The published cause was a routing defect, not our classroom row-security policy. The lesson I take from it is about test evidence: a successful authorization check does not by itself establish that the eventual response contains the intended resource. In our small case, we can name exactly which rows each resident should and should not receive. That makes an isolation claim testable. The linked incident report gives the company’s explanation; our lab is a separate example.
+GitHub’s incident is useful because it reminds us to follow the request all the way to the content returned. The company's investigation traced the failure to a routing defect. The lesson I take from it is about test evidence: a successful authorization check does not by itself establish that the eventual response contains the intended resource. In our small case, we can name exactly which rows each resident should and should not receive. That makes an isolation claim testable. The linked incident report gives the company’s explanation; our lab is a separate example.
 
 Primary source: https://github.blog/news-insights/the-library/incident-report-inadvertent-private-repository-disclosure/
 

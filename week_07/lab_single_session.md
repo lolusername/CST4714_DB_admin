@@ -33,7 +33,7 @@ ORDER BY opened_at DESC
 LIMIT 20;
 ```
 
-EXPLAIN ANALYZE executes the statement. This exercise uses a read-only SELECT. Copy the relevant scan, sort, and limit lines into SQL comments. Record the estimated and actual rows, loops, rows removed by the filter if shown, top-level buffer counters, and execution times. Keep parent and child buffer counts separate instead of adding them together.
+EXPLAIN ANALYZE executes the statement. This exercise uses a read-only SELECT. Copy the relevant scan, sort, and limit lines into SQL comments. Record the estimated and actual rows, loops, rows removed by the filter if shown, top-level buffer counters, and execution times. Read parent and child buffer counts separately.
 
 Explain why returning twenty rows can still require examining many more. Your exact plan, estimates, and timings may differ from the lecture.
 

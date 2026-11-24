@@ -1,6 +1,6 @@
 # Week 2 videos
 
-Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. Diagrams are schematic illustrations, not benchmarks.
+Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams trace the steps in each example.
 
 ## [NULL: why = NULL finds nothing](01_null_logic.mp4) (1:20)
 

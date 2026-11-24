@@ -23,7 +23,7 @@ Read the [textbook corrections](../COURSE_CORRECTIONS.md) with the assigned sect
 Use [Chapter 8: A Backup Matters Only When Recovery Works](../Operating_Cloud_Databases.pdf).
 
 - **Before Day 1:** read the recovery concepts through **Free-Tier Recovery** and **Verify Structure, Data, and Behavior**. Use the command explanations as a reference while running the restore notebook.
-- **Before Day 2:** read **Worked Example: A Recovery Runbook Entry** and **Safe Migrations and Recovery Are Connected**. Revisit Chapter 3's **Keys Identify and Connect Facts** and **Constraints Reject Invalid States** for the midterm schema work. In class, identify the supplied schema's keys and three non-key integrity controls, then explain which invalid state each prevents. This refresh is part of midterm preparation, not another submission.
+- **Before Day 2:** read **Worked Example: A Recovery Runbook Entry** and **Safe Migrations and Recovery Are Connected**. Revisit Chapter 3's **Keys Identify and Connect Facts** and **Constraints Reject Invalid States** for the midterm schema work. In class, identify the supplied schema's keys and three non-key integrity controls, then explain which invalid state each prevents. This refresh prepares you for the midterm.
 
 Bring one point you want clarified. Reading supports the in-class work; it does
 not add a separate reading report. Optional textbook practice is not required
@@ -84,7 +84,7 @@ Keep your Week 7 lab work. Reuse your own research and explanations in the READM
 
 Complete [Lab 2: Midterm Work Session in Supabase](lab_02_midterm_work_session.md). The notebook connects Colab to your own Supabase project through the **session pooler**, runs the midterm starter there, and shows every result. You work through Parts 1, 2, 4, and 5, including a real backup of your Supabase schema restored into a separate database in Colab. Copy your SQL into `midterm.sql` and your results into `README.md` as you go. Bring your Supabase database password. Slides 24–29 explain the session pooler, IPv4 and IPv6, and the lab steps.
 
-Submit the sharing link to your saved Colab copy of `midterm_work_session.ipynb`, with output and your progress account. Give the instructor viewer access. The lab is classwork, not the midterm, and adds no midterm requirement.
+Submit the sharing link to your saved Colab copy of `midterm_work_session.ipynb`, with output and your progress account. Give the instructor viewer access. Complete the lab during class.
 
 Bring your Week 7 writing, your current `midterm.sql` and `README.md`, and one concrete question.
 

@@ -17,4 +17,4 @@ manim -s -r 2240,960 --disable_caching --media_dir build week10_stills.py ArrayM
 
 Each scene only adds objects. It does not play animations. The PNGs are 2240 × 960 pixels. Use the course's instructional-content license for the illustrations and its code license for the Python source.
 
-The filter/projection/sort illustration uses only tickets 1001, 1003, and 1006 from the six-ticket fixture. Its stages are conceptual, not a claim about a physical query execution plan. The status filter excludes resolved ticket 1003; projection keeps ticket ID and status, and descending ticket ID puts 1006 before 1001. The stored documents are unchanged.
+The filter/projection/sort illustration uses only tickets 1001, 1003, and 1006 from the six-ticket fixture. Follow the stages to see how the example works. The status filter excludes resolved ticket 1003; projection keeps ticket ID and status, and descending ticket ID puts 1006 before 1001. The stored documents are unchanged.

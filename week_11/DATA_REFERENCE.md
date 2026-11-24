@@ -2,9 +2,9 @@
 
 ## One document means one request
 
-This independent four-ticket fixture is not the twelve-ticket CSV or Week 10 fixture. All application fields and events are listed below. MongoDB adds a generated `_id`; `ticket_id` is a separate unique course ID. `assignee_id` refers conceptually to a staff member, but no staff collection is joined in this exercise. The field is an integer or explicit null: ticket 1004 is unassigned. A missing field would be different from this stored null.
+This exercise uses an independent four-ticket fixture. All application fields and events are listed below. MongoDB adds a generated `_id`; `ticket_id` is a separate unique course ID. `assignee_id` refers conceptually to a staff member, but no staff collection is joined in this exercise. The field is an integer or explicit null: ticket 1004 is unassigned. A missing field would be different from this stored null.
 
-`category`, `status`, `priority`, and `subject` are text. Category is streetlight or sanitation; status here is new/open/in_progress/resolved; the active filter includes new/open/in_progress. Priority is urgent/high/low here (medium also exists elsewhere in the course). `opened_at` is a UTC BSON date, represented below as an ISO string for readability. `events` is an array of embedded documents; `events.type` is text. Ticket 1004's empty array is present, not null or missing. No event time or actor field exists in this fixture.
+`category`, `status`, `priority`, and `subject` are text. Category is streetlight or sanitation; status here is new/open/in_progress/resolved; the active filter includes new/open/in_progress. Priority is urgent/high/low here (medium also exists elsewhere in the course). `opened_at` is a UTC BSON date, represented below as an ISO string for readability. `events` is an array of embedded documents; `events.type` is text. Ticket 1004 stores an empty events array. No event time or actor field exists in this fixture.
 
 ```json
 [

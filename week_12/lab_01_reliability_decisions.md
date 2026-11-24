@@ -51,7 +51,7 @@ plan and acknowledging what it cannot guarantee. You do not need to purchase a
 feature or perform a failover.
 
 **Optional practice only:** discuss your confirmation policy and recovery analysis; do not submit a separate response.
-Use precise reasons rather than a large matrix. During project work, reuse the
+Give a specific reason for each decision. During project work, reuse the
 same reasoning for one important write in your project; the
 [final project](materials/assignments/final_project.md) remains its sole requirements
 document.

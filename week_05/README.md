@@ -69,8 +69,7 @@ notebook's rollback case. You predict and test the commit alternative, keeping
 the fixture and competing update unchanged.
 
 **Before the diagnostic query:** a PostgreSQL session uses a server process
-called a backend. Its **PID** is that process identifier, not a user or ticket
-ID. `SELECT pg_backend_pid();` identifies the backend for the connection running
+called a backend. Its **PID** identifies the server process. `SELECT pg_backend_pid();` identifies the backend for the connection running
 the query. In slides **15-16**, read the waiting session's `pg_blocking_pids`
 list to find its blockers. The notebook captures these IDs from its own open
 connections; a later SQL Editor request may use a different backend.
@@ -85,11 +84,11 @@ Submit the sharing link to your completed Colab notebook in Brightspace, as
 stated in Lab 2. The credential prompt does not save your connection string
 in the file.
 
-For support with the lab's explanation, use [Writing About Database Decisions](materials/assessments/critical_writing.md). It develops the response already included in your lab, not an additional assignment.
+For support with the lab's explanation, use [Writing About Database Decisions](materials/assessments/critical_writing.md). Include this response in your lab.
 
 ## Optional Industry Extension: Deadlock Detective
 
-This activity is optional, ungraded, and does not add a submission.
+Use this optional exercise for practice.
 
 Draw a wait-for graph for this incident: Transaction A locks ticket 1001 and then
 requests ticket 1002; Transaction B locks ticket 1002 and then requests ticket
@@ -120,4 +119,4 @@ Teach the diagram beside its matching example and the three-minute company case 
 **Required hand-ins remain:** Day 1: `week_05_transaction_outcomes.sql`; Day 2: a viewable link to the saved Colab locks notebook. The runnable notebook is a workspace when a SQL file is assigned. Keep required comments and observed error details in the SQL file. No additional notebook hand-in is required.
 
 
-**Optional Day 1 workspace:** [Transaction outcomes notebook](01_transaction_outcomes.ipynb), or [open it in Colab](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_05/01_transaction_outcomes.ipynb). It runs real PostgreSQL inside the Colab runtime without a cloud account and mirrors the five lab experiments. Its setup already loads the fixture into a unique disposable database. Keep each entire transaction in one cell. Use this route or the existing cloud helper above; you do not need both. The required Day 1 hand-in remains `week_05_transaction_outcomes.sql`, with the lab’s comments and observations. The notebook itself is not a second submission.
+**Optional Day 1 workspace:** [Transaction outcomes notebook](01_transaction_outcomes.ipynb), or [open it in Colab](https://colab.research.google.com/github/lolusername/CST4714_DB_admin/blob/main/week_05/01_transaction_outcomes.ipynb). It runs real PostgreSQL inside the Colab runtime without a cloud account and mirrors the five lab experiments. Its setup already loads the fixture into a unique disposable database. Keep each entire transaction in one cell. Use this route or the existing cloud helper above; you do not need both. The required Day 1 hand-in remains `week_05_transaction_outcomes.sql`, with the lab’s comments and observations. Use the notebook to run the experiment.

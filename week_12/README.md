@@ -43,7 +43,7 @@ The slide-to-cell route is explicit in the deck and transcript. Setup time comes
 
 GitLab's account of its January 2017 PostgreSQL outage describes accidental deletion and problems with available recovery mechanisms. The platform differs from Atlas, but the operational responsibility is the same: retain a usable artifact, rehearse restoration, and check meaningful data values. Our five-ticket exercise practices those checks; it does not reproduce the production incident or prove a production recovery target. In a database administration interview, explain what you recovered and what your test did not establish.
 
-[Read GitLab’s own postmortem](https://about.gitlab.com/blog/postmortem-of-database-outage-of-january-31/). This is lecture context, not another assignment.
+[Read GitLab’s own postmortem](https://about.gitlab.com/blog/postmortem-of-database-outage-of-january-31/). Use this example during the lecture.
 
 <!-- videos:start -->
 ## Videos
@@ -59,12 +59,12 @@ Short silent animations with captions (3 for this week). Each has a subtitle fil
 ## Optional reference and limits
 
 - [The former reliability decision exercise](lab_01_reliability_decisions.md) is optional, ungraded practice; it has no separate submission this week.
-- [Full recovery notebook](materials/notebooks/05_mongodb_logical_recovery.ipynb) and [extended reference](reference_mongodb_recovery_extended.md) retain deeper reconstruction examples. They are not the required route.
-- [Legacy local short notebook](materials/notebooks/05_mongodb_logical_recovery_short.ipynb) is a clearly labeled mock reference, not evidence of an Atlas connection.
+- [Full recovery notebook](materials/notebooks/05_mongodb_logical_recovery.ipynb) and [extended reference](reference_mongodb_recovery_extended.md) retain deeper reconstruction examples. Use the required Atlas route for class.
+- [Legacy local short notebook](materials/notebooks/05_mongodb_logical_recovery_short.ipynb) provides a local mock for reference.
 - Validator reconstruction is **not required this week**. It is optional reference; there is no next-week requirement implied.
 - Free clusters have managed replicas but do not support the class forcing a primary failover. A normal ping/write does not test an election. [Free limits](https://www.mongodb.com/docs/atlas/reference/free-shared-limitations/).
 - Atlas documents an optional billed Free-cluster backup subscription in private preview. Do not enable it. We use our own synthetic document artifact. [Current backup options](https://www.mongodb.com/docs/atlas/backup-restore-cluster/).
-- This document file does not rebuild indexes, validators, users, or application configuration. A temporary runtime file must be retained elsewhere; it is not a full production backup.
+- This document file does not rebuild indexes, validators, users, or application configuration. Retain the runtime file outside Colab so you can restore it later.
 
 The existing [final-project page](materials/assignments/final_project.md) remains the sole project requirements document. This week's work adds no project deliverable.
 

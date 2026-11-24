@@ -2,7 +2,7 @@
 
 ## Tables, events, and the resident projection
 
-One tickets row is the authoritative state of one request. The notebook runs SQLite, while the supplied incident describes PostgreSQL and a MongoDB projection. The Python dictionaries model delivery behavior; they are not a live MongoDB service or concurrent consumer.
+One tickets row is the authoritative state of one request. The notebook runs SQLite, while the supplied incident describes PostgreSQL and a MongoDB projection. The Python dictionaries model how a consumer handles event delivery.
 
 | ticket_id (integer primary key) | status (required text) | source_version (positive integer) |
 |---|---|---|
@@ -10,7 +10,7 @@ One tickets row is the authoritative state of one request. The notebook runs SQL
 |1009|resolved|5|
 |1010|resolved|7|
 
-The outbox initially has no rows. Its `event_id` text primary key names an event; `ticket_id` references tickets; `status` and `source_version` carry the complete projected state. `(ticket_id, source_version)` is unique. Statuses allowed by the source are open/resolved/closed. All shown fields are present and non-null. Version is ordered per ticket, not a global timestamp.
+The outbox initially has no rows. Its `event_id` text primary key names an event; `ticket_id` references tickets; `status` and `source_version` carry the complete projected state. `(ticket_id, source_version)` is unique. Statuses allowed by the source are open/resolved/closed. All shown fields are present and non-null. Versions increase separately for each ticket.
 
 Accepted updates add these complete outbox rows:
 

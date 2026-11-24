@@ -57,14 +57,12 @@ cloud networking.
 
 1. Open a fresh copy in a Python 3 / CPU runtime. Run from the top through the
    query under **Read a Few Rows**, then stop before **Day 1: A View Is a Named
-   Query**. The Week 3 title is intentional: you are reusing its setup, not doing
-   its assignment. The fixture should report 8 users, 12 tickets, and 21 events.
+   Query**. Use the setup cells from Week 3 to load the fixture. The fixture should report 8 users, 12 tickets, and 21 events.
 2. Add code cells using **+ Code**. Put each lab SQL block between the triple
    quotes shown below. Keep each `BEGIN`, role change, query, and `ROLLBACK`
    together in one call. Do not use **Run all** or the Week 3 export cells.
 3. Save the SQL inside your quotes, including your explanation comments, in a
-   text editor under the filename specified by the current lab. Submit that SQL
-   file, not the Python wrapper or the notebook. Run the lab's cleanup first;
+   text editor under the filename specified by the current lab. Submit the saved SQL file. Run the lab's cleanup first;
    then run the notebook's final **Finish: Remove Only This Notebook's Practice
    Database** cleanup cell when you are done with the runtime.
 
@@ -112,7 +110,7 @@ Complete [Lab 2: Restrict rows by current actor](lab_02_rls_test_harness.md).
 
 Submit only `week_06_rls_test.sql`.
 
-For support with the lab's explanation, use [Writing About Database Decisions](materials/assessments/critical_writing.md). It develops the response already included in your lab, not an additional assignment.
+For support with the lab's explanation, use [Writing About Database Decisions](materials/assessments/critical_writing.md). Include this response in your lab.
 
 ## In-Class Writing: When MVCC Goes Wrong
 
@@ -133,7 +131,7 @@ Write your response in the Brightspace assignment.
 
 ## Optional Industry Extension: Permission Escape Room
 
-This activity is optional, ungraded, and does not add a submission.
+Use this optional exercise for practice.
 
 Review this deliberately unsafe proposal without executing it:
 

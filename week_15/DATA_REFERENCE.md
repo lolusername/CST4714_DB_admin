@@ -17,6 +17,6 @@ One staff row is one staff member. One tickets row is one request. `tickets.assi
 |3|NULL|new|
 |4|202|open|
 
-Allowed status values are new/open/in_progress/resolved. No field is omitted from these SQL rows. Python prints SQL NULL as None; JSON encodes it as null. The JSON version uses `_id` for the same ticket identifier, not a newly generated ObjectId. It includes assignee_id and status.
+Allowed status values are new/open/in_progress/resolved. No field is omitted from these SQL rows. Python prints SQL NULL as None; JSON encodes it as null. The JSON document uses the ticket identifier as its _id. It includes assignee_id and status.
 
-Active IDs are 1, 3, 4. The zero-inclusive staff report counts matched ticket IDs and returns 201: 1, 202: 1, 203: 0. Ticket 3 is active but unassigned, so it is outside the matched staff workload. The complete active total 3 is not the same population as assigned active total 2.
+Active IDs are 1, 3, 4. The zero-inclusive staff report counts matched ticket IDs and returns 201: 1, 202: 1, 203: 0. Ticket 3 is active but unassigned, so it is outside the matched staff workload. Three tickets are active. Two have an assignee.

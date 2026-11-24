@@ -14,9 +14,9 @@ MongoDB is the database software. Atlas is the service hosting it. Colab is a di
 
 Here is the replica-set model for today. Three members, A, B, and C. Together they are a replica set: three copies of the same logical database. These labels describe a conceptual replica set; we do not control Atlas member elections in this exercise.
 
-Start on the left. The client writes ticket 1099. A is the primary, and the primary is the member that accepts writes. A applies the change and records it in its oplog, the operations log. Think of the oplog as a running history of data changes. It is not a table your application queries. It is what the secondaries read so they can catch up.
+Start on the left. The client writes ticket 1099. A is the primary, and the primary is the member that accepts writes. A applies the change and records it in its oplog, the operations log. Think of the oplog as a running history of data changes. MongoDB uses it internally. It is what the secondaries read so they can catch up.
 
-B and C are secondaries. They fetch entries from that history and apply them to their own copies. Why does that matter? Because they do not do it at the exact same instant as A. Look at C: may temporarily lag. During that gap, C's data is older. That is called replication lag, and it does not mean a write was lost. It means you need to know which member answered your read.
+B and C are secondaries. They fetch entries from that history and apply them to their own copies. Why does that matter? Because they do not do it at the exact same instant as A. Look at C: may temporarily lag. During that gap, C's data is older. That delay is called replication lag. It means you need to know which member answered your read.
 
 Two more things. The oplog is bounded, so a secondary that falls too far behind can need more than a quick replay of recent entries. And if A fails, an election can pick a new primary, but noticing the failure, holding the election, and reconnecting the client all take time. That is the bottom line of the slide: the oplog carries changes, copies can lag, and failover is not instant.
 
@@ -36,7 +36,7 @@ Now the box at the bottom, which surprises people. A timeout can stop the acknow
 
 That is why the choice comes from consequences. A resident's confirmed submission deserves a clear retention promise, and the developer also needs a defined response for when that promise cannot be confirmed in time.
 
-Sources: https://www.mongodb.com/docs/manual/reference/write-concern/ . Table applies to the authored three-voting-data-bearing-member case, not arbitrary topologies.
+Sources: https://www.mongodb.com/docs/manual/reference/write-concern/ . The table follows the three voting data-bearing members in this example.
 
 ## Slide 5
 
@@ -48,7 +48,7 @@ The only place the old tickets still exist is the last column. Still 5 saved tic
 
 But do not over-trust a file either. You still need to know which moment it represents, what it contains, whether your tools can read it, where you can restore it, and whether the application works afterward. A data file without its rules or credentials can leave the recovery incomplete.
 
-And the bottom line of the slide: an oplog has a bounded history. It is not an indefinite recovery archive. That is why today we keep an explicit small artifact and restore it somewhere else, instead of hoping some replica still has the old version.
+And the bottom line of the slide: an oplog has a bounded history. It retains a finite window of changes. Keep an explicit recovery artifact and restore it to a separate target.
 
 Sources: Authored five-ticket deletion example; https://www.mongodb.com/docs/manual/core/replica-set-oplog/ ; https://www.mongodb.com/docs/database-tools/mongodump/ .
 
@@ -60,11 +60,11 @@ Read the case at the top. A complete artifact represents 16:10. The deletion hap
 
 Now the target. The objective allows at most five minutes of lost work. Twelve is more than five, so this artifact does not meet it. And here is the important part: restoring it faster does not help. A lightning-fast restore of a 16:10 file still gives you 16:10 data.
 
-Notice that I said the artifact represents 16:10. That is not the same as saying an export finished at 16:10. A long export over changing data might not reflect one clean instant. In our worked case we are told the point directly, so we can reason without hiding that assumption.
+Notice that I said the artifact represents 16:10. Check the timestamp of the snapshot. A long export over changing data might not reflect one clean instant. In our worked case we are told the point directly, so we can reason without hiding that assumption.
 
-One more discipline. Twelve minutes is a time window. It is not a number of lost tickets. We were not told how many requests arrived in that window, so we do not invent one. And these times belong to this worked example. These are supplied teaching times, not measured Atlas recovery times.
+One more discipline. Twelve minutes is a time window. Count affected tickets from the records. We were not told how many requests arrived in that window, so we do not invent one. And these times belong to this worked example. The teaching case supplies these recovery times.
 
-Sources: Original course recovery timeline and Chapter 8/12 recovery-objective definitions. These worked times are not an assessed second lab.
+Sources: Original course recovery timeline and Chapter 8/12 recovery-objective definitions. Use the worked times to practice the calculation.
 
 ## Slide 7
 
@@ -76,13 +76,13 @@ Read the table. Detect the deletion: 2 minutes. Retrieve and authorize the artif
 
 Now read the second line of the box. It still misses the five-minute data-loss objective from the previous slide. Same incident, one pass and one fail. That is exactly why these are two numbers and not one. You can come back quickly with old data, or recover very recent data and be down too long. Those are different consequences for different people.
 
-Last point. Seven minutes is an observed result from one rehearsal, under these supplied conditions. It is not a guarantee for a bigger dataset, a slower operator, a different network path, or a different failure. Our Atlas exercise does not measure a full incident-to-service interval. And if part of the interval from incident to restored service was never measured, say that it is unknown, instead of making up a number that lets the target pass.
+Last point. Seven minutes is an observed result from one rehearsal, under these supplied conditions. A new workload or failure calls for a fresh measurement. Our Atlas exercise does not measure a full incident-to-service interval. Identify any unmeasured part of the recovery interval.
 
 Sources: Original course worked recovery timeline; current Week 12 instructor guide. No production service-level guarantee is implied.
 
 ## Slide 8
 
-Keep track of three places. On the left is our source collection in Atlas. In the middle is the saved Extended JSON file. On the right is a different Atlas collection used as the restore target. All three initially describe five tickets. We intentionally change ticket 1004 only on the right. Its count stays five. The old subject survives in the middle, so that is the value we use to repair the target. We do not damage the source, delete a database, or ask Atlas to fail over. Cell 05b downloads the synthetic file because a file left only in a temporary Colab runtime is not a retained recovery copy.
+Keep track of three places. On the left is our source collection in Atlas. In the middle is the saved Extended JSON file. On the right is a different Atlas collection used as the restore target. All three initially describe five tickets. We intentionally change ticket 1004 only on the right. Its count stays five. The old subject survives in the middle, so that is the value we use to repair the target. We do not damage the source, delete a database, or ask Atlas to fail over. Download the synthetic file in Cell 05b to retain it after the runtime ends.
 
 ## Slide 9
 
@@ -90,17 +90,17 @@ There are two different identities. Your Atlas website login lets you manage the
 
 ## Slide 10
 
-Open the complete data reference above Cell 04. It lists every application field and all five records. Ticket ID is our course identifier; MongoDB adds its own unique ID. Every opening time here is a real UTC date, not a date-shaped string. Run supplied Cell 04a, then visible Cell 04. The collection names include a new random suffix, so the run has its own source and target. The output must show five acknowledged records and ticket 1004 with Broken bench slat. Open Atlas Browse Collections or Data Explorer, select cst4714_week12 and the printed source collection, and find the same ticket there. That is concrete write/read evidence beyond ping.
+Open the complete data reference above Cell 04. It lists every application field and all five records. Ticket ID is our course identifier; MongoDB adds its own unique ID. Each opening time is a UTC date. Run supplied Cell 04a, then visible Cell 04. The collection names include a new random suffix, so the run has its own source and target. The output must show five acknowledged records and ticket 1004 with Broken bench slat. Open Atlas Browse Collections or Data Explorer, select cst4714_week12 and the printed source collection, and find the same ticket there. That is concrete write/read evidence beyond ping.
 
 ## Slide 11
 
 Here is the problem. Ordinary JSON knows numbers, strings, objects, arrays, true and false, and null. It has no date type. And it does not distinguish every numeric type that BSON, MongoDB's storage format, keeps apart. So if we write tickets to a JSON file, how does a date come back as a date?
 
-The answer is Canonical Extended JSON. Look at the code box. These are selected fields from ticket 1001, not the complete document. ticket_id is not just 1001. It is wrapped in a marker, dollar numberInt, which says this is an integer. And opened_at is wrapped in dollar date, and inside that, dollar numberLong, with the value 1769987400000. Read the caption: that number is milliseconds since the Unix epoch. For our fixture, it is February 1 at 23:10 UTC, the time in the complete notebook reference.
+The answer is Canonical Extended JSON. Look at the code box. These are selected fields from ticket 1001. ticket_id is not just 1001. It is wrapped in a marker, dollar numberInt, which says this is an integer. And opened_at is wrapped in dollar date, and inside that, dollar numberLong, with the value 1769987400000. Read the caption: that number is milliseconds since the Unix epoch. For our fixture, it is February 1 at 23:10 UTC, the time in the complete notebook reference.
 
-Notice the quotation marks around the number. That does not mean the date turned into a string. The marker keys tell a BSON-aware parser how to rebuild the stored type. A parser that only knows JSON reads the same text just fine, but it leaves those markers as ordinary dictionaries.
+Notice the quotation marks around the number. Check the Python value's type after the restore. The marker keys tell a BSON-aware parser how to rebuild the stored type. A parser that only knows JSON reads the same text just fine, but it leaves those markers as ordinary dictionaries.
 
-Why use canonical mode? It is wordier than a display meant for people, but it preserves the type information. A restore has to bring back what was stored, not just something that looks similar. On the next slide you will see the difference for yourself in Python.
+Why use canonical mode? It is wordier than a display meant for people, but it preserves the type information. Compare the restored field values and their types with the saved data. On the next slide you will see the difference for yourself in Python.
 
 Sources: Selected fields from Notebook 05; https://www.mongodb.com/docs/languages/python/pymongo-driver/current/data-formats/extended-json/ ; https://www.mongodb.com/docs/manual/reference/bson-types/ .
 
@@ -116,13 +116,13 @@ Why does that matter? Because the plain parser did not fail. No error, no warnin
 
 The BSON-aware parser understands the marker convention and rebuilds a real datetime. The notebook's options also keep the times UTC-aware, consistent from the source, through the file, into the restored database.
 
-Read the scope line at the bottom. The notebook imports json and json_util and defines JSON_OPTIONS before this, so this is not a standalone script. In the notebook we use the BSON-aware result before inserting, and then we check the restored values. We do not just trust the parser's name. Observe the actual type rather than assume it. That habit is the lesson of this slide.
+Read the scope line at the bottom. Run this excerpt after the notebook defines JSON_OPTIONS and loads json and json_util. In the notebook we use the BSON-aware result before inserting, and then we check the restored values. We do not just trust the parser's name. Inspect the actual field type. That habit is the lesson of this slide.
 
 Sources: Original course parser comparison using the exact ticket 1001 instant; https://pymongo.readthedocs.io/en/stable/api/bson/json_util.html .
 
 ## Slide 13
 
-The file has two jobs. It retains the earlier values, and it carries enough type information to rebuild the dates. Ordinary JSON has no built-in date type. Extended JSON uses markers that a BSON-aware parser understands. Cell 05 shows the difference directly: the ordinary reader produces a dictionary for the marked date, and the BSON-aware reader produces a datetime. Now run Cell 05b to download the synthetic artifact. Saving your notebook to Drive does not retain the files created inside its runtime. This small export assumes the source is unchanged while we read it. It does not establish a consistent backup of a busy production deployment.
+The file has two jobs. It retains the earlier values, and it carries enough type information to rebuild the dates. Ordinary JSON has no built-in date type. Extended JSON uses markers that a BSON-aware parser understands. Cell 05 shows the difference directly: the ordinary reader produces a dictionary for the marked date, and the BSON-aware reader produces a datetime. Now run Cell 05b to download the synthetic artifact. Saving your notebook to Drive does not retain the files created inside its runtime. This small export assumes the source is unchanged while we read it. The exercise exports an idle classroom dataset.
 
 ## Slide 14
 
@@ -134,13 +134,13 @@ Your change is deliberately small so you can spend the time explaining what it d
 
 ## Slide 16
 
-GitLab's own postmortem describes an accidental deletion during a PostgreSQL incident and difficulties with the available recovery mechanisms. This was not MongoDB, and our five-ticket lab is not a reproduction of that incident. The transferable responsibility is to rehearse recovery and inspect what the recovery actually gives you. In an interview, describe the checks you ran: same count, same IDs, dates reconstructed as dates, and the complete saved values. Then state the limit. We did not test a production service, a real outage, or a full deployment rebuild. A precise account of a small test is stronger evidence than calling it disaster recovery without those boundaries.
+GitLab's own postmortem describes an accidental deletion during a PostgreSQL incident and difficulties with the available recovery mechanisms. Apply the recovery question from the incident to the five-ticket lab. The transferable responsibility is to rehearse recovery and inspect what the recovery actually gives you. In an interview, describe the checks you ran: same count, same IDs, dates reconstructed as dates, and the complete saved values. Then state the limit. We did not test a production service, a real outage, or a full deployment rebuild. A precise account of a small test is stronger evidence than calling it disaster recovery without those boundaries.
 
 Source: https://about.gitlab.com/blog/postmortem-of-database-outage-of-january-31/
 
 ## Slide 17
 
-A successful run proves that your current client could connect, write, read, and recover these five documents using a saved artifact. It does not prove that a replica election will finish in a certain time. Atlas manages the Free cluster's replicas and does not let this class force a primary failover. The artifact holds documents, not users, collection rules, all indexes, or your application configuration. Atlas currently documents an optional billed Free backup subscription in private preview; we do not enable it. The older screenshot in the reading is dated. Use the corrections link for that product detail. Validator reconstruction is optional reference, not required work this week.
+A successful run proves that your current client could connect, write, read, and recover these five documents using a saved artifact. Measure election time in a separate failover test. Atlas manages the Free cluster's replicas and does not let this class force a primary failover. The artifact holds documents. Recreate the required indexes, rules, users, and application configuration separately. Atlas currently documents an optional billed Free backup subscription in private preview; we do not enable it. The older screenshot in the reading is dated. Use the corrections link for that product detail. Validator reconstruction is optional reference this week.
 
 ## Slide 18
 
@@ -148,7 +148,7 @@ Keep everything together in your own Drive copy. Your explanation should name wh
 
 ## Slide 19
 
-These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Replica sets: oplog, lag, and elections (1:24); Write concern, read preference, and read concern (1:39); Replication is not backup: logical recovery (1:31). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 12 README. The diagrams are schematic illustrations, not benchmarks.
+These short animations go with this week's reading. Students can watch them before class to preview the mechanisms, or afterwards to review: Replica sets: oplog, lag, and elections (1:24); Write concern, read preference, and read concern (1:39); Replication is not backup: logical recovery (1:31). Each video is silent with on-screen captions and a subtitle file, and is linked from the Week 12 README. The diagrams illustrate the design.
 
 ## License
 

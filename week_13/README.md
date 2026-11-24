@@ -31,9 +31,9 @@ Prepare access to your own MongoDB Atlas **Free** cluster and a database user wi
 | 65–85 | Individual product grouping and 5–7 sentence handoff | Change Cell 15; Submission Record |
 | 85–100 | Career connection, limits, saving and sharing | Submit one viewable saved Colab link |
 
-Keep `USE_LIVE_FEED = False`. Use Cells **01, 02a–02b, 03–08, 10, 11 twice, 14 and 15**. Skip **09, 12 and 13**, which are optional SQL paths. Cell 16 is optional cleanup after retaining evidence. Supplied setup code can stay collapsed; it still needs to run. Run one numbered cell at a time rather than Run all on a new connection.
+Keep `USE_LIVE_FEED = False`. Use Cells **01, 02a–02b, 03–08, 10, 11 twice, 14 and 15**. Skip **09, 12 and 13**, which are optional SQL paths. Cell 16 is optional cleanup after retaining evidence. Supplied setup code can stay collapsed; it still needs to run. Run each numbered cell in sequence so you can respond to the connection prompt.
 
-The expected record counts are **0 → 75 → 75**, with the same collection on both imports. Do not rerun the name-generating Cell 08 between them. Cell 14 independently reads all 75 records and compares all eight selected fields and their types with the source; it also displays one known record. Cell 15 compares the database grouping with a separate calculation from the source. A modified counter is not a substitute for these checks.
+The expected record counts are **0 → 75 → 75**, with the same collection on both imports. Do not rerun the name-generating Cell 08 between them. Cell 14 independently reads all 75 records and compares all eight selected fields and their types with the source; it also displays one known record. Cell 15 compares the database grouping with a separate calculation from the source. Use the read-back comparison to verify the stored values.
 
 ## What to submit
 
@@ -43,7 +43,7 @@ Save the changed code, outputs and handoff in your own Drive copy. Give the inst
 
 ## Scope and optional practice
 
-The retained data are the first 75 selected records from catalog version **2026.07.10**, retrieved **July 13, 2026**, with eight documented fields. One record is a catalog entry, not an affected computer. The source is historical and nonrandom. It cannot rank vendor security or determine a current patch deadline. Labels and calendar-day strings are preserved; `cwes` remains an array in Atlas.
+The retained data are the first 75 selected records from catalog version **2026.07.10**, retrieved **July 13, 2026**, with eight documented fields. Each record describes a vulnerability listed in the catalog. The source is historical and nonrandom. It cannot rank vendor security or determine a current patch deadline. Labels and calendar-day strings are preserved; `cwes` remains an array in Atlas.
 
 Cell 07's four buckets illustrate range/hash placement in Python. They are not actual Atlas shards or a benchmark, and this small sample supplies no evidence that it needs sharding. SQLite, PostgreSQL, the live feed and extra date-window questions remain optional later practice. They add no submission and are not proof of an Atlas connection. Existing final-project requirements remain unchanged.
 
@@ -60,7 +60,7 @@ Short silent animations with captions (3 for this week). Each has a subtitle fil
 
 ## Industry/Career Connection — Discord: access patterns and hot partitions
 
-Discord's 2023 engineering account describes message-storage growth, hot partitions, a data-service layer, and migration from Cassandra to ScyllaDB. Its workload is not our CISA catalog and its design is not a MongoDB recommendation. The useful comparison is methodological: measure the distribution and access pattern before selecting infrastructure, and verify a migration rather than trusting row counts alone. A data engineer should report the import key, repeat behavior, field checks, and remaining limits. Our 75-record subset provides no evidence that it needs sharding.
+Discord's 2023 engineering account describes message-storage growth, hot partitions, a data-service layer, and migration from Cassandra to ScyllaDB. Discord studied its message-storage workload. Measure distribution and access patterns before selecting infrastructure, then verify the migrated values against the source. A data engineer should report the import key, repeat behavior, field checks, and remaining limits. Our 75-record subset provides no evidence that it needs sharding.
 
 Read the [company's own account](https://discord.com/blog/how-discord-stores-trillions-of-messages). This supports the lesson; it adds no submission. Keep the case distinct from the measured classroom outputs.
 

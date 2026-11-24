@@ -27,7 +27,7 @@ For ticket 1003, event 5007 receives 1, 5006 receives 2, and 5005 receives 3.
 Use a CTE to name that result before filtering its `rn` column.
 
 The secondary `event_id` order breaks equal-timestamp ties deterministically.
-It is a reporting rule, not proof of which real-world event happened last.
+The report uses the larger ID to break timestamp ties consistently.
 
 ## 2. Build and Check the View
 

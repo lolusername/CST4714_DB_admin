@@ -1,10 +1,10 @@
 # Week 4 videos
 
-Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. Diagrams are schematic illustrations, not benchmarks.
+Short silent animations with on-screen captions. Each video has a matching `.srt` subtitle file. The diagrams trace the steps in each example.
 
-## [Count requests, not ticket-event pairs](04_count_at_grain.mp4) (1:30)
+## [Count each request once](04_count_at_grain.mp4) (1:30)
 
-[![Count requests, not ticket-event pairs](04_count_at_grain.png)](04_count_at_grain.mp4)
+[![Count each request once](04_count_at_grain.png)](04_count_at_grain.mp4)
 
 A category report that joins raw events counts water as 5 requests: ticket 1003 three times and 1008 twice. Summarizing events per ticket in a CTE first gives 12 requests and 21 events, and a second query checks the water row.
 

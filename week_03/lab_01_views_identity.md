@@ -23,8 +23,7 @@ request; several events can describe its history. The requester is the person
 who reported it, while the assignee is the staff member handling it. Ticket 1004
 has requester 104 and no assignee. Locate that row before joining anything.
 In Colab, the SQL goes inside the notebook's clearly marked SQL strings; keep
-the supplied Python setup unchanged. The notebook is a workspace, not an extra
-submission.
+the supplied Python setup unchanged. Save the SQL from that workspace for submission.
 
 A view is a named query. Start with this working version:
 

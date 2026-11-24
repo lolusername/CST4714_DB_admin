@@ -4,7 +4,7 @@
 
 Today we walk through the Metro Support project and its rubric, then investigate the data and plan the index experiment.
 
-**The midterm is a separate project, not today's notebook.** Everything about it is on one page: [midterm instructions](../week_08/materials/assignments/midterm_project.md). Today's Colab notebook is classwork with its own Brightspace link.
+**The midterm is a separate project.** Everything about it is on one page: [midterm instructions](../week_08/materials/assignments/midterm_project.md). Today's Colab notebook is classwork with its own Brightspace link.
 
 ## Materials
 

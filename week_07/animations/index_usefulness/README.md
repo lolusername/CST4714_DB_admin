@@ -17,7 +17,7 @@ It follows a sequential scan, builds an index on `lname`, and shows one possible
 
 The index definition is `CREATE INDEX users_lname_idx ON users (lname);`. The column in `ON (...)` determines what is indexed; the name is only a label. Creating this index does not rearrange the table or guarantee result order.
 
-The six-row table, simplified index entries, and page diagrams illustrate mechanisms. They are not a recorded query plan, a literal B-tree layout, or a benchmark. A real six-row table may use a sequential scan even for the filtered query. Each numbered location represents a table-row location, not an index containing the full record.
+The six-row table and page diagrams trace how PostgreSQL finds matching records. A real six-row table may use a sequential scan even for the filtered query. Each numbered location shows where a table row is stored.
 
 ## Chapters
 
