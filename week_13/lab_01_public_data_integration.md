@@ -12,7 +12,14 @@ Save your own copy of the [notebook](materials/notebooks/06_public_data_capacity
 
 Follow **Cells 01, 02a–02b, 03–06, 07a and 07** with the instructor. Inspect the source and data checks; compare CVE-ID and date-added measurements. Cell 07 simulates range and hash placement in Python.
 
-In **Cell 08**, keep `TARGET = "atlas"`. **Cell 10** prints the runtime IPv4 address, pauses for its temporary `/32` access-list rule, and then reads the hidden URI or allowed Colab secret. Use your own Free cluster and database user scoped to `cst4714_week13`. Keep credentials out of code/output. Do not enable a paid feature or access from everywhere.
+### Before the import — allow your Colab IP address in MongoDB Atlas
+
+Keep `TARGET = "atlas"` in **Cell 08**. Use your Free cluster and a database user with `readWrite` on `cst4714_week13`.
+
+1. Run **Cell 10**. Leave it waiting and copy the address it prints, including `/32`.
+2. In the Atlas project containing your cluster, open **Database & Network Access → IP Access List**. If the address already shows **Active**, continue to step 4.
+3. Click **Add IP Address**, paste into **Access List Entry**, select **Save as temporary access list**, choose **6 hours**, and click **Confirm**. Wait for **Active**.
+4. Return to **Cell 10**. Press **Enter** in its input box to use the saved `MONGODB_URI`, or type **P** and press **Enter** to paste your URI privately.
 
 After successful setup, run **Cell 11 twice into the same collection**. Expect **0 → 75 → 75** records. Do not rerun Cell 08 between imports. Run **Cell 14** to compare all records, fields and types with the source. The instructor first demonstrates **Cell 15** with vendor grouping. These steps happen before the individual lab timer starts.
 
